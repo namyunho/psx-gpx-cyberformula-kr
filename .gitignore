@@ -1,0 +1,15 @@
+# Copyrighted source media and firmware
+roms/
+*.bin
+*.cue
+*.iso
+
+# Generated or extracted binary data
+out/
+work/
+__pycache__/
+*.pyc
+
+# Local agent instructions and imported workflow reference material
+/AGENTS.md
+/codex/
