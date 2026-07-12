@@ -1,5 +1,6 @@
 # Copyrighted source media and firmware
 roms/
+/font/
 *.bin
 *.cue
 *.iso
