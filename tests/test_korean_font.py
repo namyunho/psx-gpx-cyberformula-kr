@@ -3,6 +3,7 @@ import unittest
 from scripts.korean_font import (
     SOURCE_GLYPH_SIZE,
     crop_to_psx,
+    rasterize_ttf_glyph,
     unpack_mono_glyph,
 )
 from scripts.psx_font import PIXEL_COUNT
@@ -24,6 +25,10 @@ class KoreanFontTests(unittest.TestCase):
         self.assertEqual(len(cropped), PIXEL_COUNT)
         self.assertEqual(sum(cropped), 7)
         self.assertEqual(cropped[0], 7)
+
+    def test_ttf_rasterizer_rejects_multiple_characters(self) -> None:
+        with self.assertRaises(ValueError):
+            rasterize_ttf_glyph(object(), "가나")
 
 
 if __name__ == "__main__":

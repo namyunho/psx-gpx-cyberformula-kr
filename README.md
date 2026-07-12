@@ -19,6 +19,7 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 - [x] 텍스트 토큰 해석 경로와 토큰 동기 CD 오디오 경로 분리
 - [x] 실제 시각 글리프 렌더러와 폰트 비트맵 위치 확정
 - [x] 14×14 한국어 후보 글꼴 검증 및 게임 포맷 변환
+- [x] 첫 한글 PoC용 빈 슬롯·대상 토큰 확정 및 로컬 이미지 생성
 - [ ] 한국어 글리프 슬롯 및 인코딩 방식 결정
 - [ ] 첫 한국어 대사 PoC 제작·에뮬레이터 검증
 - [ ] 전체 대사 추출·번역·재삽입
@@ -61,9 +62,11 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 | `scripts/tim_scan.py` | 구조적으로 유효한 PS1 TIM 이미지 탐색·렌더링 |
 | `scripts/custom_text.py` | 커스텀 u16 텍스트의 손실 없는 추출·재조립·부분 해독 |
 | `scripts/gdb_dump.py` | DuckStation GDB 서버를 통한 PS1 RAM 덤프 |
+| `scripts/gdb_write.py` | DuckStation GDB 서버를 통한 검증된 PS1 RAM 쓰기 |
 | `scripts/ram_map.py` | 디스크 파일 조각과 RAM 적재 위치 대응 |
 | `scripts/psx_font.py` | 14×14, 3bpp 압축 글리프 추출·렌더링·재인코딩 |
-| `scripts/korean_font.py` | 16×16 1bpp 한글 글꼴의 14×14 게임 포맷 변환·미리보기 |
+| `scripts/korean_font.py` | 한글 TTF·16×16 비트맵의 14×14 게임 포맷 변환·미리보기 |
+| `scripts/build_font_poc.py` | 첫 대사의 빈 슬롯 한글 PoC 파일·에뮬레이터용 이미지 생성 |
 
 확인된 부분 글리프 맵은
 [`data/glyph-map.json`](data/glyph-map.json)에 누적합니다. 근거가 확보되지 않은
@@ -73,9 +76,15 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 3bpp 테이블로 확인했습니다. 상세 포맷과 실행 코드 경로는
 [`docs/font-format.md`](docs/font-format.md)에 정리합니다.
 
-로컬에서 제공된 `Galmuri14 Regular` 후보는 전체 2,350자가 14×14 영역 안에
-들어가며 고정 이름 **시바 세이치로**도 모두 변환되는 것을 확인했습니다. 후보
-파일 분석과 변환 결과는 [`docs/korean-font.md`](docs/korean-font.md)에 기록합니다.
+로컬에서 제공된 `Galmuri14 Regular` TTF는 네이티브 15px 렌더링과 위치 보정으로
+전체 2,350자를 14×14 영역에 손실 없이 넣을 수 있습니다. 함께 제공된 14px급
+비트맵은 일부 획이 소실되므로 사용하지 않습니다. 분석과 변환 결과는
+[`docs/korean-font.md`](docs/korean-font.md)에 기록합니다.
+
+첫 가시성 PoC는 빈 글리프 `0x4CD`에 `한`을 넣고, 첫 대사의 `憧` 토큰을
+`0x4CD`로 바꾸도록 구성했습니다. 같은 크기의 중간 파일과 로컬 Track 1
+복사본 생성까지 검증했으며, 실제 화면 판정은 아직 남아 있습니다. 상세 내용은
+[`docs/poc.md`](docs/poc.md)에 기록합니다.
 
 ## 테스트
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inspect and convert 16x16, 1bpp Korean glyphs for the PS1 font."""
+"""Inspect and convert Korean bitmap/TTF glyphs for the PS1 font."""
 
 from __future__ import annotations
 
@@ -43,6 +43,27 @@ def crop_to_psx(pixels: list[int], *, intensity: int = 7) -> list[int]:
         for row in range(1, HEIGHT + 1)
         for column in range(1, WIDTH + 1)
     ]
+
+
+def rasterize_ttf_glyph(
+    font: object,
+    character: str,
+    *,
+    x_offset: int = -1,
+    y_offset: int = -1,
+) -> list[int]:
+    """Rasterize one TTF glyph inside the bordered 16x16 working cell."""
+    from PIL import Image, ImageDraw
+
+    if len(character) != 1:
+        raise ValueError("character must contain exactly one code point")
+    image = Image.new("1", (SOURCE_WIDTH, SOURCE_HEIGHT))
+    # The retained game area is x/y 1..14. Galmuri14's native 15px design
+    # fits that area at target offset (-1, -1), i.e. source position (0, 0).
+    ImageDraw.Draw(image).text(
+        (x_offset + 1, y_offset + 1), character, font=font, fill=1
+    )
+    return [1 if value else 0 for value in image.get_flattened_data()]
 
 
 def bounding_box(pixels: list[int]) -> tuple[int, int, int, int] | None:
@@ -92,14 +113,27 @@ def main() -> None:
     parser.add_argument("--glyph-map", type=Path, required=True)
     parser.add_argument("--text", default="시바세이치로")
     parser.add_argument("--byte-order", choices=("big", "little"), default="big")
+    parser.add_argument("--ttf-size", type=int, default=15)
+    parser.add_argument("--x-offset", type=int, default=-1)
+    parser.add_argument("--y-offset", type=int, default=-1)
     parser.add_argument("--preview", type=Path)
     parser.add_argument("--packed-output", type=Path)
     args = parser.parse_args()
 
-    source = args.input.read_bytes()
     mapping = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-    if len(source) % SOURCE_GLYPH_SIZE:
-        parser.error("input size is not a multiple of 32 bytes")
+    is_ttf = args.input.suffix.lower() in {".ttf", ".otf"}
+    if is_ttf:
+        from PIL import ImageFont
+
+        if args.ttf_size < 1:
+            parser.error("--ttf-size must be positive")
+        font = ImageFont.truetype(str(args.input), args.ttf_size)
+        source = b""
+    else:
+        font = None
+        source = args.input.read_bytes()
+        if len(source) % SOURCE_GLYPH_SIZE:
+            parser.error("input size is not a multiple of 32 bytes")
 
     glyphs: list[tuple[str, list[int]]] = []
     packed = bytearray()
@@ -107,10 +141,19 @@ def main() -> None:
         if character not in mapping:
             parser.error(f"character is absent from glyph map: {character!r}")
         index = int(mapping[character])
-        start = index * SOURCE_GLYPH_SIZE
-        pixels = unpack_mono_glyph(
-            source[start : start + SOURCE_GLYPH_SIZE], byte_order=args.byte_order
-        )
+        if font is not None:
+            pixels = rasterize_ttf_glyph(
+                font,
+                character,
+                x_offset=args.x_offset,
+                y_offset=args.y_offset,
+            )
+        else:
+            start = index * SOURCE_GLYPH_SIZE
+            pixels = unpack_mono_glyph(
+                source[start : start + SOURCE_GLYPH_SIZE],
+                byte_order=args.byte_order,
+            )
         glyphs.append((character, pixels))
         packed.extend(pack_glyph(crop_to_psx(pixels)))
         print(
@@ -123,7 +166,8 @@ def main() -> None:
         args.packed_output.parent.mkdir(parents=True, exist_ok=True)
         args.packed_output.write_bytes(packed)
     print(
-        f"glyphs={len(glyphs)} source=16x16/1bpp output=14x14/3bpp "
+        f"glyphs={len(glyphs)} "
+        f"source={'TTF' if is_ttf else '16x16/1bpp'} output=14x14/3bpp "
         f"packed_bytes={len(packed)}"
     )
 

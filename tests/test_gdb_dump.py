@@ -30,6 +30,18 @@ class DumpTests(unittest.TestCase):
         self.assertEqual(data, bytes(range(10)))
         self.assertEqual(client.connect_count, 1)
 
+    def test_write_memory_command(self):
+        client = gdb_dump.RemoteGdb("127.0.0.1", 3333)
+        commands = []
+
+        def command(value):
+            commands.append(value)
+            return b"OK"
+
+        client.command = command
+        client.write_memory(0x80010000, bytes.fromhex("1234ABCD"))
+        self.assertEqual(commands, ["M80010000,4:1234abcd"])
+
 
 if __name__ == "__main__":
     unittest.main()

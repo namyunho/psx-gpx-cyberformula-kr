@@ -83,6 +83,31 @@ class RemoteGdb:
             if current == b"$":
                 return self._receive_packet(current)
 
+    def interrupt(self) -> bytes:
+        """Halt a running target and return its stop reply."""
+        if self.socket is None:
+            self.connect()
+        assert self.socket is not None
+        self.socket.sendall(b"\x03")
+        return self._receive_packet()
+
+    def resume(self) -> None:
+        """Resume the target without waiting for its next stop reply."""
+        if self.socket is None:
+            self.connect()
+        assert self.socket is not None
+        raw = b"c"
+        packet = b"$" + raw + b"#" + f"{sum(raw) & 0xFF:02x}".encode("ascii")
+        self.socket.sendall(packet)
+        acknowledgement = self._read_exact(1)
+        if acknowledgement != b"+":
+            raise RuntimeError(f"unexpected GDB acknowledgement: {acknowledgement!r}")
+
+    def write_memory(self, address: int, data: bytes) -> None:
+        response = self.command(f"M{address:x},{len(data):x}:{data.hex()}")
+        if response != b"OK":
+            raise RuntimeError(f"GDB memory write failed: {response.decode()}")
+
     def read_memory(self, address: int, size: int, retries: int = 3) -> bytes:
         last_error: Exception | None = None
         for attempt in range(retries):
