@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a renderer-hook PoC for 0x5xxx Hangul cache tokens."""
+"""Build the retired high-token renderer-hook PoC for reproduction."""
 
 from __future__ import annotations
 
@@ -40,12 +40,16 @@ except ModuleNotFoundError:  # Support direct execution from the repository root
 EXE_LOAD_ADDRESS = 0x80030000
 EXE_HEADER_SIZE = 0x800
 SLPS_LBA = 24
-HOOK_PATCH_RAM = 0x8003271C
-HOOK_CODE_RAM = 0x8005A000
-HANGUL_CACHE_RAM = 0x80059800
-HANGUL_TOKEN_PREFIX = 0x5000
+HOOK_PATCH_RAM = 0x80032804
+HOOK_CODE_RAM = 0x8005BB18
+HANGUL_CACHE_RAM = 0x8005B5E4
+HANGUL_CACHE_READ_RAM = 0xA005B5E4
+HANGUL_TOKEN_PREFIX = 0x7000
+HANGUL_REMAP_POINTER_BASE_RAM = 0x800B6054
+HANGUL_REMAP_POINTER_SIZE = 18 * 2
 
-EXPECTED_HOOK_SITE = bytes.fromhex("800162301900401080006230")
+EXPECTED_SOURCE_SLPS_SHA256 = "0CBDA75255E7F9EDBB758EE8B815082C3DD167E7E0E709A5526C17653014FAB9"
+EXPECTED_HOOK_SITE = bytes.fromhex("FF0F6330C010030021104300")
 HOOK_SITE_REPLACEMENT_WORDS = 3
 
 
@@ -55,6 +59,7 @@ REG = {
     "v0": 2,
     "v1": 3,
     "a0": 4,
+    "a1": 5,
 }
 
 
@@ -88,37 +93,43 @@ def branch_offset(pc: int, target: int) -> int:
 
 
 def build_hook_code() -> bytes:
-    not_hangul = HOOK_CODE_RAM + 0x20
-    original_special = HOOK_CODE_RAM + 0x34
+    not_hangul = HOOK_CODE_RAM + 0x2C
     words = [
-        # If the original token is 0x5xxx, select the Hangul cache base and let
-        # the original 12-bit index math at 0x80032804 continue.
-        i_type(0x0C, REG["v1"], REG["v0"], 0xF000),  # andi v0, v1, 0xF000
-        i_type(0x09, REG["zero"], REG["at"], HANGUL_TOKEN_PREFIX),
-        i_type(0x05, REG["v0"], REG["at"], branch_offset(HOOK_CODE_RAM + 0x08, not_hangul)),
+        # The engine remaps raw tokens by reading current_text_base + token*2
+        # before this point. Recover the 0x7000 local index from that remap
+        # address for the first-dialogue PoC.
+        i_type(0x0F, REG["zero"], REG["a1"], HANGUL_REMAP_POINTER_BASE_RAM >> 16),
+        i_type(0x0D, REG["a1"], REG["a1"], HANGUL_REMAP_POINTER_BASE_RAM & 0xFFFF),
+        r_type(REG["v0"], REG["a1"], REG["at"], 0, 0x23),  # subu at, v0, a1
+        i_type(0x0B, REG["at"], REG["a1"], HANGUL_REMAP_POINTER_SIZE),  # sltiu a1, at, size
+        i_type(
+            0x04,
+            REG["a1"],
+            REG["zero"],
+            branch_offset(HOOK_CODE_RAM + 0x10, not_hangul),
+        ),
+        i_type(0x0C, REG["at"], REG["a1"], 1),  # delay slot: andi a1, at, 1
+        i_type(0x05, REG["a1"], REG["zero"], branch_offset(HOOK_CODE_RAM + 0x18, not_hangul)),
         0,
-        i_type(0x0F, REG["zero"], REG["a0"], HANGUL_CACHE_RAM >> 16),
-        i_type(0x0D, REG["a0"], REG["a0"], HANGUL_CACHE_RAM & 0xFFFF),
-        j_type(0x02, 0x80032804),
-        0,
-        # Reproduce the original branch that was displaced at 0x8003271C.
-        i_type(0x0C, REG["v1"], REG["v0"], 0x0180),  # andi v0, v1, 0x0180
-        i_type(0x05, REG["v0"], REG["zero"], branch_offset(HOOK_CODE_RAM + 0x24, original_special)),
-        i_type(0x0C, REG["v1"], REG["v0"], 0x0080),  # delay slot: andi v0, v1, 0x0080
-        j_type(0x02, 0x80032788),
-        0,
-        j_type(0x02, 0x80032728),
+        r_type(0, REG["at"], REG["v1"], 1, 0x02),  # srl v1, at, 1
+        i_type(0x0F, REG["zero"], REG["a0"], HANGUL_CACHE_READ_RAM >> 16),
+        i_type(0x0D, REG["a0"], REG["a0"], HANGUL_CACHE_READ_RAM & 0xFFFF),
+        # Reproduce the three original instructions displaced at 0x80032804.
+        i_type(0x0C, REG["v1"], REG["v1"], 0x0FFF),  # andi v1, v1, 0x0FFF
+        0x000310C0,  # sll v0, v1, 3
+        r_type(REG["v0"], REG["v1"], REG["v0"], 0, 0x21),  # addu v0, v0, v1
+        j_type(0x02, 0x80032810),
         0,
     ]
     return encode_words(words)
 
 
-def build_hook_site_patch() -> bytes:
-    return encode_words([j_type(0x02, HOOK_CODE_RAM), 0, 0])
+def build_hook_site_patch(target: int = HOOK_CODE_RAM) -> bytes:
+    return encode_words([j_type(0x02, target), 0, 0])
 
 
 def patch_slps_cache_hook(
-    slps_data: bytes, glyphs: dict[str, bytes]
+    slps_data: bytes, glyphs: dict[str, bytes], *, require_source_hash: bool = False
 ) -> tuple[bytes, dict[str, int]]:
     hangul = [
         character
@@ -142,6 +153,8 @@ def patch_slps_cache_hook(
     hook_site = exe_offset(HOOK_PATCH_RAM)
     if bytes(patched[hook_site : hook_site + len(EXPECTED_HOOK_SITE)]) != EXPECTED_HOOK_SITE:
         raise ValueError("hook site bytes differ from the verified SLPS_019.58")
+    if require_source_hash and sha256(slps_data) != EXPECTED_SOURCE_SLPS_SHA256:
+        raise ValueError("source SLPS_019.58 hash differs from the verified Disc 1 executable")
 
     cache_offset = exe_offset(HANGUL_CACHE_RAM)
     cache_end = cache_offset + len(glyph_bytes)
@@ -149,10 +162,6 @@ def patch_slps_cache_hook(
     hook_end = hook_offset + len(hook_code)
     if cache_end > hook_offset:
         raise ValueError("Hangul cache overlaps hook code")
-    if any(patched[cache_offset:cache_end]):
-        raise ValueError("Hangul cache target is not blank")
-    if any(patched[hook_offset:hook_end]):
-        raise ValueError("hook code target is not blank")
 
     patched[cache_offset:cache_end] = glyph_bytes
     patched[hook_offset:hook_end] = hook_code
@@ -224,7 +233,9 @@ def main() -> None:
 
     original_slps = args.slps.read_bytes()
     original_allbin = args.allbin.read_bytes()
-    patched_slps, mapping = patch_slps_cache_hook(original_slps, glyphs)
+    patched_slps, mapping = patch_slps_cache_hook(
+        original_slps, glyphs, require_source_hash=True
+    )
     patched_allbin = patch_allbin_cache_dialogue(original_allbin, mapping)
 
     args.output_dir.mkdir(parents=True, exist_ok=True)

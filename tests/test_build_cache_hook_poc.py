@@ -27,7 +27,7 @@ class BuildCacheHookPocTests(unittest.TestCase):
         hook = build_hook_code()
         site = build_hook_site_patch()
 
-        self.assertEqual(len(hook), 15 * 4)
+        self.assertEqual(len(hook), 16 * 4)
         self.assertEqual(len(site), 3 * 4)
         self.assertEqual(struct.unpack_from("<I", site, 0)[0] >> 26, 0x02)
         self.assertEqual(site[4:], bytes(8))
