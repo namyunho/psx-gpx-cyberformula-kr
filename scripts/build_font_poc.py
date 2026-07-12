@@ -122,7 +122,11 @@ def write_poc_cue(source_cue: Path, track_output: Path, cue_output: Path) -> Non
             path = track_output.resolve()
         else:
             path = (source_cue.parent / match.group(2)).resolve()
-        rewritten.append(f'{match.group(1)}"{path.as_posix()}"{match.group(3)}')
+            local_audio = cue_output.parent / path.name
+            if path != local_audio.resolve():
+                shutil.copyfile(path, local_audio)
+            path = local_audio.resolve()
+        rewritten.append(f'{match.group(1)}"{path.name}"{match.group(3)}')
     if file_number == 0:
         raise ValueError("source CUE has no FILE entries")
     cue_output.parent.mkdir(parents=True, exist_ok=True)

@@ -1,5 +1,7 @@
 import struct
+import tempfile
 import unittest
+from pathlib import Path
 
 from io import BytesIO
 
@@ -8,6 +10,7 @@ from scripts.build_font_poc import (
     USER_DATA_OFFSET,
     patch_poc_files,
     patch_raw_fragment,
+    write_poc_cue,
 )
 from scripts.psx_font import GLYPH_SIZE
 
@@ -64,6 +67,32 @@ class BuildFontPocTests(unittest.TestCase):
         self.assertEqual(
             patched[USER_DATA_OFFSET + 7 : USER_DATA_OFFSET + 9], b"\x12\x34"
         )
+
+    def test_writes_local_multitrack_cue(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / "source"
+            output = root / "output"
+            source.mkdir()
+            output.mkdir()
+            (source / "track1.bin").write_bytes(b"one")
+            (source / "track2.bin").write_bytes(b"two")
+            source_cue = source / "disc.cue"
+            source_cue.write_text(
+                'FILE "track1.bin" BINARY\n  TRACK 01 MODE2/2352\n'
+                'FILE "track2.bin" BINARY\n  TRACK 02 AUDIO\n',
+                encoding="ascii",
+            )
+            track_output = output / "poc-track1.bin"
+            track_output.write_bytes(b"patched")
+            cue_output = output / "poc.cue"
+
+            write_poc_cue(source_cue, track_output, cue_output)
+
+            cue = cue_output.read_text(encoding="ascii")
+            self.assertIn('FILE "poc-track1.bin" BINARY', cue)
+            self.assertIn('FILE "track2.bin" BINARY', cue)
+            self.assertEqual((output / "track2.bin").read_bytes(), b"two")
 
 
 if __name__ == "__main__":
