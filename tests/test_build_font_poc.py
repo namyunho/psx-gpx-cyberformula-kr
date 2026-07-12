@@ -6,9 +6,13 @@ from pathlib import Path
 from io import BytesIO
 
 from scripts.build_font_poc import (
+    DIALOGUE_LINES,
+    DIALOGUE_REGION_OFFSET,
+    DIALOGUE_REGION_TOKENS,
     RAW_SECTOR_SIZE,
     USER_DATA_OFFSET,
     patch_poc_files,
+    patch_dialogue_poc_files,
     patch_raw_fragment,
     write_poc_cue,
 )
@@ -16,6 +20,37 @@ from scripts.psx_font import GLYPH_SIZE
 
 
 class BuildFontPocTests(unittest.TestCase):
+    def test_patches_full_dialogue_in_place(self) -> None:
+        start = bytes(0x40000)
+        allbin = bytearray(0x200)
+        struct.pack_into("<H", allbin, DIALOGUE_REGION_OFFSET, 0x903F)
+        struct.pack_into("<H", allbin, DIALOGUE_REGION_OFFSET + 16 * 2, 0xFFFB)
+        struct.pack_into("<H", allbin, DIALOGUE_REGION_OFFSET + 33 * 2, 0x8000)
+        hangul = {
+            character
+            for character in "".join(DIALOGUE_LINES)
+            if "가" <= character <= "힣"
+        }
+        glyphs = {
+            character: bytes([index + 1]) * GLYPH_SIZE
+            for index, character in enumerate(sorted(hangul))
+        }
+
+        patched_start, patched_allbin, mapping = patch_dialogue_poc_files(
+            start, bytes(allbin), glyphs
+        )
+
+        tokens = struct.unpack_from(
+            f"<{DIALOGUE_REGION_TOKENS}H", patched_allbin, DIALOGUE_REGION_OFFSET
+        )
+        self.assertEqual(tokens[0], 0x903F)
+        self.assertEqual(tokens[16], 0xFFFB)
+        self.assertEqual(tokens[17], 0x0000)
+        self.assertEqual(tokens[-1], 0x8000)
+        self.assertEqual(len(mapping), len(hangul) + 6)
+        self.assertEqual(len(patched_start), len(start))
+        self.assertEqual(len(patched_allbin), len(allbin))
+
     def test_patches_only_glyph_and_token(self) -> None:
         start = bytes(200)
         allbin = bytearray(32)
