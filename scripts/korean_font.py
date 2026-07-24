@@ -4,6 +4,8 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
+import hashlib
 import json
 from pathlib import Path
 
@@ -16,6 +18,120 @@ except ModuleNotFoundError:  # Support direct execution from the repository root
 SOURCE_WIDTH = 16
 SOURCE_HEIGHT = 16
 SOURCE_GLYPH_SIZE = 32
+
+
+@dataclass(frozen=True)
+class FontProfile:
+    profile_id: str
+    profile_path: Path
+    source_path: Path
+    source_sha256: str
+    glyph_map_path: Path
+    glyph_map_sha256: str
+    glyph_map: dict[str, int]
+    family: str
+    style: str
+    version: str
+    ttf_size_px: int
+    x_offset_px: int
+    y_offset_px: int
+    intensity: int
+    ink_union: tuple[int, int, int, int]
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def load_font_profile(path: Path) -> FontProfile:
+    profile_path = path.resolve()
+    data = json.loads(profile_path.read_text(encoding="utf-8"))
+    if data.get("schema_version") != 1:
+        raise ValueError("font profile schema_version must be 1")
+
+    source = data.get("source")
+    target = data.get("target")
+    if not isinstance(source, dict) or not isinstance(target, dict):
+        raise ValueError("font profile requires source and target objects")
+    if source.get("kind") != "truetype":
+        raise ValueError("font profile source.kind must be 'truetype'")
+
+    source_path = (profile_path.parent / source["path"]).resolve()
+    glyph_map_path = (profile_path.parent / source["glyph_map_path"]).resolve()
+    expected_source_hash = str(source["sha256"]).lower()
+    expected_map_hash = str(source["glyph_map_sha256"]).lower()
+    if sha256_file(source_path) != expected_source_hash:
+        raise ValueError(f"font source SHA-256 differs: {source_path}")
+    if sha256_file(glyph_map_path) != expected_map_hash:
+        raise ValueError(f"font glyph map SHA-256 differs: {glyph_map_path}")
+
+    mapping_data = json.loads(glyph_map_path.read_text(encoding="utf-8"))
+    if not isinstance(mapping_data, dict):
+        raise ValueError("font glyph map must be an object")
+    glyph_map = {str(character): int(index) for character, index in mapping_data.items()}
+    glyph_count = int(source["glyph_count"])
+    if len(glyph_map) != glyph_count:
+        raise ValueError(
+            f"font glyph map count differs: {len(glyph_map)} != {glyph_count}"
+        )
+    if set(glyph_map.values()) != set(range(glyph_count)):
+        raise ValueError("font glyph map indices must cover one contiguous range")
+
+    expected_target = {
+        "cell_width_px": WIDTH,
+        "cell_height_px": HEIGHT,
+        "bits_per_pixel": 3,
+        "record_bytes": (WIDTH * HEIGHT * 3 + 7) // 8,
+    }
+    for key, expected in expected_target.items():
+        if int(target.get(key, -1)) != expected:
+            raise ValueError(f"font profile target {key} must be {expected}")
+    intensity = int(target["intensity"])
+    if not 1 <= intensity <= 7:
+        raise ValueError("font profile target intensity must be between 1 and 7")
+
+    union = target.get("observed_ink_union")
+    if not isinstance(union, dict):
+        raise ValueError("font profile requires target.observed_ink_union")
+    ink_union = tuple(
+        int(union[key]) for key in ("x_min", "y_min", "x_max", "y_max")
+    )
+    if not (
+        0 <= ink_union[0] <= ink_union[2] < WIDTH
+        and 0 <= ink_union[1] <= ink_union[3] < HEIGHT
+    ):
+        raise ValueError("font profile observed ink union is outside the target cell")
+
+    from PIL import ImageFont
+
+    font = ImageFont.truetype(str(source_path), int(source["ttf_size_px"]))
+    if tuple(font.getname()) != (source["family"], source["style"]):
+        raise ValueError(
+            f"font internal name differs: {font.getname()} != "
+            f"{(source['family'], source['style'])}"
+        )
+
+    return FontProfile(
+        profile_id=str(data["profile_id"]),
+        profile_path=profile_path,
+        source_path=source_path,
+        source_sha256=expected_source_hash,
+        glyph_map_path=glyph_map_path,
+        glyph_map_sha256=expected_map_hash,
+        glyph_map=glyph_map,
+        family=str(source["family"]),
+        style=str(source["style"]),
+        version=str(source["version"]),
+        ttf_size_px=int(source["ttf_size_px"]),
+        x_offset_px=int(source["x_offset_px"]),
+        y_offset_px=int(source["y_offset_px"]),
+        intensity=intensity,
+        ink_union=ink_union,
+    )
 
 
 def unpack_mono_glyph(data: bytes, *, byte_order: str = "big") -> list[int]:
@@ -66,6 +182,34 @@ def rasterize_ttf_glyph(
     return [1 if value else 0 for value in image.get_flattened_data()]
 
 
+def pack_profile_glyphs(
+    profile: FontProfile,
+    characters: list[str],
+    *,
+    intensity: int | None = None,
+) -> dict[str, bytes]:
+    from PIL import ImageFont
+
+    target_intensity = profile.intensity if intensity is None else intensity
+    if not 1 <= target_intensity <= 7:
+        raise ValueError("intensity must be between 1 and 7")
+    font = ImageFont.truetype(str(profile.source_path), profile.ttf_size_px)
+    packed: dict[str, bytes] = {}
+    for character in characters:
+        if character not in profile.glyph_map:
+            raise ValueError(f"character is absent from glyph map: {character!r}")
+        pixels = rasterize_ttf_glyph(
+            font,
+            character,
+            x_offset=profile.x_offset_px,
+            y_offset=profile.y_offset_px,
+        )
+        packed[character] = pack_glyph(
+            crop_to_psx(pixels, intensity=target_intensity)
+        )
+    return packed
+
+
 def bounding_box(pixels: list[int]) -> tuple[int, int, int, int] | None:
     points = [
         (index % SOURCE_WIDTH, index // SOURCE_WIDTH)
@@ -109,29 +253,57 @@ def render_preview(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("input", type=Path)
-    parser.add_argument("--glyph-map", type=Path, required=True)
+    parser.add_argument("input", type=Path, nargs="?")
+    parser.add_argument("--font-profile", type=Path)
+    parser.add_argument("--glyph-map", type=Path)
     parser.add_argument("--text", default="시바세이치로")
     parser.add_argument("--byte-order", choices=("big", "little"), default="big")
     parser.add_argument("--ttf-size", type=int, default=15)
     parser.add_argument("--x-offset", type=int, default=-1)
     parser.add_argument("--y-offset", type=int, default=-1)
+    parser.add_argument("--intensity", type=int)
     parser.add_argument("--preview", type=Path)
     parser.add_argument("--packed-output", type=Path)
     args = parser.parse_args()
 
-    mapping = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-    is_ttf = args.input.suffix.lower() in {".ttf", ".otf"}
+    if (args.input is None) == (args.font_profile is None):
+        parser.error("provide either input or --font-profile")
+    if args.font_profile:
+        if args.glyph_map:
+            parser.error("--glyph-map is supplied by --font-profile")
+        profile = load_font_profile(args.font_profile)
+        mapping = profile.glyph_map
+        input_path = profile.source_path
+        ttf_size = profile.ttf_size_px
+        x_offset = profile.x_offset_px
+        y_offset = profile.y_offset_px
+        intensity = profile.intensity if args.intensity is None else args.intensity
+        is_ttf = True
+    else:
+        if not args.glyph_map:
+            parser.error("--glyph-map is required with a direct input")
+        profile = None
+        assert args.input is not None
+        mapping = json.loads(args.glyph_map.read_text(encoding="utf-8"))
+        input_path = args.input
+        ttf_size = args.ttf_size
+        x_offset = args.x_offset
+        y_offset = args.y_offset
+        intensity = 7 if args.intensity is None else args.intensity
+        is_ttf = input_path.suffix.lower() in {".ttf", ".otf"}
+    if not 1 <= intensity <= 7:
+        parser.error("--intensity must be between 1 and 7")
+
     if is_ttf:
         from PIL import ImageFont
 
-        if args.ttf_size < 1:
+        if ttf_size < 1:
             parser.error("--ttf-size must be positive")
-        font = ImageFont.truetype(str(args.input), args.ttf_size)
+        font = ImageFont.truetype(str(input_path), ttf_size)
         source = b""
     else:
         font = None
-        source = args.input.read_bytes()
+        source = input_path.read_bytes()
         if len(source) % SOURCE_GLYPH_SIZE:
             parser.error("input size is not a multiple of 32 bytes")
 
@@ -145,8 +317,8 @@ def main() -> None:
             pixels = rasterize_ttf_glyph(
                 font,
                 character,
-                x_offset=args.x_offset,
-                y_offset=args.y_offset,
+                x_offset=x_offset,
+                y_offset=y_offset,
             )
         else:
             start = index * SOURCE_GLYPH_SIZE
@@ -155,7 +327,7 @@ def main() -> None:
                 byte_order=args.byte_order,
             )
         glyphs.append((character, pixels))
-        packed.extend(pack_glyph(crop_to_psx(pixels)))
+        packed.extend(pack_glyph(crop_to_psx(pixels, intensity=intensity)))
         print(
             f"U+{ord(character):04X} index={index} bbox={bounding_box(pixels)}"
         )
@@ -168,8 +340,14 @@ def main() -> None:
     print(
         f"glyphs={len(glyphs)} "
         f"source={'TTF' if is_ttf else '16x16/1bpp'} output=14x14/3bpp "
-        f"packed_bytes={len(packed)}"
+        f"packed_bytes={len(packed)} intensity={intensity}"
     )
+    if profile:
+        print(
+            f"profile={profile.profile_id} family={profile.family} "
+            f"version={profile.version} ttf_size={profile.ttf_size_px} "
+            f"offset=({profile.x_offset_px},{profile.y_offset_px})"
+        )
 
 
 if __name__ == "__main__":

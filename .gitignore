@@ -2,6 +2,7 @@
 roms/
 /font/
 *.bin
+!fonts/galmuri11/*.bin
 *.cue
 *.iso
 *.ccd

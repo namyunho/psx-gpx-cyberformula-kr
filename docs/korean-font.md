@@ -1,99 +1,101 @@
-# 한국어 후보 글꼴 검증
+# 한국어 사용 글꼴: Galmuri11
 
-## 결론
+## 확정 결론
 
-로컬 `font/`에 제공된 **TTF는** 게임의 14×14 대사 글꼴에 사용하기
-적합합니다. 내부 패밀리 이름은 `Galmuri14 Regular`, 버전은 `2.403`입니다.
-단, 함께 제공된 16×16 1bpp `.bin`은 일부 1픽셀 획이 소실되어 있으므로
-게임 폰트의 입력으로 사용하지 않습니다. TTF에서 직접 다시 생성합니다.
+본문 한글의 사용 글꼴은 로컬 `fonts/galmuri11/`의 **Galmuri11 Regular**로
+확정한다. 빌드의 단일 입력은 `config/font-profile.json`이며, 정확한 파일
+해시와 래스터 설정을 검증한 뒤에만 게임 글리프를 만든다.
 
-| 항목 | 결과 |
+Galmuri11의 이름, 포인트와 픽셀, 컨테이너 크기는 서로 다른 값이다.
+
+| 구분 | 값 |
 |---|---:|
-| 글리프 수 | 2,350자 |
-| TTF 래스터 크기 | 15px |
-| 14×14 셀 배치 오프셋 | `x=-1`, `y=-1` |
-| 서로 구별되는 결과 비트맵 | 2,350자 |
-| 14×14 바깥 픽셀이 있는 글리프 | 0자 |
-| 게임 변환 포맷 | 14×14, 3bpp, 74바이트/자 |
+| 로컬 TTF 내부 이름 | `Galmuri11 Regular` |
+| 로컬 TTF 버전 | `2.403` |
+| 공식 네이티브 표기 | 9pt / 12px |
+| TTF 래스터 입력 | 12px |
+| 래스터 작업 컨테이너 | 16×16px |
+| 실제 잉크 합집합 | 최대 11×11px |
+| 게임 저장 셀 | 14×14px |
+| 게임 셀의 잉크 합집합 | `(1,1)..(11,11)` |
+| 게임 표현 | 3bpp, 74바이트/자 |
+| 본문 켜진 픽셀 | 값 `1` |
 
-Galmuri14의 네이티브 크기는 공식 문서 기준 15px입니다. 15px로 래스터화한 뒤
-14×14 셀의 왼쪽·위쪽으로 각각 1픽셀 옮기면 2,350자 모두 잘림 없이 들어가고,
-서로 다른 2,350개 비트맵으로 유지됩니다. 꺼진 픽셀과 켜진 픽셀은 각각 게임의
-3bpp 값 0과 7로 변환합니다.
+16×16은 `.bin`과 래스터 작업 공간의 저장 컨테이너일 뿐, 게임에 16×16
+글리프를 넣는다는 뜻이 아니다. 12px TTF를 16×16 작업 공간의 `(2,1)`에서
+그린 뒤 바깥 1px를 잘라내면, 14×14 게임 셀에서는 `(1,1)..(11,11)` 안에
+들어간다. 홀수인 3px의 잔여 폭은 왼쪽·위쪽 1px, 오른쪽·아래쪽 2px로
+분배된다.
 
-### 제공된 `.bin`을 사용하지 않는 이유
+## 11px 비트맵을 사용하지 않는 이유
 
-`.bin`의 저장 형식 자체는 16×16, 1bpp, 글리프당 32바이트이며 행은 16비트
-big-endian, MSB 우선입니다. 그러나 2,350자 중 고유 비트맵은 2,222개뿐입니다.
-125개 중복 그룹에서 253자가 다른 문자와 같은 모양이며, 예를 들어 `로`와
-`르`, `고`와 `그`, `가`와 `카`가 동일합니다. 14px 래스터링에서 특징적인
-1픽셀 획이 사라진 결과와 일치합니다.
+같은 폴더의 `font-58c1637749eb0742.bin`은 다음 형식의 참고 자산이다.
 
-따라서 이전의 “바깥 테두리를 잘라 `.bin`을 그대로 쓴다”는 판단은 폐기합니다.
-비트맵의 크기만 맞는 것으로는 부족하며 글자별 자형 구별도 검증해야 합니다.
+- 16×16 컨테이너
+- 1bpp
+- 글리프당 32바이트
+- 2,350자
 
-## 고정 이름 검증
+이 파일의 실제 획은 대체로 9~10×10이며, 2,350자가 2,250개의 고유
+비트맵으로 축소된다. 예를 들어 `산/선/신`, `안/언/인`이 같은 비트맵이 된다.
+로컬 TTF도 11px로 래스터하면 같은 종류의 충돌이 생긴다.
 
-고정 이름 **시바 세이치로**에 필요한 여섯 글자는 모두 문자표에 있습니다.
+반면 Galmuri11 TTF를 공식 네이티브 크기인 12px로 래스터하면:
 
-| 글자 | 문자표 인덱스 | 16×16 작업 셀의 실제 경계 |
-|---|---:|---|
-| 시 | 1256 | `(1, 1)..(12, 14)` |
-| 바 | 902 | `(1, 1)..(14, 14)` |
-| 세 | 1155 | `(1, 1)..(13, 14)` |
-| 이 | 1547 | `(1, 1)..(12, 14)` |
-| 치 | 1880 | `(1, 1)..(12, 14)` |
-| 로 | 703 | `(1, 1)..(13, 13)` |
+- 2,350자 전부 서로 다른 비트맵
+- 14×14 셀 밖 픽셀 0개
+- 전체 잉크 합집합 `(1,1)..(11,11)`
 
-변환된 여섯 글자는 `6 × 74 = 444`바이트이며 `pack_glyph()`로 다시 읽었을
-때 원래 14×14 픽셀과 일치합니다. 최종 화면 가독성은 실제 게임의 글자색,
-배경, 합성 효과가 적용된 PoC에서 한 번 더 확인합니다.
+가 된다. 따라서 사용 글꼴은 Galmuri11이지만, 빌드 원천은 11px 파생 `.bin`이
+아니라 동일 폴더의 TTF 12px 렌더다.
 
-## 재현 방법
+## 고정 프로필
 
-후보 원본은 배포 저장소에 포함하지 않고 로컬 `font/`에 둡니다.
-
-```powershell
-$env:PYTHONPATH = "work/pydeps"
-python scripts/korean_font.py `
-  font/font-12345a7f7565e4fe.ttf `
-  --glyph-map font/font-12345a7f7565e4fe_glyph_map.json `
-  --text "시바세이치로" `
-  --preview work/korean-name-source.png `
-  --packed-output work/korean-name-14x14.bin
-
-python scripts/psx_font.py work/korean-name-14x14.bin `
-  --offset 0 --start 0 --count 6 --scale 8 --columns 6 `
-  --output work/korean-name-game-format.png
-```
-
-검증한 로컬 입력 파일의 SHA-256은 다음과 같습니다.
+`config/font-profile.json`이 다음 표현값의 단일 기준이다.
 
 ```text
-9B5C3DEDE010F95B58A479C0824A11A3BFA05D34BF87A1204B4E3A78AC3BE845  font-12345a7f7565e4fe.bin
-D3818C0F2898A3B2D79CCD04EC1E4DE5E8940AA26ABEE261F73E315A44CE8DF9  font-12345a7f7565e4fe.ttf
-697EE64E9999A3D58985DA31F0968419EA58211D3BD7AD20C5C9733F26C38406  font-12345a7f7565e4fe_glyph_map.json
-946087E2A19AC81C7F837651E37A301D734B9AA5945E29307090FBBFA1FC9474  font-12345a7f7565e4fe_preview.png
+profile: galmuri11-primary-dialogue-v1
+source: fonts/galmuri11/font-58c1637749eb0742.ttf
+source SHA-256: 2C709890595668F7BDB6DF408420FDA957DDE0288E95B31A1CC17A2AB98B4B4F
+glyph map SHA-256: 697EE64E9999A3D58985DA31F0968419EA58211D3BD7AD20C5C9733F26C38406
+TTF size: 12px
+x offset: 1
+y offset: 0
+target: 14×14, 3bpp, 74 bytes
+intensity: 1
 ```
 
-## 글리프 수와 배포 조건
+구조 상수인 `START.BIN` 폰트 주소와 자주 조정할 수 있는 표현값은 분리한다.
+빌더는 프로필의 원천 해시, 내부 family/style, 2,350개 문자표와 연속 인덱스를
+검증한다. 미일치 시 결과를 만들지 않는다.
 
-후보 2,350자를 게임의 기존 글리프 테이블에 통째로 넣을 공간은 없습니다.
-따라서 번역문에 실제로 쓰는 한글만 선별해 넣고, 사용할 슬롯 또는 확장된 폰트
-저장 위치를 다음 단계에서 결정해야 합니다. 글꼴 자체의 크기 적합성과 별개인
-용량·인덱싱 문제입니다.
+## 재현
 
-다음 단계 조사 결과, 2,350자 전체는 Disc 1 Track 1 말미의
-`LBA 255811..255960` 150섹터에 한글 폰트 팩으로 저장하고 런타임에는 화면
-또는 텍스트 블록 단위 캐시에 필요한 글리프만 적재하기로 결정했습니다. 이후
-화면 검증에서 `0x5xxx`/`0x7xxx` 고상위 토큰 운반 방식은 폐기했고, 한글 운반은
-엔진 네이티브 로컬 토큰과 리맵 표를 사용하는 방향으로 전환했습니다. 자세한
-저장 공간 계산과 인코딩 방침은
-[`docs/hangul-storage-encoding.md`](hangul-storage-encoding.md)에 기록합니다.
+대표 18자를 프로필에서 게임 포맷으로 만들고 원천 배치를 확인한다.
 
-Galmuri 공식 저장소는 이 글꼴을 SIL Open Font License 1.1로 배포합니다.
-폰트 또는 수정·변환된 폰트 자료를 배포물에 포함할 때는 해당 저작권 고지와
-라이선스 전문을 함께 포함해야 합니다.
+```bash
+.venv/bin/python scripts/korean_font.py \
+  --font-profile config/font-profile.json \
+  --text "드디어여기까지왔다꿈의팀스고그랑프리" \
+  --preview work/poc-galmuri11/galmuri11-source-preview.png \
+  --packed-output work/poc-galmuri11/galmuri11-dialogue-glyphs.3bpp \
+  --intensity 1
+```
+
+전수 프로필 검증은 기본 테스트에 포함된다.
+
+```bash
+.venv/bin/python -m unittest tests.test_korean_font -v
+```
+
+## 배포 조건
+
+Galmuri는 SIL Open Font License 1.1로 배포된다. 폰트 소프트웨어나 변환된
+폰트 자료를 배포물에 포함할 때는 저작권 고지와 OFL 1.1 전문을 함께 포함한다.
 
 - 공식 저장소: <https://github.com/quiple/galmuri>
-- 공식 한국어 라이선스: <https://github.com/quiple/galmuri/blob/main/ofl-ko.md>
+- 공식 영문 라이선스: <https://github.com/quiple/galmuri/blob/main/ofl.md>
+- 한국어 비공식 번역: <https://github.com/quiple/galmuri/blob/main/ofl-ko.md>
+
+현재 PoC의 정적 삽입과 실제 화면 판정은
+[`galmuri11-font-poc.md`](galmuri11-font-poc.md)에 기록한다.

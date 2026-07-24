@@ -5,23 +5,33 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 from pathlib import Path
 import re
 import shutil
 import struct
 
 try:
-    from scripts.korean_font import crop_to_psx, rasterize_ttf_glyph
+    from scripts.korean_font import load_font_profile, pack_profile_glyphs
     from scripts.psx_font import GLYPH_SIZE, pack_glyph
 except ModuleNotFoundError:  # Support direct execution from the repository root.
-    from korean_font import crop_to_psx, rasterize_ttf_glyph
+    from korean_font import load_font_profile, pack_profile_glyphs
     from psx_font import GLYPH_SIZE, pack_glyph
 
 
+DEFAULT_FONT_PROFILE = (
+    Path(__file__).resolve().parent.parent / "config" / "font-profile.json"
+)
 FONT_OFFSET = 0x1A000
 POC_GLYPH_INDEX = 0x4CD
 TEXT_TOKEN_OFFSET = 0x6E
 EXPECTED_ORIGINAL_TOKEN = 0x03B7
+EXPECTED_SOURCE_START_SHA256 = (
+    "D0B22EFB4E5EA46C869F822AF9BC7F207BC95A670A25ACB15FC3DCD2AB3BF8CC"
+)
+EXPECTED_SOURCE_ALLBIN_SHA256 = (
+    "6F61295BE0CE2D7D8F38B57BADC3B1073E5C16EC3FBA5CE898F3368051336A0E"
+)
 START_LBA = 225
 ALLBIN_LBA = 9919
 RAW_SECTOR_SIZE = 2352
@@ -217,10 +227,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start-bin", type=Path, required=True)
     parser.add_argument("--allbin", type=Path, required=True)
-    parser.add_argument("--ttf", type=Path, required=True)
+    parser.add_argument("--font-profile", type=Path, default=DEFAULT_FONT_PROFILE)
     parser.add_argument("--character", default="한")
     parser.add_argument("--full-dialogue", action="store_true")
-    parser.add_argument("--intensity", type=int, default=1)
+    parser.add_argument("--intensity", type=int)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--track1", type=Path)
     parser.add_argument("--track-output", type=Path)
@@ -231,14 +241,17 @@ def main() -> None:
 
     if len(args.character) != 1:
         parser.error("--character must contain exactly one code point")
-    if not 1 <= args.intensity <= 7:
+    if args.intensity is not None and not 1 <= args.intensity <= 7:
         parser.error("--intensity must be between 1 and 7")
 
-    from PIL import ImageFont
-
-    font = ImageFont.truetype(str(args.ttf), 15)
+    profile = load_font_profile(args.font_profile)
+    intensity = profile.intensity if args.intensity is None else args.intensity
     original_start = args.start_bin.read_bytes()
     original_allbin = args.allbin.read_bytes()
+    if sha256(original_start) != EXPECTED_SOURCE_START_SHA256:
+        raise ValueError("source START.BIN hash differs from the verified Disc 1 file")
+    if sha256(original_allbin) != EXPECTED_SOURCE_ALLBIN_SHA256:
+        raise ValueError("source ALLBIN.BIN hash differs from the verified Disc 1 file")
     if args.full_dialogue:
         hangul = list(
             dict.fromkeys(
@@ -247,14 +260,7 @@ def main() -> None:
                 if "가" <= character <= "힣"
             )
         )
-        glyphs = {
-            character: pack_glyph(
-                crop_to_psx(
-                    rasterize_ttf_glyph(font, character), intensity=args.intensity
-                )
-            )
-            for character in hangul
-        }
+        glyphs = pack_profile_glyphs(profile, hangul, intensity=intensity)
         patched_start, patched_allbin, mapping = patch_dialogue_poc_files(
             original_start, original_allbin, glyphs
         )
@@ -264,8 +270,9 @@ def main() -> None:
             + ",".join(f"{character}=0x{mapping[character]:03X}" for character in hangul)
         )
     else:
-        pixels = rasterize_ttf_glyph(font, args.character)
-        glyph_data = pack_glyph(crop_to_psx(pixels, intensity=args.intensity))
+        glyph_data = pack_profile_glyphs(
+            profile, [args.character], intensity=intensity
+        )[args.character]
         patched_start, patched_allbin = patch_poc_files(
             original_start, original_allbin, glyph_data
         )
@@ -288,6 +295,60 @@ def main() -> None:
     print(
         f"ALLBIN.BIN size={len(patched_allbin)} sha256={sha256(patched_allbin)} "
         f"output={allbin_output}"
+    )
+    manifest = {
+        "schema_version": 1,
+        "build_id": "galmuri11-dialogue-poc",
+        "font_profile": {
+            "profile_id": profile.profile_id,
+            "path": str(profile.profile_path),
+            "source": str(profile.source_path),
+            "source_sha256": profile.source_sha256,
+            "family": profile.family,
+            "style": profile.style,
+            "version": profile.version,
+            "ttf_size_px": profile.ttf_size_px,
+            "x_offset_px": profile.x_offset_px,
+            "y_offset_px": profile.y_offset_px,
+            "intensity": intensity,
+            "ink_union": profile.ink_union,
+        },
+        "source": {
+            "START.BIN": {
+                "path": str(args.start_bin.resolve()),
+                "sha256": sha256(original_start),
+            },
+            "ALLBIN.BIN": {
+                "path": str(args.allbin.resolve()),
+                "sha256": sha256(original_allbin),
+            },
+        },
+        "dialogue": list(DIALOGUE_LINES) if args.full_dialogue else None,
+        "mapping": (
+            {character: f"0x{index:03X}" for character, index in mapping.items()}
+            if args.full_dialogue
+            else {args.character: f"0x{POC_GLYPH_INDEX:03X}"}
+        ),
+        "outputs": {
+            "START.BIN": {
+                "path": str(start_output.resolve()),
+                "sha256": sha256(patched_start),
+            },
+            "ALLBIN.BIN": {
+                "path": str(allbin_output.resolve()),
+                "sha256": sha256(patched_allbin),
+            },
+        },
+    }
+    manifest_path = args.output_dir / "manifest.json"
+    manifest_path.write_text(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    print(
+        f"font_profile={profile.profile_id} ttf_size={profile.ttf_size_px} "
+        f"offset=({profile.x_offset_px},{profile.y_offset_px}) "
+        f"intensity={intensity} manifest={manifest_path}"
     )
 
     raw_options = (args.track1, args.track_output, args.source_cue, args.cue_output)

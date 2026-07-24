@@ -1,12 +1,15 @@
 import unittest
+from pathlib import Path
 
 from scripts.korean_font import (
     SOURCE_GLYPH_SIZE,
     crop_to_psx,
+    load_font_profile,
+    pack_profile_glyphs,
     rasterize_ttf_glyph,
     unpack_mono_glyph,
 )
-from scripts.psx_font import PIXEL_COUNT
+from scripts.psx_font import HEIGHT, PIXEL_COUNT, WIDTH, unpack_glyph
 
 
 class KoreanFontTests(unittest.TestCase):
@@ -29,6 +32,34 @@ class KoreanFontTests(unittest.TestCase):
     def test_ttf_rasterizer_rejects_multiple_characters(self) -> None:
         with self.assertRaises(ValueError):
             rasterize_ttf_glyph(object(), "가나")
+
+    def test_galmuri11_profile_preserves_all_glyphs_inside_centered_cell(self) -> None:
+        profile = load_font_profile(
+            Path(__file__).resolve().parent.parent / "config" / "font-profile.json"
+        )
+        characters = list(profile.glyph_map)
+        packed = pack_profile_glyphs(profile, characters)
+
+        self.assertEqual(profile.family, "Galmuri11")
+        self.assertEqual(profile.ttf_size_px, 12)
+        self.assertEqual(len(packed), 2350)
+        self.assertEqual(len(set(packed.values())), 2350)
+
+        points: list[tuple[int, int]] = []
+        for glyph in packed.values():
+            pixels = unpack_glyph(glyph)
+            points.extend(
+                (index % WIDTH, index // WIDTH)
+                for index, value in enumerate(pixels)
+                if value
+            )
+        xs = [x for x, _ in points]
+        ys = [y for _, y in points]
+        self.assertEqual(
+            (min(xs), min(ys), max(xs), max(ys)),
+            profile.ink_union,
+        )
+        self.assertTrue(all(0 <= x < WIDTH and 0 <= y < HEIGHT for x, y in points))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "profile_id": "galmuri11-primary-dialogue-v1",
+  "source": {
+    "kind": "truetype",
+    "path": "../fonts/galmuri11/font-58c1637749eb0742.ttf",
+    "sha256": "2c709890595668f7bdb6df408420fda957dde0288e95b31a1cc17a2ab98b4b4f",
+    "glyph_map_path": "../fonts/galmuri11/font-58c1637749eb0742_glyph_map.json",
+    "glyph_map_sha256": "697ee64e9999a3d58985da31f0968419ea58211d3bd7ad20c5c9733f26c38406",
+    "glyph_count": 2350,
+    "family": "Galmuri11",
+    "style": "Regular",
+    "version": "2.403",
+    "official_point_size_at_96dpi": 9,
+    "ttf_size_px": 12,
+    "x_offset_px": 1,
+    "y_offset_px": 0
+  },
+  "target": {
+    "renderer": "primary_dialogue",
+    "cell_width_px": 14,
+    "cell_height_px": 14,
+    "bits_per_pixel": 3,
+    "record_bytes": 74,
+    "intensity": 1,
+    "observed_ink_union": {
+      "x_min": 1,
+      "y_min": 1,
+      "x_max": 11,
+      "y_max": 11
+    }
+  },
+  "license": {
+    "spdx": "OFL-1.1",
+    "copyright": "Copyright 2019-2025 Lee Minseo",
+    "upstream": "https://github.com/quiple/galmuri",
+    "license_text": "https://github.com/quiple/galmuri/blob/main/ofl.md",
+    "local_text": "../fonts/galmuri11/OFL.txt"
+  },
+  "rejected_local_source": {
+    "path": "../fonts/galmuri11/font-58c1637749eb0742.bin",
+    "container_width_px": 16,
+    "container_height_px": 16,
+    "bits_per_pixel": 1,
+    "record_bytes": 32,
+    "observed_ink_width_px": "8..10",
+    "observed_ink_height_px": "7..10",
+    "reason": "The 16x16 container holds an 11px-derived bitmap that collapses 2350 mapped characters to 2250 distinct bitmaps; the official 12px (9pt at 96dpi) TTF render preserves all 2350."
+  }
+}
