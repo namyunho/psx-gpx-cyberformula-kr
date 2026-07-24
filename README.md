@@ -3,9 +3,35 @@
 PlayStation용 일본 게임 **《신세기 GPX 사이버 포뮬러 새로운 도전자》**
 Disc 1의 한국어 패치를 제작하기 위한 분석·도구·문서를 관리하는 저장소입니다.
 
-현재는 원본 디스크 구조와 텍스트 엔진을 분석하고, 화면에 표시된 일본어 대사를
-디스크 데이터 및 실행 중 RAM과 대응시킨 단계입니다. 게임 ROM, BIOS, 추출 파일,
-RAM 덤프는 저장소에 포함하지 않습니다.
+현재는 원본 디스크 구조, 텍스트 엔진, 폰트 공급자와 그래픽 상태 분모를 전수
+목록화한 뒤 Galmuri11 본문 폰트 PoC를 검증하는 단계입니다. 베이크드 그래픽은
+화면 소비 경로가 확인된 상태만 편집 대상으로 승격합니다. 게임 ROM, BIOS,
+추출 파일, RAM 덤프는 저장소에 포함하지 않습니다.
+
+## 로컬 준비
+
+원본 Disc 1의 기본 위치는 다음과 같습니다.
+
+```text
+roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1).cue
+roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).bin
+```
+
+멀티 BIN/CUE의 나머지 오디오 트랙도 같은 디렉터리에 두고 CUE의 원래 참조 관계를
+유지합니다. 다른 위치를 사용하려면 `PSX_DISC1_CUE`와
+`PSX_DISC1_TRACK1` 환경 변수로 재정의합니다. 원본 파일은 저장소에 커밋하지
+않습니다.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements-analysis.txt
+.venv/bin/python scripts/original_media.py prepare
+.venv/bin/python scripts/original_media.py paths
+.venv/bin/python scripts/original_media.py verify --cue
+```
+
+기본 경로와 지원 원본의 크기·CRC32·MD5·SHA-256은
+[`config/original-media.json`](config/original-media.json)이 관리합니다.
 
 ## 현재 진행 상황
 
@@ -18,12 +44,19 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 - [x] 최초 확인 글리프 29자 매핑
 - [x] 텍스트 토큰 해석 경로와 토큰 동기 CD 오디오 경로 분리
 - [x] 실제 시각 글리프 렌더러와 폰트 비트맵 위치 확정
-- [x] 14×14 한국어 후보 글꼴 검증 및 게임 포맷 변환
+- [x] 5,843개 font-rendered stream의 저장 구조와 도달 등급 분류
+- [x] 1,739개 그래픽 관련 state의 역할 분모 확정
+- [x] IDA Pro·Ghidra로 loader/overlay/초상 경로 교차검증
+- [x] Disc 1의 컨테이너·텍스트·그래픽·오디오·영상 전량 추출 및 검증
+- [x] Galmuri11 12px → 실제 11×11 잉크 → 14×14 게임 셀 프로필 확정
 - [x] 첫 한글 PoC용 빈 슬롯·대상 토큰 확정 및 로컬 이미지 생성
 - [x] 첫 한국어 대사 PoC 제작·에뮬레이터 검증
+- [x] Galmuri11 첫 대사 PoC 정적 삽입·raw Track diff 검증
+- [ ] Galmuri11 첫 대사 DuckStation 화면 검증
 - [x] 한국어 글리프 저장 공간 결정
 - [x] 고상위 한글 토큰 렌더러 훅 PoC 폐기 및 리맵 표 전략 전환
 - [x] 리맵/표시 버퍼 생성 경로 추적 PoC
+- [ ] 베이크드 문자 대상별 GPU 소비 지점과 저장 state 연결
 - [ ] 소비 지점 런타임 계측 및 로컬 토큰 리맵 패치 PoC
 - [ ] 전체 대사 추출·번역·재삽입
 - [ ] 재현 가능한 패치 빌드 및 배포용 패치 생성
@@ -38,6 +71,9 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 - 해당 블록의 확인된 RAM 적재 주소: `0x800A8054`
 - 확인된 줄 경계 토큰: `0xFFFB`
 - 확인된 페이지 대기 토큰: `0x8000`
+- 증명된 font-rendered stream: 5,843개
+- 그래픽 관련 scheduled state: 1,739개
+- 베이크드 문자 시각 검토 state: 1,463개
 
 최초로 대응한 화면 문장은 다음과 같습니다.
 
@@ -46,8 +82,10 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 チーム、「スゴウグランプリ」）
 ```
 
-세부 조사 결과와 원본 이미지 해시는
-[`docs/initial-survey.md`](docs/initial-survey.md)에 기록합니다.
+수정 전 구조 기준선과 원본 이미지 해시는
+[`docs/reverse-engineering-baseline.md`](docs/reverse-engineering-baseline.md)에
+기록합니다. 2026-07-12의 역사적 첫 판정은
+[`docs/initial-survey.md`](docs/initial-survey.md)에 보존합니다.
 
 ## 번역판 고정 방침
 
@@ -61,7 +99,20 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 | 파일 | 용도 |
 |---|---|
 | `scripts/psx_disc.py` | MODE1/MODE2 PS1 이미지의 ISO9660 조사 및 읽기 전용 추출 |
+| `scripts/psx_layout.py` | 파일 레코드·164개 loader descriptor·11개 파일 schedule의 정확한 분할 조사 |
+| `scripts/psx_text_inventory.py` | 포인터/코드 참조로 증명되는 5,843개 글꼴 스트림 전수 목록 |
+| `scripts/psx_font_inventory.py` | primary/alternate 14×14 3bpp 폰트 공급자 경계 조사 |
+| `scripts/psx_portrait_inventory.py` | START 41..64의 CLUT+48×56 4bpp 초상 block 목록 |
+| `scripts/psx_graphics_scope.py` | 1,739개 그래픽 관련 state의 상호 배타적 수정 역할 분류 |
+| `scripts/psx_vram_render.py` | raw VRAM rectangle의 검토용 접촉표 렌더링 |
+| `scripts/psx_loader_calls.py` | main EXE의 scheduled-file loader 직접 호출과 상수 인자 조사 |
+| `scripts/extract_disc1_assets.py` | ISO/state/child/text/font/portrait/VRAM/VAB/SEQ/raw XA·STR 전량 추출 |
+| `scripts/decode_disc1_streams.py` | XA·VAB ADPCM, CDDA, MDEC를 PCM/FFV1로 무손실 해제 |
+| `scripts/verify_disc1_extraction.py` | state 재결합·원본 해시·PCM frame·MDEC frame 전량 검증 |
 | `scripts/mips_survey.py` | PS1 MIPS 코드와 BIOS 호출 후보 조사 |
+| `scripts/mips_disasm.py` | PS-X EXE·raw overlay 선형 디스어셈블과 delay slot 표시 |
+| `scripts/build_ida_db.py` | PS-X EXE header를 반영한 MIPS little-endian IDA DB 생성 |
+| `scripts/hex_dump.py` | 임의 파일/RAM 범위의 hex·Shift-JIS·little-endian u16 덤프 |
 | `scripts/tim_scan.py` | 구조적으로 유효한 PS1 TIM 이미지 탐색·렌더링 |
 | `scripts/custom_text.py` | 커스텀 u16 텍스트의 손실 없는 추출·재조립·부분 해독 |
 | `scripts/gdb_dump.py` | DuckStation GDB 서버를 통한 PS1 RAM 덤프 |
@@ -70,26 +121,49 @@ RAM 덤프는 저장소에 포함하지 않습니다.
 | `scripts/psx_font.py` | 14×14, 3bpp 압축 글리프 추출·렌더링·재인코딩 |
 | `scripts/korean_font.py` | 한글 TTF·16×16 비트맵의 14×14 게임 포맷 변환·미리보기 |
 | `scripts/build_font_poc.py` | 첫 대사의 빈 슬롯 한글 PoC 파일·에뮬레이터용 이미지 생성 |
+| `scripts/render_font_poc_preview.py` | 수정 `START.BIN`의 실제 글리프 레코드로 2줄 셀 미리보기 생성 |
+| `scripts/verify_font_poc.py` | 폰트 슬롯·대사 영역·raw Track 예상 쓰기 전량 검증 |
 | `scripts/build_cache_hook_poc.py` | 폐기된 고상위 한글 토큰 렌더러 훅 PoC 재현 이미지 생성 |
 | `scripts/trace_remap_path.py` | RAM 덤프와 실행 파일에서 리맵/표시 버퍼 포인터 체인 추적 |
+| `scripts/original_media.py` | 비커밋 원본 경로 준비·해시·CUE track 구조 검증 |
+| `scripts/toolchain.py` | Python·MCP·IDA/Ghidra·DuckStation·패치 도구 진단 |
+| `scripts/mcp_probe.py` | 프로젝트 MCP 서버의 `initialize` handshake 점검 |
 
 확인된 부분 글리프 맵은
 [`data/glyph-map.json`](data/glyph-map.json)에 누적합니다. 근거가 확보되지 않은
 글자는 임의로 추정하지 않고 미매핑 상태로 유지합니다.
 
 대사 글꼴은 `START.BIN + 0x1A000`에 있는 글자당 74바이트의 14×14,
-3bpp 테이블로 확인했습니다. 상세 포맷과 실행 코드 경로는
+3bpp primary 표이며, UI용 alternate 표는 `START.BIN + 0x3D1800`입니다.
+상세 포맷과 실행 코드 경로는
 [`docs/font-format.md`](docs/font-format.md)에 정리합니다.
 
-로컬에서 제공된 `Galmuri14 Regular` TTF는 네이티브 15px 렌더링과 위치 보정으로
-전체 2,350자를 14×14 영역에 손실 없이 넣을 수 있습니다. 함께 제공된 14px급
-비트맵은 일부 획이 소실되므로 사용하지 않습니다. 분석과 변환 결과는
+그래픽 픽셀에 새겨진 문자의 작업 단위, 파일별 state 분모와 편집 승격 조건은
+[`docs/graphics-text-inventory.md`](docs/graphics-text-inventory.md)에
+정리했습니다.
+
+Disc 1의 전체 추출 경로, 24,000개 이상의 원본·파생 파일과 XA/MDEC/VAB
+압축 해제 결과는 [`docs/disc1-extraction.md`](docs/disc1-extraction.md)에
+정리했습니다. 실제 산출물은 `work/extracted/disc1/`에 있습니다.
+
+PCSX-Redux의 GPU Logger와 Lua breakpoint로 화면 primitive의 VRAM 좌표에서
+`GP0(A0) → DMA2 MADR/CHCR → RAM writer → 저장 자산`을 역추적하는 방법은
+[`docs/gpu-upload-source-tracing.md`](docs/gpu-upload-source-tracing.md)에
+정리했습니다. 대사 폰트 위치는 이미 확정됐으므로, 이 기법은 미확인 UI·이미지
+탐색과 저장→RAM→VRAM→화면 연결 검증에 사용합니다.
+
+사용 글꼴은 로컬 `fonts/galmuri11/`의 `Galmuri11 Regular`로 확정했습니다.
+16×16은 참고 `.bin`의 컨테이너이며, 빌드는 TTF를 공식 네이티브 크기 12px로
+래스터해 실제 최대 11×11 잉크를 14×14 셀 중앙에 배치합니다. 11px 파생
+비트맵은 문자 충돌이 있어 사용하지 않습니다. 분석과 변환 결과는
 [`docs/korean-font.md`](docs/korean-font.md)에 기록합니다.
 
 첫 가시성 PoC는 빈 글리프 `0x4CD`에 `한`을 표시해 본문 경로를 확인한 뒤,
 첫 대사 전체를 18개 임시 한글 글리프로 교체했습니다. DuckStation에서 흰색
 한글 두 줄과 주변 대화창이 정상 표시되는 것을 확인해 최소 가시성 게이트를
 통과했습니다. 상세 내용은 [`docs/poc.md`](docs/poc.md)에 기록합니다.
+현재 Galmuri11 교체 PoC의 정적 검증과 화면 확인 상태는
+[`docs/galmuri11-font-poc.md`](docs/galmuri11-font-poc.md)에 기록합니다.
 
 전체 한글 2,350자를 기존 폰트 테이블에 전상주시킬 RAM 공간은 없으므로, 한글
 글리프는 Disc 1 Track 1 말미의 `LBA 255811..255960` 150섹터에 전용 폰트
@@ -121,19 +195,34 @@ RAM에는 남아도 렌더러 직전의 리맵/표시 버퍼 변환 단계에서
 
 ## 테스트
 
-```powershell
-python -m unittest discover -s tests -v
+```bash
+.venv/bin/python -m unittest discover -s tests -v
+.venv/bin/python scripts/toolchain.py
+.venv/bin/python scripts/mcp_probe.py
 ```
 
 `mips_survey.py`를 사용하려면 분석용 의존성을 별도로 설치합니다.
 
-```powershell
-python -m pip install --target work/pydeps -r requirements-analysis.txt
-$env:PYTHONPATH = "work/pydeps"
+```bash
+.venv/bin/python -m pip install -r requirements-analysis.txt
 ```
 
 `work/`는 분석 중 생성되는 임시 추출물과 덤프를 위한 경로이며 버전 관리 대상이
 아닙니다.
+
+## 역공학 MCP와 외부 도구
+
+`mini-yonku-wgp2-kr`의 상보적 IDA/idalib/Ghidra 운용 방식을 PS1용으로
+이식했습니다. 프로젝트 `.mcp.json`에는 `ida-pro-mcp`, `idalib-mcp`,
+`ghidra`가 등록돼 있습니다. PS-X EXE load address, overlay 경계, MIPS
+delay/load hazard, DuckStation GDB와 디스크 도구의 적용 범위는
+[`docs/reverse-engineering-mcp.md`](docs/reverse-engineering-mcp.md)를
+따릅니다.
+
+현재 Mac에는 IDA Professional 9.4, Ghidra 12.1.2, DuckStation,
+armips, mkpsxiso/dumpsxiso, xdelta3, Flips, FFmpeg와 vgmstream을
+준비했습니다. SNES 전용
+HiROM/65816/Mesen Lua/asar 코드는 가져오지 않았습니다.
 
 ## 원본 자료 및 저작권
 
