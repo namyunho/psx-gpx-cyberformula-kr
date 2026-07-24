@@ -15,6 +15,11 @@ from pathlib import Path
 import struct
 import zlib
 
+try:
+    from scripts.original_media import load_manifest, resolved_paths
+except ModuleNotFoundError:  # Support direct execution from the repository root.
+    from original_media import load_manifest, resolved_paths
+
 
 RAW_SECTOR_SIZE = 2352
 
@@ -48,13 +53,19 @@ class PsxDisc:
             raise ValueError(f"image size is not divisible by {RAW_SECTOR_SIZE}: {size}")
         return size // RAW_SECTOR_SIZE
 
-    def read_sector(self, lba: int) -> tuple[bytes, str]:
+    def read_raw_sector(self, lba: int) -> bytes:
+        """Read one exact 2352-byte sector without discarding sector fields."""
+
         if lba < 0 or lba >= self.sector_count:
             raise ValueError(f"LBA outside this track: {lba}")
         self._file.seek(lba * RAW_SECTOR_SIZE)
         sector = self._file.read(RAW_SECTOR_SIZE)
         if len(sector) != RAW_SECTOR_SIZE:
             raise EOFError(f"short sector at LBA {lba}")
+        return sector
+
+    def read_sector(self, lba: int) -> tuple[bytes, str]:
+        sector = self.read_raw_sector(lba)
         if sector[:12] != bytes.fromhex("00FFFFFFFFFFFFFFFFFFFF00"):
             raise ValueError(f"invalid raw-sector sync pattern at LBA {lba}")
         mode = sector[15]
@@ -68,12 +79,35 @@ class PsxDisc:
         return sector[24:2072], "MODE2/FORM1"
 
     def read_extent(self, lba: int, size: int) -> bytes:
+        """Read an ISO extent in 2048-byte logical-block coordinates.
+
+        CD-XA Form 2 exposes 2324 user bytes, but this disc's directory lengths
+        and extent allocation still use 2048-byte logical blocks. Raw
+        XA/MDEC consumers must use :meth:`read_raw_extent` instead.
+        """
+
         result = bytearray()
         while len(result) < size:
             payload, _ = self.read_sector(lba)
-            result.extend(payload)
+            if len(payload) < 2048:
+                raise ValueError(f"sector at LBA {lba} has less than 2048 user bytes")
+            result.extend(payload[:2048])
             lba += 1
         return bytes(result[:size])
+
+    def read_raw_extent(self, lba: int, block_count: int) -> bytes:
+        """Read an exact run of raw sectors belonging to one directory extent."""
+
+        if block_count < 0 or lba + block_count > self.sector_count:
+            raise ValueError(
+                f"raw extent outside this track: LBA {lba}+{block_count}"
+            )
+        self._file.seek(lba * RAW_SECTOR_SIZE)
+        expected = block_count * RAW_SECTOR_SIZE
+        result = self._file.read(expected)
+        if len(result) != expected:
+            raise EOFError(f"short raw extent at LBA {lba}: {len(result)} != {expected}")
+        return result
 
     def primary_volume_descriptor(self) -> bytes:
         pvd, sector_type = self.read_sector(16)
@@ -169,18 +203,19 @@ def cmd_extract(args: argparse.Namespace) -> None:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     subparsers = parser.add_subparsers(dest="command", required=True)
+    default_image = str(resolved_paths(load_manifest())["disc1_track1"])
 
     info = subparsers.add_parser("info", help="show image and ISO metadata")
-    info.add_argument("--image", required=True)
+    info.add_argument("--image", default=default_image)
     info.add_argument("--hash", action="store_true")
     info.set_defaults(func=cmd_info)
 
     listing = subparsers.add_parser("list", help="list ISO root entries as JSON")
-    listing.add_argument("--image", required=True)
+    listing.add_argument("--image", default=default_image)
     listing.set_defaults(func=cmd_list)
 
     extract = subparsers.add_parser("extract", help="extract logical ISO files")
-    extract.add_argument("--image", required=True)
+    extract.add_argument("--image", default=default_image)
     extract.add_argument("--output", required=True)
     extract.add_argument("--name", action="append", help="file to extract; repeatable")
     extract.set_defaults(func=cmd_extract)

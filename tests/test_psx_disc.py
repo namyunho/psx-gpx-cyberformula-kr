@@ -32,6 +32,32 @@ class DirectoryRecordTests(unittest.TestCase):
         self.assertEqual(entries[0].size, 69)
         self.assertFalse(entries[0].is_directory)
 
+    def test_mixed_form_extent_uses_2048_byte_iso_blocks(self):
+        sync = bytes.fromhex("00FFFFFFFFFFFFFFFFFFFF00")
+
+        def sector(payload: bytes, *, form2: bool) -> bytes:
+            raw = bytearray(2352)
+            raw[:12] = sync
+            raw[15] = 2
+            raw[18] = 0x20 if form2 else 0
+            raw[24 : 24 + len(payload)] = payload
+            return bytes(raw)
+
+        first = bytes([0x11]) * 2324
+        second = bytes([0x22]) * 2048
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "track.bin"
+            path.write_bytes(
+                sector(first, form2=True) + sector(second, form2=False)
+            )
+            with psx_disc.PsxDisc(path) as disc:
+                logical = disc.read_extent(0, 4096)
+                raw = disc.read_raw_extent(0, 2)
+        self.assertEqual(logical, first[:2048] + second)
+        self.assertEqual(len(raw), 4704)
+
 
 if __name__ == "__main__":
     unittest.main()
