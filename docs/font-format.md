@@ -44,10 +44,11 @@
 
 ## 화면 교차 검증
 
-`data/glyph-map.json`에 기록된 29개 토큰을 이 포맷으로 직접 렌더링했습니다.
-괄호, 줄임표, 히라가나, 가타카나, 한자 `憧`이 실제 대사 화면 및 판독 문자열과
-일치했습니다. 따라서 토큰 값, 글리프 테이블 위치, 비트 순서, 글리프 크기를
-하나의 독립된 화면 표본으로 교차 검증한 상태입니다.
+초기에는 `data/glyph-map.json`의 29개 화면 증명 토큰을 이 포맷으로 직접
+렌더링해 괄호, 줄임표, 가나와 한자 `憧`을 교차 검증했습니다. 이후 사용자가
+실제 게임 색상에 맞게 정규화한 두 아틀라스로 primary 1,229자와 alternate
+1,484자의 전체 대응표를 완성했습니다. 두 표는 기호 배치와 수록 문자가 다르므로
+`primary`와 `alternate` scope를 분리해 사용합니다.
 
 재현 명령:
 
@@ -56,6 +57,7 @@ $env:PYTHONPATH = "work/pydeps"
 python scripts/psx_font.py work/disc1/START.BIN `
   --offset 0x1A000 `
   --glyph-map data/glyph-map.json `
+  --glyph-table primary `
   --output work/font-known.png
 ```
 

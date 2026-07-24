@@ -78,6 +78,11 @@ def main() -> None:
     parser.add_argument("input", type=Path)
     parser.add_argument("--offset", type=lambda value: int(value, 0), default=0x1A000)
     parser.add_argument("--glyph-map", type=Path)
+    parser.add_argument(
+        "--glyph-table",
+        choices=("primary", "alternate"),
+        default="primary",
+    )
     parser.add_argument("--start", type=lambda value: int(value, 0), default=0)
     parser.add_argument("--count", type=lambda value: int(value, 0))
     parser.add_argument("--scale", type=int, default=6)
@@ -89,7 +94,11 @@ def main() -> None:
         parser.error("--scale and --columns must be positive")
     if args.glyph_map:
         mapping = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-        indices = [int(value, 16) for value in mapping.get("glyphs", {})]
+        if "tables" in mapping:
+            glyphs = mapping["tables"][args.glyph_table]["glyphs"]
+        else:
+            glyphs = mapping.get("glyphs", {})
+        indices = [int(value, 16) for value in glyphs]
     elif args.count is not None:
         if args.count < 1:
             parser.error("--count must be positive")

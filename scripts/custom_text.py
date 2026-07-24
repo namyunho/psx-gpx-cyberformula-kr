@@ -70,6 +70,11 @@ def main() -> None:
     parser.add_argument("--end", required=True, type=lambda value: int(value, 0))
     parser.add_argument("--output", required=True)
     parser.add_argument("--glyph-map", type=Path)
+    parser.add_argument(
+        "--glyph-table",
+        choices=("primary", "alternate"),
+        default="primary",
+    )
     args = parser.parse_args()
 
     path = Path(args.input)
@@ -78,7 +83,10 @@ def main() -> None:
     glyph_map = None
     if args.glyph_map:
         glyph_map = json.loads(args.glyph_map.read_text(encoding="utf-8"))
-        glyphs = glyph_map.get("glyphs", {})
+        if "tables" in glyph_map:
+            glyphs = glyph_map["tables"][args.glyph_table]["glyphs"]
+        else:
+            glyphs = glyph_map.get("glyphs", {})
         controls = glyph_map.get("controls", {})
         for entry in entries:
             entry["jp"] = decode_tokens(

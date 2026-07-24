@@ -1,0 +1,385 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/namyunho/psx-gpx-cyberformula-kr/data/dialogue-extraction-schema.json",
+  "title": "Disc 1 dialogue collaboration workset",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "schema",
+    "workset_kind",
+    "baseline_id",
+    "translation_generated",
+    "scope",
+    "field_policy",
+    "token_spec",
+    "layout_profiles",
+    "summary",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 2
+    },
+    "schema": {
+      "const": "data/dialogue-extraction-schema.json"
+    },
+    "workset_kind": {
+      "enum": [
+        "dialogue",
+        "font-rendered-ui"
+      ]
+    },
+    "baseline_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "translation_generated": {
+      "const": false
+    },
+    "scope": {
+      "type": "object"
+    },
+    "field_policy": {
+      "type": "object"
+    },
+    "token_spec": {
+      "type": "object"
+    },
+    "layout_profiles": {
+      "type": "object"
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "entry_count",
+        "generated_translation_count"
+      ],
+      "properties": {
+        "entry_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "generated_translation_count": {
+          "const": 0
+        }
+      }
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "pointerReference": {
+      "type": "object",
+      "required": [
+        "reference_index",
+        "storage_file_offset",
+        "storage_unit_offset",
+        "width_bits",
+        "endian",
+        "basis",
+        "base",
+        "raw_value"
+      ],
+      "properties": {
+        "reference_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "storage_file_offset": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]+$"
+        },
+        "storage_unit_offset": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]+$"
+        },
+        "width_bits": {
+          "const": 32
+        },
+        "endian": {
+          "const": "little"
+        },
+        "basis": {
+          "const": "runtime_absolute"
+        },
+        "base": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]{8}$"
+        },
+        "raw_value": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]{8}$"
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "container",
+        "unit_index",
+        "subsystem",
+        "file_offset",
+        "unit_offset",
+        "runtime_pointer",
+        "byte_size",
+        "sha256",
+        "terminal",
+        "reference_count",
+        "pointer_references"
+      ],
+      "properties": {
+        "container": {
+          "const": "ALLBIN.BIN"
+        },
+        "unit_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subsystem": {
+          "type": "string",
+          "minLength": 1
+        },
+        "file_offset": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]+$"
+        },
+        "unit_offset": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]+$"
+        },
+        "runtime_pointer": {
+          "type": "string",
+          "pattern": "^0x[0-9A-F]{8}$"
+        },
+        "byte_size": {
+          "type": "integer",
+          "minimum": 2,
+          "multipleOf": 2
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "terminal": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{4}$"
+        },
+        "reference_count": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pointer_references": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/pointerReference"
+          }
+        },
+        "reference_proof": {
+          "type": "string"
+        }
+      }
+    },
+    "controlToken": {
+      "type": "object",
+      "required": [
+        "token_index",
+        "raw",
+        "kind",
+        "markup",
+        "policy"
+      ],
+      "properties": {
+        "token_index": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "raw": {
+          "type": "string",
+          "pattern": "^[0-9A-F]{4}$"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "markup": {
+          "type": "string"
+        },
+        "policy": {
+          "type": "string"
+        }
+      }
+    },
+    "japaneseReading": {
+      "type": "object",
+      "required": [
+        "text",
+        "display_text",
+        "mapping_complete",
+        "mapped_glyph_count",
+        "unmapped_glyphs"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "display_text": {
+          "type": "string"
+        },
+        "mapping_complete": {
+          "type": "boolean"
+        },
+        "mapped_glyph_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unmapped_glyphs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-F]{4}$"
+          }
+        }
+      }
+    },
+    "original": {
+      "type": "object",
+      "required": [
+        "raw_hex",
+        "tokens",
+        "japanese",
+        "token_kind_counts",
+        "control_tokens"
+      ],
+      "properties": {
+        "raw_hex": {
+          "type": "string",
+          "pattern": "^(?:[0-9A-F]{4})+$"
+        },
+        "tokens": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[0-9A-F]{4}$"
+          }
+        },
+        "japanese": {
+          "$ref": "#/$defs/japaneseReading"
+        },
+        "token_kind_counts": {
+          "type": "object"
+        },
+        "control_tokens": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/controlToken"
+          }
+        }
+      }
+    },
+    "translationVariant": {
+      "type": "object",
+      "required": [
+        "text",
+        "status",
+        "notes"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "untranslated",
+            "in_progress",
+            "needs_review",
+            "needs_human_review",
+            "complete"
+          ]
+        },
+        "notes": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "use_only_when": {
+          "type": "string"
+        }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "required": [
+        "entry_id",
+        "classification",
+        "reachability",
+        "source",
+        "original",
+        "layout",
+        "translation",
+        "flags"
+      ],
+      "properties": {
+        "entry_id": {
+          "type": "string",
+          "pattern": "^disc1/allbin/"
+        },
+        "classification": {
+          "enum": [
+            "story",
+            "general_race",
+            "diagnostic_test",
+            "dormant_unreachable",
+            "font_rendered_ui"
+          ]
+        },
+        "reachability": {
+          "enum": [
+            "main_path",
+            "diagnostic_path",
+            "dormant_unreachable",
+            "direct_or_shared_ui"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/source"
+        },
+        "original": {
+          "$ref": "#/$defs/original"
+        },
+        "layout": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "translation": {
+          "type": "object",
+          "required": [
+            "full",
+            "abbreviated"
+          ],
+          "properties": {
+            "full": {
+              "$ref": "#/$defs/translationVariant"
+            },
+            "abbreviated": {
+              "$ref": "#/$defs/translationVariant"
+            }
+          }
+        },
+        "flags": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

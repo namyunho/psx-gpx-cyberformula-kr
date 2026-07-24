@@ -48,7 +48,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | PS-X EXE·파일 로더·schedule 역공학 | ✅ 완료 — 19개 파일 record, 164개 descriptor, 11개 scheduled 파일 분할 |
 | Disc 1 전량 추출·압축해제 | ✅ 완료 — 1,935 state 재결합, XA·VAB·CDDA·MDEC 검증 |
 | 글꼴 렌더 스트림 모집단 | ✅ 완료 — 증거가 있는 5,843개 스트림과 도달 등급 분류 |
-| 일본어 글리프 대응표 | 🚧 진행 중 — 첫 화면에서 증명된 29자만 매핑, 미확정 글리프는 추정하지 않음 |
+| 일본어 글리프 대응표 | ✅ 완료 — primary 1,229자와 alternate 1,484자 전 슬롯, JIS 순서·수정 아틀라스 교차 검증 |
 | 본문·UI 폰트 구조 | ✅ 완료 — primary/alternate 14×14, 3bpp, 74바이트 record |
 | Galmuri11 사용 프로필 | ✅ 완료 — TTF 12px, 실제 최대 11×11 잉크, 14×14 셀 배치 |
 | 최초 한글 가시성 PoC | ✅ 통과 — 역사적 Galmuri14 시험으로 DuckStation 본문 렌더 경로 확인 |
@@ -56,14 +56,13 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 한글 저장·리맵 전략 | 🚧 조건부 확정 — Track 1 말미 폰트 팩과 화면 단위 캐시, 생산자 리맵 구현 필요 |
 | 그래픽 현지화 분모 | ✅ 구조 완료 — 1,739개 그래픽 관련 state 역할 분류 |
 | 베이크드 문자 소비 경로 | 🚧 진행 전 — 1,463개 검토 state를 화면→VRAM→RAM→저장 위치에 연결해야 함 |
-| 전체 대사 추출 작업본 | ⏳ 예정 — 보호 원문·완역본·축약본을 분리한 번역 자산 생성 |
+| 전체 대사 추출 작업본 | ✅ 원문 판독 완료 — 대사 5,783개와 UI 60개 미매핑 0, 번역 필드는 전부 비움 |
 | 전체 번역·재삽입 | ⏳ 예정 |
 | 통합 빌드·실행 QA·차분 배포 | ⏳ 예정 |
 
-> **현재 판정 요약**: 구조 분석과 원본 유래 데이터의 무손실 추출은 완료됐습니다.
-> 하지만 “스트림을 전량 찾았다”는 사실은 “일본어 원문을 모두 해독·번역했다”는
-> 뜻이 아닙니다. 전체 글리프 대응, 번역 자산, 런타임 리맵과 재삽입 검증이
-> 완료되기 전에는 한글 패치 완성으로 판정하지 않습니다.
+> **현재 판정 요약**: 구조 분석, 원본 유래 데이터의 무손실 추출과 일본어
+> 글리프 판독은 완료됐습니다. 번역 자산, 런타임 리맵과 재삽입 검증은 아직
+> 남아 있으므로 한글 패치 완성으로 판정하지 않습니다.
 
 ## 확정된 작업 블록
 
@@ -71,6 +70,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 |---|---:|---|
 | ISO·scheduled 컨테이너 | ISO 파일 16개, scheduled 파일 11개, state 1,935개 | 원본 경계·해시와 state 재결합 일치 |
 | 글꼴 렌더 스트림 | 총 5,843개 | 스토리 4,022, 일반 레이스 68, 진단/시험 1,080, 휴면 613, UI 60 |
+| 대사 협업 작업본 | 대사 5,783개, UI 60개 | 가역 원문·안정 ID·보호 필드와 빈 완역본/축약본을 JSON으로 분리 |
 | 텍스트 저장 | little-endian u16 | 커스텀 글리프 index, `FFFB` 정렬/줄 경계, `8000` 페이지 대기 |
 | 폰트 공급자 | primary 1,229 slot, alternate 1,484 slot | 두 표 모두 14×14, 3bpp, 글리프당 74바이트 |
 | 초상 | 625 block | 32바이트 CLUT + 48×56 4bpp |
@@ -100,14 +100,16 @@ config/
   original-media.json   지원 원본 식별값과 기본 로컬 경로
   font-profile.json     Galmuri11 입력 해시와 14×14 변환 프로필
 data/
-  glyph-map.json        화면으로 증명된 일본어 글리프 대응표
+  dialogue-extraction-schema.json
+                        대사 협업 작업본 JSON Schema
+  glyph-map.json        primary·alternate 전체 일본어 글리프 대응표
 docs/
   *.md                  구조 기준선·추출·폰트·PoC·역공학 판정 기록
 fonts/galmuri11/
   OFL.txt               SIL OFL 1.1 전문
   *.ttf, *.bin, *.json  허용된 Galmuri11 원본과 문자표
 scripts/
-  *.py                  조사·추출·디코드·PoC·검증 도구
+  *.py                  조사·추출·대사 작업본·디코드·PoC·검증 도구
   ida/                  PS-X EXE용 IDA loader 보조 스크립트
 tests/
   test_*.py             컨테이너·폰트·추출·재삽입 회귀 검사
@@ -122,6 +124,7 @@ tmp/                    비커밋 임시 캡처
 |---|---|
 | [수정 전 역공학 기준선](docs/reverse-engineering-baseline.md) | 대상 리비전, 로더·schedule·텍스트·폰트·초상·그래픽 분모의 현재 결론 |
 | [Disc 1 전량 추출·압축해제](docs/disc1-extraction.md) | 추출 경계, 출력 구조, 압축해제 수량과 전량 검증 |
+| [Disc 1 대사 추출 작업본](docs/dialogue-extraction.md) | 번역 없는 가역 JSON, 협업 필드 정책, 17×3 대사창과 저장 공간 판정 |
 | [그래픽 문자 인벤토리](docs/graphics-text-inventory.md) | 베이크드 문자 검토 state와 편집 승격 조건 |
 | [폰트 포맷](docs/font-format.md) | primary/alternate 14×14 3bpp 공급자와 렌더러 |
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
@@ -167,6 +170,8 @@ python3 -m venv .venv
   --output work/analysis/disc1-layout.json
 .venv/bin/python scripts/psx_text_inventory.py \
   --output work/analysis/disc1-text.json
+.venv/bin/python scripts/build_japanese_glyph_map.py
+.venv/bin/python scripts/extract_disc1_dialogue.py
 .venv/bin/python scripts/psx_font_inventory.py \
   --output work/analysis/disc1-fonts.json
 .venv/bin/python scripts/psx_portrait_inventory.py \
