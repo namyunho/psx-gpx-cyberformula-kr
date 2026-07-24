@@ -3,6 +3,11 @@
 대상은 `Future GPX Cyber Formula - Aratanaru Chousensha (Japan)` PS1판이다.
 이 문서는 확인한 사실과 아직 검증되지 않은 가설을 구분한다.
 
+> 이 문서는 2026-07-12의 역사적 초기 조사 기록이다. 이후 전수 분석의 정본은
+> [`reverse-engineering-baseline.md`](reverse-engineering-baseline.md)다.
+> 특히 아래 초기 판정 중 `0x80048E3C` 파일 읽기 래퍼설과 `0xFFFB`
+> 엔트리 종료자설은 철회됐다.
+
 ## 확인한 사실
 
 ### 매체
@@ -25,9 +30,10 @@
 - entry point: `0x80041C18`
 - load address: `0x80030000`
 - text size: `0x31000`
-- 부트 EXE에는 ISO 주요 파일명이 연속된 테이블로 들어 있다. `ALLBIN.BIN` 검색/읽기
-  래퍼는 `0x80048E3C`에서 시작하며 내부적으로 ISO 파일 검색 루틴
-  `0x80048B38`을 호출한다.
+- 부트 EXE에는 ISO 주요 파일명이 연속된 테이블로 들어 있다. 후속 IDA/Ghidra
+  교차검증에서 `0x80048E3C`는 `MoveImage` 계열로 정정했다. scheduled-file
+  loader는 `0x80041294`, 파일 레코드는 `0x80057444`의 19개, load
+  descriptor는 `0x80058FB8`의 164개다.
 - 부트 EXE는 Sony 라이브러리 문자열과 CD/GPU 디버그 문자열을 보존하고 있어 정적
   분석 앵커로 사용할 수 있다.
 
@@ -65,8 +71,9 @@
 
 - `ALLBIN.BIN`의 첫 84바이트(`0x0000..0x0053`)는 짧은 MIPS 함수 4개다.
 - `0x0054`부터는 리틀엔디언 u16 토큰 스트림이 시작된다.
-- 문자 후보는 주로 `0x0001..0x04xx`, 제어코드 후보는 `0x90xx`, 엔트리 종료자
-  후보는 `0xFFFB`다.
+- 문자 후보는 주로 `0x0001..0x04xx`, 제어코드 후보는 `0x90xx`다.
+  후속 동적 검증에서 `0xFFFB`는 줄 정렬/경계, `0x8000`은 story page
+  경계로 정정했다.
 - `0x0054..0x2A800`을 첫 대표 텍스트 구간으로 분리했다. `0x2A808`부터는 다시
   명확한 MIPS 함수 프롤로그가 등장한다.
 - `ALLBIN.BIN` 전체에는 `0xFFFB`가 7,613회 존재한다. 코드·기타 데이터의 우연한
