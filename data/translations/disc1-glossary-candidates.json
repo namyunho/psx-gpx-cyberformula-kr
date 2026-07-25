@@ -1,0 +1,1875 @@
+{
+  "schema_version": 1,
+  "source": "disc1-dialogue-translation-brief.json",
+  "terms": [
+    {
+      "term_id": "term-0001",
+      "category": "character",
+      "jp": "風見ハヤト",
+      "reading": "かざみ はやと",
+      "ko_candidate": "카자미 하야토",
+      "variants": [
+        "風見さん",
+        "風見",
+        "ハヤト",
+        "ハヤト君"
+      ],
+      "occurrences": 311,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0002",
+        "disc1/allbin/u00/event_page/ref0016",
+        "disc1/allbin/u00/event_page/ref0024",
+        "disc1/allbin/u00/event_page/ref0033",
+        "disc1/allbin/u01/event_page/ref0021"
+      ],
+      "confidence": "high",
+      "notes": "Full name and surname/given-name variants appear in race dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0002",
+      "category": "character",
+      "jp": "菅生修",
+      "reading": "すごう おさむ",
+      "ko_candidate": "스고 오사무",
+      "variants": [
+        "菅生修さん",
+        "菅生",
+        "修さん",
+        "オサム・スゴウ"
+      ],
+      "occurrences": 24,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0005",
+        "disc1/allbin/u00/event_page/ref0054",
+        "disc1/allbin/u02/event_page/ref0024",
+        "disc1/allbin/u02/event_page/ref0062",
+        "disc1/allbin/u02/event_page/ref0065"
+      ],
+      "confidence": "high",
+      "notes": "Owner name appears with surname, given name, and katakana order.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0003",
+      "category": "character",
+      "jp": "菅生あすか",
+      "reading": "すごう あすか",
+      "ko_candidate": "스고 아스카",
+      "variants": [
+        "あすか",
+        "あすかさん"
+      ],
+      "occurrences": 54,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0272",
+        "disc1/allbin/u02/event_page/ref0281",
+        "disc1/allbin/u05/event_page/ref0030",
+        "disc1/allbin/u05/event_page/ref0040",
+        "disc1/allbin/u05/event_page/ref0046"
+      ],
+      "confidence": "high",
+      "notes": "Introduced by full name, then repeatedly addressed by given name.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0004",
+      "category": "character",
+      "jp": "結城レナ",
+      "reading": "ゆうき れな",
+      "ko_candidate": "유키 레나",
+      "variants": [
+        "レナ",
+        "レナちゃん",
+        "結城レナちゃん",
+        "フロイライン・レナ"
+      ],
+      "occurrences": 203,
+      "evidence_ids": [
+        "disc1/allbin/u01/event_page/ref0002",
+        "disc1/allbin/u01/event_page/ref0004",
+        "disc1/allbin/u01/event_page/ref0010",
+        "disc1/allbin/u02/event_page/ref0003",
+        "disc1/allbin/u02/event_page/ref0006"
+      ],
+      "confidence": "high",
+      "notes": "Introduced by full name and repeatedly addressed by given name/nickname.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0005",
+      "category": "character",
+      "jp": "新条直輝",
+      "reading": "しんじょう なおき",
+      "ko_candidate": "신죠 나오키",
+      "variants": [
+        "新条",
+        "新条さん"
+      ],
+      "occurrences": 55,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0075",
+        "disc1/allbin/u02/event_page/ref0089",
+        "disc1/allbin/u02/event_page/ref0090",
+        "disc1/allbin/u04/event_page/ref0063",
+        "disc1/allbin/u05/event_page/ref0085"
+      ],
+      "confidence": "high",
+      "notes": "Full name and surname forms both appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0006",
+      "category": "character",
+      "jp": "ブリード・加賀",
+      "reading": "ぶりーど かが",
+      "ko_candidate": "브리드 카가",
+      "variants": [
+        "ブリード加賀",
+        "加賀",
+        "加賀さん"
+      ],
+      "occurrences": 64,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0138",
+        "disc1/allbin/u02/event_page/ref0139",
+        "disc1/allbin/u02/event_page/ref0143",
+        "disc1/allbin/u04/event_page/ref0083",
+        "disc1/allbin/u05/event_page/ref0148"
+      ],
+      "confidence": "high",
+      "notes": "Full name and surname forms both appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0007",
+      "category": "character",
+      "jp": "クレア・フォートラン",
+      "reading": "くれあ・ふぉーとらん",
+      "ko_candidate": "클레어 포트란",
+      "variants": [
+        "クレア",
+        "クレアさん"
+      ],
+      "occurrences": 65,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0011",
+        "disc1/allbin/u00/event_page/ref0019",
+        "disc1/allbin/u00/event_page/ref0055",
+        "disc1/allbin/u00/event_page/ref0077",
+        "disc1/allbin/u02/event_page/ref0001"
+      ],
+      "confidence": "high",
+      "notes": "Full name and given-name variants appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0008",
+      "category": "character",
+      "jp": "レオン・アンハート",
+      "reading": "れおん・あんはーと",
+      "ko_candidate": "레온 안하트",
+      "variants": [
+        "レオン",
+        "レオンさん"
+      ],
+      "occurrences": 34,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0045",
+        "disc1/allbin/u02/event_page/ref0058",
+        "disc1/allbin/u04/event_page/ref0056",
+        "disc1/allbin/u05/event_page/ref0064",
+        "disc1/allbin/u05/event_page/ref0077"
+      ],
+      "confidence": "high",
+      "notes": "Full name and given-name variants appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0009",
+      "category": "character",
+      "jp": "エデリー・ブーツホルツ",
+      "reading": "えでりー・ぶーつほるつ",
+      "ko_candidate": "에델리 부츠홀츠",
+      "variants": [
+        "エデリー",
+        "ブーツホルツ",
+        "ブーツホルツさん"
+      ],
+      "occurrences": 56,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0061",
+        "disc1/allbin/u02/event_page/ref0070",
+        "disc1/allbin/u04/event_page/ref0055",
+        "disc1/allbin/u05/event_page/ref0189",
+        "disc1/allbin/u05/event_page/ref0191"
+      ],
+      "confidence": "high",
+      "notes": "Full name and surname/given-name variants appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0010",
+      "category": "character",
+      "jp": "ジャッキー・グーデリアン",
+      "reading": "じゃっきー・ぐーでりあん",
+      "ko_candidate": "재키 구데리안",
+      "variants": [
+        "ジャッキー",
+        "グーデリアン",
+        "グーデリアンさん"
+      ],
+      "occurrences": 62,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0094",
+        "disc1/allbin/u02/event_page/ref0101",
+        "disc1/allbin/u02/event_page/ref0102",
+        "disc1/allbin/u02/event_page/ref0105",
+        "disc1/allbin/u02/event_page/ref0116"
+      ],
+      "confidence": "high",
+      "notes": "Full name and nickname/surname variants appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0011",
+      "category": "character",
+      "jp": "ハイネル",
+      "reading": "はいねる",
+      "ko_candidate": "하이넬",
+      "variants": [
+        "ハイネルさん"
+      ],
+      "occurrences": 64,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0117",
+        "disc1/allbin/u02/event_page/ref0131",
+        "disc1/allbin/u02/event_page/ref0292",
+        "disc1/allbin/u03/event_page/ref0045",
+        "disc1/allbin/u03/event_page/ref0046"
+      ],
+      "confidence": "medium",
+      "notes": "Surname/given-name boundary is not explicit in the dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0012",
+      "category": "character",
+      "jp": "アンリ・クレイトー",
+      "reading": "あんり・くれいとー",
+      "ko_candidate": "앙리 클레이토",
+      "variants": [
+        "アンリ",
+        "アンリさん",
+        "アンリ君"
+      ],
+      "occurrences": 56,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0049",
+        "disc1/allbin/u02/event_page/ref0210",
+        "disc1/allbin/u02/event_page/ref0292",
+        "disc1/allbin/u03/event_page/ref0007",
+        "disc1/allbin/u03/event_page/ref0010"
+      ],
+      "confidence": "medium",
+      "notes": "Full form appears; shortened variants are frequent.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0013",
+      "category": "character",
+      "jp": "カール＝リヒター・フォン・ランドル",
+      "reading": "かーる＝りひたー・ふぉん・らんどる",
+      "ko_candidate": "카를 리히터 폰 란돌",
+      "variants": [
+        "ランドル",
+        "ランドルさん",
+        "フォン・ランドル"
+      ],
+      "occurrences": 74,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0189",
+        "disc1/allbin/u06/event_page/ref0059",
+        "disc1/allbin/u07/event_page/ref0086",
+        "disc1/allbin/u07/event_page/ref0091",
+        "disc1/allbin/u07/event_page/ref0093"
+      ],
+      "confidence": "high",
+      "notes": "Full name appears and surname form is frequent.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0014",
+      "category": "character",
+      "jp": "グレイスン",
+      "reading": "ぐれいすん",
+      "ko_candidate": "그레이슨",
+      "variants": [
+        "グレイスンさん"
+      ],
+      "occurrences": 11,
+      "evidence_ids": [
+        "disc1/allbin/u08/event_page/ref0069",
+        "disc1/allbin/u08/event_page/ref0071",
+        "disc1/allbin/u08/event_page/ref0156",
+        "disc1/allbin/u09/event_page/ref0195",
+        "disc1/allbin/u12/event_page/ref0306"
+      ],
+      "confidence": "medium",
+      "notes": "Appears as a person addressed by name.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0015",
+      "category": "character",
+      "jp": "片桐誠",
+      "reading": "かたぎり まこと",
+      "ko_candidate": "카타기리 마코토",
+      "variants": [
+        "片桐"
+      ],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0168",
+        "disc1/allbin/u14/event_page/ref0336"
+      ],
+      "confidence": "high",
+      "notes": "Full name and surname form appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0016",
+      "category": "character",
+      "jp": "今日子",
+      "reading": "きょうこ",
+      "ko_candidate": "쿄코",
+      "variants": [
+        "今日子さん"
+      ],
+      "occurrences": 15,
+      "evidence_ids": [
+        "disc1/allbin/u04/event_page/ref0034",
+        "disc1/allbin/u06/event_page/ref0075",
+        "disc1/allbin/u06/event_page/ref0078",
+        "disc1/allbin/u08/event_page/ref0118",
+        "disc1/allbin/u09/event_page/ref0340"
+      ],
+      "confidence": "medium",
+      "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0017",
+      "category": "character",
+      "jp": "ミキ",
+      "reading": "みき",
+      "ko_candidate": "미키",
+      "variants": [
+        "ミキさん"
+      ],
+      "occurrences": 25,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0082",
+        "disc1/allbin/u02/event_page/ref0089",
+        "disc1/allbin/u05/event_page/ref0088",
+        "disc1/allbin/u05/event_page/ref0089",
+        "disc1/allbin/u05/event_page/ref0092"
+      ],
+      "confidence": "medium",
+      "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0018",
+      "category": "character",
+      "jp": "メグ",
+      "reading": "めぐ",
+      "ko_candidate": "메구",
+      "variants": [
+        "メグさん"
+      ],
+      "occurrences": 28,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0230",
+        "disc1/allbin/u02/event_page/ref0232",
+        "disc1/allbin/u04/event_page/ref0102",
+        "disc1/allbin/u05/event_page/ref0160",
+        "disc1/allbin/u05/event_page/ref0170"
+      ],
+      "confidence": "medium",
+      "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0019",
+      "category": "character",
+      "jp": "リトル",
+      "reading": "りとる",
+      "ko_candidate": "리틀",
+      "variants": [
+        "リトルさん"
+      ],
+      "occurrences": 19,
+      "evidence_ids": [
+        "disc1/allbin/u09/event_page/ref0173",
+        "disc1/allbin/u09/event_page/ref0175",
+        "disc1/allbin/u09/event_page/ref0214",
+        "disc1/allbin/u09/event_page/ref0240",
+        "disc1/allbin/u09/event_page/ref0260"
+      ],
+      "confidence": "medium",
+      "notes": "Name-like form appears as address; exact full identity not explicit.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0020",
+      "category": "character",
+      "jp": "七瀬さつき",
+      "reading": "ななせ さつき",
+      "ko_candidate": "나나세 사츠키",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0218"
+      ],
+      "confidence": "low",
+      "notes": "Appears as a self-introduction once.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0021",
+      "category": "character",
+      "jp": "中沢",
+      "reading": "なかざわ",
+      "ko_candidate": "나카자와",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u09/event_page/ref0208"
+      ],
+      "confidence": "low",
+      "notes": "Appears as a name once.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0022",
+      "category": "character",
+      "jp": "{name:surname}{name:given}",
+      "reading": "なまえ：せい＋なまえ：めい",
+      "ko_candidate": "{성}{이름}",
+      "variants": [
+        "{name:surname}",
+        "{name:given}"
+      ],
+      "occurrences": 104,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0004",
+        "disc1/allbin/u02/event_page/ref0047",
+        "disc1/allbin/u02/event_page/ref0063",
+        "disc1/allbin/u02/event_page/ref0077",
+        "disc1/allbin/u02/event_page/ref0107"
+      ],
+      "confidence": "high",
+      "notes": "Player-name placeholders appear throughout dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0023",
+      "category": "character",
+      "jp": "ナイト・シューマッハ",
+      "reading": "ないと・しゅーまっは",
+      "ko_candidate": "나이트 슈마하",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0007",
+        "disc1/allbin/u09/event_page/ref0303"
+      ],
+      "confidence": "high",
+      "notes": "Legendary driver name appears in dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0024",
+      "category": "team",
+      "jp": "スゴウグランプリ",
+      "reading": "すごうぐらんぷり",
+      "ko_candidate": "스고 그랑프리",
+      "variants": [
+        "スゴウ",
+        "スゴウチーム",
+        "スゴウのチーム"
+      ],
+      "occurrences": 104,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0000",
+        "disc1/allbin/u00/event_page/ref0002",
+        "disc1/allbin/u00/event_page/ref0019",
+        "disc1/allbin/u00/event_page/ref0051",
+        "disc1/allbin/u00/event_page/ref0058"
+      ],
+      "confidence": "high",
+      "notes": "Team name and shortened team references appear repeatedly.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0025",
+      "category": "team",
+      "jp": "スゴウウィナーズ",
+      "reading": "すごううぃなーず",
+      "ko_candidate": "스고 위너스",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u24/voice_event/ref0075"
+      ],
+      "confidence": "medium",
+      "notes": "Appears in telemetry-related line.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0026",
+      "category": "team",
+      "jp": "アオイZIP",
+      "reading": "あおいじっぷ",
+      "ko_candidate": "아오이 ZIP",
+      "variants": [
+        "アオイ"
+      ],
+      "occurrences": 13,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0161",
+        "disc1/allbin/u02/event_page/ref0168",
+        "disc1/allbin/u04/event_page/ref0039",
+        "disc1/allbin/u06/event_page/ref0083",
+        "disc1/allbin/u09/event_page/ref0328"
+      ],
+      "confidence": "high",
+      "notes": "Aoi ZIP and shortened Aoi references appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0027",
+      "category": "team",
+      "jp": "ミッシングリンク",
+      "reading": "みっしんぐりんく",
+      "ko_candidate": "미싱 링크",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0045",
+        "disc1/allbin/u07/event_page/ref0061"
+      ],
+      "confidence": "high",
+      "notes": "Team name appears in relation to Leon and motor home.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0028",
+      "category": "team",
+      "jp": "ユニオン",
+      "reading": "ゆにおん",
+      "ko_candidate": "유니온",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u14/event_page/ref0413",
+        "disc1/allbin/u14/event_page/ref0417"
+      ],
+      "confidence": "medium",
+      "notes": "Organization/team name appears twice.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0029",
+      "category": "organization",
+      "jp": "FICCY",
+      "reading": "ふぃっしー",
+      "ko_candidate": "FICCY",
+      "variants": [],
+      "occurrences": 10,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0069",
+        "disc1/allbin/u01/event_page/ref0010",
+        "disc1/allbin/u02/event_page/ref0000",
+        "disc1/allbin/u02/event_page/ref0039",
+        "disc1/allbin/u09/event_page/ref0013"
+      ],
+      "confidence": "high",
+      "notes": "Organizer name appears repeatedly.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0030",
+      "category": "event",
+      "jp": "サイバーフォーミュラ",
+      "reading": "さいばーふぉーみゅら",
+      "ko_candidate": "사이버 포뮬러",
+      "variants": [
+        "サイバー"
+      ],
+      "occurrences": 57,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0001",
+        "disc1/allbin/u00/event_page/ref0006",
+        "disc1/allbin/u00/event_page/ref0007",
+        "disc1/allbin/u00/event_page/ref0010",
+        "disc1/allbin/u00/event_page/ref0038"
+      ],
+      "confidence": "high",
+      "notes": "Series/discipline name appears repeatedly.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0031",
+      "category": "event",
+      "jp": "スタンダード・フォーミュラ",
+      "reading": "すたんだーど・ふぉーみゅら",
+      "ko_candidate": "스탠더드 포뮬러",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0009"
+      ],
+      "confidence": "medium",
+      "notes": "Racing category appears once as a proper comparison term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0032",
+      "category": "event",
+      "jp": "FICCY主催の特別レース",
+      "reading": "ふぃっしーしゅさいのとくべつれーす",
+      "ko_candidate": "FICCY 주최 특별 레이스",
+      "variants": [
+        "特別レース"
+      ],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0069",
+        "disc1/allbin/u01/event_page/ref0010"
+      ],
+      "confidence": "medium",
+      "notes": "Event is tied to FICCY and repeated in early dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0033",
+      "category": "event",
+      "jp": "前夜祭パーティ",
+      "reading": "ぜんやさいぱーてぃ",
+      "ko_candidate": "전야제 파티",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0000"
+      ],
+      "confidence": "medium",
+      "notes": "Named event context for FICCY party.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0034",
+      "category": "event",
+      "jp": "グランプリ",
+      "reading": "ぐらんぷり",
+      "ko_candidate": "그랑프리",
+      "variants": [],
+      "occurrences": 7,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0000",
+        "disc1/allbin/u00/event_page/ref0054",
+        "disc1/allbin/u02/event_page/ref0132",
+        "disc1/allbin/u02/event_page/ref0200",
+        "disc1/allbin/u07/event_page/ref0142"
+      ],
+      "confidence": "medium",
+      "notes": "Competition term used as a proper racing context.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0035",
+      "category": "machine",
+      "jp": "ネメシス",
+      "reading": "ねめしす",
+      "ko_candidate": "네메시스",
+      "variants": [],
+      "occurrences": 182,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0041",
+        "disc1/allbin/u00/event_page/ref0042",
+        "disc1/allbin/u00/event_page/ref0044",
+        "disc1/allbin/u00/event_page/ref0045",
+        "disc1/allbin/u00/event_page/ref0079"
+      ],
+      "confidence": "high",
+      "notes": "Cyber system partner name appears very frequently.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0036",
+      "category": "machine",
+      "jp": "アスラーダ",
+      "reading": "あすらーだ",
+      "ko_candidate": "아스라다",
+      "variants": [],
+      "occurrences": 37,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0014",
+        "disc1/allbin/u00/event_page/ref0018",
+        "disc1/allbin/u00/event_page/ref0020",
+        "disc1/allbin/u00/event_page/ref0021",
+        "disc1/allbin/u00/event_page/ref0023"
+      ],
+      "confidence": "high",
+      "notes": "Machine/system name appears repeatedly.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0037",
+      "category": "machine",
+      "jp": "ガーランド",
+      "reading": "がーらんど",
+      "ko_candidate": "가랜드",
+      "variants": [
+        "ガーランドSF−03",
+        "ガーランドSF-03",
+        "ガーランドSF"
+      ],
+      "occurrences": 19,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0020",
+        "disc1/allbin/u00/event_page/ref0056",
+        "disc1/allbin/u21/voice_event/ref0022",
+        "disc1/allbin/u21/voice_event/ref0038",
+        "disc1/allbin/u22/voice_event/ref0006"
+      ],
+      "confidence": "high",
+      "notes": "Machine and model variant appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0038",
+      "category": "machine",
+      "jp": "イシュザーク",
+      "reading": "いしゅざーく",
+      "ko_candidate": "이슈자크",
+      "variants": [
+        "イシュザーク00−X3",
+        "イシュザーク00-X3"
+      ],
+      "occurrences": 26,
+      "evidence_ids": [
+        "disc1/allbin/u18/event_page/ref0183",
+        "disc1/allbin/u25/voice_event/ref0013",
+        "disc1/allbin/u25/voice_event/ref0079",
+        "disc1/allbin/u25/voice_event/ref0085",
+        "disc1/allbin/u26/voice_event/ref0013"
+      ],
+      "confidence": "high",
+      "notes": "Machine and model variant appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0039",
+      "category": "machine",
+      "jp": "シュティール",
+      "reading": "しゅてぃーる",
+      "ko_candidate": "슈틸",
+      "variants": [
+        "シュティールHG165",
+        "シュティール2台"
+      ],
+      "occurrences": 23,
+      "evidence_ids": [
+        "disc1/allbin/u07/event_page/ref0138",
+        "disc1/allbin/u08/event_page/ref0095",
+        "disc1/allbin/u12/event_page/ref0268",
+        "disc1/allbin/u22/voice_event/ref0036",
+        "disc1/allbin/u22/voice_event/ref0040"
+      ],
+      "confidence": "high",
+      "notes": "Machine and model/count references appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0040",
+      "category": "machine",
+      "jp": "ミッショネル",
+      "reading": "みっしょねる",
+      "ko_candidate": "미셔넬",
+      "variants": [
+        "ミッショネルMS−3B",
+        "ミッショネルMS-3B"
+      ],
+      "occurrences": 19,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0026",
+        "disc1/allbin/u23/voice_event/ref0032",
+        "disc1/allbin/u23/voice_event/ref0038",
+        "disc1/allbin/u23/voice_event/ref0041",
+        "disc1/allbin/u23/voice_event/ref0046"
+      ],
+      "confidence": "high",
+      "notes": "Machine and model variant appear.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0041",
+      "category": "machine",
+      "jp": "エルコンドル",
+      "reading": "えるこんどる",
+      "ko_candidate": "엘 콘도르",
+      "variants": [],
+      "occurrences": 7,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0032",
+        "disc1/allbin/u23/voice_event/ref0038",
+        "disc1/allbin/u23/voice_event/ref0060",
+        "disc1/allbin/u24/voice_event/ref0089",
+        "disc1/allbin/u25/voice_event/ref0046"
+      ],
+      "confidence": "high",
+      "notes": "Machine/vehicle name appears in race system lines.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0042",
+      "category": "machine",
+      "jp": "トルネード",
+      "reading": "とるねーど",
+      "ko_candidate": "토네이도",
+      "variants": [],
+      "occurrences": 8,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0068",
+        "disc1/allbin/u24/voice_event/ref0094",
+        "disc1/allbin/u24/voice_event/ref0100",
+        "disc1/allbin/u24/voice_event/ref0106",
+        "disc1/allbin/u24/voice_event/ref0115"
+      ],
+      "confidence": "medium",
+      "notes": "Machine/vehicle name appears in race system lines.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0043",
+      "category": "machine",
+      "jp": "エクスペリオン",
+      "reading": "えくすぺりおん",
+      "ko_candidate": "엑스페리온",
+      "variants": [
+        "エクスぺリオン"
+      ],
+      "occurrences": 8,
+      "evidence_ids": [
+        "disc1/allbin/u17/event_page/ref0066",
+        "disc1/allbin/u18/event_page/ref0115",
+        "disc1/allbin/u29/voice_event/ref0056",
+        "disc1/allbin/u30/embedded_race/e0053",
+        "disc1/allbin/u31/embedded_race/e0051"
+      ],
+      "confidence": "medium",
+      "notes": "Machine name appears in race capture lines; one source spelling uses small ぺ.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0044",
+      "category": "machine",
+      "jp": "サイバーシステム",
+      "reading": "さいばーしすてむ",
+      "ko_candidate": "사이버 시스템",
+      "variants": [],
+      "occurrences": 18,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0038",
+        "disc1/allbin/u00/event_page/ref0041",
+        "disc1/allbin/u09/event_page/ref0047",
+        "disc1/allbin/u17/event_page/ref0070",
+        "disc1/allbin/u20/event_page/ref0011"
+      ],
+      "confidence": "high",
+      "notes": "System type repeatedly describes Nemesis.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0045",
+      "category": "machine",
+      "jp": "ナビシステム",
+      "reading": "なびしすてむ",
+      "ko_candidate": "내비 시스템",
+      "variants": [],
+      "occurrences": 5,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0023",
+        "disc1/allbin/u00/event_page/ref0025",
+        "disc1/allbin/u00/event_page/ref0035",
+        "disc1/allbin/u09/event_page/ref0032",
+        "disc1/allbin/u14/event_page/ref0289"
+      ],
+      "confidence": "high",
+      "notes": "System term appears in machine explanation.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0046",
+      "category": "machine",
+      "jp": "テレメトリー・システム",
+      "reading": "てれめとりー・しすてむ",
+      "ko_candidate": "텔레메트리 시스템",
+      "variants": [
+        "テレ・メトリー",
+        "テレメトリー"
+      ],
+      "occurrences": 6,
+      "evidence_ids": [
+        "disc1/allbin/u21/voice_event/ref0027",
+        "disc1/allbin/u23/voice_event/ref0009",
+        "disc1/allbin/u23/voice_event/ref0015",
+        "disc1/allbin/u23/voice_event/ref0020",
+        "disc1/allbin/u24/voice_event/ref0075"
+      ],
+      "confidence": "medium",
+      "notes": "Telemetry variants appear in system lines.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0047",
+      "category": "location",
+      "jp": "コークスクリューバンク",
+      "reading": "こーくすくりゅーばんく",
+      "ko_candidate": "코크스크류 뱅크",
+      "variants": [],
+      "occurrences": 10,
+      "evidence_ids": [
+        "disc1/allbin/u30/embedded_race/e0143",
+        "disc1/allbin/u30/embedded_race/e0162",
+        "disc1/allbin/u31/embedded_race/e0141",
+        "disc1/allbin/u31/embedded_race/e0160",
+        "disc1/allbin/u32/embedded_race/e0142"
+      ],
+      "confidence": "high",
+      "notes": "Track-section name appears repeatedly in race dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0048",
+      "category": "location",
+      "jp": "ポイントA",
+      "reading": "ぽいんとえー",
+      "ko_candidate": "포인트 A",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0030",
+        "disc1/allbin/u23/voice_event/ref0036"
+      ],
+      "confidence": "medium",
+      "notes": "Course point appears in system/race line.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0049",
+      "category": "location",
+      "jp": "モーターホーム",
+      "reading": "もーたーほーむ",
+      "ko_candidate": "모터홈",
+      "variants": [],
+      "occurrences": 11,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0293",
+        "disc1/allbin/u03/event_page/ref0078",
+        "disc1/allbin/u03/event_page/ref0088",
+        "disc1/allbin/u07/event_page/ref0061",
+        "disc1/allbin/u10/event_page/ref0043"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated paddock/location term tied to teams.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0050",
+      "category": "location",
+      "jp": "ピット",
+      "reading": "ぴっと",
+      "ko_candidate": "피트",
+      "variants": [],
+      "occurrences": 5,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0059",
+        "disc1/allbin/u05/event_page/ref0020",
+        "disc1/allbin/u26/voice_event/ref0007",
+        "disc1/allbin/u26/voice_event/ref0031",
+        "disc1/allbin/u27/voice_event/ref0032"
+      ],
+      "confidence": "medium",
+      "notes": "Race location term appears in dialogue.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0051",
+      "category": "location",
+      "jp": "サーキット",
+      "reading": "さーきっと",
+      "ko_candidate": "서킷",
+      "variants": [],
+      "occurrences": 14,
+      "evidence_ids": [
+        "disc1/allbin/u01/event_page/ref0024",
+        "disc1/allbin/u02/event_page/ref0142",
+        "disc1/allbin/u06/event_page/ref0087",
+        "disc1/allbin/u06/event_page/ref0159",
+        "disc1/allbin/u15/event_page/ref0076"
+      ],
+      "confidence": "medium",
+      "notes": "Racing venue term appears repeatedly.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0052",
+      "category": "title",
+      "jp": "オーナー",
+      "reading": "おーなー",
+      "ko_candidate": "오너",
+      "variants": [],
+      "occurrences": 51,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0005",
+        "disc1/allbin/u00/event_page/ref0050",
+        "disc1/allbin/u00/event_page/ref0053",
+        "disc1/allbin/u02/event_page/ref0001",
+        "disc1/allbin/u02/event_page/ref0018"
+      ],
+      "confidence": "high",
+      "notes": "Role used repeatedly for team owners.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0053",
+      "category": "title",
+      "jp": "マシンデザイナー",
+      "reading": "ましんでざいなー",
+      "ko_candidate": "머신 디자이너",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0019"
+      ],
+      "confidence": "medium",
+      "notes": "Role used for Claire.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0054",
+      "category": "title",
+      "jp": "チーフメカニック",
+      "reading": "ちーふめかにっく",
+      "ko_candidate": "치프 메카닉",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0168"
+      ],
+      "confidence": "medium",
+      "notes": "Role used in Aoi ZIP introduction.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0055",
+      "category": "title",
+      "jp": "レースクィーン",
+      "reading": "れーすくぃーん",
+      "ko_candidate": "레이스 퀸",
+      "variants": [
+        "クィーン"
+      ],
+      "occurrences": 26,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0023",
+        "disc1/allbin/u02/event_page/ref0026",
+        "disc1/allbin/u02/event_page/ref0063",
+        "disc1/allbin/u02/event_page/ref0078",
+        "disc1/allbin/u02/event_page/ref0099"
+      ],
+      "confidence": "high",
+      "notes": "Role tied to Rena and Aoi wording.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0056",
+      "category": "title",
+      "jp": "キャンギャル",
+      "reading": "きゃんぎゃる",
+      "ko_candidate": "캠페인 걸",
+      "variants": [],
+      "occurrences": 5,
+      "evidence_ids": [
+        "disc1/allbin/u01/event_page/ref0010",
+        "disc1/allbin/u02/event_page/ref0234",
+        "disc1/allbin/u09/event_page/ref0310",
+        "disc1/allbin/u13/event_page/ref0064",
+        "disc1/allbin/u16/event_page/ref0276"
+      ],
+      "confidence": "medium",
+      "notes": "Role tied to FICCY race context.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0057",
+      "category": "title",
+      "jp": "監督",
+      "reading": "かんとく",
+      "ko_candidate": "감독",
+      "variants": [],
+      "occurrences": 4,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0131",
+        "disc1/allbin/u02/event_page/ref0132",
+        "disc1/allbin/u03/event_page/ref0052",
+        "disc1/allbin/u06/event_page/ref0084"
+      ],
+      "confidence": "medium",
+      "notes": "Role appears for racing staff/driver.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0058",
+      "category": "title",
+      "jp": "ドライバー",
+      "reading": "どらいばー",
+      "ko_candidate": "드라이버",
+      "variants": [],
+      "occurrences": 121,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0006",
+        "disc1/allbin/u00/event_page/ref0007",
+        "disc1/allbin/u00/event_page/ref0040",
+        "disc1/allbin/u00/event_page/ref0041",
+        "disc1/allbin/u02/event_page/ref0016"
+      ],
+      "confidence": "high",
+      "notes": "Core role term; also used in named epithets.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0059",
+      "category": "title",
+      "jp": "トップドライバー",
+      "reading": "とっぷどらいばー",
+      "ko_candidate": "톱 드라이버",
+      "variants": [],
+      "occurrences": 18,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0006",
+        "disc1/allbin/u02/event_page/ref0016",
+        "disc1/allbin/u09/event_page/ref0021",
+        "disc1/allbin/u30/embedded_race/e0067",
+        "disc1/allbin/u30/embedded_race/e0078"
+      ],
+      "confidence": "high",
+      "notes": "Repeated title/rank term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0060",
+      "category": "title",
+      "jp": "チャンピオン",
+      "reading": "ちゃんぴおん",
+      "ko_candidate": "챔피언",
+      "variants": [
+        "ワールドチャンピオン"
+      ],
+      "occurrences": 16,
+      "evidence_ids": [
+        "disc1/allbin/u06/event_page/ref0133",
+        "disc1/allbin/u07/event_page/ref0013",
+        "disc1/allbin/u09/event_page/ref0033",
+        "disc1/allbin/u09/event_page/ref0139",
+        "disc1/allbin/u10/event_page/ref0140"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated racing title.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0061",
+      "category": "title",
+      "jp": "ルーキー",
+      "reading": "るーきー",
+      "ko_candidate": "루키",
+      "variants": [
+        "ルーキーボーイ"
+      ],
+      "occurrences": 16,
+      "evidence_ids": [
+        "disc1/allbin/u03/event_page/ref0076",
+        "disc1/allbin/u05/event_page/ref0123",
+        "disc1/allbin/u05/event_page/ref0124",
+        "disc1/allbin/u05/event_page/ref0063",
+        "disc1/allbin/u05/event_page/ref0076"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated status/title for new driver.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0062",
+      "category": "title",
+      "jp": "カミカゼボーイ",
+      "reading": "かみかぜぼーい",
+      "ko_candidate": "카미카제 보이",
+      "variants": [],
+      "occurrences": 22,
+      "evidence_ids": [
+        "disc1/allbin/u07/event_page/ref0121",
+        "disc1/allbin/u07/event_page/ref0126",
+        "disc1/allbin/u08/event_page/ref0086",
+        "disc1/allbin/u08/event_page/ref0092",
+        "disc1/allbin/u08/event_page/ref0106"
+      ],
+      "confidence": "high",
+      "notes": "Repeated nickname/title.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0063",
+      "category": "title",
+      "jp": "奇跡のドライバー",
+      "reading": "きせきのどらいばー",
+      "ko_candidate": "기적의 드라이버",
+      "variants": [],
+      "occurrences": 6,
+      "evidence_ids": [
+        "disc1/allbin/u12/event_page/ref0034",
+        "disc1/allbin/u30/embedded_race/e0138",
+        "disc1/allbin/u31/embedded_race/e0136",
+        "disc1/allbin/u32/embedded_race/e0137",
+        "disc1/allbin/u33/embedded_race/e0087"
+      ],
+      "confidence": "high",
+      "notes": "Repeated epithet.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0064",
+      "category": "title",
+      "jp": "走る事に命を捧げた男",
+      "reading": "はしることにいのちをささげたおとこ",
+      "ko_candidate": "달리는 일에 목숨을 바친 남자",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0070"
+      ],
+      "confidence": "medium",
+      "notes": "Quoted epithet for Boots Holtz.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0065",
+      "category": "title",
+      "jp": "努力と根性の人、新条直輝",
+      "reading": "どりょくとこんじょうのひと、しんじょうなおき",
+      "ko_candidate": "노력과 근성의 사람, 신죠 나오키",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0090"
+      ],
+      "confidence": "medium",
+      "notes": "Quoted epithet/name phrase.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0066",
+      "category": "title",
+      "jp": "アオイの女王様",
+      "reading": "あおいのじょおうさま",
+      "ko_candidate": "아오이의 여왕님",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0161"
+      ],
+      "confidence": "medium",
+      "notes": "Quoted epithet.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0067",
+      "category": "title",
+      "jp": "一人グランプリ",
+      "reading": "ひとりぐらんぷり",
+      "ko_candidate": "1인 그랑프리",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0132"
+      ],
+      "confidence": "medium",
+      "notes": "Quoted epithet-like phrase.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0068",
+      "category": "title",
+      "jp": "マイ・パートナー",
+      "reading": "まい・ぱーとなー",
+      "ko_candidate": "마이 파트너",
+      "variants": [
+        "マイ・ベストパートナー"
+      ],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u10/event_page/ref0012",
+        "disc1/allbin/u17/event_page/ref0044",
+        "disc1/allbin/u19/event_page/ref0025"
+      ],
+      "confidence": "medium",
+      "notes": "Partner epithet phrase.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0069",
+      "category": "technical_term",
+      "jp": "ブースト",
+      "reading": "ぶーすと",
+      "ko_candidate": "부스트",
+      "variants": [],
+      "occurrences": 178,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0025",
+        "disc1/allbin/u00/event_page/ref0026",
+        "disc1/allbin/u00/event_page/ref0028",
+        "disc1/allbin/u07/event_page/ref0158",
+        "disc1/allbin/u07/event_page/ref0159"
+      ],
+      "confidence": "high",
+      "notes": "Core race/mechanical action term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0070",
+      "category": "technical_term",
+      "jp": "ブースト・オン",
+      "reading": "ぶーすと・おん",
+      "ko_candidate": "부스트 온",
+      "variants": [
+        "ブーストオン"
+      ],
+      "occurrences": 42,
+      "evidence_ids": [
+        "disc1/allbin/u21/voice_event/ref0056",
+        "disc1/allbin/u24/voice_event/ref0145",
+        "disc1/allbin/u24/voice_event/ref0146",
+        "disc1/allbin/u27/voice_event/ref0040",
+        "disc1/allbin/u27/voice_event/ref0058"
+      ],
+      "confidence": "high",
+      "notes": "Command phrase appears in punctuated and unpunctuated forms.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0071",
+      "category": "technical_term",
+      "jp": "ブーストアシスト",
+      "reading": "ぶーすとあしすと",
+      "ko_candidate": "부스트 어시스트",
+      "variants": [],
+      "occurrences": 14,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0007",
+        "disc1/allbin/u23/voice_event/ref0009",
+        "disc1/allbin/u23/voice_event/ref0013",
+        "disc1/allbin/u23/voice_event/ref0015",
+        "disc1/allbin/u23/voice_event/ref0020"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system/race support term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0072",
+      "category": "technical_term",
+      "jp": "ブーストカット",
+      "reading": "ぶーすとかっと",
+      "ko_candidate": "부스트 컷",
+      "variants": [],
+      "occurrences": 10,
+      "evidence_ids": [
+        "disc1/allbin/u30/embedded_race/e0146",
+        "disc1/allbin/u30/embedded_race/e0147",
+        "disc1/allbin/u31/embedded_race/e0144",
+        "disc1/allbin/u31/embedded_race/e0145",
+        "disc1/allbin/u32/embedded_race/e0145"
+      ],
+      "confidence": "high",
+      "notes": "Repeated race strategy/mechanical term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0073",
+      "category": "technical_term",
+      "jp": "スパイラルブースト",
+      "reading": "すぱいらるぶーすと",
+      "ko_candidate": "스파이럴 부스트",
+      "variants": [],
+      "occurrences": 19,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0026",
+        "disc1/allbin/u00/event_page/ref0028",
+        "disc1/allbin/u07/event_page/ref0158",
+        "disc1/allbin/u07/event_page/ref0167",
+        "disc1/allbin/u09/event_page/ref0069"
+      ],
+      "confidence": "high",
+      "notes": "Repeated technique term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0074",
+      "category": "technical_term",
+      "jp": "スパイラル",
+      "reading": "すぱいらる",
+      "ko_candidate": "스파이럴",
+      "variants": [],
+      "occurrences": 42,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0025",
+        "disc1/allbin/u00/event_page/ref0026",
+        "disc1/allbin/u00/event_page/ref0028",
+        "disc1/allbin/u07/event_page/ref0158",
+        "disc1/allbin/u07/event_page/ref0167"
+      ],
+      "confidence": "medium",
+      "notes": "Technique shorthand; kept separate from compound occurrences.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0075",
+      "category": "technical_term",
+      "jp": "イナーシャルドリフト",
+      "reading": "いなーしゃるどりふと",
+      "ko_candidate": "이너셜 드리프트",
+      "variants": [
+        "イナーシャル・ドリフト"
+      ],
+      "occurrences": 7,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0031",
+        "disc1/allbin/u13/event_page/ref0003",
+        "disc1/allbin/u17/event_page/ref0022",
+        "disc1/allbin/u24/voice_event/ref0149",
+        "disc1/allbin/u24/voice_event/ref0160"
+      ],
+      "confidence": "high",
+      "notes": "Technique appears with and without separator.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0076",
+      "category": "technical_term",
+      "jp": "イナーシャル",
+      "reading": "いなーしゃる",
+      "ko_candidate": "이너셜",
+      "variants": [],
+      "occurrences": 31,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0031",
+        "disc1/allbin/u09/event_page/ref0016",
+        "disc1/allbin/u10/event_page/ref0124",
+        "disc1/allbin/u12/event_page/ref0215",
+        "disc1/allbin/u13/event_page/ref0003"
+      ],
+      "confidence": "medium",
+      "notes": "Technique shorthand; kept separate from compound occurrences.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0077",
+      "category": "technical_term",
+      "jp": "リフティングターン",
+      "reading": "りふてぃんぐたーん",
+      "ko_candidate": "리프팅 턴",
+      "variants": [],
+      "occurrences": 20,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0031",
+        "disc1/allbin/u17/event_page/ref0022",
+        "disc1/allbin/u18/event_page/ref0113",
+        "disc1/allbin/u18/event_page/ref0017",
+        "disc1/allbin/u29/voice_event/ref0094"
+      ],
+      "confidence": "high",
+      "notes": "Repeated technique term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0078",
+      "category": "technical_term",
+      "jp": "エフェクトファンドライブ",
+      "reading": "えふぇくとふぁんどらいぶ",
+      "ko_candidate": "이펙트 팬 드라이브",
+      "variants": [],
+      "occurrences": 5,
+      "evidence_ids": [
+        "disc1/allbin/u30/embedded_race/e0084",
+        "disc1/allbin/u31/embedded_race/e0082",
+        "disc1/allbin/u32/embedded_race/e0083",
+        "disc1/allbin/u33/embedded_race/e0033",
+        "disc1/allbin/u34/embedded_race/e0087"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system/technique activation term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0079",
+      "category": "technical_term",
+      "jp": "エフェクト・ファン",
+      "reading": "えふぇくと・ふぁん",
+      "ko_candidate": "이펙트 팬",
+      "variants": [
+        "エフェクト・��ァン"
+      ],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u24/voice_event/ref0144",
+        "disc1/allbin/u24/voice_event/ref0156",
+        "disc1/allbin/u29/voice_event/ref0092"
+      ],
+      "confidence": "medium",
+      "notes": "Component/system term appears with one corrupted glyph variant.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0080",
+      "category": "technical_term",
+      "jp": "ドライビングパターンバックアップ",
+      "reading": "どらいびんぐぱたーんばっくあっぷ",
+      "ko_candidate": "드라이빙 패턴 백업",
+      "variants": [],
+      "occurrences": 12,
+      "evidence_ids": [
+        "disc1/allbin/u22/voice_event/ref0013",
+        "disc1/allbin/u22/voice_event/ref0017",
+        "disc1/allbin/u22/voice_event/ref0030",
+        "disc1/allbin/u22/voice_event/ref0106",
+        "disc1/allbin/u22/voice_event/ref0112"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system analysis term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0081",
+      "category": "technical_term",
+      "jp": "ドライビングデータバックアップ",
+      "reading": "どらいびんぐでーたばっくあっぷ",
+      "ko_candidate": "드라이빙 데이터 백업",
+      "variants": [],
+      "occurrences": 5,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0070",
+        "disc1/allbin/u23/voice_event/ref0073",
+        "disc1/allbin/u23/voice_event/ref0076",
+        "disc1/allbin/u24/voice_event/ref0040",
+        "disc1/allbin/u24/voice_event/ref0151"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system analysis term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0082",
+      "category": "technical_term",
+      "jp": "バックアップデータ",
+      "reading": "ばっくあっぷでーた",
+      "ko_candidate": "백업 데이터",
+      "variants": [],
+      "occurrences": 4,
+      "evidence_ids": [
+        "disc1/allbin/u22/voice_event/ref0019",
+        "disc1/allbin/u22/voice_event/ref0096",
+        "disc1/allbin/u22/voice_event/ref0099",
+        "disc1/allbin/u23/voice_event/ref0000"
+      ],
+      "confidence": "medium",
+      "notes": "Related system data term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0083",
+      "category": "technical_term",
+      "jp": "DNA計算",
+      "reading": "でぃーえぬえーけいさん",
+      "ko_candidate": "DNA 계산",
+      "variants": [],
+      "occurrences": 8,
+      "evidence_ids": [
+        "disc1/allbin/u30/embedded_race/e0014",
+        "disc1/allbin/u30/embedded_race/e0037",
+        "disc1/allbin/u31/embedded_race/e0013",
+        "disc1/allbin/u31/embedded_race/e0035",
+        "disc1/allbin/u32/embedded_race/e0014"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated system computation term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0084",
+      "category": "technical_term",
+      "jp": "コースインフォメーション",
+      "reading": "こーすいんふぉめーしょん",
+      "ko_candidate": "코스 인포메이션",
+      "variants": [],
+      "occurrences": 20,
+      "evidence_ids": [
+        "disc1/allbin/u21/voice_event/ref0022",
+        "disc1/allbin/u21/voice_event/ref0051",
+        "disc1/allbin/u22/voice_event/ref0008",
+        "disc1/allbin/u23/voice_event/ref0003",
+        "disc1/allbin/u23/voice_event/ref0030"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system display/search term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0085",
+      "category": "technical_term",
+      "jp": "マシンコンディション",
+      "reading": "ましんこんでぃしょん",
+      "ko_candidate": "머신 컨디션",
+      "variants": [],
+      "occurrences": 8,
+      "evidence_ids": [
+        "disc1/allbin/u25/voice_event/ref0073",
+        "disc1/allbin/u25/voice_event/ref0100",
+        "disc1/allbin/u26/voice_event/ref0060",
+        "disc1/allbin/u26/voice_event/ref0066",
+        "disc1/allbin/u27/voice_event/ref0027"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system/race state term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0086",
+      "category": "technical_term",
+      "jp": "マシンダメージ",
+      "reading": "ましんだめーじ",
+      "ko_candidate": "머신 데미지",
+      "variants": [],
+      "occurrences": 9,
+      "evidence_ids": [
+        "disc1/allbin/u22/voice_event/ref0134",
+        "disc1/allbin/u22/voice_event/ref0144",
+        "disc1/allbin/u23/voice_event/ref0050",
+        "disc1/allbin/u24/voice_event/ref0033",
+        "disc1/allbin/u24/voice_event/ref0034"
+      ],
+      "confidence": "high",
+      "notes": "Repeated race state term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0087",
+      "category": "technical_term",
+      "jp": "オート・バランサー",
+      "reading": "おーと・ばらんさー",
+      "ko_candidate": "오토 밸런서",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u24/voice_event/ref0156"
+      ],
+      "confidence": "medium",
+      "notes": "Machine system/component term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0088",
+      "category": "technical_term",
+      "jp": "タイヤ・バースト",
+      "reading": "たいや・ばーすと",
+      "ko_candidate": "타이어 버스트",
+      "variants": [],
+      "occurrences": 1,
+      "evidence_ids": [
+        "disc1/allbin/u25/voice_event/ref0037"
+      ],
+      "confidence": "medium",
+      "notes": "Race incident/mechanical term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0089",
+      "category": "technical_term",
+      "jp": "カウンターアロー",
+      "reading": "かうんたーあろー",
+      "ko_candidate": "카운터 애로",
+      "variants": [],
+      "occurrences": 6,
+      "evidence_ids": [
+        "disc1/allbin/u24/voice_event/ref0087",
+        "disc1/allbin/u25/voice_event/ref0043",
+        "disc1/allbin/u25/voice_event/ref0069",
+        "disc1/allbin/u26/voice_event/ref0034",
+        "disc1/allbin/u27/voice_event/ref0042"
+      ],
+      "confidence": "high",
+      "notes": "Repeated race technique/command term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0090",
+      "category": "technical_term",
+      "jp": "サービスポイント",
+      "reading": "さーびすぽいんと",
+      "ko_candidate": "서비스 포인트",
+      "variants": [],
+      "occurrences": 6,
+      "evidence_ids": [
+        "disc1/allbin/u25/voice_event/ref0007",
+        "disc1/allbin/u25/voice_event/ref0009",
+        "disc1/allbin/u25/voice_event/ref0025",
+        "disc1/allbin/u25/voice_event/ref0031",
+        "disc1/allbin/u25/voice_event/ref0038"
+      ],
+      "confidence": "high",
+      "notes": "Repeated system/race term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0091",
+      "category": "technical_term",
+      "jp": "オーバー・スピード",
+      "reading": "おーばー・すぴーど",
+      "ko_candidate": "오버 스피드",
+      "variants": [],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u24/voice_event/ref0140",
+        "disc1/allbin/u24/voice_event/ref0152",
+        "disc1/allbin/u28/voice_event/ref0005"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated warning/condition term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0092",
+      "category": "technical_term",
+      "jp": "システム・オール・グリーン",
+      "reading": "しすてむ・おーる・ぐりーん",
+      "ko_candidate": "시스템 올 그린",
+      "variants": [
+        "システム・オールグリーン",
+        "オール・グリーン"
+      ],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u22/voice_event/ref0004",
+        "disc1/allbin/u23/voice_event/ref0001",
+        "disc1/allbin/u24/voice_event/ref0046"
+      ],
+      "confidence": "medium",
+      "notes": "System-ready phrase appears in variant forms.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0093",
+      "category": "technical_term",
+      "jp": "スタンバイ・オーケー",
+      "reading": "すたんばい・おーけー",
+      "ko_candidate": "스탠바이 오케이",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u29/voice_event/ref0049",
+        "disc1/allbin/u29/voice_event/ref0050"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated system-ready phrase.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0094",
+      "category": "technical_term",
+      "jp": "コマンド",
+      "reading": "こまんど",
+      "ko_candidate": "커맨드",
+      "variants": [],
+      "occurrences": 9,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0044",
+        "disc1/allbin/u00/event_page/ref0045",
+        "disc1/allbin/u00/event_page/ref0047",
+        "disc1/allbin/u21/voice_event/ref0028",
+        "disc1/allbin/u22/voice_event/ref0026"
+      ],
+      "confidence": "medium",
+      "notes": "Repeated UI/system command term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0095",
+      "category": "technical_term",
+      "jp": "セッティング",
+      "reading": "せってぃんぐ",
+      "ko_candidate": "세팅",
+      "variants": [],
+      "occurrences": 23,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0169",
+        "disc1/allbin/u03/event_page/ref0013",
+        "disc1/allbin/u03/event_page/ref0014",
+        "disc1/allbin/u03/event_page/ref0015",
+        "disc1/allbin/u03/event_page/ref0026"
+      ],
+      "confidence": "high",
+      "notes": "Repeated machine setup term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0096",
+      "category": "technical_term",
+      "jp": "テレ・メトリーへ転送",
+      "reading": "てれ・めとりーへてんそう",
+      "ko_candidate": "텔레메트리로 전송",
+      "variants": [],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u23/voice_event/ref0009",
+        "disc1/allbin/u23/voice_event/ref0015",
+        "disc1/allbin/u23/voice_event/ref0020"
+      ],
+      "confidence": "medium",
+      "notes": "System transfer phrase appears multiple times.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0097",
+      "category": "technical_term",
+      "jp": "スリップストリーム",
+      "reading": "すりっぷすとりーむ",
+      "ko_candidate": "슬립스트림",
+      "variants": [
+        "スリップ\nストリーム"
+      ],
+      "occurrences": 9,
+      "evidence_ids": [
+        "disc1/allbin/u22/voice_event/ref0055",
+        "disc1/allbin/u23/voice_event/ref0005",
+        "disc1/allbin/u23/voice_event/ref0006",
+        "disc1/allbin/u23/voice_event/ref0010",
+        "disc1/allbin/u23/voice_event/ref0011"
+      ],
+      "confidence": "high",
+      "notes": "Repeated racing technique term.",
+      "status": "candidate"
+    }
+  ]
+}

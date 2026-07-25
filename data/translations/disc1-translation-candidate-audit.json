@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "mechanically-validated-semantic-review-required",
+  "brief_sha256": "0a0ada7f42e1db47188042f1982e7eff0ac6cb18bf22cc7a58d8a7883bc8f00a",
+  "translation_candidate_sha256": "df134903851bd24ed08bc255f9e81f7eef82b5987fd817ad00f129b36892980f",
+  "glossary_candidate_sha256": "d85647fbc1634233a328b3c073b37d57aac214cfdcf07af91b1339a251d8e58c",
+  "mechanical_validation": {
+    "entry_count": 5783,
+    "confirmed_limits": 4022,
+    "unconfirmed_limits": 1761,
+    "brief_duplicate_ids": 0,
+    "candidate_duplicate_ids": 0,
+    "missing_ids": 0,
+    "extra_ids": 0,
+    "protected_field_mismatches": 0,
+    "empty_korean": 0,
+    "confirmed_limit_overflows": 0,
+    "japanese_script_residue": 0
+  },
+  "glossary_validation": {
+    "term_count": 97,
+    "confidence_counts": {
+      "high": 52,
+      "low": 2,
+      "medium": 43
+    },
+    "duplicate_term_ids": 0,
+    "invalid_evidence_ids": 0,
+    "same_japanese_multiple_korean": 0
+  },
+  "review_queue": {
+    "dialogue_entries": 5783,
+    "medium_or_low_glossary_terms": 45,
+    "low_confidence_term_ids": [
+      "term-0020",
+      "term-0021"
+    ],
+    "not_mechanically_validated": [
+      "translation meaning and omissions",
+      "character voice and register",
+      "proper-name identity and transliteration consistency",
+      "renderer layout for entries whose max_glyphs is null"
+    ]
+  }
+}
