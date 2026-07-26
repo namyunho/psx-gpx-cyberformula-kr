@@ -45,6 +45,16 @@ python3 scripts/build_dialogue_safe_slots.py
 .venv/bin/python scripts/dialogue_layout_editor.py
 ```
 
+macOS Finder에서는 저장소 최상위의 다음 파일을 더블클릭하면 된다.
+
+```text
+대사-편집기.command
+```
+
+실행기는 `.venv`와 번역 후보·보호 workset·원본 ALLBIN을 확인하고 안전 슬롯
+JSON/CSV를 최신 원본에서 다시 만든 뒤 편집기를 연다. 첫 실행에서 macOS가
+차단하면 Finder에서 파일을 Control-클릭한 뒤 `열기`를 선택한다.
+
 특정 대사에서 시작:
 
 ```bash
