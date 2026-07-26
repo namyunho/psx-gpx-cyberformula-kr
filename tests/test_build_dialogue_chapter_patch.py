@@ -7,14 +7,19 @@ import unittest
 
 from scripts.build_dialogue_chapter_patch import (
     PROTECTED_ORIGINAL_GLYPH_INDICES,
+    UNIT_SHARED_POOL_REFERENCE_PROFILES,
     build_source_ordered_stream,
     changed_ranges,
     encode_entry,
     fit_fixed_diagnostic_candidate,
     passthrough_gap_glyph_indices,
     physical_entry_ranges,
+    reference_catalog_sha256,
+    relink_unit_shared_pool,
     repack_unit,
+    scan_unit_dialogue_references,
     validate_stable_id_join,
+    verify_unit_reference_profile,
     verify_expected_writes,
     write_unit_at_original_offsets_diagnostic,
 )
@@ -49,6 +54,15 @@ class DialogueChapterBuildTests(unittest.TestCase):
         self.assertEqual(tokens[0], 0x903F)
         self.assertEqual(tokens[-1], 0x8000)
         self.assertEqual(tokens.count(0xFFFB), 2)
+
+    def test_rejects_four_dialogue_rows_even_when_unit_has_space(self) -> None:
+        mapping = {character: index for index, character in enumerate("가나다라")}
+        with self.assertRaisesRegex(ValueError, "invalid reflow row count"):
+            encode_entry(
+                self.first,
+                "가\n나\n다\n라",
+                mapping,
+            )
 
     def test_fixed_diagnostic_hard_wrap_preserves_visible_sequence(self) -> None:
         candidate = (
@@ -319,6 +333,202 @@ class DialogueChapterBuildTests(unittest.TestCase):
         self.assertEqual(
             passthrough_gap_glyph_indices(bytes(allbin), entries),
             frozenset({0x0000, 0x0049}),
+        )
+
+    def test_verified_units_have_exhaustive_frozen_reference_catalogs(
+        self,
+    ) -> None:
+        workset = json.loads(
+            (ROOT / "work/translations/disc1-dialogue.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        source_allbin = (
+            ROOT / "work/extracted/disc1/iso/ALLBIN.BIN"
+        ).read_bytes()
+        for unit_index in (0, 21):
+            entries = [
+                entry
+                for entry in workset["entries"]
+                if int(entry["source"]["unit_index"]) == unit_index
+            ]
+            profile = UNIT_SHARED_POOL_REFERENCE_PROFILES[unit_index]
+            unit_file_offset = {
+                int(entry["source"]["file_offset"], 16)
+                - int(entry["source"]["unit_offset"], 16)
+                for entry in entries
+            }.pop()
+            source_unit = source_allbin[
+                unit_file_offset :
+                unit_file_offset + int(profile["scheduled_bytes"])
+            ]
+            layout = build_source_ordered_stream(
+                source_unit,
+                entries,
+                {
+                    entry["entry_id"]: bytes.fromhex(
+                        entry["original"]["raw_hex"]
+                    )
+                    for entry in entries
+                },
+            )
+            references = scan_unit_dialogue_references(
+                source_unit,
+                entries,
+                layout,
+            )
+            report = verify_unit_reference_profile(
+                unit_index,
+                source_unit,
+                references,
+                profile,
+            )
+            self.assertTrue(report["verified"])
+            self.assertEqual(
+                report["catalog_sha256"],
+                profile["catalog_sha256"],
+            )
+
+    def test_unit_shared_pool_relinks_hidden_and_gap_consumers(self) -> None:
+        def entry(
+            entry_id: str,
+            *,
+            unit_offset: int,
+            glyph: int,
+            pointer_storage: int,
+        ) -> dict:
+            raw = struct.pack("<4H", glyph, glyph, glyph, 0x8000)
+            pointer = 0x800A8000 + unit_offset
+            return {
+                "entry_id": entry_id,
+                "source": {
+                    "unit_index": 0,
+                    "file_offset": f"0x{unit_offset:06X}",
+                    "unit_offset": f"0x{unit_offset:04X}",
+                    "runtime_pointer": f"0x{pointer:08X}",
+                    "byte_size": len(raw),
+                    "pointer_references": [
+                        {
+                            "storage_file_offset": (
+                                f"0x{pointer_storage:06X}"
+                            ),
+                            "storage_unit_offset": (
+                                f"0x{pointer_storage:04X}"
+                            ),
+                            "raw_value": f"0x{pointer:08X}",
+                        }
+                    ],
+                },
+                "original": {
+                    "raw_hex": raw.hex(),
+                    "tokens": [
+                        f"{glyph:04X}",
+                        f"{glyph:04X}",
+                        f"{glyph:04X}",
+                        "8000",
+                    ],
+                    "control_tokens": [
+                        {"token_index": 3, "kind": "page_end"}
+                    ],
+                },
+            }
+
+        entries = [
+            entry("first", unit_offset=0x10, glyph=1, pointer_storage=0x80),
+            entry("second", unit_offset=0x1A, glyph=2, pointer_storage=0x84),
+        ]
+        allbin = bytearray(0xA0)
+        for source in entries:
+            offset = int(source["source"]["unit_offset"], 16)
+            raw = bytes.fromhex(source["original"]["raw_hex"])
+            allbin[offset : offset + len(raw)] = raw
+            reference = source["source"]["pointer_references"][0]
+            struct.pack_into(
+                "<I",
+                allbin,
+                int(reference["storage_unit_offset"], 16),
+                int(reference["raw_value"], 16),
+            )
+        struct.pack_into("<I", allbin, 0x8C, 0x800A801A)
+        struct.pack_into("<I", allbin, 0x90, 0x800A8018)
+
+        mapping = {
+            "가": 0x100,
+            "나": 0x101,
+            "다": 0x102,
+            "라": 0x103,
+            "마": 0x104,
+        }
+        reflow = {
+            "first": {"status": "ready", "ko_candidate": "가나다라"},
+            "second": {"status": "ready", "ko_candidate": "마"},
+        }
+        streams = {
+            entry["entry_id"]: encode_entry(
+                entry,
+                reflow[entry["entry_id"]]["ko_candidate"],
+                mapping,
+            )
+            for entry in entries
+        }
+        layout = build_source_ordered_stream(bytes(allbin), entries, streams)
+        references = scan_unit_dialogue_references(
+            bytes(allbin),
+            entries,
+            layout,
+        )
+        kind_counts = {
+            kind: sum(
+                reference["target_kind"] == kind
+                for reference in references
+            )
+            for kind in ("entry_start", "preserved_gap")
+        }
+        profile = {
+            "scheduled_bytes": len(allbin),
+            "reference_count": len(references),
+            "entry_start_reference_count": kind_counts["entry_start"],
+            "gap_reference_count": kind_counts["preserved_gap"],
+            "catalog_sha256": reference_catalog_sha256(references),
+        }
+        report = relink_unit_shared_pool(
+            allbin,
+            entries,
+            reflow,
+            mapping,
+            reference_profile=profile,
+        )
+
+        first_offset = int(
+            report["physical_entries"][0]["output_unit_offset"],
+            16,
+        )
+        second_offset = int(
+            report["physical_entries"][1]["output_unit_offset"],
+            16,
+        )
+        self.assertEqual(first_offset, 0x10)
+        self.assertEqual(second_offset, 0x1C)
+        self.assertEqual(
+            struct.unpack_from("<I", allbin, 0x84)[0],
+            0x800A8000 + second_offset,
+        )
+        self.assertEqual(
+            struct.unpack_from("<I", allbin, 0x8C)[0],
+            0x800A8000 + second_offset,
+        )
+        self.assertEqual(
+            struct.unpack_from("<I", allbin, 0x90)[0],
+            0x800A801A,
+        )
+        self.assertEqual(report["original_slot_overflow_count"], 1)
+        self.assertEqual(report["tail_padding_bytes"], 2)
+        self.assertTrue(report["unit_capacity_preserved"])
+        self.assertEqual(
+            report["reference_catalog"][
+                "additional_event_consumer_reference_count"
+            ],
+            2,
         )
 
     def test_fixed_diagnostic_preserves_earlier_overflowing_stream(self) -> None:

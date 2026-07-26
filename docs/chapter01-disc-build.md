@@ -256,3 +256,17 @@ unit `0` + `21` 안전 슬롯 Track 1 SHA-256:
 
 현재 판정은 `u00/u21-safe-slot-runtime-pass`, 전체 프로젝트는
 `nonrelease-partial-translation`이다.
+
+## unit 공용 arena 실행 검증 통과
+
+개별 안전 슬롯을 유지하는 위 기준선은 회귀 비교용으로 보존한다. unit 안의
+남는 대사 용량을 다른 대사에 재할당하기 위한 `unit-shared-pool`은
+[`unit-dialogue-pool-experiment.md`](unit-dialogue-pool-experiment.md)에
+기록한 Track 1에서 u00 시작부터 u21 분기와 종료까지 사용자 실행 검증을
+통과했다. 과거 누락됐던 u00/u21 이벤트 operand를 포함한 참조 324개,
+무포인터 페이지, 후미 padding, 초상·화자·음성과 분기 흐름이 유지됐다.
+
+따라서 `u00`, `u21`은 개별 원본 슬롯 초과를 허용하고 unit 원본 대사 스트림
+총량을 공용 한도로 사용한다. 줄당 17글리프·페이지당 3줄은 저장 공간과
+독립된 확정 표시 제약으로 유지한다. 다른 unit은 자체 참조 카탈로그와 실행
+검증을 갖추기 전까지 이 판정을 승계하지 않는다.

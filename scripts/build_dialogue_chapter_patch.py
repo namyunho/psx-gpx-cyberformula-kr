@@ -66,6 +66,42 @@ FIXED_NAMES = {
 NAME_PATTERN = re.compile(r"\{name:(?:surname|given)\}")
 CONTROL_CONTENT_KINDS = {"glyph", "name_surname", "name_given"}
 REMOVABLE_INTERNAL_KINDS = {"align", "name_surname", "name_given"}
+UNIT_SHARED_POOL_REFERENCE_PROFILES = {
+    0: {
+        "scheduled_bytes": 0x3000,
+        "reference_count": 189,
+        "entry_start_reference_count": 183,
+        "gap_reference_count": 6,
+        "catalog_sha256": (
+            "5829e12496562e919811f93cfb7fdd1d68fc5d2e69272deddcac7770f9b67d1e"
+        ),
+        "runtime_validation": {
+            "status": "passed",
+            "date": "2026-07-27",
+            "scope": "full-u00-then-u21-chapter-replay",
+            "track1_sha256": (
+                "39da4bc7eb8d49944be5ad95f4acd73364d1ca1172f186772ca884c15a024b3f"
+            ),
+        },
+    },
+    21: {
+        "scheduled_bytes": 0x5000,
+        "reference_count": 135,
+        "entry_start_reference_count": 135,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "6421b4f9059af3efdbeaee89fe6981469e3232c8f1a1c66139ab69df15f2f7e5"
+        ),
+        "runtime_validation": {
+            "status": "passed",
+            "date": "2026-07-27",
+            "scope": "full-u00-then-u21-chapter-replay",
+            "track1_sha256": (
+                "39da4bc7eb8d49944be5ad95f4acd73364d1ca1172f186772ca884c15a024b3f"
+            ),
+        },
+    },
+}
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -542,6 +578,167 @@ def build_source_ordered_stream(
     }
 
 
+def reference_catalog_sha256(
+    references: Iterable[dict[str, Any]],
+) -> str:
+    canonical = "".join(
+        f"{int(reference['storage_unit_offset']):08X}:"
+        f"{int(reference['source_target_unit_offset']):08X}\n"
+        for reference in references
+    )
+    return sha256_bytes(canonical.encode("ascii"))
+
+
+def scan_unit_dialogue_references(
+    unit_data: bytes,
+    entries: Iterable[dict[str, Any]],
+    layout: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Enumerate every absolute pointer into the physical dialogue run.
+
+    The supported ALLBIN revision stores both a trailing pointer table and
+    event/voice operands that point at the same dialogue pages.  The original
+    extractor catalogued the table but not the executable event operands.
+    Search every byte of the independently loaded unit so an unaligned
+    consumer cannot be silently omitted; the fixed-revision profile then
+    freezes the exact resulting storage/target population by digest.
+    """
+    entries_by_start = {
+        int(entry["source"]["unit_offset"], 16): entry
+        for entry in entries
+    }
+    load_addresses = {
+        int(entry["source"]["runtime_pointer"], 16)
+        - int(entry["source"]["unit_offset"], 16)
+        for entry in entries_by_start.values()
+    }
+    if len(load_addresses) != 1:
+        raise ValueError("unit dialogue references have mixed load addresses")
+    load_address = load_addresses.pop()
+    region_start = int(layout["region_start"])
+    region_end = int(layout["region_end"])
+    gaps = [
+        gap
+        for gap in layout["gaps"]
+        if int(gap["source_end"]) > int(gap["source_start"])
+    ]
+
+    references: list[dict[str, Any]] = []
+    for storage in range(0, len(unit_data) - 3):
+        raw_value = struct.unpack_from("<I", unit_data, storage)[0]
+        source_target = raw_value - load_address
+        if not region_start <= source_target < region_end:
+            continue
+        if storage % 4:
+            raise ValueError(
+                "unit dialogue contains an unaligned absolute reference at "
+                f"0x{storage:04X}"
+            )
+
+        source_entry = entries_by_start.get(source_target)
+        if source_entry is not None:
+            output_target = int(layout["placements"][
+                source_entry["entry_id"]
+            ])
+            target_kind = "entry_start"
+            target_id = source_entry["entry_id"]
+            anchor_delta = 0
+        else:
+            gap = next(
+                (
+                    candidate
+                    for candidate in gaps
+                    if int(candidate["source_start"])
+                    <= source_target
+                    < int(candidate["source_end"])
+                ),
+                None,
+            )
+            if gap is None:
+                containing_entry = next(
+                    (
+                        entry
+                        for start, end, entry in physical_entry_ranges(
+                            entries_by_start.values()
+                        )
+                        if start < source_target < end
+                    ),
+                    None,
+                )
+                if containing_entry is not None:
+                    raise ValueError(
+                        f"{containing_entry['entry_id']}: absolute reference "
+                        f"at 0x{storage:04X} enters translated text at "
+                        f"+0x{source_target - int(containing_entry['source']['unit_offset'], 16):X}"
+                    )
+                raise ValueError(
+                    f"absolute reference at 0x{storage:04X} has no preserved "
+                    f"dialogue anchor for target 0x{source_target:04X}"
+                )
+            anchor_delta = source_target - int(gap["source_start"])
+            output_target = int(gap["output_start"]) + anchor_delta
+            target_kind = "preserved_gap"
+            target_id = (
+                f"{gap['after_entry_id']}->{gap['before_entry_id']}"
+            )
+
+        references.append(
+            {
+                "storage_unit_offset": storage,
+                "raw_value": raw_value,
+                "source_target_unit_offset": source_target,
+                "output_target_unit_offset": output_target,
+                "target_kind": target_kind,
+                "target_id": target_id,
+                "anchor_delta": anchor_delta,
+            }
+        )
+    return references
+
+
+def verify_unit_reference_profile(
+    unit_index: int,
+    unit_data: bytes,
+    references: list[dict[str, Any]],
+    profile: dict[str, Any],
+) -> dict[str, Any]:
+    if len(unit_data) != int(profile["scheduled_bytes"]):
+        raise ValueError(
+            f"unit {unit_index}: scheduled size differs from the frozen "
+            "reference profile"
+        )
+    if len(references) != int(profile["reference_count"]):
+        raise ValueError(
+            f"unit {unit_index}: exhaustive reference count changed: "
+            f"{len(references)} != {profile['reference_count']}"
+        )
+    kind_counts = defaultdict(int)
+    for reference in references:
+        kind_counts[str(reference["target_kind"])] += 1
+    for kind, profile_key in (
+        ("entry_start", "entry_start_reference_count"),
+        ("preserved_gap", "gap_reference_count"),
+    ):
+        if kind_counts[kind] != int(profile[profile_key]):
+            raise ValueError(
+                f"unit {unit_index}: {kind} reference count changed: "
+                f"{kind_counts[kind]} != {profile[profile_key]}"
+            )
+    digest = reference_catalog_sha256(references)
+    if digest != profile["catalog_sha256"]:
+        raise ValueError(
+            f"unit {unit_index}: exhaustive reference catalog digest changed"
+        )
+    return {
+        "scheduled_unit_bytes": len(unit_data),
+        "reference_count": len(references),
+        "entry_start_reference_count": kind_counts["entry_start"],
+        "preserved_gap_reference_count": kind_counts["preserved_gap"],
+        "catalog_sha256": digest,
+        "verified": True,
+    }
+
+
 def passthrough_gap_glyph_indices(
     allbin: bytes,
     entries_by_unit: dict[int, list[dict[str, Any]]],
@@ -570,6 +767,286 @@ def passthrough_gap_glyph_indices(
                     indices.add(token)
             cursor = end
     return frozenset(indices)
+
+
+def relink_unit_shared_pool(
+    allbin: bytearray,
+    entries: list[dict[str, Any]],
+    reflow_by_id: dict[str, dict[str, Any]],
+    mapping: dict[str, int],
+    *,
+    reference_profile: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Repack a complete unit-local dialogue arena and relink every consumer."""
+    if not entries:
+        raise ValueError("cannot relink an empty unit")
+    unit_index = int(entries[0]["source"]["unit_index"])
+    if any(int(entry["source"]["unit_index"]) != unit_index for entry in entries):
+        raise ValueError("unit shared pool received mixed units")
+    if reference_profile is None:
+        try:
+            reference_profile = UNIT_SHARED_POOL_REFERENCE_PROFILES[unit_index]
+        except KeyError as error:
+            raise ValueError(
+                f"unit {unit_index}: no frozen shared-pool reference profile"
+            ) from error
+
+    ranges = physical_entry_ranges(entries)
+    unit_file_offsets = {
+        int(entry["source"]["file_offset"], 16)
+        - int(entry["source"]["unit_offset"], 16)
+        for _, _, entry in ranges
+    }
+    if len(unit_file_offsets) != 1:
+        raise ValueError(f"unit {unit_index}: inconsistent file offset")
+    unit_file_offset = unit_file_offsets.pop()
+    scheduled_bytes = int(reference_profile["scheduled_bytes"])
+    source_unit = bytes(
+        allbin[unit_file_offset : unit_file_offset + scheduled_bytes]
+    )
+    if len(source_unit) != scheduled_bytes:
+        raise ValueError(f"unit {unit_index}: source ALLBIN unit is truncated")
+
+    for _, _, entry in ranges:
+        offset = int(entry["source"]["unit_offset"], 16)
+        raw = bytes.fromhex(entry["original"]["raw_hex"])
+        if source_unit[offset : offset + len(raw)] != raw:
+            raise ValueError(f"{entry['entry_id']}: source ALLBIN bytes differ")
+
+    streams: dict[str, bytes] = {}
+    shell_token_count = 0
+    for _, _, entry in ranges:
+        entry_id = entry["entry_id"]
+        derived = reflow_by_id[entry_id]
+        if derived.get("status") != "ready":
+            raise ValueError(
+                f"{entry_id}: reinsertion blocker {derived.get('status')}"
+            )
+        text = derived.get("ko_candidate")
+        if not isinstance(text, str):
+            raise ValueError(f"{entry_id}: missing reviewed Korean candidate")
+        encoded = encode_entry(entry, text, mapping)
+        leading, trailing = split_control_shell(entry)
+        leading_raw = struct.pack(f"<{len(leading)}H", *leading)
+        trailing_raw = struct.pack(f"<{len(trailing)}H", *trailing)
+        if not encoded.startswith(leading_raw) or not encoded.endswith(
+            trailing_raw
+        ):
+            raise ValueError(f"{entry_id}: protected control shell changed")
+        shell_token_count += len(leading) + len(trailing)
+        streams[entry_id] = encoded
+
+    layout = build_source_ordered_stream(source_unit, entries, streams)
+    region_start = int(layout["region_start"])
+    region_end = int(layout["region_end"])
+    capacity = int(layout["capacity"])
+    packed_stream = bytes(layout["stream"])
+    padding_bytes = capacity - len(packed_stream)
+    if padding_bytes < 0 or padding_bytes % 2:
+        raise ValueError(
+            f"unit {unit_index}: invalid shared-pool padding {padding_bytes}"
+        )
+
+    references = scan_unit_dialogue_references(
+        source_unit,
+        entries,
+        layout,
+    )
+    reference_report = verify_unit_reference_profile(
+        unit_index,
+        source_unit,
+        references,
+        reference_profile,
+    )
+    known_storages = {
+        int(reference["storage_unit_offset"], 16)
+        for entry in entries
+        for reference in entry["source"]["pointer_references"]
+    }
+    catalog_storages = {
+        int(reference["storage_unit_offset"])
+        for reference in references
+    }
+    if not known_storages <= catalog_storages:
+        missing = sorted(known_storages - catalog_storages)
+        raise ValueError(
+            f"unit {unit_index}: known pointer catalog entries disappeared: "
+            + ", ".join(f"0x{offset:04X}" for offset in missing)
+        )
+
+    # The physical arena always retains its original byte length. Remaining
+    # capacity is placed after the final repacked span, never between
+    # dialogue/control spans. No catalogued pointer targets this tail, but
+    # u00/u21 runtime replay confirmed that the final padding is not consumed
+    # as a dialogue/control continuation. Other profiles remain unverified
+    # until they carry their own runtime evidence.
+    runtime_validation = reference_profile.get(
+        "runtime_validation",
+        {"status": "not-run"},
+    )
+    runtime_passed = runtime_validation.get("status") == "passed"
+    output_region = packed_stream + bytes(padding_bytes)
+    if len(output_region) != capacity:
+        raise ValueError(f"unit {unit_index}: shared arena size changed")
+    allbin[
+        unit_file_offset + region_start :
+        unit_file_offset + region_end
+    ] = output_region
+
+    load_addresses = {
+        int(entry["source"]["runtime_pointer"], 16)
+        - int(entry["source"]["unit_offset"], 16)
+        for entry in entries
+    }
+    if len(load_addresses) != 1:
+        raise ValueError(f"unit {unit_index}: inconsistent runtime load address")
+    load_address = load_addresses.pop()
+    for reference in references:
+        storage = unit_file_offset + int(reference["storage_unit_offset"])
+        actual = struct.unpack_from("<I", allbin, storage)[0]
+        if actual != int(reference["raw_value"]):
+            raise ValueError(
+                f"unit {unit_index}: reference source differs at "
+                f"0x{int(reference['storage_unit_offset']):04X}"
+            )
+        struct.pack_into(
+            "<I",
+            allbin,
+            storage,
+            load_address + int(reference["output_target_unit_offset"]),
+        )
+
+    for reference in references:
+        storage = unit_file_offset + int(reference["storage_unit_offset"])
+        expected = load_address + int(reference["output_target_unit_offset"])
+        actual = struct.unpack_from("<I", allbin, storage)[0]
+        if actual != expected:
+            raise ValueError(
+                f"unit {unit_index}: relocated reference differs at "
+                f"0x{int(reference['storage_unit_offset']):04X}"
+            )
+
+    for _, _, entry in ranges:
+        entry_id = entry["entry_id"]
+        placement = int(layout["placements"][entry_id])
+        stream = streams[entry_id]
+        if allbin[
+            unit_file_offset + placement :
+            unit_file_offset + placement + len(stream)
+        ] != stream:
+            raise ValueError(f"{entry_id}: relocated stream verification failed")
+
+    safe_slots = {
+        record.entry_id: record
+        for record in fixed_original_safe_slots(source_unit, entries)
+    }
+    original_slot_overflows = [
+        {
+            "entry_id": entry["entry_id"],
+            "source_unit_offset": entry["source"]["unit_offset"],
+            "original_safe_slot_bytes": safe_slots[
+                entry["entry_id"]
+            ].safe_slot_bytes,
+            "encoded_bytes": len(streams[entry["entry_id"]]),
+            "overflow_bytes": (
+                len(streams[entry["entry_id"]])
+                - safe_slots[entry["entry_id"]].safe_slot_bytes
+            ),
+        }
+        for _, _, entry in ranges
+        if len(streams[entry["entry_id"]])
+        > safe_slots[entry["entry_id"]].safe_slot_bytes
+    ]
+
+    gaps = [
+        gap for gap in layout["gaps"] if gap["after_entry_id"] is not None
+    ]
+    return {
+        "unit_index": unit_index,
+        "unit_file_offset": f"0x{unit_file_offset:X}",
+        "entry_count": len(ranges),
+        "placement_policy": "unit-shared-pool",
+        "translation_input_field": "ko_candidate",
+        "original_text_bytes": sum(
+            int(entry["source"]["byte_size"]) for entry in entries
+        ),
+        "encoded_text_bytes": sum(len(stream) for stream in streams.values()),
+        "physical_region_start": f"0x{region_start:04X}",
+        "physical_region_end_exclusive": f"0x{region_end:04X}",
+        "physical_region_capacity_bytes": capacity,
+        "packed_dialogue_and_other_bytes": len(packed_stream),
+        "tail_padding_bytes": padding_bytes,
+        "tail_padding_token": "0x0000",
+        "tail_padding_position": "after-final-repacked-span",
+        "tail_padding_runtime_status": (
+            "runtime-verified-no-fallthrough-observed"
+            if runtime_passed
+            else "no-catalogued-target-runtime-fallthrough-validation-required"
+        ),
+        "output_physical_region_bytes": len(output_region),
+        "unit_capacity_preserved": len(output_region) == capacity,
+        "original_slot_overflow_count": len(original_slot_overflows),
+        "original_slot_overflows": original_slot_overflows,
+        "protected_control_shell_token_count": shell_token_count,
+        "protected_control_shell_entry_count": len(entries),
+        "protected_control_shells_byte_exact": True,
+        "inter_entry_gap_count": len(gaps),
+        "inter_entry_gap_bytes": sum(int(gap["byte_size"]) for gap in gaps),
+        "inter_entry_gaps_byte_exact": True,
+        "pointerless_page_count": sum(
+            int(gap["page_end_count"]) for gap in layout["gaps"]
+        ),
+        "reference_catalog": {
+            **reference_report,
+            "known_extractor_reference_count": len(known_storages),
+            "additional_event_consumer_reference_count": (
+                len(references) - len(known_storages)
+            ),
+            "all_relocated_and_verified": True,
+        },
+        "runtime_validation": runtime_validation,
+        "references": [
+            {
+                "storage_unit_offset": (
+                    f"0x{int(reference['storage_unit_offset']):04X}"
+                ),
+                "source_target_unit_offset": (
+                    f"0x{int(reference['source_target_unit_offset']):04X}"
+                ),
+                "output_target_unit_offset": (
+                    f"0x{int(reference['output_target_unit_offset']):04X}"
+                ),
+                "target_kind": reference["target_kind"],
+                "target_id": reference["target_id"],
+                "anchor_delta": int(reference["anchor_delta"]),
+            }
+            for reference in references
+        ],
+        "physical_entries": [
+            {
+                "entry_id": entry_id,
+                "source_unit_offset": next(
+                    entry["source"]["unit_offset"]
+                    for entry in entries
+                    if entry["entry_id"] == entry_id
+                ),
+                "output_unit_offset": (
+                    f"0x{int(layout['placements'][entry_id]):04X}"
+                ),
+                "encoded_bytes": len(streams[entry_id]),
+            }
+            for entry_id in layout["physical_entry_ids"]
+        ],
+        "warning": (
+            "Unit-local relink: every frozen event/table reference is "
+            "updated and this profile passed its recorded runtime replay."
+            if runtime_passed
+            else
+            "Unit-local relink: every frozen event/table reference is "
+            "updated. Post-final padding and full control flow still require "
+            "runtime replay."
+        ),
+    }
 
 
 def repack_unit(
@@ -1126,11 +1603,16 @@ def main() -> None:
     parser.add_argument("--all-story", action="store_true")
     parser.add_argument(
         "--placement-policy",
-        choices=("source-order-repack", "fixed-original-diagnostic"),
+        choices=(
+            "source-order-repack",
+            "unit-shared-pool",
+            "fixed-original-diagnostic",
+        ),
         default="source-order-repack",
         help=(
-            "Use fixed-original-diagnostic only for intentional runtime "
-            "overflow localization; it permits destructive entry overlap."
+            "Use unit-shared-pool for exhaustive unit-local relocation, or "
+            "fixed-original-diagnostic only for intentional runtime overflow "
+            "localization; the latter permits destructive entry overlap."
         ),
     )
     parser.add_argument("--output-dir", type=Path, required=True)
@@ -1140,10 +1622,13 @@ def main() -> None:
         units = parse_units(args.unit, args.all_story)
     except ValueError as error:
         parser.error(str(error))
-    if 21 in units and args.placement_policy != "fixed-original-diagnostic":
+    if 21 in units and args.placement_policy not in {
+        "fixed-original-diagnostic",
+        "unit-shared-pool",
+    }:
         parser.error(
-            "unit 21 is currently allowed only with "
-            "--placement-policy fixed-original-diagnostic"
+            "unit 21 is currently allowed only with --placement-policy "
+            "fixed-original-diagnostic or unit-shared-pool"
         )
 
     source_start = args.start_bin.read_bytes()
@@ -1196,11 +1681,13 @@ def main() -> None:
         passthrough_original_glyph_indices=gap_glyph_indices,
     )
     patched_allbin = bytearray(source_allbin)
-    unit_writer = (
-        write_unit_at_original_offsets_diagnostic
-        if args.placement_policy == "fixed-original-diagnostic"
-        else repack_unit
-    )
+    unit_writer = {
+        "fixed-original-diagnostic": (
+            write_unit_at_original_offsets_diagnostic
+        ),
+        "source-order-repack": repack_unit,
+        "unit-shared-pool": relink_unit_shared_pool,
+    }[args.placement_policy]
     unit_reports = [
         unit_writer(
             patched_allbin,
@@ -1246,7 +1733,22 @@ def main() -> None:
                 unit_file_offset + region_end,
             )
         )
-        if args.placement_policy == "source-order-repack":
+        if args.placement_policy in {
+            "source-order-repack",
+            "unit-shared-pool",
+        }:
+            if args.placement_policy == "unit-shared-pool":
+                allbin_allowed_ranges.extend(
+                    (
+                        unit_file_offset
+                        + int(reference["storage_unit_offset"], 16),
+                        unit_file_offset
+                        + int(reference["storage_unit_offset"], 16)
+                        + 4,
+                    )
+                    for reference in report["references"]
+                )
+                continue
             allbin_allowed_ranges.extend(
                 (
                     int(reference["storage_file_offset"], 16),
@@ -1304,6 +1806,12 @@ def main() -> None:
             "Expect the first slot conflict to break subsequent dialogue."
             if args.placement_policy == "fixed-original-diagnostic"
             else (
+                "Unit-local pool: every frozen event/table reference is "
+                "relinked and each physical arena keeps its original byte "
+                "capacity. Selected profiles carry recorded runtime replay "
+                "evidence."
+                if args.placement_policy == "unit-shared-pool"
+                else
                 "Only selected units are encoded with the replaced global "
                 "font. Do not test unselected dialogue in this partial build."
             )

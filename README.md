@@ -145,10 +145,11 @@ tmp/                    비커밋 임시 캡처
 | [캐릭터 이름과 고정 주인공명](docs/character-name-layout.md) | `시바/세이치로` 2+4 슬롯, 이름 화면·재표시·화자명 34개 안전 삽입 |
 | [리맵 표 전략](docs/remap-table-strategy.md) | 후속 분석에서 폐기된 역사적 설계 |
 | [리맵 경로 추적 PoC](docs/remap-path-poc.md) | 텍스트 상태 필드 판정을 남긴 역사적 PoC |
-| [챕터 1 비배포 디스크 빌드](docs/chapter01-disc-build.md) | 정적 폰트·unit 0 대사·raw sector 삽입과 EDC/ECC 검증 |
+| [챕터 1 비배포 디스크 빌드](docs/chapter01-disc-build.md) | 정적 폰트·u00/u21 대사·이름·raw sector 삽입과 EDC/ECC 검증 |
 | [대사 런타임 검증 기준선](docs/dialogue-runtime-findings.md) | 고정 주소 판정, 초상화·이름 제어 손상, 반각 검토, u21·선택지 후속 과제 |
 | [대사별 검증 안전 슬롯](docs/dialogue-safe-slots.md) | 5,783개 고정 원위치 바이트 경계, 생성 JSON·CSV와 엄격 보호 정책 |
-| [17×3 대사 편집기](docs/dialogue-layout-editor.md) | 한국어 후보 수동 편집, 고정 셀 미리보기와 보호 JSON 저장 |
+| [unit 공용 대사 arena](docs/unit-dialogue-pool-experiment.md) | u00/u21 전수 포인터 재연결, 공용 용량과 실행 검증 결과 |
+| [17×3 대사 편집기](docs/dialogue-layout-editor.md) | 화면·개별 슬롯·unit 공용 용량을 분리한 한국어 후보 편집 |
 | [Git 작업 흐름](docs/git-workflow.md) | `main`과 목적별 단기 브랜치, 검증·병합·태그 정책 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
 | [GPU 업로드 원본 추적](docs/gpu-upload-source-tracing.md) | 화면→VRAM→DMA2/RAM→저장 자산을 연결하는 미실행 조사 절차 |
@@ -211,26 +212,25 @@ python3 -m venv .venv
   --start-bin work/extracted/disc1/iso/START.BIN \
   --allbin work/extracted/disc1/iso/ALLBIN.BIN \
   --unit 0,21 \
-  --placement-policy fixed-original-diagnostic \
-  --output-dir work/build/dialogue-u00-u21-safe-fixed-original
+  --placement-policy unit-shared-pool \
+  --output-dir work/build/dialogue-u00-u21-unit-shared-pool
 .venv/bin/python scripts/build_character_name_patch.py \
-  --file-build-dir work/build/dialogue-u00-u21-safe-fixed-original \
-  --output-dir work/build/dialogue-u00-u21-safe-names
+  --file-build-dir work/build/dialogue-u00-u21-unit-shared-pool \
+  --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names
 .venv/bin/python scripts/build_dialogue_chapter_disc.py \
-  --file-build-dir work/build/dialogue-u00-u21-safe-names \
-  --output-dir work/build/dialogue-u00-u21-safe-names-disc
+  --file-build-dir work/build/dialogue-u00-u21-unit-shared-pool-names \
+  --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names-disc
 ```
 
 실행 범위와 출력 CUE/BIN은
 [`docs/chapter01-disc-build.md`](docs/chapter01-disc-build.md)를 따릅니다.
-빌더는 번역 후보의 안정 ID 순서를 검증하고, 챕터 1 첫 엔트리
-`disc1/allbin/u00/event_page/ref0000`을 원본 고정 시작점 `ALLBIN+0x54`에
-보존합니다. 현재 진단 모드는 포인터를 갱신하거나 대사를 재배치하지 않고
-원본 시작 주소에 번역 스트림을 씁니다. 현재 사용자가 교정한 unit `0`과
-`21`의 156개 대사는 모두 각 원본 안전 슬롯 안에 들어가며, 슬롯 겹침과
-손상된 다음 엔트리는 0개입니다. 정책 이름은 역사적으로
-`fixed-original-diagnostic`을 유지하지만 현재 이 두 unit의 산출물은
-진행 검증에 사용할 수 있습니다. primary 글꼴의 `0x000..0x045`,
+빌더는 번역 후보의 안정 ID와 u00/u21의 고정 참조 카탈로그를 검증하고,
+모든 대사·무포인터 페이지·이벤트 포인터를 unit 안에서 함께 재배치합니다.
+개별 원본 슬롯은 초과할 수 있지만 unit의 원본 대사 스트림 총량은 넘을 수
+없고, 줄당 17글리프·페이지당 3줄 제한은 별도로 유지합니다. 이 경로는 u00
+시작부터 u21의 분기와 종료까지 사용자 실행 검증을 통과했습니다. 다른
+unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 공용 재배치
+대상으로 자동 승격하지 않습니다. primary 글꼴의 `0x000..0x045`,
 `0x0E4..0x0E5`는 영문·숫자·특수문자 보호 슬롯으로 예약되어 한글 배정에
 사용되지 않습니다.
 

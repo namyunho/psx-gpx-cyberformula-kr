@@ -99,6 +99,57 @@ def write_json(path: Path, value: Any) -> None:
     )
 
 
+def recorded_runtime_validation(
+    file_manifest: dict[str, Any],
+    *,
+    selected_units: list[int],
+    output_track_sha256: str,
+) -> dict[str, Any] | None:
+    """Return runtime evidence only when it belongs to this exact Track 1."""
+    raw_units = file_manifest.get("units")
+    if not isinstance(raw_units, list):
+        return None
+    records_by_unit: dict[int, dict[str, Any]] = {}
+    for raw_unit in raw_units:
+        if not isinstance(raw_unit, dict):
+            return None
+        unit_index = raw_unit.get("unit_index")
+        record = raw_unit.get("runtime_validation")
+        if (
+            not isinstance(unit_index, int)
+            or unit_index in records_by_unit
+            or not isinstance(record, dict)
+        ):
+            return None
+        records_by_unit[unit_index] = record
+    if set(records_by_unit) != set(selected_units):
+        return None
+
+    unit_evidence: list[dict[str, Any]] = []
+    for unit_index in selected_units:
+        record = records_by_unit[unit_index]
+        if (
+            record.get("status") != "passed"
+            or record.get("track1_sha256") != output_track_sha256
+            or not isinstance(record.get("date"), str)
+            or not isinstance(record.get("scope"), str)
+        ):
+            return None
+        unit_evidence.append(
+            {
+                "unit_index": unit_index,
+                "date": record["date"],
+                "scope": record["scope"],
+            }
+        )
+    return {
+        "status": "passed-user-reported",
+        "track1_sha256": output_track_sha256,
+        "selected_units": selected_units,
+        "units": unit_evidence,
+    }
+
+
 def plan_file_mutations(
     *,
     owner: str,
@@ -463,16 +514,80 @@ def build_disc(
         output_track=output_track,
         output_cue=output_cue,
     )
+    output_track_hashes = file_hashes(output_track)
+    recorded_runtime = recorded_runtime_validation(
+        file_manifest,
+        selected_units=selected_units,
+        output_track_sha256=output_track_hashes["sha256"],
+    )
+    runtime_verified = not diagnostic_overflow and recorded_runtime is not None
+    runtime_validation = (
+        recorded_runtime
+        if runtime_verified
+        else {
+            "status": "not-run-user-gui-required",
+            "required": [
+                "boot the generated CUE",
+                "enter chapter 1",
+                "confirm Korean glyph palette/outline/shadow",
+                (
+                    "observe fixed-address overlap boundaries; this diagnostic "
+                    "is not expected to advance through every entry"
+                    if diagnostic_overflow
+                    else "confirm selected dialogue entries render and advance"
+                ),
+                (
+                    (
+                        "continue to general-race unit 21 and inspect its "
+                        "first overlap boundary"
+                        if diagnostic_overflow
+                        else (
+                            "continue through general-race unit 21 and "
+                            "confirm its dialogue control flow"
+                        )
+                    )
+                    if 21 in selected_units
+                    else "do not continue into an unselected dialogue unit"
+                ),
+                *(
+                    [
+                        "confirm the default name is 시바 / 세이치로",
+                        (
+                            "confirm the fixed name is preserved when it is "
+                            "displayed again after registration"
+                        ),
+                        "confirm Korean character and system speaker labels",
+                    ]
+                    if "SLPS_019.58" in replacements
+                    else []
+                ),
+            ],
+        }
+    )
     manifest = {
         "schema_version": 1,
         "status": (
             "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
             if diagnostic_overflow
             else (
-                "nonrelease-chapter01-runtime-validation-required-"
-                "with-character-names"
-                if "SLPS_019.58" in replacements
-                else "nonrelease-chapter01-runtime-validation-required"
+                (
+                    "nonrelease-chapter01-runtime-verified-"
+                    "with-character-names"
+                    if runtime_verified and "SLPS_019.58" in replacements
+                    else (
+                        "nonrelease-chapter01-runtime-verified"
+                        if runtime_verified
+                        else (
+                            "nonrelease-chapter01-runtime-validation-required-"
+                            "with-character-names"
+                            if "SLPS_019.58" in replacements
+                            else (
+                                "nonrelease-chapter01-runtime-validation-"
+                                "required"
+                            )
+                        )
+                    )
+                )
             )
         ),
         "chapter": {
@@ -535,7 +650,7 @@ def build_disc(
         "outputs": {
             "track1": {
                 "path": str(output_track.resolve()),
-                **file_hashes(output_track),
+                **output_track_hashes,
             },
             "cue": {
                 "path": str(output_cue.resolve()),
@@ -549,45 +664,7 @@ def build_disc(
                 for name, replacement in replacements.items()
             },
         },
-        "runtime_validation": {
-            "status": "not-run-user-gui-required",
-            "required": [
-                "boot the generated CUE",
-                "enter chapter 1",
-                "confirm Korean glyph palette/outline/shadow",
-                (
-                    "observe fixed-address overlap boundaries; this diagnostic "
-                    "is not expected to advance through every entry"
-                    if diagnostic_overflow
-                    else "confirm selected dialogue entries render and advance"
-                ),
-                (
-                    (
-                        "continue to general-race unit 21 and inspect its "
-                        "first overlap boundary"
-                        if diagnostic_overflow
-                        else (
-                            "continue through general-race unit 21 and "
-                            "confirm its dialogue control flow"
-                        )
-                    )
-                    if 21 in selected_units
-                    else "do not continue into an unselected dialogue unit"
-                ),
-                *(
-                    [
-                        "confirm the default name is 시바 / 세이치로",
-                        (
-                            "confirm the fixed name is preserved when it is "
-                            "displayed again after registration"
-                        ),
-                        "confirm Korean character and system speaker labels",
-                    ]
-                    if "SLPS_019.58" in replacements
-                    else []
-                ),
-            ],
-        },
+        "runtime_validation": runtime_validation,
     }
     write_json(output_dir / "manifest.json", manifest)
     return manifest

@@ -8,6 +8,7 @@ from scripts.build_dialogue_chapter_disc import (
     apply_sector_mutations,
     compact_integer_ranges,
     plan_file_mutations,
+    recorded_runtime_validation,
     write_local_cue,
 )
 from scripts.psx_sector import (
@@ -51,6 +52,48 @@ class DialogueChapterDiscTests(unittest.TestCase):
                 {"start": 4, "end_inclusive": 6, "count": 3},
                 {"start": 9, "end_inclusive": 9, "count": 1},
             ],
+        )
+
+    def test_runtime_evidence_requires_exact_units_and_track_hash(self) -> None:
+        manifest = {
+            "units": [
+                {
+                    "unit_index": unit_index,
+                    "runtime_validation": {
+                        "status": "passed",
+                        "date": "2026-07-27",
+                        "scope": "chapter-replay",
+                        "track1_sha256": "verified-track",
+                    },
+                }
+                for unit_index in (0, 21)
+            ]
+        }
+        report = recorded_runtime_validation(
+            manifest,
+            selected_units=[0, 21],
+            output_track_sha256="verified-track",
+        )
+        self.assertIsNotNone(report)
+        assert report is not None
+        self.assertEqual(report["status"], "passed-user-reported")
+        self.assertEqual(
+            [unit["unit_index"] for unit in report["units"]],
+            [0, 21],
+        )
+        self.assertIsNone(
+            recorded_runtime_validation(
+                manifest,
+                selected_units=[0, 21],
+                output_track_sha256="different-track",
+            )
+        )
+        self.assertIsNone(
+            recorded_runtime_validation(
+                manifest,
+                selected_units=[0],
+                output_track_sha256="verified-track",
+            )
         )
 
     def test_writes_cue_with_original_audio_references(self) -> None:
