@@ -157,6 +157,46 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         self.assertEqual(summary["line_width_overflow"], 1)
         self.assertEqual(summary["row_count_overflow"], 1)
 
+    def test_filters_multiline_dialogue_with_nonempty_rows_under_six(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {"id": "single-short", "ko": "가" * 5},
+                {"id": "short-row", "ko": "나" * 5 + "\n" + "다" * 8},
+                {"id": "six-row", "ko": "라" * 6 + "\n" + "마" * 8},
+                {"id": "empty-row", "ko": "바" * 8 + "\n"},
+                {
+                    "id": "expanded-token",
+                    "ko": "{name:surname}\n" + "사" * 8,
+                },
+                {
+                    "id": "short-and-overflow",
+                    "ko": "아" * 18 + "\n짧음",
+                },
+            ]
+        }
+        document = DialogueDocument(Path("input.json"), source)
+
+        self.assertEqual(
+            document.short_line_candidate_indices(),
+            (1, 4, 5),
+        )
+        self.assertEqual(
+            filter_entry_indices(document, short_line_only=True),
+            [1, 4, 5],
+        )
+        self.assertEqual(
+            filter_entry_indices(
+                document,
+                overflow_only=True,
+                short_line_only=True,
+            ),
+            [5],
+        )
+        summary = document.validation_summary()
+        self.assertEqual(summary["short_line_candidates"], 3)
+
     def test_rejects_duplicate_stable_ids(self) -> None:
         source = {
             "entries": [

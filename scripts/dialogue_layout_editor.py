@@ -25,6 +25,7 @@ from typing import Any, Iterable
 COLUMNS = 17
 ROWS = 3
 CAPACITY = COLUMNS * ROWS
+SHORT_LINE_GLYPH_LIMIT = 6
 DEFAULT_INPUT = Path(
     "work/translations/disc1-dialogue-ko-candidate.json"
 )
@@ -78,6 +79,16 @@ class LayoutMeasurement:
         if self.row_overflow:
             reasons.append("rows")
         return tuple(reasons)
+
+    @property
+    def short_line_rows(self) -> tuple[int, ...]:
+        if len(self.lines) < 2:
+            return ()
+        return tuple(
+            index + 1
+            for index, width in enumerate(self.line_widths)
+            if 0 < width < SHORT_LINE_GLYPH_LIMIT
+        )
 
     @property
     def exceeds_limits(self) -> bool:
@@ -440,6 +451,13 @@ class DialogueDocument:
             if measure_layout(value).exceeds_limits
         )
 
+    def short_line_candidate_indices(self) -> tuple[int, ...]:
+        return tuple(
+            index
+            for index, value in enumerate(self._values)
+            if measure_layout(value).short_line_rows
+        )
+
     def output_document(self) -> dict[str, Any]:
         output = copy.deepcopy(self.document)
         output_entries = output["entries"]
@@ -482,6 +500,7 @@ class DialogueDocument:
     def validation_summary(self) -> dict[str, Any]:
         fits = 0
         overflow = 0
+        short_line_candidates = 0
         glyph_capacity_overflow = 0
         line_width_overflow = 0
         row_count_overflow = 0
@@ -496,6 +515,8 @@ class DialogueDocument:
                 line_width_overflow += 1
             if measurement.row_overflow:
                 row_count_overflow += 1
+            if measurement.short_line_rows:
+                short_line_candidates += 1
             if measurement.fits:
                 fits += 1
             else:
@@ -509,6 +530,7 @@ class DialogueDocument:
             "glyph_capacity_overflow": glyph_capacity_overflow,
             "line_width_overflow": line_width_overflow,
             "row_count_overflow": row_count_overflow,
+            "short_line_candidates": short_line_candidates,
             "empty": empty,
             "dirty": len(self.dirty_indices),
         }
@@ -519,6 +541,7 @@ def filter_entry_indices(
     *,
     query: str = "",
     overflow_only: bool = False,
+    short_line_only: bool = False,
 ) -> list[int]:
     """Return stable document indices matching search and layout filters."""
     normalized_query = query.strip().casefold()
@@ -527,10 +550,16 @@ def filter_entry_indices(
         if overflow_only
         else None
     )
+    short_line_indices = (
+        set(document.short_line_candidate_indices())
+        if short_line_only
+        else None
+    )
     return [
         index
         for index in range(len(document))
         if (overflow_indices is None or index in overflow_indices)
+        and (short_line_indices is None or index in short_line_indices)
         and (
             not normalized_query
             or normalized_query in document.searchable_text(index)
@@ -565,6 +594,9 @@ def run_gui(
             self.current_index: int | None = None
             self.filtered_indices = list(range(len(document)))
             self.overflow_indices = set(document.layout_overflow_indices())
+            self.short_line_indices = set(
+                document.short_line_candidate_indices()
+            )
             self._loading_editor = False
 
             root.title("PSX 대사 17×3 편집기")
@@ -574,6 +606,7 @@ def run_gui(
 
             self.search_var = tk.StringVar()
             self.overflow_only_var = tk.BooleanVar(value=False)
+            self.short_line_only_var = tk.BooleanVar(value=False)
             self.filter_summary_var = tk.StringVar()
             self.id_var = tk.StringVar()
             self.meta_var = tk.StringVar()
@@ -649,15 +682,21 @@ def run_gui(
                 variable=self.overflow_only_var,
                 command=self.refresh_filter,
             ).pack(side=tk.LEFT)
+            ttk.Checkbutton(
+                filter_bar,
+                text="6자 미만 행만",
+                variable=self.short_line_only_var,
+                command=self.refresh_filter,
+            ).pack(side=tk.LEFT, padx=(6, 0))
             ttk.Button(
                 filter_bar,
                 text="목록 갱신",
                 command=self.refresh_filter,
-            ).pack(side=tk.LEFT, padx=(6, 0))
-            ttk.Label(
-                filter_bar,
-                textvariable=self.filter_summary_var,
             ).pack(side=tk.RIGHT)
+            ttk.Label(
+                left,
+                textvariable=self.filter_summary_var,
+            ).pack(anchor=tk.W, pady=(0, 6))
 
             nav = ttk.Frame(left)
             nav.pack(fill=tk.X, pady=(0, 6))
@@ -825,10 +864,14 @@ def run_gui(
             self.overflow_indices = set(
                 self.document.layout_overflow_indices()
             )
+            self.short_line_indices = set(
+                self.document.short_line_candidate_indices()
+            )
             self.filtered_indices = filter_entry_indices(
                 self.document,
                 query=self.search_var.get(),
                 overflow_only=self.overflow_only_var.get(),
+                short_line_only=self.short_line_only_var.get(),
             )
             self.update_filter_summary()
 
@@ -840,9 +883,12 @@ def run_gui(
                 overflow_marker = (
                     "!" if index in self.overflow_indices else " "
                 )
+                short_line_marker = (
+                    "~" if index in self.short_line_indices else " "
+                )
                 self.entry_list.insert(
                     tk.END,
-                    f"{marker}{overflow_marker} "
+                    f"{marker}{overflow_marker}{short_line_marker} "
                     f"{_short_entry_label(self.document, index)}",
                 )
             if current in self.filtered_indices:
@@ -859,6 +905,7 @@ def run_gui(
             self.filter_summary_var.set(
                 f"목록 {len(self.filtered_indices)}건"
                 f" / 한도 초과 {len(self.overflow_indices)}건"
+                f" / 짧은 행 {len(self.short_line_indices)}건"
             )
 
         def _select_list_position(self, position: int) -> None:
@@ -944,10 +991,10 @@ def run_gui(
             self.commit_current()
             self.ko_text.edit_modified(False)
             self.update_preview()
-            self.update_current_overflow_state()
+            self.update_current_filter_state()
             self.update_title()
 
-        def update_current_overflow_state(self) -> None:
+        def update_current_filter_state(self) -> None:
             if self.current_index is None:
                 return
             measurement = measure_layout(
@@ -957,6 +1004,10 @@ def run_gui(
                 self.overflow_indices.add(self.current_index)
             else:
                 self.overflow_indices.discard(self.current_index)
+            if measurement.short_line_rows:
+                self.short_line_indices.add(self.current_index)
+            else:
+                self.short_line_indices.discard(self.current_index)
             self.update_metadata(self.current_index)
             if self.current_index in self.filtered_indices:
                 position = self.filtered_indices.index(self.current_index)
@@ -970,10 +1021,15 @@ def run_gui(
                     if self.current_index in self.overflow_indices
                     else " "
                 )
+                short_line_marker = (
+                    "~"
+                    if self.current_index in self.short_line_indices
+                    else " "
+                )
                 self.entry_list.delete(position)
                 self.entry_list.insert(
                     position,
-                    f"{marker}{overflow_marker} "
+                    f"{marker}{overflow_marker}{short_line_marker} "
                     f"{_short_entry_label(self.document, self.current_index)}",
                 )
                 self._select_list_position(position)
@@ -1003,6 +1059,12 @@ def run_gui(
                 reason_parts.append(f"{rows}행 폭")
             if measurement.row_overflow:
                 reason_parts.append("행 수")
+            short_line_note = ""
+            if measurement.short_line_rows:
+                rows = ",".join(
+                    str(row) for row in measurement.short_line_rows
+                )
+                short_line_note = f"  |  6자 미만: {rows}행"
             state = (
                 "적합"
                 if not reason_parts
@@ -1012,6 +1074,7 @@ def run_gui(
                 " · ".join(width_parts)
                 + f"  |  표시 {measurement.visible_glyph_count}/{CAPACITY}"
                 + f"  |  {state}"
+                + short_line_note
             )
 
             canvas = self.preview_canvas
@@ -1090,7 +1153,7 @@ def run_gui(
                 self._loading_editor = False
             self.commit_current()
             self.update_preview()
-            self.update_current_overflow_state()
+            self.update_current_filter_state()
             self.update_title()
             self.message_var.set("자동 배치를 적용했습니다. 저장 전 검토하세요.")
 
@@ -1114,7 +1177,7 @@ def run_gui(
                 self._loading_editor = False
             self.commit_current()
             self.update_preview()
-            self.update_current_overflow_state()
+            self.update_current_filter_state()
             self.update_title()
 
         def previous(self) -> None:
