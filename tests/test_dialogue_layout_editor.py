@@ -6,12 +6,16 @@ import tempfile
 import unittest
 
 from scripts.dialogue_layout_editor import (
+    DialogueControlContext,
     DialogueDocument,
     DialogueEditorError,
+    ProtectedControlToken,
+    SafeSlotRecord,
     conservative_word_wrap,
     expand_display_tokens,
     filter_entry_indices,
     load_control_contexts,
+    load_safe_slot_records,
     measure_layout,
 )
 
@@ -197,6 +201,120 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
         summary = document.validation_summary()
         self.assertEqual(summary["short_line_candidates"], 3)
+
+    def test_filters_and_reports_verified_storage_slot_overflow(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {"id": "fits", "ko": "가" * 3},
+                {"id": "storage-only", "ko": "나" * 4},
+                {"id": "layout-and-storage", "ko": "다" * 18},
+            ]
+        }
+        terminal = ProtectedControlToken(
+            token_index=4,
+            raw="8000",
+            kind="page_end",
+            markup="{page_end}",
+            policy="preserve",
+        )
+        contexts = {
+            entry["id"]: DialogueControlContext(
+                entry_id=entry["id"],
+                original_stream_bytes=8,
+                leading=(),
+                internal_movable=(),
+                trailing=(terminal,),
+            )
+            for entry in source["entries"]
+        }
+
+        def slot(entry_id: str, start: int) -> SafeSlotRecord:
+            return SafeSlotRecord(
+                entry_id=entry_id,
+                unit_index=0,
+                subsystem="event_page",
+                file_offset=f"0x{start:06X}",
+                unit_offset=f"0x{start:04X}",
+                safe_end_file_offset=f"0x{start + 8:06X}",
+                safe_end_unit_offset=f"0x{start + 8:04X}",
+                original_stream_bytes=8,
+                safe_slot_bytes=8,
+                safe_slot_words=4,
+                additional_zero_gap_bytes=0,
+                boundary_kind="adjacent-next-entry",
+                next_physical_entry_id="next",
+                protected_target="next",
+            )
+
+        slots = {
+            entry["id"]: slot(entry["id"], 0x10 + index * 8)
+            for index, entry in enumerate(source["entries"])
+        }
+        document = DialogueDocument(
+            Path("input.json"),
+            source,
+            control_contexts=contexts,
+            safe_slots=slots,
+        )
+
+        self.assertEqual(
+            document.storage_slot_overflow_indices(),
+            (1, 2),
+        )
+        self.assertEqual(
+            filter_entry_indices(
+                document,
+                storage_overflow_only=True,
+            ),
+            [1, 2],
+        )
+        self.assertEqual(
+            filter_entry_indices(
+                document,
+                overflow_only=True,
+                storage_overflow_only=True,
+            ),
+            [2],
+        )
+        report = document.control_report(1)
+        self.assertIn(
+            "검증 안전 슬롯 8B · 현재 예상 10B · 2B 초과",
+            report,
+        )
+        self.assertIn("ALLBIN 0x000018–0x000020", report)
+        summary = document.validation_summary()
+        self.assertEqual(summary["safe_slot_entries"], 3)
+        self.assertEqual(summary["storage_slot_measurable"], 3)
+        self.assertEqual(summary["storage_slot_exact"], 1)
+        self.assertEqual(summary["storage_slot_under_capacity"], 0)
+        self.assertEqual(summary["storage_slot_overflow"], 2)
+        self.assertEqual(summary["maximum_storage_overflow_bytes"], 30)
+
+    def test_rejects_safe_slot_catalog_from_a_different_workset(
+        self,
+    ) -> None:
+        catalog = {
+            "schema_version": 1,
+            "catalog_kind": "disc1-fixed-original-dialogue-safe-slots",
+            "status": "verified-physical-boundaries-runtime-qa-required",
+            "source": {"workset_sha256": "not-the-current-hash"},
+            "entries": [],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            workset_path = Path(directory) / "workset.json"
+            catalog_path = Path(directory) / "slots.json"
+            workset_path.write_text("{}", encoding="utf-8")
+            catalog_path.write_text(json.dumps(catalog), encoding="utf-8")
+            with self.assertRaisesRegex(
+                DialogueEditorError,
+                "different protected workset",
+            ):
+                load_safe_slot_records(
+                    catalog_path,
+                    workset_path=workset_path,
+                )
 
     def test_loads_protected_control_shell_and_renders_inline_stream(
         self,

@@ -13,6 +13,7 @@ import argparse
 from collections import Counter
 import copy
 from dataclasses import dataclass
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -30,6 +31,9 @@ DEFAULT_INPUT = Path(
     "work/translations/disc1-dialogue-ko-candidate.json"
 )
 DEFAULT_WORKSET = Path("work/translations/disc1-dialogue.json")
+DEFAULT_SAFE_SLOTS = Path(
+    "work/analysis/disc1-dialogue-safe-slots.json"
+)
 EDITABLE_FIELD_PATTERN = re.compile(r"^entries\[\]\.([A-Za-z_][A-Za-z0-9_]*)$")
 WORD_PATTERN = re.compile(r"\S+")
 CONTROL_CONTENT_KINDS = frozenset(
@@ -55,10 +59,65 @@ NAME_EXPANSIONS = {
     "{name:given}": "세이치로",
 }
 PUNCTUATION_ENDINGS = frozenset("…‥.!?。！？,，:：;；)]}）］】」』’”'")
+SAFE_SLOT_BOUNDARY_LABELS = {
+    "adjacent-next-entry": "바로 다음 추출 대사 시작",
+    "protected-zero-fallthrough-gap": "런타임 통과 0x0000 간격 보호",
+    "protected-nonzero-gap": "비영(非零) 무포인터·이벤트 데이터 보호",
+    "last-extracted-entry-original-end": "유닛 끝 미분류 영역 보호",
+}
 
 
 class DialogueEditorError(ValueError):
     """Raised when an input document or requested layout is invalid."""
+
+
+@dataclass(frozen=True)
+class SafeSlotRecord:
+    entry_id: str
+    unit_index: int
+    subsystem: str
+    file_offset: str
+    unit_offset: str
+    safe_end_file_offset: str
+    safe_end_unit_offset: str
+    original_stream_bytes: int
+    safe_slot_bytes: int
+    safe_slot_words: int
+    additional_zero_gap_bytes: int
+    boundary_kind: str
+    next_physical_entry_id: str | None
+    protected_target: str
+
+    @property
+    def boundary_label(self) -> str:
+        return SAFE_SLOT_BOUNDARY_LABELS.get(
+            self.boundary_kind,
+            self.boundary_kind,
+        )
+
+
+@dataclass(frozen=True)
+class StorageSlotMeasurement:
+    safe_slot: SafeSlotRecord
+    estimated_stream_bytes: int
+
+    @property
+    def remaining_bytes(self) -> int:
+        return max(
+            0,
+            self.safe_slot.safe_slot_bytes - self.estimated_stream_bytes,
+        )
+
+    @property
+    def overflow_bytes(self) -> int:
+        return max(
+            0,
+            self.estimated_stream_bytes - self.safe_slot.safe_slot_bytes,
+        )
+
+    @property
+    def fits(self) -> bool:
+        return self.overflow_bytes == 0
 
 
 @dataclass(frozen=True)
@@ -180,7 +239,23 @@ class DialogueControlContext:
             f" · 후미 제어(0글리프) {trailing}"
         )
 
-    def read_only_report(self, dialogue_text: str) -> str:
+    def estimated_stream_bytes(self, dialogue_text: str) -> int:
+        align_count = dialogue_text.count("\n")
+        visible_glyphs = len(
+            expand_display_tokens(dialogue_text).replace("\n", "")
+        )
+        return 2 * (
+            len(self.leading)
+            + visible_glyphs
+            + align_count
+            + len(self.trailing)
+        )
+
+    def read_only_report(
+        self,
+        dialogue_text: str,
+        safe_slot: SafeSlotRecord | None = None,
+    ) -> str:
         leading = (
             " · ".join(token.description for token in self.leading)
             or "없음"
@@ -190,19 +265,37 @@ class DialogueControlContext:
             or "없음"
         )
         align_count = dialogue_text.count("\n")
-        visible_glyphs = len(
-            expand_display_tokens(dialogue_text).replace("\n", "")
-        )
-        estimated_bytes = 2 * (
-            len(self.leading)
-            + visible_glyphs
-            + align_count
-            + len(self.trailing)
-        )
+        estimated_bytes = self.estimated_stream_bytes(dialogue_text)
+        if safe_slot is None:
+            byte_report = (
+                f"바이트: 원본 스트림 {self.original_stream_bytes}B"
+                f" · 현재 예상 {estimated_bytes}B"
+                " · 검증 안전 슬롯 자료 없음"
+            )
+            boundary_report = "슬롯 경계: 자료 없음"
+        else:
+            delta = safe_slot.safe_slot_bytes - estimated_bytes
+            if delta > 0:
+                state = f"{delta}B 미사용"
+            elif delta == 0:
+                state = "정확히 일치"
+            else:
+                state = f"{-delta}B 초과"
+            byte_report = (
+                f"바이트: 원본 스트림 {self.original_stream_bytes}B"
+                f" · 검증 안전 슬롯 {safe_slot.safe_slot_bytes}B"
+                f" · 현재 예상 {estimated_bytes}B · {state}"
+            )
+            boundary_report = (
+                f"슬롯 경계: ALLBIN {safe_slot.file_offset}"
+                f"–{safe_slot.safe_end_file_offset}"
+                f" / unit {safe_slot.unit_offset}"
+                f"–{safe_slot.safe_end_unit_offset}"
+                f" · {safe_slot.boundary_label}"
+            )
         return (
-            f"바이트: 원본 스트림 {self.original_stream_bytes}B"
-            f" · 현재 예상 {estimated_bytes}B"
-            " (안전 슬롯 한도는 별도)\n"
+            f"{byte_report}\n"
+            f"{boundary_report}\n"
             f"선두 보호: {leading}\n"
             f"조판: 줄바꿈 {align_count}개"
             " → 0xFFFB {align} [movable-layout-in-story-only]\n"
@@ -607,6 +700,154 @@ def load_control_contexts(
     return contexts
 
 
+def load_safe_slot_records(
+    path: Path,
+    *,
+    required_ids: Iterable[str] | None = None,
+    workset_path: Path | None = None,
+) -> dict[str, SafeSlotRecord]:
+    """Load and validate fixed-original physical write budgets."""
+    try:
+        catalog = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise DialogueEditorError(f"{path}: {error}") from error
+    if not isinstance(catalog, dict):
+        raise DialogueEditorError(f"{path}: safe-slot catalog must be an object")
+    if catalog.get("schema_version") != 1 or catalog.get("catalog_kind") != (
+        "disc1-fixed-original-dialogue-safe-slots"
+    ):
+        raise DialogueEditorError(f"{path}: unsupported safe-slot catalog")
+    if catalog.get("status") != (
+        "verified-physical-boundaries-runtime-qa-required"
+    ):
+        raise DialogueEditorError(f"{path}: safe-slot catalog is not verified")
+
+    source = catalog.get("source")
+    if not isinstance(source, dict):
+        raise DialogueEditorError(f"{path}: safe-slot source is missing")
+    if workset_path is not None:
+        try:
+            actual_workset_hash = hashlib.sha256(
+                workset_path.read_bytes()
+            ).hexdigest()
+        except OSError as error:
+            raise DialogueEditorError(f"{workset_path}: {error}") from error
+        if source.get("workset_sha256") != actual_workset_hash:
+            raise DialogueEditorError(
+                f"{path}: safe-slot catalog was generated from a different "
+                "protected workset"
+            )
+
+    raw_entries = catalog.get("entries")
+    if not isinstance(raw_entries, list):
+        raise DialogueEditorError(f"{path}: safe-slot entries are missing")
+    records: dict[str, SafeSlotRecord] = {}
+    for index, raw in enumerate(raw_entries):
+        if not isinstance(raw, dict):
+            raise DialogueEditorError(
+                f"{path}: entries[{index}] must be an object"
+            )
+        try:
+            entry_id = raw["id"]
+            unit_index = raw["unit_index"]
+            subsystem = raw["subsystem"]
+            file_offset = raw["file_offset"]
+            unit_offset = raw["unit_offset"]
+            safe_end_file_offset = raw["safe_end_file_offset"]
+            safe_end_unit_offset = raw["safe_end_unit_offset"]
+            original_stream_bytes = raw["original_stream_bytes"]
+            safe_slot_bytes = raw["safe_slot_bytes"]
+            safe_slot_words = raw["safe_slot_words"]
+            additional_zero_gap_bytes = raw["additional_zero_gap_bytes"]
+            boundary_kind = raw["boundary_kind"]
+            next_physical_entry_id = raw["next_physical_entry_id"]
+            protected_target = raw["protected_target"]
+        except KeyError as error:
+            raise DialogueEditorError(
+                f"{path}: entries[{index}] is missing {error.args[0]}"
+            ) from error
+        hex_fields = (
+            file_offset,
+            unit_offset,
+            safe_end_file_offset,
+            safe_end_unit_offset,
+        )
+        if (
+            not isinstance(entry_id, str)
+            or not entry_id
+            or not isinstance(unit_index, int)
+            or not isinstance(subsystem, str)
+            or not subsystem
+            or any(
+                not isinstance(value, str)
+                or not re.fullmatch(r"0x[0-9A-Fa-f]+", value)
+                for value in hex_fields
+            )
+            or not isinstance(original_stream_bytes, int)
+            or original_stream_bytes <= 0
+            or original_stream_bytes % 2
+            or not isinstance(safe_slot_bytes, int)
+            or safe_slot_bytes < original_stream_bytes
+            or safe_slot_bytes % 2
+            or not isinstance(safe_slot_words, int)
+            or safe_slot_words * 2 != safe_slot_bytes
+            or not isinstance(additional_zero_gap_bytes, int)
+            or additional_zero_gap_bytes != (
+                safe_slot_bytes - original_stream_bytes
+            )
+            or boundary_kind not in SAFE_SLOT_BOUNDARY_LABELS
+            or (
+                next_physical_entry_id is not None
+                and not isinstance(next_physical_entry_id, str)
+            )
+            or not isinstance(protected_target, str)
+            or not protected_target
+        ):
+            raise DialogueEditorError(
+                f"{path}: entries[{index}] has invalid safe-slot metadata"
+            )
+        if (
+            int(safe_end_file_offset, 16) - int(file_offset, 16)
+            != safe_slot_bytes
+            or int(safe_end_unit_offset, 16) - int(unit_offset, 16)
+            != safe_slot_bytes
+        ):
+            raise DialogueEditorError(
+                f"{entry_id}: safe-slot coordinates differ from byte size"
+            )
+        if entry_id in records:
+            raise DialogueEditorError(
+                f"{path}: duplicate safe-slot ID {entry_id}"
+            )
+        records[entry_id] = SafeSlotRecord(
+            entry_id=entry_id,
+            unit_index=unit_index,
+            subsystem=subsystem,
+            file_offset=file_offset,
+            unit_offset=unit_offset,
+            safe_end_file_offset=safe_end_file_offset,
+            safe_end_unit_offset=safe_end_unit_offset,
+            original_stream_bytes=original_stream_bytes,
+            safe_slot_bytes=safe_slot_bytes,
+            safe_slot_words=safe_slot_words,
+            additional_zero_gap_bytes=additional_zero_gap_bytes,
+            boundary_kind=boundary_kind,
+            next_physical_entry_id=next_physical_entry_id,
+            protected_target=protected_target,
+        )
+
+    if required_ids is not None:
+        required = tuple(required_ids)
+        missing = [entry_id for entry_id in required if entry_id not in records]
+        if missing:
+            raise DialogueEditorError(
+                f"{path}: safe-slot catalog is missing {len(missing)} editor "
+                f"IDs; first={missing[0]}"
+            )
+        return {entry_id: records[entry_id] for entry_id in required}
+    return records
+
+
 def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     serialized = (
@@ -643,6 +884,7 @@ class DialogueDocument:
         *,
         editable_field: str | None = None,
         control_contexts: dict[str, DialogueControlContext] | None = None,
+        safe_slots: dict[str, SafeSlotRecord] | None = None,
     ) -> None:
         if not isinstance(document, dict):
             raise DialogueEditorError("dialogue JSON root must be an object")
@@ -692,12 +934,29 @@ class DialogueDocument:
         self._saved_values = list(values)
         self._values = list(values)
         self._control_contexts = dict(control_contexts or {})
+        self._safe_slots = dict(safe_slots or {})
         unknown_context_ids = sorted(set(self._control_contexts) - set(ids))
         if unknown_context_ids:
             raise DialogueEditorError(
                 "control context contains unknown editor IDs: "
                 + ", ".join(unknown_context_ids[:10])
             )
+        unknown_safe_slot_ids = sorted(set(self._safe_slots) - set(ids))
+        if unknown_safe_slot_ids:
+            raise DialogueEditorError(
+                "safe-slot catalog contains unknown editor IDs: "
+                + ", ".join(unknown_safe_slot_ids[:10])
+            )
+        for entry_id in set(self._control_contexts) & set(self._safe_slots):
+            context = self._control_contexts[entry_id]
+            safe_slot = self._safe_slots[entry_id]
+            if context.original_stream_bytes != (
+                safe_slot.original_stream_bytes
+            ):
+                raise DialogueEditorError(
+                    f"{entry_id}: control stream and safe-slot original "
+                    "byte sizes differ"
+                )
 
     @classmethod
     def load(
@@ -706,6 +965,7 @@ class DialogueDocument:
         *,
         editable_field: str | None = None,
         workset_path: Path | None = None,
+        safe_slots_path: Path | None = None,
     ) -> "DialogueDocument":
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
@@ -730,11 +990,21 @@ class DialogueDocument:
             if workset_path is not None and required_ids is not None
             else None
         )
+        safe_slots = (
+            load_safe_slot_records(
+                safe_slots_path,
+                required_ids=required_ids,
+                workset_path=workset_path,
+            )
+            if safe_slots_path is not None and required_ids is not None
+            else None
+        )
         return cls(
             path,
             document,
             editable_field=editable_field,
             control_contexts=contexts,
+            safe_slots=safe_slots,
         )
 
     def __len__(self) -> int:
@@ -779,7 +1049,32 @@ class DialogueDocument:
         context = self.control_context(index)
         if context is None:
             return "보호 workset이 연결되지 않아 제어코드를 표시할 수 없습니다."
-        return context.read_only_report(self.value(index))
+        return context.read_only_report(
+            self.value(index),
+            self.safe_slot(index),
+        )
+
+    def safe_slot(self, index: int) -> SafeSlotRecord | None:
+        return self._safe_slots.get(self.ids[index])
+
+    def estimated_stream_bytes(self, index: int) -> int | None:
+        context = self.control_context(index)
+        if context is None:
+            return None
+        return context.estimated_stream_bytes(self.value(index))
+
+    def storage_slot_measurement(
+        self,
+        index: int,
+    ) -> StorageSlotMeasurement | None:
+        safe_slot = self.safe_slot(index)
+        estimated = self.estimated_stream_bytes(index)
+        if safe_slot is None or estimated is None:
+            return None
+        return StorageSlotMeasurement(
+            safe_slot=safe_slot,
+            estimated_stream_bytes=estimated,
+        )
 
     def japanese(self, index: int) -> str:
         entry = self.entries[index]
@@ -849,6 +1144,17 @@ class DialogueDocument:
             if measure_layout(value).short_line_rows
         )
 
+    def storage_slot_overflow_indices(self) -> tuple[int, ...]:
+        return tuple(
+            index
+            for index in range(len(self))
+            if (
+                (measurement := self.storage_slot_measurement(index))
+                is not None
+                and not measurement.fits
+            )
+        )
+
     def output_document(self) -> dict[str, Any]:
         output = copy.deepcopy(self.document)
         output_entries = output["entries"]
@@ -895,9 +1201,15 @@ class DialogueDocument:
         glyph_capacity_overflow = 0
         line_width_overflow = 0
         row_count_overflow = 0
+        storage_slot_measurable = 0
+        storage_slot_exact = 0
+        storage_slot_under_capacity = 0
+        storage_slot_overflow = 0
+        maximum_storage_overflow_bytes = 0
         empty = 0
-        for value in self._values:
+        for index, value in enumerate(self._values):
             measurement = measure_layout(value)
+            storage = self.storage_slot_measurement(index)
             if not value.strip():
                 empty += 1
             if measurement.glyph_capacity_overflow:
@@ -912,6 +1224,20 @@ class DialogueDocument:
                 fits += 1
             else:
                 overflow += 1
+            if storage is not None:
+                storage_slot_measurable += 1
+                if storage.estimated_stream_bytes == (
+                    storage.safe_slot.safe_slot_bytes
+                ):
+                    storage_slot_exact += 1
+                elif storage.fits:
+                    storage_slot_under_capacity += 1
+                else:
+                    storage_slot_overflow += 1
+                    maximum_storage_overflow_bytes = max(
+                        maximum_storage_overflow_bytes,
+                        storage.overflow_bytes,
+                    )
         return {
             "path": str(self.path),
             "editable_field": self.editable_field,
@@ -923,6 +1249,14 @@ class DialogueDocument:
             "row_count_overflow": row_count_overflow,
             "short_line_candidates": short_line_candidates,
             "control_context_entries": len(self._control_contexts),
+            "safe_slot_entries": len(self._safe_slots),
+            "storage_slot_measurable": storage_slot_measurable,
+            "storage_slot_exact": storage_slot_exact,
+            "storage_slot_under_capacity": storage_slot_under_capacity,
+            "storage_slot_overflow": storage_slot_overflow,
+            "maximum_storage_overflow_bytes": (
+                maximum_storage_overflow_bytes
+            ),
             "leading_control_tokens": sum(
                 len(context.leading)
                 for context in self._control_contexts.values()
@@ -945,6 +1279,7 @@ def filter_entry_indices(
     *,
     query: str = "",
     overflow_only: bool = False,
+    storage_overflow_only: bool = False,
     short_line_only: bool = False,
 ) -> list[int]:
     """Return stable document indices matching search and layout filters."""
@@ -952,6 +1287,11 @@ def filter_entry_indices(
     overflow_indices = (
         set(document.layout_overflow_indices())
         if overflow_only
+        else None
+    )
+    storage_overflow_indices = (
+        set(document.storage_slot_overflow_indices())
+        if storage_overflow_only
         else None
     )
     short_line_indices = (
@@ -963,6 +1303,10 @@ def filter_entry_indices(
         index
         for index in range(len(document))
         if (overflow_indices is None or index in overflow_indices)
+        and (
+            storage_overflow_indices is None
+            or index in storage_overflow_indices
+        )
         and (short_line_indices is None or index in short_line_indices)
         and (
             not normalized_query
@@ -998,6 +1342,9 @@ def run_gui(
             self.current_index: int | None = None
             self.filtered_indices = list(range(len(document)))
             self.overflow_indices = set(document.layout_overflow_indices())
+            self.storage_overflow_indices = set(
+                document.storage_slot_overflow_indices()
+            )
             self.short_line_indices = set(
                 document.short_line_candidate_indices()
             )
@@ -1010,6 +1357,7 @@ def run_gui(
 
             self.search_var = tk.StringVar()
             self.overflow_only_var = tk.BooleanVar(value=False)
+            self.storage_overflow_only_var = tk.BooleanVar(value=False)
             self.short_line_only_var = tk.BooleanVar(value=False)
             self.filter_summary_var = tk.StringVar()
             self.id_var = tk.StringVar()
@@ -1093,8 +1441,16 @@ def run_gui(
                 variable=self.short_line_only_var,
                 command=self.refresh_filter,
             ).pack(side=tk.LEFT, padx=(6, 0))
+            storage_filter_bar = ttk.Frame(left)
+            storage_filter_bar.pack(fill=tk.X, pady=(0, 6))
+            ttk.Checkbutton(
+                storage_filter_bar,
+                text="안전 슬롯 초과만",
+                variable=self.storage_overflow_only_var,
+                command=self.refresh_filter,
+            ).pack(side=tk.LEFT)
             ttk.Button(
-                filter_bar,
+                storage_filter_bar,
                 text="목록 갱신",
                 command=self.refresh_filter,
             ).pack(side=tk.RIGHT)
@@ -1152,7 +1508,7 @@ def run_gui(
             control_frame.pack(fill=tk.X, pady=(8, 0))
             self.control_text = tk.Text(
                 control_frame,
-                height=6,
+                height=7,
                 wrap=tk.WORD,
                 state=tk.DISABLED,
                 font=("Menlo", 11),
@@ -1195,6 +1551,19 @@ def run_gui(
                 font=("Menlo", 10, "bold"),
             )
             self.control_text.pack(fill=tk.X)
+            self.slot_canvas = tk.Canvas(
+                control_frame,
+                height=24,
+                background="#d8dee8",
+                highlightthickness=0,
+            )
+            self.slot_canvas.pack(fill=tk.X, pady=(5, 0))
+            self.slot_canvas.bind(
+                "<Configure>",
+                lambda _event: self.update_slot_meter(
+                    self.current_index
+                ),
+            )
 
             text_pane = ttk.Panedwindow(right, orient=tk.VERTICAL)
             text_pane.pack(fill=tk.BOTH, expand=True, pady=(8, 8))
@@ -1338,6 +1707,9 @@ def run_gui(
             self.overflow_indices = set(
                 self.document.layout_overflow_indices()
             )
+            self.storage_overflow_indices = set(
+                self.document.storage_slot_overflow_indices()
+            )
             self.short_line_indices = set(
                 self.document.short_line_candidate_indices()
             )
@@ -1345,6 +1717,9 @@ def run_gui(
                 self.document,
                 query=self.search_var.get(),
                 overflow_only=self.overflow_only_var.get(),
+                storage_overflow_only=(
+                    self.storage_overflow_only_var.get()
+                ),
                 short_line_only=self.short_line_only_var.get(),
             )
             self.update_filter_summary()
@@ -1357,12 +1732,18 @@ def run_gui(
                 overflow_marker = (
                     "!" if index in self.overflow_indices else " "
                 )
+                storage_marker = (
+                    "B"
+                    if index in self.storage_overflow_indices
+                    else " "
+                )
                 short_line_marker = (
                     "~" if index in self.short_line_indices else " "
                 )
                 self.entry_list.insert(
                     tk.END,
-                    f"{marker}{overflow_marker}{short_line_marker} "
+                    f"{marker}{overflow_marker}{storage_marker}"
+                    f"{short_line_marker} "
                     f"{_short_entry_label(self.document, index)}",
                 )
             if current in self.filtered_indices:
@@ -1379,6 +1760,7 @@ def run_gui(
             self.filter_summary_var.set(
                 f"목록 {len(self.filtered_indices)}건"
                 f" / 한도 초과 {len(self.overflow_indices)}건"
+                f" / 슬롯 초과 {len(self.storage_overflow_indices)}건"
                 f" / 짧은 행 {len(self.short_line_indices)}건"
             )
 
@@ -1428,15 +1810,17 @@ def run_gui(
                     "표시할 수 없습니다.",
                 )
                 widget.configure(state=tk.DISABLED)
+                self.update_slot_meter(index)
                 return
 
             report_lines = context.read_only_report(
-                self.document.value(index)
+                self.document.value(index),
+                self.document.safe_slot(index),
             ).splitlines()
             widget.insert(tk.END, report_lines[0] + "\n")
             widget.insert(
                 tk.END,
-                " / ".join(report_lines[1:4]) + "\n",
+                " / ".join(report_lines[1:5]) + "\n",
             )
             widget.insert(
                 tk.END,
@@ -1463,6 +1847,81 @@ def run_gui(
                 widget.insert(tk.END, f" {segment.chip_text} ", tag)
                 widget.insert(tk.END, " ")
             widget.configure(state=tk.DISABLED)
+            self.update_slot_meter(index)
+
+        def update_slot_meter(self, index: int | None) -> None:
+            canvas = self.slot_canvas
+            canvas.delete("all")
+            width = max(100, canvas.winfo_width())
+            height = max(20, canvas.winfo_height())
+            measurement = (
+                self.document.storage_slot_measurement(index)
+                if index is not None
+                else None
+            )
+            if measurement is None:
+                canvas.create_text(
+                    width // 2,
+                    height // 2,
+                    text="검증 안전 슬롯 자료 또는 제어 셸 없음",
+                    fill="#3e4d63",
+                )
+                return
+
+            safe_bytes = measurement.safe_slot.safe_slot_bytes
+            current_bytes = measurement.estimated_stream_bytes
+            scale_bytes = max(safe_bytes, current_bytes, 1)
+            used_end = int(width * min(current_bytes, safe_bytes) / scale_bytes)
+            safe_end = int(width * safe_bytes / scale_bytes)
+            canvas.create_rectangle(
+                0,
+                0,
+                width,
+                height,
+                fill="#d8dee8",
+                outline="",
+            )
+            if used_end:
+                canvas.create_rectangle(
+                    0,
+                    0,
+                    used_end,
+                    height,
+                    fill="#3f7f6b",
+                    outline="",
+                )
+            if measurement.overflow_bytes:
+                canvas.create_rectangle(
+                    safe_end,
+                    0,
+                    width,
+                    height,
+                    fill="#c74747",
+                    outline="",
+                )
+                state = f"{measurement.overflow_bytes}B 초과"
+            elif measurement.remaining_bytes:
+                state = f"{measurement.remaining_bytes}B 미사용"
+            else:
+                state = "정확히 일치"
+            canvas.create_line(
+                safe_end,
+                0,
+                safe_end,
+                height,
+                fill="#17253a",
+                width=2,
+            )
+            canvas.create_text(
+                width // 2,
+                height // 2,
+                text=(
+                    f"현재 {current_bytes}B / 검증 안전 슬롯 "
+                    f"{safe_bytes}B — {state}"
+                ),
+                fill="#101923",
+                font=("TkDefaultFont", 10, "bold"),
+            )
 
         def update_metadata(self, index: int) -> None:
             metadata = self.document.metadata(index)
@@ -1486,13 +1945,30 @@ def run_gui(
             limit_state = (
                 ", ".join(reason_labels) if reason_labels else "적합"
             )
+            storage = self.document.storage_slot_measurement(index)
+            storage_state = "자료 없음"
+            if storage is not None:
+                storage_state = (
+                    f"{storage.estimated_stream_bytes}/"
+                    f"{storage.safe_slot.safe_slot_bytes}B "
+                    + (
+                        (
+                            f"({storage.remaining_bytes}B 미사용)"
+                            if storage.remaining_bytes
+                            else "(정확히 일치)"
+                        )
+                        if storage.fits
+                        else f"({storage.overflow_bytes}B 초과)"
+                    )
+                )
             self.meta_var.set(
                 f"{index + 1}/{len(self.document)}  "
                 f"unit={metadata['unit'] or '?'}  "
                 f"class={metadata['classification'] or '?'}  "
                 f"status={metadata['status'] or '?'}  "
                 f"max_glyphs={limit if limit is not None else '미확정'}  "
-                f"layout={limit_state}"
+                f"layout={limit_state}  "
+                f"slot={storage_state}"
             )
 
         def on_list_select(self, _event: object) -> None:
@@ -1527,6 +2003,13 @@ def run_gui(
                 self.overflow_indices.add(self.current_index)
             else:
                 self.overflow_indices.discard(self.current_index)
+            storage = self.document.storage_slot_measurement(
+                self.current_index
+            )
+            if storage is not None and not storage.fits:
+                self.storage_overflow_indices.add(self.current_index)
+            else:
+                self.storage_overflow_indices.discard(self.current_index)
             if measurement.short_line_rows:
                 self.short_line_indices.add(self.current_index)
             else:
@@ -1545,6 +2028,11 @@ def run_gui(
                     if self.current_index in self.overflow_indices
                     else " "
                 )
+                storage_marker = (
+                    "B"
+                    if self.current_index in self.storage_overflow_indices
+                    else " "
+                )
                 short_line_marker = (
                     "~"
                     if self.current_index in self.short_line_indices
@@ -1553,7 +2041,8 @@ def run_gui(
                 self.entry_list.delete(position)
                 self.entry_list.insert(
                     position,
-                    f"{marker}{overflow_marker}{short_line_marker} "
+                    f"{marker}{overflow_marker}{storage_marker}"
+                    f"{short_line_marker} "
                     f"{_short_entry_label(self.document, self.current_index)}",
                 )
                 self._select_list_position(position)
@@ -1848,6 +2337,14 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--safe-slots",
+        type=Path,
+        default=DEFAULT_SAFE_SLOTS,
+        help=(
+            "verified fixed-original safe-slot catalog generated from ALLBIN"
+        ),
+    )
+    parser.add_argument(
         "--editable-field",
         help="override detected Korean field, e.g. ko or ko_reflowed",
     )
@@ -1867,6 +2364,7 @@ def main() -> None:
             args.input,
             editable_field=args.editable_field,
             workset_path=args.workset,
+            safe_slots_path=args.safe_slots,
         )
         if args.check:
             print(
