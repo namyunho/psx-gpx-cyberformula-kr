@@ -233,7 +233,7 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         def slot(entry_id: str, start: int) -> SafeSlotRecord:
             return SafeSlotRecord(
                 entry_id=entry_id,
-                unit_index=0,
+                unit_index=99,
                 subsystem="event_page",
                 file_offset=f"0x{start:06X}",
                 unit_offset=f"0x{start:04X}",
@@ -291,6 +291,96 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         self.assertEqual(summary["storage_slot_under_capacity"], 0)
         self.assertEqual(summary["storage_slot_overflow"], 2)
         self.assertEqual(summary["maximum_storage_overflow_bytes"], 30)
+        self.assertEqual(summary["unit_storage_measurable"], 1)
+        self.assertEqual(summary["unit_storage_overflow"], 1)
+        self.assertEqual(summary["maximum_unit_storage_overflow_bytes"], 32)
+
+    def test_unit_pool_allows_entry_overflow_when_unit_total_fits(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {"id": "long", "ko": "가" * 7},
+                {"id": "short-a", "ko": "나" * 2},
+                {"id": "short-b", "ko": "다" * 3},
+            ]
+        }
+        terminal = ProtectedControlToken(
+            token_index=5,
+            raw="8000",
+            kind="page_end",
+            markup="{page_end}",
+            policy="preserve",
+        )
+        contexts = {
+            entry["id"]: DialogueControlContext(
+                entry_id=entry["id"],
+                original_stream_bytes=12,
+                leading=(),
+                internal_movable=(),
+                trailing=(terminal,),
+            )
+            for entry in source["entries"]
+        }
+
+        def slot(entry_id: str, start: int) -> SafeSlotRecord:
+            return SafeSlotRecord(
+                entry_id=entry_id,
+                unit_index=0,
+                subsystem="event_page",
+                file_offset=f"0x{start:06X}",
+                unit_offset=f"0x{start:04X}",
+                safe_end_file_offset=f"0x{start + 12:06X}",
+                safe_end_unit_offset=f"0x{start + 12:04X}",
+                original_stream_bytes=12,
+                safe_slot_bytes=12,
+                safe_slot_words=6,
+                additional_zero_gap_bytes=0,
+                boundary_kind="adjacent-next-entry",
+                next_physical_entry_id="next",
+                protected_target="next",
+            )
+
+        slots = {
+            entry["id"]: slot(entry["id"], 0x20 + index * 12)
+            for index, entry in enumerate(source["entries"])
+        }
+        document = DialogueDocument(
+            Path("input.json"),
+            source,
+            control_contexts=contexts,
+            safe_slots=slots,
+        )
+
+        self.assertEqual(document.storage_slot_overflow_indices(), (0,))
+        unit = document.unit_storage_measurement(0)
+        self.assertIsNotNone(unit)
+        assert unit is not None
+        self.assertEqual(unit.profile.original_stream_capacity_bytes, 36)
+        self.assertEqual(unit.estimated_stream_bytes, 30)
+        self.assertEqual(unit.remaining_bytes, 6)
+        self.assertTrue(unit.fits)
+        self.assertFalse(unit.profile.runtime_verified)
+        self.assertEqual(document.unit_storage_overflow_indices(), ())
+
+        document.set_value(2, "다" * 7)
+        unit = document.unit_storage_measurement(2)
+        self.assertIsNotNone(unit)
+        assert unit is not None
+        self.assertEqual(unit.estimated_stream_bytes, 38)
+        self.assertEqual(unit.overflow_bytes, 2)
+        self.assertFalse(unit.fits)
+        self.assertEqual(
+            document.unit_storage_overflow_indices(),
+            (0, 1, 2),
+        )
+        self.assertEqual(
+            filter_entry_indices(
+                document,
+                unit_storage_overflow_only=True,
+            ),
+            [0, 1, 2],
+        )
 
     def test_rejects_safe_slot_catalog_from_a_different_workset(
         self,

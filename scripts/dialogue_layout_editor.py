@@ -65,6 +65,26 @@ SAFE_SLOT_BOUNDARY_LABELS = {
     "protected-nonzero-gap": "비영(非零) 무포인터·이벤트 데이터 보호",
     "last-extracted-entry-original-end": "유닛 끝 미분류 영역 보호",
 }
+UNIT_SHARED_POOL_RUNTIME_VALIDATION = {
+    0: {
+        "status": "passed",
+        "label": "실행 검증 완료",
+        "entry_count": 88,
+        "original_stream_capacity_bytes": 5624,
+        "track1_sha256": (
+            "39da4bc7eb8d49944be5ad95f4acd73364d1ca1172f186772ca884c15a024b3f"
+        ),
+    },
+    21: {
+        "status": "passed",
+        "label": "실행 검증 완료",
+        "entry_count": 68,
+        "original_stream_capacity_bytes": 4226,
+        "track1_sha256": (
+            "39da4bc7eb8d49944be5ad95f4acd73364d1ca1172f186772ca884c15a024b3f"
+        ),
+    },
+}
 
 
 class DialogueEditorError(ValueError):
@@ -113,6 +133,50 @@ class StorageSlotMeasurement:
         return max(
             0,
             self.estimated_stream_bytes - self.safe_slot.safe_slot_bytes,
+        )
+
+    @property
+    def fits(self) -> bool:
+        return self.overflow_bytes == 0
+
+
+@dataclass(frozen=True)
+class UnitStorageProfile:
+    unit_index: int
+    entry_ids: tuple[str, ...]
+    original_stream_capacity_bytes: int
+    runtime_validation_status: str
+    runtime_validation_label: str
+    runtime_validation_track1_sha256: str | None
+
+    @property
+    def entry_count(self) -> int:
+        return len(self.entry_ids)
+
+    @property
+    def runtime_verified(self) -> bool:
+        return self.runtime_validation_status == "passed"
+
+
+@dataclass(frozen=True)
+class UnitStorageMeasurement:
+    profile: UnitStorageProfile
+    estimated_stream_bytes: int
+
+    @property
+    def remaining_bytes(self) -> int:
+        return max(
+            0,
+            self.profile.original_stream_capacity_bytes
+            - self.estimated_stream_bytes,
+        )
+
+    @property
+    def overflow_bytes(self) -> int:
+        return max(
+            0,
+            self.estimated_stream_bytes
+            - self.profile.original_stream_capacity_bytes,
         )
 
     @property
@@ -848,6 +912,57 @@ def load_safe_slot_records(
     return records
 
 
+def build_unit_storage_profiles(
+    safe_slots: dict[str, SafeSlotRecord],
+) -> dict[int, UnitStorageProfile]:
+    """Derive immutable unit dialogue capacities from the protected catalog."""
+    entries_by_unit: dict[int, list[SafeSlotRecord]] = {}
+    for record in safe_slots.values():
+        entries_by_unit.setdefault(record.unit_index, []).append(record)
+
+    profiles: dict[int, UnitStorageProfile] = {}
+    for unit_index, records in sorted(entries_by_unit.items()):
+        ordered = sorted(
+            records,
+            key=lambda record: int(record.unit_offset, 16),
+        )
+        capacity = sum(
+            record.original_stream_bytes for record in ordered
+        )
+        candidate_validation = UNIT_SHARED_POOL_RUNTIME_VALIDATION.get(
+            unit_index,
+            {},
+        )
+        validation = (
+            candidate_validation
+            if (
+                candidate_validation.get("entry_count") == len(ordered)
+                and candidate_validation.get(
+                    "original_stream_capacity_bytes"
+                )
+                == capacity
+            )
+            else {}
+        )
+        profiles[unit_index] = UnitStorageProfile(
+            unit_index=unit_index,
+            entry_ids=tuple(record.entry_id for record in ordered),
+            original_stream_capacity_bytes=capacity,
+            runtime_validation_status=str(
+                validation.get("status", "not-verified")
+            ),
+            runtime_validation_label=str(
+                validation.get("label", "공용 재배치 미검증")
+            ),
+            runtime_validation_track1_sha256=(
+                str(validation["track1_sha256"])
+                if "track1_sha256" in validation
+                else None
+            ),
+        )
+    return profiles
+
+
 def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     serialized = (
@@ -885,6 +1000,7 @@ class DialogueDocument:
         editable_field: str | None = None,
         control_contexts: dict[str, DialogueControlContext] | None = None,
         safe_slots: dict[str, SafeSlotRecord] | None = None,
+        unit_storage_profiles: dict[int, UnitStorageProfile] | None = None,
     ) -> None:
         if not isinstance(document, dict):
             raise DialogueEditorError("dialogue JSON root must be an object")
@@ -931,10 +1047,18 @@ class DialogueDocument:
         self.document = copy.deepcopy(document)
         self.editable_field = field
         self.ids = ids
+        self._index_by_id = {
+            entry_id: index for index, entry_id in enumerate(ids)
+        }
         self._saved_values = list(values)
         self._values = list(values)
         self._control_contexts = dict(control_contexts or {})
         self._safe_slots = dict(safe_slots or {})
+        self._unit_storage_profiles = dict(
+            unit_storage_profiles
+            if unit_storage_profiles is not None
+            else build_unit_storage_profiles(self._safe_slots)
+        )
         unknown_context_ids = sorted(set(self._control_contexts) - set(ids))
         if unknown_context_ids:
             raise DialogueEditorError(
@@ -990,21 +1114,42 @@ class DialogueDocument:
             if workset_path is not None and required_ids is not None
             else None
         )
-        safe_slots = (
+        all_safe_slots = (
             load_safe_slot_records(
                 safe_slots_path,
-                required_ids=required_ids,
                 workset_path=workset_path,
             )
             if safe_slots_path is not None and required_ids is not None
             else None
         )
+        if all_safe_slots is None or required_ids is None:
+            safe_slots = None
+            unit_storage_profiles = None
+        else:
+            missing = [
+                entry_id
+                for entry_id in required_ids
+                if entry_id not in all_safe_slots
+            ]
+            if missing:
+                raise DialogueEditorError(
+                    f"{safe_slots_path}: safe-slot catalog is missing "
+                    f"{len(missing)} editor IDs; first={missing[0]}"
+                )
+            safe_slots = {
+                entry_id: all_safe_slots[entry_id]
+                for entry_id in required_ids
+            }
+            unit_storage_profiles = build_unit_storage_profiles(
+                all_safe_slots
+            )
         return cls(
             path,
             document,
             editable_field=editable_field,
             control_contexts=contexts,
             safe_slots=safe_slots,
+            unit_storage_profiles=unit_storage_profiles,
         )
 
     def __len__(self) -> int:
@@ -1076,6 +1221,53 @@ class DialogueDocument:
             estimated_stream_bytes=estimated,
         )
 
+    def unit_index(self, index: int) -> int | None:
+        safe_slot = self.safe_slot(index)
+        if safe_slot is not None:
+            return safe_slot.unit_index
+        entry = self.entries[index]
+        value = entry.get("unit_index")
+        if isinstance(value, int):
+            return value
+        source = entry.get("source")
+        if isinstance(source, dict):
+            value = source.get("unit_index")
+            if isinstance(value, int):
+                return value
+        return None
+
+    def unit_storage_measurements(
+        self,
+    ) -> dict[int, UnitStorageMeasurement]:
+        measurements: dict[int, UnitStorageMeasurement] = {}
+        for unit_index, profile in self._unit_storage_profiles.items():
+            if any(
+                entry_id not in self._index_by_id
+                or entry_id not in self._control_contexts
+                for entry_id in profile.entry_ids
+            ):
+                continue
+            estimated = sum(
+                self._control_contexts[entry_id].estimated_stream_bytes(
+                    self._values[self._index_by_id[entry_id]]
+                )
+                for entry_id in profile.entry_ids
+            )
+            measurements[unit_index] = UnitStorageMeasurement(
+                profile=profile,
+                estimated_stream_bytes=estimated,
+            )
+        return measurements
+
+    def unit_storage_measurement(
+        self,
+        index: int,
+    ) -> UnitStorageMeasurement | None:
+        unit_index = self.unit_index(index)
+        if unit_index is None:
+            return None
+        return self.unit_storage_measurements().get(unit_index)
+
     def japanese(self, index: int) -> str:
         entry = self.entries[index]
         value = entry.get("jp")
@@ -1096,11 +1288,7 @@ class DialogueDocument:
 
     def metadata(self, index: int) -> dict[str, str]:
         entry = self.entries[index]
-        unit = entry.get("unit_index")
-        if unit is None:
-            source = entry.get("source")
-            if isinstance(source, dict):
-                unit = source.get("unit_index")
+        unit = self.unit_index(index)
         status = entry.get(
             "reinsertion_status",
             entry.get("status", ""),
@@ -1153,6 +1341,20 @@ class DialogueDocument:
                 is not None
                 and not measurement.fits
             )
+        )
+
+    def unit_storage_overflow_indices(self) -> tuple[int, ...]:
+        overflow_units = {
+            unit_index
+            for unit_index, measurement in (
+                self.unit_storage_measurements().items()
+            )
+            if not measurement.fits
+        }
+        return tuple(
+            index
+            for index in range(len(self))
+            if self.unit_index(index) in overflow_units
         )
 
     def output_document(self) -> dict[str, Any]:
@@ -1238,6 +1440,12 @@ class DialogueDocument:
                         maximum_storage_overflow_bytes,
                         storage.overflow_bytes,
                     )
+        unit_measurements = self.unit_storage_measurements()
+        unit_storage_overflow = [
+            measurement
+            for measurement in unit_measurements.values()
+            if not measurement.fits
+        ]
         return {
             "path": str(self.path),
             "editable_field": self.editable_field,
@@ -1256,6 +1464,23 @@ class DialogueDocument:
             "storage_slot_overflow": storage_slot_overflow,
             "maximum_storage_overflow_bytes": (
                 maximum_storage_overflow_bytes
+            ),
+            "unit_storage_measurable": len(unit_measurements),
+            "unit_storage_fits": (
+                len(unit_measurements) - len(unit_storage_overflow)
+            ),
+            "unit_storage_overflow": len(unit_storage_overflow),
+            "maximum_unit_storage_overflow_bytes": max(
+                (
+                    measurement.overflow_bytes
+                    for measurement in unit_storage_overflow
+                ),
+                default=0,
+            ),
+            "runtime_verified_unit_shared_pool_units": sorted(
+                measurement.profile.unit_index
+                for measurement in unit_measurements.values()
+                if measurement.profile.runtime_verified
             ),
             "leading_control_tokens": sum(
                 len(context.leading)
@@ -1280,6 +1505,7 @@ def filter_entry_indices(
     query: str = "",
     overflow_only: bool = False,
     storage_overflow_only: bool = False,
+    unit_storage_overflow_only: bool = False,
     short_line_only: bool = False,
 ) -> list[int]:
     """Return stable document indices matching search and layout filters."""
@@ -1294,6 +1520,11 @@ def filter_entry_indices(
         if storage_overflow_only
         else None
     )
+    unit_storage_overflow_indices = (
+        set(document.unit_storage_overflow_indices())
+        if unit_storage_overflow_only
+        else None
+    )
     short_line_indices = (
         set(document.short_line_candidate_indices())
         if short_line_only
@@ -1306,6 +1537,10 @@ def filter_entry_indices(
         and (
             storage_overflow_indices is None
             or index in storage_overflow_indices
+        )
+        and (
+            unit_storage_overflow_indices is None
+            or index in unit_storage_overflow_indices
         )
         and (short_line_indices is None or index in short_line_indices)
         and (
@@ -1345,6 +1580,9 @@ def run_gui(
             self.storage_overflow_indices = set(
                 document.storage_slot_overflow_indices()
             )
+            self.unit_storage_overflow_indices = set(
+                document.unit_storage_overflow_indices()
+            )
             self.short_line_indices = set(
                 document.short_line_candidate_indices()
             )
@@ -1358,6 +1596,7 @@ def run_gui(
             self.search_var = tk.StringVar()
             self.overflow_only_var = tk.BooleanVar(value=False)
             self.storage_overflow_only_var = tk.BooleanVar(value=False)
+            self.unit_storage_overflow_only_var = tk.BooleanVar(value=False)
             self.short_line_only_var = tk.BooleanVar(value=False)
             self.filter_summary_var = tk.StringVar()
             self.id_var = tk.StringVar()
@@ -1449,6 +1688,12 @@ def run_gui(
                 variable=self.storage_overflow_only_var,
                 command=self.refresh_filter,
             ).pack(side=tk.LEFT)
+            ttk.Checkbutton(
+                storage_filter_bar,
+                text="유닛 총량 초과만",
+                variable=self.unit_storage_overflow_only_var,
+                command=self.refresh_filter,
+            ).pack(side=tk.LEFT, padx=(6, 0))
             ttk.Button(
                 storage_filter_bar,
                 text="목록 갱신",
@@ -1561,6 +1806,19 @@ def run_gui(
             self.slot_canvas.bind(
                 "<Configure>",
                 lambda _event: self.update_slot_meter(
+                    self.current_index
+                ),
+            )
+            self.unit_canvas = tk.Canvas(
+                control_frame,
+                height=24,
+                background="#d8dee8",
+                highlightthickness=0,
+            )
+            self.unit_canvas.pack(fill=tk.X, pady=(4, 0))
+            self.unit_canvas.bind(
+                "<Configure>",
+                lambda _event: self.update_unit_meter(
                     self.current_index
                 ),
             )
@@ -1710,6 +1968,9 @@ def run_gui(
             self.storage_overflow_indices = set(
                 self.document.storage_slot_overflow_indices()
             )
+            self.unit_storage_overflow_indices = set(
+                self.document.unit_storage_overflow_indices()
+            )
             self.short_line_indices = set(
                 self.document.short_line_candidate_indices()
             )
@@ -1719,6 +1980,9 @@ def run_gui(
                 overflow_only=self.overflow_only_var.get(),
                 storage_overflow_only=(
                     self.storage_overflow_only_var.get()
+                ),
+                unit_storage_overflow_only=(
+                    self.unit_storage_overflow_only_var.get()
                 ),
                 short_line_only=self.short_line_only_var.get(),
             )
@@ -1737,12 +2001,18 @@ def run_gui(
                     if index in self.storage_overflow_indices
                     else " "
                 )
+                unit_storage_marker = (
+                    "U"
+                    if index in self.unit_storage_overflow_indices
+                    else " "
+                )
                 short_line_marker = (
                     "~" if index in self.short_line_indices else " "
                 )
                 self.entry_list.insert(
                     tk.END,
                     f"{marker}{overflow_marker}{storage_marker}"
+                    f"{unit_storage_marker}"
                     f"{short_line_marker} "
                     f"{_short_entry_label(self.document, index)}",
                 )
@@ -1761,6 +2031,7 @@ def run_gui(
                 f"목록 {len(self.filtered_indices)}건"
                 f" / 한도 초과 {len(self.overflow_indices)}건"
                 f" / 슬롯 초과 {len(self.storage_overflow_indices)}건"
+                f" / 유닛 초과 {len(self.unit_storage_overflow_indices)}건"
                 f" / 짧은 행 {len(self.short_line_indices)}건"
             )
 
@@ -1811,6 +2082,7 @@ def run_gui(
                 )
                 widget.configure(state=tk.DISABLED)
                 self.update_slot_meter(index)
+                self.update_unit_meter(index)
                 return
 
             report_lines = context.read_only_report(
@@ -1848,6 +2120,7 @@ def run_gui(
                 widget.insert(tk.END, " ")
             widget.configure(state=tk.DISABLED)
             self.update_slot_meter(index)
+            self.update_unit_meter(index)
 
         def update_slot_meter(self, index: int | None) -> None:
             canvas = self.slot_canvas
@@ -1896,10 +2169,12 @@ def run_gui(
                     0,
                     width,
                     height,
-                    fill="#c74747",
+                    fill="#d88928",
                     outline="",
                 )
-                state = f"{measurement.overflow_bytes}B 초과"
+                state = (
+                    f"{measurement.overflow_bytes}B 초과 · 공용 재배치 필요"
+                )
             elif measurement.remaining_bytes:
                 state = f"{measurement.remaining_bytes}B 미사용"
             else:
@@ -1918,6 +2193,82 @@ def run_gui(
                 text=(
                     f"현재 {current_bytes}B / 검증 안전 슬롯 "
                     f"{safe_bytes}B — {state}"
+                ),
+                fill="#101923",
+                font=("TkDefaultFont", 10, "bold"),
+            )
+
+        def update_unit_meter(self, index: int | None) -> None:
+            canvas = self.unit_canvas
+            canvas.delete("all")
+            width = max(100, canvas.winfo_width())
+            height = max(20, canvas.winfo_height())
+            measurement = (
+                self.document.unit_storage_measurement(index)
+                if index is not None
+                else None
+            )
+            if measurement is None:
+                canvas.create_text(
+                    width // 2,
+                    height // 2,
+                    text="완전한 유닛 대사·제어 자료가 없어 공용 총량 계산 불가",
+                    fill="#3e4d63",
+                )
+                return
+
+            capacity = measurement.profile.original_stream_capacity_bytes
+            current = measurement.estimated_stream_bytes
+            scale_bytes = max(capacity, current, 1)
+            used_end = int(width * min(current, capacity) / scale_bytes)
+            capacity_end = int(width * capacity / scale_bytes)
+            canvas.create_rectangle(
+                0,
+                0,
+                width,
+                height,
+                fill="#d8dee8",
+                outline="",
+            )
+            if used_end:
+                canvas.create_rectangle(
+                    0,
+                    0,
+                    used_end,
+                    height,
+                    fill="#3f7f6b",
+                    outline="",
+                )
+            if measurement.overflow_bytes:
+                canvas.create_rectangle(
+                    capacity_end,
+                    0,
+                    width,
+                    height,
+                    fill="#c74747",
+                    outline="",
+                )
+                state = f"{measurement.overflow_bytes}B 초과 · 빌드 차단"
+            elif measurement.remaining_bytes:
+                state = f"{measurement.remaining_bytes}B 공용 여유"
+            else:
+                state = "정확히 일치"
+            canvas.create_line(
+                capacity_end,
+                0,
+                capacity_end,
+                height,
+                fill="#17253a",
+                width=2,
+            )
+            profile = measurement.profile
+            canvas.create_text(
+                width // 2,
+                height // 2,
+                text=(
+                    f"u{profile.unit_index:02d} 공용 {current}B / "
+                    f"{capacity}B — {state} · "
+                    f"{profile.runtime_validation_label}"
                 ),
                 fill="#101923",
                 font=("TkDefaultFont", 10, "bold"),
@@ -1961,6 +2312,27 @@ def run_gui(
                         else f"({storage.overflow_bytes}B 초과)"
                     )
                 )
+            unit_storage = self.document.unit_storage_measurement(index)
+            unit_storage_state = "자료 없음"
+            if unit_storage is not None:
+                profile = unit_storage.profile
+                unit_storage_state = (
+                    f"u{profile.unit_index:02d} "
+                    f"{unit_storage.estimated_stream_bytes}/"
+                    f"{profile.original_stream_capacity_bytes}B "
+                    + (
+                        (
+                            f"({unit_storage.remaining_bytes}B 여유)"
+                            if unit_storage.remaining_bytes
+                            else "(정확히 일치)"
+                        )
+                        if unit_storage.fits
+                        else (
+                            f"({unit_storage.overflow_bytes}B 초과·빌드 차단)"
+                        )
+                    )
+                    + f" [{profile.runtime_validation_label}]"
+                )
             self.meta_var.set(
                 f"{index + 1}/{len(self.document)}  "
                 f"unit={metadata['unit'] or '?'}  "
@@ -1968,7 +2340,8 @@ def run_gui(
                 f"status={metadata['status'] or '?'}  "
                 f"max_glyphs={limit if limit is not None else '미확정'}  "
                 f"layout={limit_state}  "
-                f"slot={storage_state}"
+                f"slot={storage_state}  "
+                f"unit_pool={unit_storage_state}"
             )
 
         def on_list_select(self, _event: object) -> None:
@@ -2010,6 +2383,9 @@ def run_gui(
                 self.storage_overflow_indices.add(self.current_index)
             else:
                 self.storage_overflow_indices.discard(self.current_index)
+            self.unit_storage_overflow_indices = set(
+                self.document.unit_storage_overflow_indices()
+            )
             if measurement.short_line_rows:
                 self.short_line_indices.add(self.current_index)
             else:
@@ -2033,6 +2409,12 @@ def run_gui(
                     if self.current_index in self.storage_overflow_indices
                     else " "
                 )
+                unit_storage_marker = (
+                    "U"
+                    if self.current_index
+                    in self.unit_storage_overflow_indices
+                    else " "
+                )
                 short_line_marker = (
                     "~"
                     if self.current_index in self.short_line_indices
@@ -2042,6 +2424,7 @@ def run_gui(
                 self.entry_list.insert(
                     position,
                     f"{marker}{overflow_marker}{storage_marker}"
+                    f"{unit_storage_marker}"
                     f"{short_line_marker} "
                     f"{_short_entry_label(self.document, self.current_index)}",
                 )

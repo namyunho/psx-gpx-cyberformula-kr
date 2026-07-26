@@ -34,7 +34,8 @@ main
 └── release/v0.1.0
 ```
 
-현재 17×3 대사 편집기는 `feature/dialogue-layout-editor`에서 작업한다.
+17×3 대사 편집기와 실행 검증을 통과한 unit 공용 재배치는 `main`의 현재
+통합 기준이다.
 
 ## 표준 흐름
 
