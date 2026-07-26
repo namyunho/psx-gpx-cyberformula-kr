@@ -38,6 +38,18 @@ CONTROL_CONTENT_KINDS = frozenset(
 MOVABLE_INTERNAL_CONTROL_KINDS = frozenset(
     {"align", "name_surname", "name_given"}
 )
+CONTROL_VISUAL_LABELS = {
+    "speaker_style": "화자·초상",
+    "style_off": "화자 표시 해제",
+    "audio": "음성",
+    "voice_transition": "음성 전환",
+    "pace": "진행 속도",
+    "pause": "일시 정지",
+    "delay": "대기",
+    "align": "줄바꿈",
+    "page_end": "페이지 끝",
+    "stream_end": "스트림 끝",
+}
 NAME_EXPANSIONS = {
     "{name:surname}": "시바",
     "{name:given}": "세이치로",
@@ -63,6 +75,40 @@ class ProtectedControlToken:
 
 
 @dataclass(frozen=True)
+class VisualStreamSegment:
+    kind: str
+    label: str
+    raw: str | None
+    display_glyphs: int
+    stream_bytes: int
+
+    @property
+    def visual_class(self) -> str:
+        if self.kind == "glyph":
+            return "glyph"
+        if self.kind in {"speaker_style", "style_off"}:
+            return "speaker"
+        if self.kind in {"audio", "voice_transition"}:
+            return "audio"
+        if self.kind in {"align"}:
+            return "layout"
+        if self.kind in {"page_end", "stream_end"}:
+            return "terminal"
+        return "other_control"
+
+    @property
+    def chip_text(self) -> str:
+        if self.kind == "glyph":
+            return self.label
+        metric = (
+            f"다음 행·{self.stream_bytes}B"
+            if self.kind == "align"
+            else f"{self.display_glyphs}칸·{self.stream_bytes}B"
+        )
+        return f"0x{self.raw} {self.label} {metric}"
+
+
+@dataclass(frozen=True)
 class DialogueControlContext:
     entry_id: str
     original_stream_bytes: int
@@ -75,6 +121,64 @@ class DialogueControlContext:
         body = dialogue_text.replace("\n", "{align}")
         trailing = "".join(token.markup for token in self.trailing)
         return f"{leading}{body}{trailing}"
+
+    def visual_segments(
+        self,
+        dialogue_text: str,
+    ) -> tuple[VisualStreamSegment, ...]:
+        segments: list[VisualStreamSegment] = []
+
+        def add_control(token: ProtectedControlToken) -> None:
+            segments.append(
+                VisualStreamSegment(
+                    kind=token.kind,
+                    label=CONTROL_VISUAL_LABELS.get(
+                        token.kind,
+                        token.kind,
+                    ),
+                    raw=token.raw,
+                    display_glyphs=0,
+                    stream_bytes=2,
+                )
+            )
+
+        for token in self.leading:
+            add_control(token)
+        for line_index, line in enumerate(dialogue_text.split("\n")):
+            if line_index:
+                segments.append(
+                    VisualStreamSegment(
+                        kind="align",
+                        label=CONTROL_VISUAL_LABELS["align"],
+                        raw="FFFB",
+                        display_glyphs=0,
+                        stream_bytes=2,
+                    )
+                )
+            expanded_line = expand_display_tokens(line)
+            if expanded_line:
+                segments.append(
+                    VisualStreamSegment(
+                        kind="glyph",
+                        label=expanded_line,
+                        raw=None,
+                        display_glyphs=len(expanded_line),
+                        stream_bytes=len(expanded_line) * 2,
+                    )
+                )
+        for token in self.trailing:
+            add_control(token)
+        return tuple(segments)
+
+    def compact_visual_summary(self, dialogue_text: str) -> str:
+        leading = ",".join(token.raw for token in self.leading) or "없음"
+        trailing = ",".join(token.raw for token in self.trailing) or "없음"
+        align_count = dialogue_text.count("\n")
+        return (
+            f"선두 제어(0글리프) {leading}"
+            f" · 줄바꿈 FFFB ×{align_count}"
+            f" · 후미 제어(0글리프) {trailing}"
+        )
 
     def read_only_report(self, dialogue_text: str) -> str:
         leading = (
@@ -911,6 +1015,7 @@ def run_gui(
             self.id_var = tk.StringVar()
             self.meta_var = tk.StringVar()
             self.counter_var = tk.StringVar()
+            self.preview_control_var = tk.StringVar()
             self.file_var = tk.StringVar()
             self.message_var = tk.StringVar()
 
@@ -1047,10 +1152,47 @@ def run_gui(
             control_frame.pack(fill=tk.X, pady=(8, 0))
             self.control_text = tk.Text(
                 control_frame,
-                height=5,
+                height=6,
                 wrap=tk.WORD,
                 state=tk.DISABLED,
                 font=("Menlo", 11),
+                padx=5,
+                pady=5,
+            )
+            self.control_text.tag_configure(
+                "stream_speaker",
+                background="#7045a0",
+                foreground="#ffffff",
+            )
+            self.control_text.tag_configure(
+                "stream_audio",
+                background="#246a93",
+                foreground="#ffffff",
+            )
+            self.control_text.tag_configure(
+                "stream_layout",
+                background="#a85d00",
+                foreground="#ffffff",
+            )
+            self.control_text.tag_configure(
+                "stream_terminal",
+                background="#8d3b4b",
+                foreground="#ffffff",
+            )
+            self.control_text.tag_configure(
+                "stream_other_control",
+                background="#555b66",
+                foreground="#ffffff",
+            )
+            self.control_text.tag_configure(
+                "stream_glyph",
+                background="#e8eef6",
+                foreground="#17253a",
+            )
+            self.control_text.tag_configure(
+                "stream_heading",
+                foreground="#3e4d63",
+                font=("Menlo", 10, "bold"),
             )
             self.control_text.pack(fill=tk.X)
 
@@ -1115,18 +1257,35 @@ def run_gui(
             preview.pack(fill=tk.X)
             ttk.Label(
                 preview,
+                textvariable=self.preview_control_var,
+            ).pack(anchor=tk.W, pady=(0, 3))
+            ttk.Label(
+                preview,
                 textvariable=self.counter_var,
             ).pack(anchor=tk.W, pady=(0, 5))
             self.cell_size = 30
             self.canvas_margin = 28
+            self.canvas_marker_width = 64
             self.preview_canvas = tk.Canvas(
                 preview,
-                width=self.canvas_margin + COLUMNS * self.cell_size + 2,
+                width=(
+                    self.canvas_margin
+                    + COLUMNS * self.cell_size
+                    + self.canvas_marker_width
+                    + 2
+                ),
                 height=ROWS * self.cell_size + 2,
                 background="#163b71",
                 highlightthickness=0,
             )
             self.preview_canvas.pack(anchor=tk.W)
+            ttk.Label(
+                preview,
+                text=(
+                    "주황 셀은 FFFB 줄바꿈이 건너뛴 위치이며, "
+                    "제어토큰 자체는 글리프 셀을 차지하지 않습니다."
+                ),
+            ).pack(anchor=tk.W, pady=(4, 0))
             available_fonts = set(tkfont.families())
             self.preview_font = next(
                 (
@@ -1258,10 +1417,52 @@ def run_gui(
             self.update_title()
 
         def update_control_view(self, index: int) -> None:
-            self.control_text.configure(state=tk.NORMAL)
-            self.control_text.delete("1.0", tk.END)
-            self.control_text.insert("1.0", self.document.control_report(index))
-            self.control_text.configure(state=tk.DISABLED)
+            widget = self.control_text
+            widget.configure(state=tk.NORMAL)
+            widget.delete("1.0", tk.END)
+            context = self.document.control_context(index)
+            if context is None:
+                widget.insert(
+                    "1.0",
+                    "보호 workset이 연결되지 않아 제어코드를 "
+                    "표시할 수 없습니다.",
+                )
+                widget.configure(state=tk.DISABLED)
+                return
+
+            report_lines = context.read_only_report(
+                self.document.value(index)
+            ).splitlines()
+            widget.insert(tk.END, report_lines[0] + "\n")
+            widget.insert(
+                tk.END,
+                " / ".join(report_lines[1:4]) + "\n",
+            )
+            widget.insert(
+                tk.END,
+                "색상: ",
+                "stream_heading",
+            )
+            legend = (
+                ("화자·초상", "stream_speaker"),
+                ("음성", "stream_audio"),
+                ("줄바꿈", "stream_layout"),
+                ("종료", "stream_terminal"),
+                ("기타 제어", "stream_other_control"),
+                ("표시 글리프", "stream_glyph"),
+            )
+            for label, tag in legend:
+                widget.insert(tk.END, f" {label} ", tag)
+                widget.insert(tk.END, " ")
+            widget.insert(tk.END, "\n")
+            widget.insert(tk.END, "실제 스트림: ", "stream_heading")
+            for segment in context.visual_segments(
+                self.document.value(index)
+            ):
+                tag = f"stream_{segment.visual_class}"
+                widget.insert(tk.END, f" {segment.chip_text} ", tag)
+                widget.insert(tk.END, " ")
+            widget.configure(state=tk.DISABLED)
 
         def update_metadata(self, index: int) -> None:
             metadata = self.document.metadata(index)
@@ -1368,6 +1569,16 @@ def run_gui(
 
         def update_preview(self) -> None:
             measurement = measure_layout(self.current_text())
+            context = (
+                self.document.control_context(self.current_index)
+                if self.current_index is not None
+                else None
+            )
+            self.preview_control_var.set(
+                context.compact_visual_summary(self.current_text())
+                if context is not None
+                else "보호 제어코드 정보 없음"
+            )
             width_parts = [
                 f"{index + 1}행 {width}/{COLUMNS}"
                 for index, width in enumerate(measurement.line_widths)
@@ -1404,6 +1615,10 @@ def run_gui(
             canvas.delete("all")
             normal_grid = "#4e75a7"
             overflow_grid = "#f05b63"
+            align_grid = "#a85d00"
+            align_fill = "#4c3b22"
+            normal_fill = "#163b71"
+            grid_end = self.canvas_margin + COLUMNS * self.cell_size
             for row in range(ROWS):
                 canvas.create_text(
                     self.canvas_margin // 2,
@@ -1418,16 +1633,34 @@ def run_gui(
                     else ""
                 )
                 row_overflow = len(line) > COLUMNS
+                explicit_align = row < len(measurement.lines) - 1
                 for column in range(COLUMNS):
                     left = self.canvas_margin + column * self.cell_size
                     top = row * self.cell_size
+                    skipped_by_align = (
+                        explicit_align and column >= len(line)
+                    )
+                    if row_overflow:
+                        cell_outline = overflow_grid
+                        cell_width = 2
+                    elif skipped_by_align:
+                        cell_outline = align_grid
+                        cell_width = 2
+                    else:
+                        cell_outline = normal_grid
+                        cell_width = 1
                     canvas.create_rectangle(
                         left,
                         top,
                         left + self.cell_size,
                         top + self.cell_size,
-                        outline=overflow_grid if row_overflow else normal_grid,
-                        width=2 if row_overflow else 1,
+                        outline=cell_outline,
+                        fill=(
+                            align_fill
+                            if skipped_by_align
+                            else normal_fill
+                        ),
+                        width=cell_width,
                     )
                     if column < len(line):
                         canvas.create_text(
@@ -1437,6 +1670,15 @@ def run_gui(
                             fill="#ffffff",
                             font=(self.preview_font, 15),
                         )
+                if explicit_align:
+                    canvas.create_text(
+                        grid_end + 7,
+                        row * self.cell_size + self.cell_size // 2,
+                        text="↵ FFFB",
+                        anchor=tk.W,
+                        fill="#ffb34d",
+                        font=("Menlo", 9, "bold"),
+                    )
             if measurement.row_overflow:
                 canvas.create_rectangle(
                     self.canvas_margin,

@@ -274,6 +274,30 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             tuple(token.raw for token in context.trailing),
             ("8000",),
         )
+        visual = context.visual_segments("한국어\n대사")
+        self.assertEqual(
+            tuple(segment.kind for segment in visual),
+            ("speaker_style", "glyph", "align", "glyph", "page_end"),
+        )
+        self.assertEqual(
+            tuple(segment.display_glyphs for segment in visual),
+            (0, 3, 0, 2, 0),
+        )
+        self.assertEqual(
+            tuple(segment.stream_bytes for segment in visual),
+            (2, 6, 2, 4, 2),
+        )
+        self.assertEqual(visual[0].visual_class, "speaker")
+        self.assertEqual(visual[2].visual_class, "layout")
+        self.assertEqual(visual[-1].visual_class, "terminal")
+        self.assertEqual(
+            context.compact_visual_summary("한국어\n대사"),
+            (
+                "선두 제어(0글리프) 903F"
+                " · 줄바꿈 FFFB ×1"
+                " · 후미 제어(0글리프) 8000"
+            ),
+        )
         document = DialogueDocument(
             Path("candidate.json"),
             candidate,
