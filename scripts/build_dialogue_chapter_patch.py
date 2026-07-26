@@ -19,6 +19,10 @@ import struct
 from typing import Any, Iterable
 
 try:
+    from scripts.build_dialogue_safe_slots import (
+        fixed_original_safe_slots,
+        physical_entry_ranges,
+    )
     from scripts.korean_font import (
         crop_to_psx,
         load_font_profile,
@@ -26,6 +30,10 @@ try:
     )
     from scripts.psx_font import GLYPH_SIZE, pack_glyph
 except ModuleNotFoundError:
+    from build_dialogue_safe_slots import (
+        fixed_original_safe_slots,
+        physical_entry_ranges,
+    )
     from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
     from psx_font import GLYPH_SIZE, pack_glyph
 
@@ -455,23 +463,6 @@ def fit_fixed_diagnostic_candidate(
     }
 
 
-def physical_entry_ranges(
-    entries: Iterable[dict[str, Any]],
-) -> list[tuple[int, int, dict[str, Any]]]:
-    ranges = []
-    ordered = sorted(
-        entries,
-        key=lambda entry: int(entry["source"]["unit_offset"], 16),
-    )
-    for entry in ordered:
-        start = int(entry["source"]["unit_offset"], 16)
-        end = start + int(entry["source"]["byte_size"])
-        if ranges and start < ranges[-1][1]:
-            raise ValueError(f"{entry['entry_id']}: source text ranges overlap")
-        ranges.append((start, end, entry))
-    return ranges
-
-
 def build_source_ordered_stream(
     unit_data: bytes,
     entries: Iterable[dict[str, Any]],
@@ -877,21 +868,15 @@ def write_unit_at_original_offsets_diagnostic(
     original_unit = bytes(
         allbin[unit_file_offset : unit_file_offset + ranges[-1][1]]
     )
+    safe_slots = {
+        record.entry_id: record
+        for record in fixed_original_safe_slots(original_unit, entries)
+    }
     conflicts: list[dict[str, Any]] = []
-    for index, (start, end, entry) in enumerate(ranges):
+    for start, _, entry in ranges:
         entry_id = entry["entry_id"]
-        if index + 1 < len(ranges):
-            next_start, _, next_entry = ranges[index + 1]
-            gap = original_unit[end:next_start]
-            if any(gap):
-                capacity_end = end
-                conflict_target = "pointerless-fallthrough-gap"
-            else:
-                capacity_end = next_start
-                conflict_target = next_entry["entry_id"]
-        else:
-            capacity_end = end
-            conflict_target = "after-last-entry"
+        safe_slot = safe_slots[entry_id]
+        capacity_end = int(safe_slot.safe_end_unit_offset, 16)
         encoded_end = start + len(streams[entry_id])
         if encoded_end > capacity_end:
             conflicts.append(
@@ -906,7 +891,8 @@ def write_unit_at_original_offsets_diagnostic(
                     "overflow_glyph_tokens": (
                         encoded_end - capacity_end + 1
                     ) // 2,
-                    "conflict_target": conflict_target,
+                    "boundary_kind": safe_slot.boundary_kind,
+                    "conflict_target": safe_slot.protected_target,
                 }
             )
 
