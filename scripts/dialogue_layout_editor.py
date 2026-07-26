@@ -65,8 +65,27 @@ class LayoutMeasurement:
         )
 
     @property
+    def glyph_capacity_overflow(self) -> bool:
+        return self.visible_glyph_count > self.columns * self.rows
+
+    @property
+    def limit_reasons(self) -> tuple[str, ...]:
+        reasons: list[str] = []
+        if self.glyph_capacity_overflow:
+            reasons.append("total")
+        if self.column_overflow_rows:
+            reasons.append("line")
+        if self.row_overflow:
+            reasons.append("rows")
+        return tuple(reasons)
+
+    @property
+    def exceeds_limits(self) -> bool:
+        return bool(self.limit_reasons)
+
+    @property
     def fits(self) -> bool:
-        return not self.row_overflow and not self.column_overflow_rows
+        return not self.exceeds_limits
 
 
 def expand_display_tokens(text: str) -> str:
@@ -414,6 +433,13 @@ class DialogueDocument:
             (self.ids[index], self.japanese(index), self.value(index))
         ).casefold()
 
+    def layout_overflow_indices(self) -> tuple[int, ...]:
+        return tuple(
+            index
+            for index, value in enumerate(self._values)
+            if measure_layout(value).exceeds_limits
+        )
+
     def output_document(self) -> dict[str, Any]:
         output = copy.deepcopy(self.document)
         output_entries = output["entries"]
@@ -456,11 +482,20 @@ class DialogueDocument:
     def validation_summary(self) -> dict[str, Any]:
         fits = 0
         overflow = 0
+        glyph_capacity_overflow = 0
+        line_width_overflow = 0
+        row_count_overflow = 0
         empty = 0
         for value in self._values:
             measurement = measure_layout(value)
             if not value.strip():
                 empty += 1
+            if measurement.glyph_capacity_overflow:
+                glyph_capacity_overflow += 1
+            if measurement.column_overflow_rows:
+                line_width_overflow += 1
+            if measurement.row_overflow:
+                row_count_overflow += 1
             if measurement.fits:
                 fits += 1
             else:
@@ -471,9 +506,36 @@ class DialogueDocument:
             "entries": len(self),
             "fits_17x3": fits,
             "layout_overflow": overflow,
+            "glyph_capacity_overflow": glyph_capacity_overflow,
+            "line_width_overflow": line_width_overflow,
+            "row_count_overflow": row_count_overflow,
             "empty": empty,
             "dirty": len(self.dirty_indices),
         }
+
+
+def filter_entry_indices(
+    document: DialogueDocument,
+    *,
+    query: str = "",
+    overflow_only: bool = False,
+) -> list[int]:
+    """Return stable document indices matching search and layout filters."""
+    normalized_query = query.strip().casefold()
+    overflow_indices = (
+        set(document.layout_overflow_indices())
+        if overflow_only
+        else None
+    )
+    return [
+        index
+        for index in range(len(document))
+        if (overflow_indices is None or index in overflow_indices)
+        and (
+            not normalized_query
+            or normalized_query in document.searchable_text(index)
+        )
+    ]
 
 
 def _short_entry_label(document: DialogueDocument, index: int) -> str:
@@ -502,6 +564,7 @@ def run_gui(
             self.save_target = save_target
             self.current_index: int | None = None
             self.filtered_indices = list(range(len(document)))
+            self.overflow_indices = set(document.layout_overflow_indices())
             self._loading_editor = False
 
             root.title("PSX 대사 17×3 편집기")
@@ -510,6 +573,8 @@ def run_gui(
             root.protocol("WM_DELETE_WINDOW", self.close)
 
             self.search_var = tk.StringVar()
+            self.overflow_only_var = tk.BooleanVar(value=False)
+            self.filter_summary_var = tk.StringVar()
             self.id_var = tk.StringVar()
             self.meta_var = tk.StringVar()
             self.counter_var = tk.StringVar()
@@ -575,6 +640,24 @@ def run_gui(
                 "write",
                 lambda *_: self.refresh_filter(),
             )
+
+            filter_bar = ttk.Frame(left)
+            filter_bar.pack(fill=tk.X, pady=(0, 6))
+            ttk.Checkbutton(
+                filter_bar,
+                text="한도 초과만",
+                variable=self.overflow_only_var,
+                command=self.refresh_filter,
+            ).pack(side=tk.LEFT)
+            ttk.Button(
+                filter_bar,
+                text="목록 갱신",
+                command=self.refresh_filter,
+            ).pack(side=tk.LEFT, padx=(6, 0))
+            ttk.Label(
+                filter_bar,
+                textvariable=self.filter_summary_var,
+            ).pack(side=tk.RIGHT)
 
             nav = ttk.Frame(left)
             nav.pack(fill=tk.X, pady=(0, 6))
@@ -739,24 +822,28 @@ def run_gui(
 
         def refresh_filter(self) -> None:
             self.commit_current()
-            query = self.search_var.get().strip().casefold()
-            if query:
-                self.filtered_indices = [
-                    index
-                    for index in range(len(self.document))
-                    if query in self.document.searchable_text(index)
-                ]
-            else:
-                self.filtered_indices = list(range(len(self.document)))
+            self.overflow_indices = set(
+                self.document.layout_overflow_indices()
+            )
+            self.filtered_indices = filter_entry_indices(
+                self.document,
+                query=self.search_var.get(),
+                overflow_only=self.overflow_only_var.get(),
+            )
+            self.update_filter_summary()
 
             current = self.current_index
             self.entry_list.delete(0, tk.END)
             dirty_indices = set(self.document.dirty_indices)
             for index in self.filtered_indices:
                 marker = "*" if index in dirty_indices else " "
+                overflow_marker = (
+                    "!" if index in self.overflow_indices else " "
+                )
                 self.entry_list.insert(
                     tk.END,
-                    f"{marker} {_short_entry_label(self.document, index)}",
+                    f"{marker}{overflow_marker} "
+                    f"{_short_entry_label(self.document, index)}",
                 )
             if current in self.filtered_indices:
                 self._select_list_position(
@@ -767,6 +854,12 @@ def run_gui(
             else:
                 self.message_var.set("검색 결과가 없습니다.")
             self.update_title()
+
+        def update_filter_summary(self) -> None:
+            self.filter_summary_var.set(
+                f"목록 {len(self.filtered_indices)}건"
+                f" / 한도 초과 {len(self.overflow_indices)}건"
+            )
 
         def _select_list_position(self, position: int) -> None:
             self.entry_list.selection_clear(0, tk.END)
@@ -787,15 +880,7 @@ def run_gui(
             self._loading_editor = True
             try:
                 self.id_var.set(self.document.ids[index])
-                metadata = self.document.metadata(index)
-                limit = self.document.maximum_glyphs(index)
-                self.meta_var.set(
-                    f"{index + 1}/{len(self.document)}  "
-                    f"unit={metadata['unit'] or '?'}  "
-                    f"class={metadata['classification'] or '?'}  "
-                    f"status={metadata['status'] or '?'}  "
-                    f"max_glyphs={limit if limit is not None else '미확정'}"
-                )
+                self.update_metadata(index)
                 self.jp_text.configure(state=tk.NORMAL)
                 self.jp_text.delete("1.0", tk.END)
                 self.jp_text.insert("1.0", self.document.japanese(index))
@@ -808,6 +893,37 @@ def run_gui(
             self.update_preview()
             self.message_var.set("한국어 필드만 편집할 수 있습니다.")
             self.update_title()
+
+        def update_metadata(self, index: int) -> None:
+            metadata = self.document.metadata(index)
+            limit = self.document.maximum_glyphs(index)
+            measurement = measure_layout(self.document.value(index))
+            reason_labels: list[str] = []
+            if measurement.glyph_capacity_overflow:
+                reason_labels.append(
+                    f"총 {measurement.visible_glyph_count}/{CAPACITY}"
+                )
+            if measurement.column_overflow_rows:
+                rows = ",".join(
+                    str(row)
+                    for row in measurement.column_overflow_rows
+                )
+                reason_labels.append(f"17자 초과 행={rows}")
+            if measurement.row_overflow:
+                reason_labels.append(
+                    f"행 {len(measurement.lines)}/{ROWS}"
+                )
+            limit_state = (
+                ", ".join(reason_labels) if reason_labels else "적합"
+            )
+            self.meta_var.set(
+                f"{index + 1}/{len(self.document)}  "
+                f"unit={metadata['unit'] or '?'}  "
+                f"class={metadata['classification'] or '?'}  "
+                f"status={metadata['status'] or '?'}  "
+                f"max_glyphs={limit if limit is not None else '미확정'}  "
+                f"layout={limit_state}"
+            )
 
         def on_list_select(self, _event: object) -> None:
             selection = self.entry_list.curselection()
@@ -828,7 +944,40 @@ def run_gui(
             self.commit_current()
             self.ko_text.edit_modified(False)
             self.update_preview()
+            self.update_current_overflow_state()
             self.update_title()
+
+        def update_current_overflow_state(self) -> None:
+            if self.current_index is None:
+                return
+            measurement = measure_layout(
+                self.document.value(self.current_index)
+            )
+            if measurement.exceeds_limits:
+                self.overflow_indices.add(self.current_index)
+            else:
+                self.overflow_indices.discard(self.current_index)
+            self.update_metadata(self.current_index)
+            if self.current_index in self.filtered_indices:
+                position = self.filtered_indices.index(self.current_index)
+                marker = (
+                    "*"
+                    if self.current_index in self.document.dirty_indices
+                    else " "
+                )
+                overflow_marker = (
+                    "!"
+                    if self.current_index in self.overflow_indices
+                    else " "
+                )
+                self.entry_list.delete(position)
+                self.entry_list.insert(
+                    position,
+                    f"{marker}{overflow_marker} "
+                    f"{_short_entry_label(self.document, self.current_index)}",
+                )
+                self._select_list_position(position)
+            self.update_filter_summary()
 
         def update_title(self) -> None:
             target = self.save_target or self.document.path
@@ -844,7 +993,21 @@ def run_gui(
                 f"{index + 1}행 {width}/{COLUMNS}"
                 for index, width in enumerate(measurement.line_widths)
             ]
-            state = "적합" if measurement.fits else "초과"
+            reason_parts: list[str] = []
+            if measurement.glyph_capacity_overflow:
+                reason_parts.append("총 글리프")
+            if measurement.column_overflow_rows:
+                rows = ",".join(
+                    str(row) for row in measurement.column_overflow_rows
+                )
+                reason_parts.append(f"{rows}행 폭")
+            if measurement.row_overflow:
+                reason_parts.append("행 수")
+            state = (
+                "적합"
+                if not reason_parts
+                else "초과: " + ", ".join(reason_parts)
+            )
             self.counter_var.set(
                 " · ".join(width_parts)
                 + f"  |  표시 {measurement.visible_glyph_count}/{CAPACITY}"
@@ -927,6 +1090,7 @@ def run_gui(
                 self._loading_editor = False
             self.commit_current()
             self.update_preview()
+            self.update_current_overflow_state()
             self.update_title()
             self.message_var.set("자동 배치를 적용했습니다. 저장 전 검토하세요.")
 
@@ -950,6 +1114,7 @@ def run_gui(
                 self._loading_editor = False
             self.commit_current()
             self.update_preview()
+            self.update_current_overflow_state()
             self.update_title()
 
         def previous(self) -> None:

@@ -10,6 +10,7 @@ from scripts.dialogue_layout_editor import (
     DialogueEditorError,
     conservative_word_wrap,
     expand_display_tokens,
+    filter_entry_indices,
     measure_layout,
 )
 
@@ -27,6 +28,15 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         overflow = measure_layout("가" * 18)
         self.assertFalse(overflow.fits)
         self.assertEqual(overflow.column_overflow_rows, (1,))
+        self.assertEqual(overflow.limit_reasons, ("line",))
+
+        total_overflow = measure_layout(
+            "가" * 13 + "\n" + "나" * 13 + "\n"
+            + "다" * 13 + "\n" + "라" * 13
+        )
+        self.assertTrue(total_overflow.glyph_capacity_overflow)
+        self.assertTrue(total_overflow.row_overflow)
+        self.assertEqual(total_overflow.limit_reasons, ("total", "rows"))
 
     def test_expands_only_fixed_name_placeholders(self) -> None:
         self.assertEqual(
@@ -106,6 +116,46 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             self.assertEqual(output["entries"][0]["max_glyphs"], 51)
             self.assertEqual(output["source_sha256"], "protected")
             self.assertFalse(document.dirty)
+
+    def test_filters_only_layout_overflow_entries_in_source_order(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {"id": "entry-0", "jp": "通常", "ko": "가" * 17},
+                {"id": "entry-1", "jp": "行超過", "ko": "나" * 18},
+                {
+                    "id": "entry-2",
+                    "jp": "総数超過",
+                    "ko": "\n".join(("다" * 13,) * 4),
+                },
+                {
+                    "id": "entry-3",
+                    "jp": "ちょうど",
+                    "ko": "\n".join(("라" * 17,) * 3),
+                },
+            ]
+        }
+        document = DialogueDocument(Path("input.json"), source)
+
+        self.assertEqual(document.layout_overflow_indices(), (1, 2))
+        self.assertEqual(
+            filter_entry_indices(document, overflow_only=True),
+            [1, 2],
+        )
+        self.assertEqual(
+            filter_entry_indices(
+                document,
+                query="総数",
+                overflow_only=True,
+            ),
+            [2],
+        )
+        summary = document.validation_summary()
+        self.assertEqual(summary["layout_overflow"], 2)
+        self.assertEqual(summary["glyph_capacity_overflow"], 1)
+        self.assertEqual(summary["line_width_overflow"], 1)
+        self.assertEqual(summary["row_count_overflow"], 1)
 
     def test_rejects_duplicate_stable_ids(self) -> None:
         source = {
