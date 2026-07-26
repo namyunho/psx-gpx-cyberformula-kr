@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
-"""Create reversible Disc 1 dialogue worksets without translating text.
+"""Create reversible direct-pointer Disc 1 worksets without translating text.
 
-The extractor consumes the already-proven font-stream inventory instead of
-searching for new strings. Original bytes, u16 tokens, pointer relationships,
-table-scoped Japanese decoding, and story-page layout measurements are
-protected fields. Full and abbreviated Korean fields are emitted empty so
-another tool or reviewer can work from the same immutable extraction baseline.
+The extractor consumes the proven direct-pointer font-stream inventory instead
+of searching for new strings. Original bytes, u16 tokens, pointer
+relationships, table-scoped Japanese decoding, and story-page layout
+measurements are protected fields. Full and abbreviated Korean fields are
+emitted empty so another tool or reviewer can work from the same immutable
+pointer-target baseline.
+
+This is not the final physical page population. Runtime fall-through after
+0x8000 reaches pointerless continuation pages; unit 0 alone has five known
+pages that this extractor does not yet promote to standalone workset entries.
 """
 
 from __future__ import annotations
@@ -566,6 +571,17 @@ def workset_document(
             "glyph_map_sha256": glyph_map_sha256,
             "glyph_map_status": glyph_map_status,
             "glyph_table": glyph_table_id,
+            "population_status": (
+                "direct-pointer-target-baseline-known-incomplete"
+                if workset_kind == "dialogue"
+                else "explicit-ui-roots"
+            ),
+            "known_population_limitation": (
+                "Pointerless continuation pages after 0x8000 are not yet "
+                "standalone entries; unit 0 has five confirmed pages."
+                if workset_kind == "dialogue"
+                else None
+            ),
         },
         "field_policy": {
             "protected": [
@@ -908,7 +924,9 @@ def build_layout_storage_report(
             "total": totals,
             "units": unit_reports,
             "decision": {
-                "prefix_and_inter_entry_gaps": "preserve-unclassified",
+                "prefix_and_inter_entry_gaps": (
+                    "preserve-physical-fallthrough-pointerless-pages-confirmed"
+                ),
                 "after_last_text_before_pointer_table": "preserve-unclassified",
                 "trailing_zero_padding": "candidate-unproven-do-not-use",
                 "cross_unit_growth": "forbidden-without-loader-and-schedule-proof",

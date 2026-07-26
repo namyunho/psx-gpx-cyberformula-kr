@@ -1,5 +1,13 @@
 # 리맵 표 기반 한글 운반 전략
 
+> **폐기된 설계**: 후속 IDA Pro/Ghidra 교차 분석에서 렌더러가 토큰 하위
+> 12비트를 primary/alternate 글리프 인덱스로 직접 사용하고,
+> `0x8001426C`는 리맵 표가 아니라 텍스트 포인터 상태 필드임을 확인했다.
+> 현재 경로는 primary 1,229슬롯 정적 교체와 대사 직접 재인코딩이다.
+> 구현 결과는 [`chapter01-disc-build.md`](chapter01-disc-build.md),
+> 현재 인코딩 결론은
+> [`hangul-storage-encoding.md`](hangul-storage-encoding.md)를 따른다.
+
 ## 결론
 
 첫 한국어 대사 PoC에서 확인한 14x14 글리프 포맷과 화면 출력 경로는 유지한다.

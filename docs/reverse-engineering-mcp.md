@@ -177,8 +177,8 @@ primitive의 Texpage·UV를 고른 뒤, Lua breakpoint로
 
 대사 폰트 자체는 이미 `START.BIN + 0x1A000`과 RAM `0x80014A00`의
 14×14·3bpp 테이블로 확정됐다. 이 방법을 기존 결론의 재탐색에 쓰지 않고,
-미확인 UI·베이크드 그래픽과 향후 한글 캐시의 저장→화면 연결을 검증하는 데
-사용한다. 좌표 계산, DMA 검증 조건, 예외와 증거 형식은
+미확인 UI·베이크드 그래픽과 정적 한글 primary 테이블의 실제 화면 색상·클리핑
+연결을 검증하는 데 사용한다. 좌표 계산, DMA 검증 조건, 예외와 증거 형식은
 [`gpu-upload-source-tracing.md`](gpu-upload-source-tracing.md)를 따른다.
 
 ## 디스크 도구 경계

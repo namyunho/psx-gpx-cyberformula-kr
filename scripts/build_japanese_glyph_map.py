@@ -91,6 +91,17 @@ ALTERNATE_CUSTOM_TAIL = (
     "筐篁絽椅繚翔翻茉莢莉號邊酥雉霍瓢槇遙ゔぢヂヲ"
 )
 
+# Context and direct slot review of the user-recolored
+# primary-glyphs-only_modify.png corrected four primary OCR readings.
+# 0x00E4 repurposes the structural ヶ slot as Greek nu in νアスラーダ.
+# The remaining three slots stay in strictly increasing JIS Level 1 order.
+PRIMARY_CONTEXT_CORRECTIONS = {
+    0x00E4: "ν",
+    0x01AA: "驚",
+    0x0310: "薦",
+    0x03EE: "発",
+}
+
 
 def decode_sjis_trail_range(
     lead: int,
@@ -193,6 +204,14 @@ def structural_glyphs(table_id: str = "primary") -> dict[int, str]:
         },
         heart_index: "♥",
     }
+    if table_id == "primary":
+        glyphs.update(
+            {
+                index: character
+                for index, character in PRIMARY_CONTEXT_CORRECTIONS.items()
+                if index < 0x00E6
+            }
+        )
     return glyphs
 
 
@@ -231,6 +250,8 @@ def complete_table_glyphs(table_id: str) -> dict[int, str]:
             for index, character in enumerate(custom)
         }
     )
+    if table_id == "primary":
+        glyphs.update(PRIMARY_CONTEXT_CORRECTIONS)
     if set(glyphs) != set(range(expected_count)):
         missing = sorted(set(range(expected_count)) - set(glyphs))
         raise ValueError(
@@ -302,6 +323,12 @@ def build_document() -> dict[str, object]:
                 (
                     "OCR outliers were corrected by neighboring JIS bounds, "
                     "glyph-shape inspection, and dialogue context."
+                ),
+                (
+                    "Direct slot review of the user-recolored "
+                    "primary-glyphs-only_modify.png corrected primary 00E4 "
+                    "to semantic ν, 01AA to 驚, 0310 to 薦, and 03EE to 発; "
+                    "dialogue context independently confirms the readings."
                 ),
                 (
                     "Primary and alternate tables remain separate because their "

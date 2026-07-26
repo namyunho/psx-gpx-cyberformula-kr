@@ -21,13 +21,17 @@ class BuildJapaneseGlyphMapTests(unittest.TestCase):
         self.assertEqual(glyphs[0x0094], "ん")
         self.assertEqual(glyphs[0x0095], "ァ")
         self.assertEqual(glyphs[0x00E2], "ン")
-        self.assertEqual(glyphs[0x00E4], "ヶ")
+        self.assertEqual(glyphs[0x00E4], "ν")
         self.assertEqual(glyphs[0x00E5], "♥")
 
     def test_alternate_structural_ranges_are_shifted_four_slots(self) -> None:
         primary = structural_glyphs("primary")
         alternate = structural_glyphs("alternate")
         for primary_index in range(0x001E, 0x00E6):
+            if primary_index == 0x00E4:
+                # Primary uses the ヶ-shaped slot as semantic Greek nu in
+                # νアスラーダ; alternate retains the literal kana reading.
+                continue
             self.assertEqual(
                 primary[primary_index],
                 alternate[primary_index - 4],
@@ -69,6 +73,12 @@ class BuildJapaneseGlyphMapTests(unittest.TestCase):
             self.assertTrue(
                 all(left < right for left, right in zip(selected, selected[1:]))
             )
+
+    def test_primary_context_corrections_match_modify_atlas_review(self) -> None:
+        primary = complete_table_glyphs("primary")
+        self.assertEqual(primary[0x01AA], "驚")
+        self.assertEqual(primary[0x0310], "薦")
+        self.assertEqual(primary[0x03EE], "発")
 
     def test_document_keeps_tables_scoped(self) -> None:
         document = build_document()

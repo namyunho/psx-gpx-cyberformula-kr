@@ -1,5 +1,11 @@
 # 리맵/표시 버퍼 생성 경로 추적 PoC
 
+> **역사적 PoC**: 이 문서의 “리맵 후보” 해석은 후속 IDA Pro/Ghidra 분석에서
+> 폐기됐다. `0x8001426C`는 직접 텍스트 포인터 상태 필드이며 렌더러는 토큰
+> 하위 12비트를 74바이트 글리프 레코드에 직접 적용한다. 현재 채택 경로는
+> [`hangul-storage-encoding.md`](hangul-storage-encoding.md), 챕터 1 삽입
+> 결과는 [`chapter01-disc-build.md`](chapter01-disc-build.md)를 따른다.
+
 ## 목표
 
 고상위 한글 토큰 훅을 폐기한 뒤의 다음 목표는 첫 대사 원본 토큰이 렌더러 직전
