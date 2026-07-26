@@ -317,13 +317,29 @@ def build_disc(
     accepted_file_statuses = {
         "nonrelease-partial-chapter-build",
         "nonrelease-fixed-original-offset-overflow-diagnostic",
+        "nonrelease-partial-chapter-build-with-character-names",
+        (
+            "nonrelease-fixed-original-offset-overflow-diagnostic-"
+            "with-character-names"
+        ),
     }
     if file_manifest.get("status") not in accepted_file_statuses:
         raise ValueError("unexpected partial file-build status")
+    diagnostic_policy = (
+        file_manifest.get("placement_policy") == "fixed-original-diagnostic"
+    )
+    diagnostic_overflow = diagnostic_policy and any(
+        int(unit.get("slot_overflow_count", 0)) > 0
+        or int(unit.get("corrupted_by_overlap_entry_count", 0)) > 0
+        for unit in file_manifest.get("units", [])
+    )
 
+    replacement_names = ["START.BIN", "ALLBIN.BIN"]
+    if "SLPS_019.58" in file_manifest.get("outputs", {}):
+        replacement_names.append("SLPS_019.58")
     replacements = {
         name: (file_build_dir / name).read_bytes()
-        for name in ("START.BIN", "ALLBIN.BIN")
+        for name in replacement_names
     }
     for name, replacement in replacements.items():
         expected_hash = file_manifest["outputs"][name]["sha256"]
@@ -451,9 +467,13 @@ def build_disc(
         "schema_version": 1,
         "status": (
             "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
-            if file_manifest.get("status")
-            == "nonrelease-fixed-original-offset-overflow-diagnostic"
-            else "nonrelease-chapter01-runtime-validation-required"
+            if diagnostic_overflow
+            else (
+                "nonrelease-chapter01-runtime-validation-required-"
+                "with-character-names"
+                if "SLPS_019.58" in replacements
+                else "nonrelease-chapter01-runtime-validation-required"
+            )
         ),
         "chapter": {
             "human_label": (
@@ -521,17 +541,12 @@ def build_disc(
                 "path": str(output_cue.resolve()),
                 "sha256": sha256_file(output_cue),
             },
-            "START.BIN": {
-                "sha256": hashlib.sha256(
-                    replacements["START.BIN"]
-                ).hexdigest(),
-                "verified_by_reextraction": True,
-            },
-            "ALLBIN.BIN": {
-                "sha256": hashlib.sha256(
-                    replacements["ALLBIN.BIN"]
-                ).hexdigest(),
-                "verified_by_reextraction": True,
+            **{
+                name: {
+                    "sha256": hashlib.sha256(replacement).hexdigest(),
+                    "verified_by_reextraction": True,
+                }
+                for name, replacement in replacements.items()
             },
         },
         "runtime_validation": {
@@ -543,15 +558,33 @@ def build_disc(
                 (
                     "observe fixed-address overlap boundaries; this diagnostic "
                     "is not expected to advance through every entry"
-                    if file_manifest.get("status")
-                    == "nonrelease-fixed-original-offset-overflow-diagnostic"
+                    if diagnostic_overflow
                     else "confirm selected dialogue entries render and advance"
                 ),
                 (
-                    "continue to general-race unit 21 and inspect its first "
-                    "overlap boundary"
+                    (
+                        "continue to general-race unit 21 and inspect its "
+                        "first overlap boundary"
+                        if diagnostic_overflow
+                        else (
+                            "continue through general-race unit 21 and "
+                            "confirm its dialogue control flow"
+                        )
+                    )
                     if 21 in selected_units
                     else "do not continue into an unselected dialogue unit"
+                ),
+                *(
+                    [
+                        "confirm the default name is 시바 / 세이치로",
+                        (
+                            "confirm the fixed name is preserved when it is "
+                            "displayed again after registration"
+                        ),
+                        "confirm Korean character and system speaker labels",
+                    ]
+                    if "SLPS_019.58" in replacements
+                    else []
                 ),
             ],
         },

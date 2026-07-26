@@ -54,6 +54,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 최초 한글 가시성 PoC | ✅ 통과 — 역사적 Galmuri14 시험으로 DuckStation 본문 렌더 경로 확인 |
 | Galmuri11 첫 대사 PoC | 🟡 정적 검증 통과 — 18자 삽입과 raw Track diff 확인, 실제 화면 최종 확인 대기 |
 | 한글 저장·인코딩 | ✅ 정적 경로 확정 — 후보 988자를 primary 1,229슬롯에 배치하고 대사 토큰 직접 재인코딩, 훅 불필요 |
+| 고정 주인공명·화자명 | ✅ 실행 확인 — `시바` 2칸+`세이치로` 4칸과 화자명·용어집 표기가 실제 화면에서 정상 표시 |
 | 그래픽 현지화 분모 | ✅ 구조 완료 — 1,739개 그래픽 관련 state 역할 분류 |
 | 베이크드 문자 소비 경로 | 🚧 진행 전 — 1,463개 검토 state를 화면→VRAM→RAM→저장 위치에 연결해야 함 |
 | 대사 추출 작업본 | 🚧 직접 포인터 대상 원문 판독 완료 — 대사 5,783개와 UI 60개 미매핑 0, unit 0에서 무포인터 페이지 5개 추가 확인 |
@@ -141,6 +142,7 @@ tmp/                    비커밋 임시 캡처
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
 | [Galmuri11 본문 PoC](docs/galmuri11-font-poc.md) | 첫 대사 정적 삽입·raw Track 검증과 남은 화면 확인 |
 | [한글 저장·인코딩](docs/hangul-storage-encoding.md) | primary 1,229슬롯 정적 맵과 직접 대사 인코딩 |
+| [캐릭터 이름과 고정 주인공명](docs/character-name-layout.md) | `시바/세이치로` 2+4 슬롯, 이름 화면·재표시·화자명 34개 안전 삽입 |
 | [리맵 표 전략](docs/remap-table-strategy.md) | 후속 분석에서 폐기된 역사적 설계 |
 | [리맵 경로 추적 PoC](docs/remap-path-poc.md) | 텍스트 상태 필드 판정을 남긴 역사적 PoC |
 | [챕터 1 비배포 디스크 빌드](docs/chapter01-disc-build.md) | 정적 폰트·unit 0 대사·raw sector 삽입과 EDC/ECC 검증 |
@@ -210,10 +212,13 @@ python3 -m venv .venv
   --allbin work/extracted/disc1/iso/ALLBIN.BIN \
   --unit 0,21 \
   --placement-policy fixed-original-diagnostic \
-  --output-dir work/build/dialogue-u00-u21-fixed-original-diagnostic
+  --output-dir work/build/dialogue-u00-u21-safe-fixed-original
+.venv/bin/python scripts/build_character_name_patch.py \
+  --file-build-dir work/build/dialogue-u00-u21-safe-fixed-original \
+  --output-dir work/build/dialogue-u00-u21-safe-names
 .venv/bin/python scripts/build_dialogue_chapter_disc.py \
-  --file-build-dir work/build/dialogue-u00-u21-fixed-original-diagnostic \
-  --output-dir work/build/dialogue-chapter01-u21-fixed-original-diagnostic
+  --file-build-dir work/build/dialogue-u00-u21-safe-names \
+  --output-dir work/build/dialogue-u00-u21-safe-names-disc
 ```
 
 실행 범위와 출력 CUE/BIN은
@@ -221,11 +226,11 @@ python3 -m venv .venv
 빌더는 번역 후보의 안정 ID 순서를 검증하고, 챕터 1 첫 엔트리
 `disc1/allbin/u00/event_page/ref0000`을 원본 고정 시작점 `ALLBIN+0x54`에
 보존합니다. 현재 진단 모드는 포인터를 갱신하거나 대사를 재배치하지 않고
-원본 시작 주소에 번역 스트림을 씁니다. unit `0`의 15개와 unit `21`의
-21개 초과 스트림은 앞 대사를 끝까지 관찰하기 위해 다음 데이터를 의도적으로
-덮으므로 진행용 이미지가 아닙니다. 이 겹침은 다음 페이지의
-`speaker_style`·`audio` 선두 토큰을 손상시키며, 현재 관측된 초상화·
-등장인물명 누락의 원인으로 판정했습니다. primary 글꼴의 `0x000..0x045`,
+원본 시작 주소에 번역 스트림을 씁니다. 현재 사용자가 교정한 unit `0`과
+`21`의 156개 대사는 모두 각 원본 안전 슬롯 안에 들어가며, 슬롯 겹침과
+손상된 다음 엔트리는 0개입니다. 정책 이름은 역사적으로
+`fixed-original-diagnostic`을 유지하지만 현재 이 두 unit의 산출물은
+진행 검증에 사용할 수 있습니다. primary 글꼴의 `0x000..0x045`,
 `0x0E4..0x0E5`는 영문·숫자·특수문자 보호 슬롯으로 예약되어 한글 배정에
 사용되지 않습니다.
 

@@ -24,7 +24,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and surname/given-name variants appear in race dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0002",
@@ -48,7 +48,7 @@
       ],
       "confidence": "high",
       "notes": "Owner name appears with surname, given name, and katakana order.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0003",
@@ -70,7 +70,7 @@
       ],
       "confidence": "high",
       "notes": "Introduced by full name, then repeatedly addressed by given name.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0004",
@@ -94,7 +94,7 @@
       ],
       "confidence": "high",
       "notes": "Introduced by full name and repeatedly addressed by given name/nickname.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0005",
@@ -116,7 +116,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and surname forms both appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0006",
@@ -139,7 +139,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and surname forms both appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0007",
@@ -161,7 +161,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and given-name variants appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0008",
@@ -183,7 +183,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and given-name variants appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0009",
@@ -206,7 +206,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and surname/given-name variants appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0010",
@@ -229,7 +229,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and nickname/surname variants appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0011",
@@ -250,7 +250,7 @@
       ],
       "confidence": "medium",
       "notes": "Surname/given-name boundary is not explicit in the dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0012",
@@ -273,7 +273,7 @@
       ],
       "confidence": "medium",
       "notes": "Full form appears; shortened variants are frequent.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0013",
@@ -296,7 +296,7 @@
       ],
       "confidence": "high",
       "notes": "Full name appears and surname form is frequent.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0014",
@@ -317,7 +317,7 @@
       ],
       "confidence": "medium",
       "notes": "Appears as a person addressed by name.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0015",
@@ -335,7 +335,7 @@
       ],
       "confidence": "high",
       "notes": "Full name and surname form appear.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0016",
@@ -356,7 +356,7 @@
       ],
       "confidence": "medium",
       "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0017",
@@ -377,7 +377,7 @@
       ],
       "confidence": "medium",
       "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0018",
@@ -398,7 +398,7 @@
       ],
       "confidence": "medium",
       "notes": "Given-name form appears repeatedly; surname is not in dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0019",
@@ -419,7 +419,7 @@
       ],
       "confidence": "medium",
       "notes": "Name-like form appears as address; exact full identity not explicit.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0020",
@@ -434,7 +434,7 @@
       ],
       "confidence": "low",
       "notes": "Appears as a self-introduction once.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0021",
@@ -449,7 +449,7 @@
       ],
       "confidence": "low",
       "notes": "Appears as a name once.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0022",
@@ -471,7 +471,7 @@
       ],
       "confidence": "high",
       "notes": "Player-name placeholders appear throughout dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0023",
@@ -487,7 +487,7 @@
       ],
       "confidence": "high",
       "notes": "Legendary driver name appears in dialogue.",
-      "status": "candidate"
+      "status": "approved"
     },
     {
       "term_id": "term-0024",
@@ -1869,6 +1869,103 @@
       ],
       "confidence": "high",
       "notes": "Repeated racing technique term.",
+      "status": "candidate"
+    },
+    {
+      "term_id": "term-0098",
+      "category": "character",
+      "jp": "司馬誠一郎",
+      "reading": "しば せいいちろう",
+      "ko_candidate": "시바 세이치로",
+      "variants": [
+        "司馬",
+        "誠一郎",
+        "{name:surname}",
+        "{name:given}"
+      ],
+      "occurrences": 111,
+      "evidence_ids": [
+        "disc1/allbin/u00/event_page/ref0004",
+        "disc1/allbin/u02/event_page/ref0047",
+        "disc1/allbin/u02/event_page/ref0063",
+        "disc1/allbin/u02/event_page/ref0077",
+        "disc1/allbin/u02/event_page/ref0107"
+      ],
+      "confidence": "high",
+      "notes": "User-approved fixed protagonist name; surname uses 2 glyphs and given name uses 4 glyphs in the shared 6-glyph runtime buffer.",
+      "status": "approved"
+    },
+    {
+      "term_id": "term-0099",
+      "category": "character",
+      "jp": "ペイ",
+      "reading": "ぺい",
+      "ko_candidate": "페이",
+      "variants": [
+        "ペイさん"
+      ],
+      "occurrences": 3,
+      "evidence_ids": [
+        "disc1/allbin/u14/event_page/ref0192",
+        "disc1/allbin/u14/event_page/ref0029",
+        "disc1/allbin/u14/event_page/ref0034"
+      ],
+      "confidence": "high",
+      "notes": "Speaker-name table index 6 and dialogue references agree.",
+      "status": "approved"
+    },
+    {
+      "term_id": "term-0100",
+      "category": "character",
+      "jp": "篠原めぐみ",
+      "reading": "しのはら めぐみ",
+      "ko_candidate": "시노하라 메구미",
+      "variants": [
+        "めぐみ",
+        "めぐみさん"
+      ],
+      "occurrences": 9,
+      "evidence_ids": [
+        "disc1/allbin/u02/event_page/ref0217",
+        "disc1/allbin/u02/event_page/ref0219",
+        "disc1/allbin/u02/event_page/ref0222",
+        "disc1/allbin/u02/event_page/ref0225",
+        "disc1/allbin/u02/event_page/ref0227"
+      ],
+      "confidence": "high",
+      "notes": "Full-name introduction and speaker-name table index 7 agree.",
+      "status": "approved"
+    },
+    {
+      "term_id": "term-0101",
+      "category": "character",
+      "jp": "馬ノ助",
+      "reading": "うまのすけ",
+      "ko_candidate": "우마노스케",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u10/event_page/ref0108",
+        "disc1/allbin/u10/event_page/ref0111"
+      ],
+      "confidence": "high",
+      "notes": "The two speaker-style index 31 entries resolve to the 馬ノ助 speaker-name table record.",
+      "status": "approved"
+    },
+    {
+      "term_id": "term-0102",
+      "category": "machine",
+      "jp": "ブイハチ",
+      "reading": "ぶいはち",
+      "ko_candidate": "브이하치",
+      "variants": [],
+      "occurrences": 2,
+      "evidence_ids": [
+        "disc1/allbin/u07/event_page/ref0026",
+        "disc1/allbin/u09/event_page/ref0109"
+      ],
+      "confidence": "high",
+      "notes": "Dialogue spelling and speaker-name table index 25 agree.",
       "status": "candidate"
     }
   ]
