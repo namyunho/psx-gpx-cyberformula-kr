@@ -122,6 +122,35 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             self.assertEqual(output["source_sha256"], "protected")
             self.assertFalse(document.dirty)
 
+    def test_refuses_to_save_a_modified_four_row_dialogue(self) -> None:
+        source = {
+            "entries": [
+                {
+                    "id": "entry-0",
+                    "jp": "原文",
+                    "ko": "원문",
+                }
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "dialogue.json"
+            path.write_text(
+                json.dumps(source, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            document = DialogueDocument.load(path)
+            document.set_value(0, "첫째\n둘째\n셋째\n넷째")
+            with self.assertRaisesRegex(
+                DialogueEditorError,
+                "3줄을 넘는 수정 대사는 저장할 수 없습니다",
+            ):
+                document.save()
+            self.assertEqual(
+                json.loads(path.read_text(encoding="utf-8")),
+                source,
+            )
+            self.assertFalse(path.with_name("dialogue.json.bak").exists())
+
     def test_filters_only_layout_overflow_entries_in_source_order(
         self,
     ) -> None:

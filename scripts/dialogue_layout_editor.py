@@ -1379,6 +1379,18 @@ class DialogueDocument:
 
     def save(self, path: Path | None = None) -> Path | None:
         target = self.path if path is None else path
+        dirty_row_overflows = [
+            index
+            for index in self.dirty_indices
+            if measure_layout(self._values[index]).row_overflow
+        ]
+        if dirty_row_overflows:
+            first = dirty_row_overflows[0]
+            raise DialogueEditorError(
+                "3줄을 넘는 수정 대사는 저장할 수 없습니다: "
+                f"{self.ids[first]} "
+                f"({len(measure_layout(self._values[first]).lines)}줄)"
+            )
         output = self.output_document()
         backup: Path | None = None
         if target.exists():
