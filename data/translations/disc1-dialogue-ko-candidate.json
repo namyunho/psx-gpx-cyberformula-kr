@@ -1,54 +1,54 @@
 {
   "schema_version": 1,
   "status": "machine-translated-candidate-needs-review",
-  "brief_sha256": "0a0ada7f42e1db47188042f1982e7eff0ac6cb18bf22cc7a58d8a7883bc8f00a",
-  "translation_candidate_sha256": "df134903851bd24ed08bc255f9e81f7eef82b5987fd817ad00f129b36892980f",
+  "brief_sha256": "84361841839a09b5f027a47c904eb25deac51b51d6b0dc801a8abb05c65ea8ba",
+  "translation_candidate_sha256": "b2e3d65db9af06c5c6a5f54fe580eddcbe5e736658f3c66334ef45fabb55d369",
   "glossary_candidate_sha256": "d85647fbc1634233a328b3c073b37d57aac214cfdcf07af91b1339a251d8e58c",
   "entry_count": 5783,
   "entries": [
     {
       "id": "disc1/allbin/u00/event_page/ref0000",
-      "ko": "(드디어 여기까지 왔다…\n동경하던 팀,\n'스고 그랑프리')"
+      "ko": "(드디어 여기까지 왔다…\n동경하던 팀,'스고 그랑프리')"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0001",
-      "ko": "(오늘 테스트에 붙으면\n나도 사이버 포뮬러에\n참전할 수 있어)"
+      "ko": "(오늘 테스트에 붙으면\n나도 사이버 포뮬러에 \n참전할 수 있어)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0002",
-      "ko": "(…그 카자미 씨처럼\n스고의 일원으로)"
+      "ko": "(…그 카자미 씨처럼 스고의 \n일원으로)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0003",
-      "ko": "자네인가?\n오늘 테스트생이."
+      "ko": "자넨가?\n오늘 테스트가?"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0004",
-      "ko": "네! {name:surname}{name:given}입니다.\n오늘 테스트를\n받으러 왔습니다!"
+      "ko": "네! {name:surname} {name:given}입니다.\n오늘 테스트를 받으러 왔습니다!"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0005",
-      "ko": "(흐음… 이 사람이\n오너인 스고\n오사무 씨인가…)"
+      "ko": "(흐음… 이 사람이 오너인\n오사무 씨인가…)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0006",
-      "ko": "(지금은 은퇴했지만\n예전 사이버 포뮬러에선\n톱 드라이버였대)"
+      "ko": "(지금은 은퇴했지만\n예전 사이버 포뮬러에선\n탑 드라이버였대)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0007",
-      "ko": "(사이버 포뮬러계를\n떠들썩하게 한\n나이트 슈마하라는)"
+      "ko": "(사이버 포뮬러계를 떠들썩하게 \n만든 나이트 슈마하 라는)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0008",
-      "ko": "(수수께끼 드라이버의\n정체가 은퇴 뒤 몰래\n복귀한 이 사람이래)"
+      "ko": "(수수께끼 드라이버의 정체가 \n은퇴 뒤 몰래 복귀한 이 사람\n이래)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0009",
-      "ko": "흠, 스탠더드 포뮬러\n실적은 꽤 대단하군."
+      "ko": "흠, 스탠더드 포뮬러 실적은 \n꽤 대단하군."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0010",
-      "ko": "하지만 사이버는 네가\n겪은 레이스와는\n완전히 다르다."
+      "ko": "하지만 사이버는 네가\n겪은 레이스와는 완전히 다르다."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0011",
@@ -56,7 +56,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0012",
-      "ko": "네!\n감사합니다!"
+      "ko": "네! 감사합니다!"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0013",
@@ -68,11 +68,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0015",
-      "ko": "(믿을 수 없어…)"
+      "ko": "믿을 수 없어…"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0016",
-      "ko": "(꿈에 그리던\n카자미 씨의 머신이\n눈앞에 있다니…!)"
+      "ko": "(꿈에 그리던 카자미 씨의 \n머신이 눈앞에 있다니…!)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0017",
@@ -88,7 +88,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0020",
-      "ko": "(아스라다 제작, 갈랜드\n설계를 맡은 슈퍼 레이디\n…정말 상냥해 보여)"
+      "ko": "(아스라다 제작, \n가랜드 설계를 맡은 슈퍼 레이디\n…정말 상냥해 보여)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0021",
@@ -100,11 +100,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0023",
-      "ko": "여기엔 이른바\n아스라다라 불리는\n내비 시스템은 없어."
+      "ko": "여기엔 이른바 아스라다라 불리는\n내비 시스템은 없어."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0024",
-      "ko": "아스라다는 어디까지나\n하야토 군의 것이니까."
+      "ko": "아스라다는 어디까지나 \n하야토군의 것이니까"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0025",
@@ -124,7 +124,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0029",
-      "ko": "(생각해 보면 테스트생\n머신에 달아도 다루긴\n힘들겠지…)"
+      "ko": "(생각해 보면 테스트생 머신에 \n달아도 다루긴 힘들겠지…)"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0030",
@@ -132,7 +132,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0031",
-      "ko": "그럼 이너셜 드리프트나\n리프팅 턴도\n없는 건가요?"
+      "ko": "그럼 이너셜 드리프트나\n리프팅 턴도 없는 건가요?"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0032",
@@ -140,11 +140,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0033",
-      "ko": "그 테크닉은 하야토 군과\n아스라다가 스스로\n만들어 낸 것…."
+      "ko": "그 테크닉은 하야토 군과\n아스라다가 스스로 만들어 \n낸 것…."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0034",
-      "ko": "이 머신으로도\n못 할 건 없겠지만,\n처음부터는 무리야."
+      "ko": "이 머신으로도 못 할 건 \n없겠지만, 처음부터는 무리야."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0035",
@@ -168,7 +168,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0040",
-      "ko": "드라이버 등록, 종료."
+      "ko": "드라이버 등록, 종료"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0041",
@@ -176,7 +176,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0042",
-      "ko": "네메시스인가….\n잘 부탁해! 네메시스!"
+      "ko": "네메시스… \n잘 부탁해! 네메시스!"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0043",
@@ -184,7 +184,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0044",
-      "ko": "자, 이걸로 네메시스와\n달릴 준비가 됐어.\n남은 건 주행 중 커맨드야."
+      "ko": "이걸로 네메시스와 달릴 준비가\n됐어. 남은 건 주행 중\n커맨드야."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0045",
@@ -216,7 +216,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0051",
-      "ko": "흥… 기록만 재는 테스트는\n우리 스고에는 있을 수\n없는 일이지."
+      "ko": "흥… 기록만 재는 테스트는\n우리 스고엔 있을 수 없는\n일이지"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0052",
@@ -228,15 +228,15 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0054",
-      "ko": "후후. 그랑프리는 이제 좀\n무리지만, 이렇게 신인을\n괴롭히는 게 오사무 씨 취미야."
+      "ko": "후후. 그랑프리는 이제 좀\n무리지만, 이렇게 신인을\n괴롭히는 게 오사무 씨 취미야"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0055",
-      "ko": "이봐, 클레어!\n취미라니 무슨 소리야💦"
+      "ko": "어이 클레어!\n취미라니 무슨 소리야💦"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0056",
-      "ko": "내가 쓸 머신은 갈랜드다.\n레이스는 3바퀴.\n네 실력, 보여 다오."
+      "ko": "내가 쓸 머신은 가랜드다.\n레이스는 3랩.\n네 실력을 보여 다오."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0057",
@@ -252,11 +252,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0060",
-      "ko": "그럼 저는 합격인가요♪"
+      "ko": "그럼 전 합격인가요"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0061",
-      "ko": "하지만 네 주행엔 아직\n중요한 것이 빠져 있군."
+      "ko": "하지만 네 주행엔 아직\n중요한 것이 빠져 있군"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0062",
@@ -280,7 +280,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0067",
-      "ko": "저는 실격인가요…💧"
+      "ko": "전 실격인가요…💧"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0068",
@@ -292,11 +292,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0070",
-      "ko": "네, 알고 있습니다!"
+      "ko": "네 알고 있습니다!"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0071",
-      "ko": "의욕이 있다면 스고의\n특별 추천권으로\n출전시켜 주겠다."
+      "ko": "의욕이 있다면\n스고의 특별추천권으로\n출전시켜 주겠다."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0072",
@@ -304,7 +304,7 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0073",
-      "ko": "그렇게 되면 물론\n스고 입단도 인정하겠다만…."
+      "ko": "그렇게 되면 물론 입단도\n인정하겠다만…"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0074",
@@ -312,11 +312,11 @@
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0075",
-      "ko": "하겠습니다!\n꼭 하게 해 주세요!"
+      "ko": "하겠습니다!\n하게 해 주세요!"
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0076",
-      "ko": "좋은 대답이다. 여기서\n포기할 정도라면\n도저히 쓸모없으니까."
+      "ko": "좋은 대답이다.\n여기서 포기할 거라면\n전혀 쓸모없으니까."
     },
     {
       "id": "disc1/allbin/u00/event_page/ref0077",
@@ -16100,15 +16100,15 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0001",
-      "ko": "초기 설정·기동 항목 로드 중… 완료.\n드라이버 체크… 완료."
+      "ko": "초기 설정 · 기동 항목\n로드 완료\n드라이버 체크… 완료"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0002",
-      "ko": "저는 차체 번호 AKF-01B,\nOS 코드네임 \"네메시스\"입니다."
+      "ko": "저는 차체 번호 AKF-01B\nOS 코드네임 네메시스 입니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0003",
-      "ko": "이봐, 인사라면\n아까 끝냈잖아."
+      "ko": "이봐, 인사라면 아까 끝냈잖아."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0004",
@@ -16120,11 +16120,11 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0006",
-      "ko": "(사이버 포뮬러\n머신치고는 꽤\n수다스럽단 말이지…)"
+      "ko": "(사이버 포뮬러 머신치고는 \n꽤 수다스럽단 말이지…)"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0007",
-      "ko": "(뭐, 이런 시스템이 있는\n것도 사이버 포뮬러의\n대단한 점이긴 하지만…)"
+      "ko": "(뭐, 이런 시스템이 \n있는 것도 사이버 포뮬러의\n대단한 점이긴 하지만…)"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0008",
@@ -16148,7 +16148,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0013",
-      "ko": "부탁해, 네메시스."
+      "ko": "부탁해, 네메시스"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0014",
@@ -16156,11 +16156,11 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0015",
-      "ko": "당 시스템은 주행 데이터를\n기억하고, 최적의 속도로 지원하는\n보정 프로그램을 탑재하고 있습니다."
+      "ko": "당 시스템은 주행 데이터를 보존\n,최적의 속도로 지원하는 보정\n프로그램을 탑재하고 있습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0016",
-      "ko": "드라이버의 특징을 기억하기\n위해 본 코스의 1주째에는\n지원을 하지 않습니다."
+      "ko": "드라이버 특징 저장을 위해\n본 코스의 1주째에는 지원을\n하지 않습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0017",
@@ -16172,19 +16172,19 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0019",
-      "ko": "처음 탑승하신 분께는 반드시\n기능 설명을 하도록\nFICCY에서 의무화하고 있습니다."
+      "ko": "처음 탑승하신 드라이버는\nFICCY가 기능 설명을 \n반드시 의무화하고 있습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0020",
-      "ko": "이 건에 대한 질문\n등은 FICCY로\n문의해 주시기 바랍니다."
+      "ko": "이 건에 대한 질문 등은 \nFICCY로 문의해 주시기 \n바랍니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0021",
-      "ko": "곧 한 바퀴를 다 달려 버리겠어…💧"
+      "ko": "곧 한 주차가 끝나 버리겠어…💧"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0022",
-      "ko": "코스 정보 표시.\n후방에서 갈랜드\nSF-03을 포착."
+      "ko": "코스 정보 표시.\n후방에서 가랜드 SF-03을 \n포착."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0023",
@@ -16192,7 +16192,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0024",
-      "ko": "바로 보여 달라고 할까…\n네 실력을."
+      "ko": "바로 보여 달라고 할까…\n네 실력을"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0025",
@@ -16200,7 +16200,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0026",
-      "ko": "(좋아, 무슨 일이 있어도\n끝까지 도망쳐 보이겠어!)"
+      "ko": "(무슨 일이 있어도 끝까지\n도망치겠어!)"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0027",
@@ -16220,23 +16220,23 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0031",
-      "ko": "단, 체력적인 불안이 맥박과\n뇌파에서 검출되었습니다."
+      "ko": "단, 체력적 불안이 맥박과\n뇌파에서 검출되었습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0032",
-      "ko": "부스트 시의 가속도 제어 등에\n보정 프로그램을 실행합니다."
+      "ko": "부스트 시 가속도 제어에\n보정 프로그램을 실행합니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0033",
-      "ko": "힘으로 밀어붙이는 건\n별로 안 맞는다는\n건가…. 고마워, 주의할게."
+      "ko": "힘으로 밀어붙이는 건,\n별로 안 맞는다는건가…\n고마워, 주의할게."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0034",
-      "ko": "힘으로 밀어붙이는 경향이\n보입니다. 핸들링 등에 일부\n불안 요소가 검출되었습니다."
+      "ko": "힘으로 푸시하는 경향이 \n보입니다. 핸들링에 불안 요소가\n검출되었습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0035",
-      "ko": "드라이빙 어시스트 프로그램을\n실행해, 당신에게 최적인\n드라이빙 보정을 수행합니다."
+      "ko": "드라이빙 어시스트 프로그램을\n실행해 당신에게 맞춤 드라이빙\n보정을 수행합니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0036",
@@ -16244,11 +16244,11 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0037",
-      "ko": "뭐, 그다지 테크니컬한\n드라이빙을 해 본 적은\n없으니 도움이 돼."
+      "ko": "뭐, 그닥 테크니컬한 드라이빙을\n해 본 적은 없으니 도움이 돼."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0038",
-      "ko": "갈랜드가 속도를 올렸습니다."
+      "ko": "가랜드가 속도를 올렸습니다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0039",
@@ -16256,11 +16256,11 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0040",
-      "ko": "…좋은 주행이다."
+      "ko": "좋은 주행이군"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0041",
-      "ko": "…아직 허술함이 눈에 띄는군."
+      "ko": "아직 허술함이 눈에 띄는군"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0042",
@@ -16288,7 +16288,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0048",
-      "ko": "무슨 일이 있어도 추월한다!\n부스트로 따돌리자!\n왠지 어택이다."
+      "ko": "뭔 일이 있어도 추월한다!\n부스트로 따돌린다!\n그냥 어택이다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0049",
@@ -16308,15 +16308,15 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0053",
-      "ko": "네메시스! 다음\n어택 포인트에서 한\n번 승부를 건다."
+      "ko": "네메시스! 다음 어택 포인트에서\n한번 승부를 건다."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0054",
-      "ko": "거기서 오너를 패스하고\n단숨에 도망치는 거야!"
+      "ko": "거기서 그를 추월하고\n단숨에 도망쳐야 해!"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0055",
-      "ko": "알겠습니다.\n액셀 밸런스 조정 시작…"
+      "ko": "알겠습니다.\n액셀밸런스 조정시작…"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0056",
@@ -16328,7 +16328,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0058",
-      "ko": "이제 마지막까지 눌러 막을 수\n있느냐가 승부의 갈림길이야!"
+      "ko": "마지막까지 눌러 막을 수\n있느냐가 승부의 갈림길이야!"
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0059",
@@ -16344,7 +16344,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0062",
-      "ko": "커브를 빠져나가는 곳에서 부스트다!\n커브 직전에 페인트다!\n남은 6%에 걸자."
+      "ko": "커브 출구에서 부스트다! \n커브 직전에 페인트다!\n남은 6%에 걸자."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0063",
@@ -16352,7 +16352,7 @@
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0064",
-      "ko": "역시 하야토와 달리고\n싶다고 찾아온 만큼은\n있군. …하지만 아직 멀었어."
+      "ko": "하야토와 달리고 싶다고 \n찾아 올 만 하군. \n…하지만 아직 멀었어."
     },
     {
       "id": "disc1/allbin/u21/voice_event/ref0065",

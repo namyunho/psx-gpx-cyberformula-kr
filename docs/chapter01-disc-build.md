@@ -2,15 +2,16 @@
 
 ## 현재 판정
 
-스토리 챕터 1은 ALLBIN scheduled unit `0`이다. 기존 작업셋의 포인터 대상
-대사 88개는 모두 띄어쓰기 경계만 사용한 17×3 줄 배치에 들어간다. 이 범위에
-보호 이름 토큰 충돌과 글리프 누락은 없다. 물리 스트림 재감사에서 별도로
-확인한 무포인터 페이지는 5개다.
+스토리 챕터 1의 ALLBIN scheduled unit `0` 88개와 뒤이어 확인한 unit `21`
+68개, 총 156개를 수작업으로 검증 안전 슬롯에 맞췄다. 두 unit 모두
+17×3 레이아웃 초과, 안전 슬롯 초과, 엔트리 겹침, 선두
+`speaker_style`·`audio` 제어 손상이 0건이다.
 
-사용자 실행 검증에서 고정 원본 주소 빌드의 대사 내용과 순서는 정상으로
-확인됐다. 이후 관측된 초상화·등장인물명 누락은 문장부호의 줄 이동이 아니라
-앞 대사의 슬롯 초과가 다음 페이지의 선두 `speaker_style`·`audio` 제어를
-덮은 결과다. 상세 근거와 반각 문장부호 검토, unit `21` 상태는
+2026-07-27 사용자 실행 검증에서 대사 순서와 내용이 정상 표시됐고, 이전에
+unit `21`의 세 번째 분기 부근에서 발생하던 프리즈와 초상화·등장인물명
+누락도 재현되지 않았다. 다음 챕터의 대사가 번역되지 않은 것은 현재 삽입
+범위가 `u00/u21`뿐이기 때문이다. 2챕터 이후는 아직 삽입·실행 검증하지
+않았다. 상세 근거는
 [`dialogue-runtime-findings.md`](dialogue-runtime-findings.md)에 정리했다.
 
 현재 개발 빌드는 다음 변경을 함께 만든다.
@@ -21,12 +22,14 @@
 - Track 1: 위 두 파일의 실제 변경분만 원래 ISO extent에 제자리 삽입
 - raw sector: 변경한 Mode 2/Form 1 섹터의 EDC와 P/Q ECC 재계산
 
-폰트는 실제로 교체됐지만 슬롯 초과를 의도적으로 허용한 **비배포 진단
-빌드**다. primary 글꼴은 전역으로 교체되는 반면 unit `0`, `21` 이외 대사는
-아직 일본어 토큰이므로 다른 대사 unit에 진입하면 안 된다. 아래에서 확인한
-무포인터 5페이지는 기존 추출·번역 작업셋에서 빠져 있으므로 현재 빌드에서는
-원문 토큰과 해당 원본 글리프 슬롯을 함께 보존한다. 추출·번역 입력에
-편입하기 전까지 챕터 1의 완전 한글화 빌드로 판정하지 않는다.
+빌더 정책 이름은 역사적 이유로 `fixed-original-diagnostic`이지만 이번
+입력은 초과를 한 건도 사용하지 않는다. 원본 시작 주소와 포인터를 유지한
+채 각 스트림을 엄격 안전 슬롯 안에 쓴 **부분 비배포 빌드**다. primary
+글꼴은 전역으로 교체되는 반면 unit `0`, `21` 이외 대사는 아직 일본어
+토큰이므로 다른 대사 unit은 호환되지 않는다. 아래에서 확인한 무포인터
+5페이지도 기존 추출·번역 작업셋에서 빠져 있어 원문 토큰과 해당 원본
+글리프 슬롯을 보존한다. 이를 작업셋에 편입하기 전까지 챕터 1 완전
+한글화로 판정하지 않는다.
 
 ## 연속 대사 순서 결함과 수정
 
@@ -143,7 +146,7 @@ unit `0`에서는 안전 경계 기준 15개가 초과한다. 첫 충돌은
 2. 네 줄이 되지만 단어 내부 분할로 3행에 들어가면 추적 가능한 예외를 적용한다.
 3. 그래도 들어가지 않으면 재삽입 차단 상태로 남긴다.
 
-현재 전체 5,783개 후보 중 22개가 단어 분할 예외로 구제됐다. 24개는 여전히
+현재 전체 5,783개 후보 중 21개가 단어 분할 예외로 구제됐다. 23개는 여전히
 들어가지 않으며, 그중 18개는 최선의 두 줄 경계 공백 제거를 고려해도 51글리프를
 초과한다. 이 18개는 다음 별도 작업본에 안정 ID, 원문, 현재 번역, 최소 필요
 글리프, 초과량과 빈 축약문 필드로 기록한다.
@@ -152,9 +155,9 @@ unit `0`에서는 안전 경계 기준 15개가 초과한다. 첫 충돌은
 work/translations/disc1-dialogue-abbreviation-required.json
 ```
 
-자동 축약은 수행하지 않는다. 나머지 6개는 51글리프 이하이지만 순차적인
-17×3 배치가 불가능한 레이아웃 수정 대상이다. 모든 차단 항목은 unit `21..34`에
-있으며 챕터 1 빌드에는 영향을 주지 않는다.
+자동 축약은 수행하지 않는다. 나머지 5개는 51글리프 이하이지만 순차적인
+17×3 배치가 불가능한 레이아웃 수정 대상이다. 모든 차단 항목은 unit
+`22..34`에 있으며 현재 `u00/u21` 빌드에는 영향을 주지 않는다.
 
 ## 재현 명령
 
@@ -166,24 +169,16 @@ work/translations/disc1-dialogue-abbreviation-required.json
 .venv/bin/python scripts/build_dialogue_chapter_patch.py \
   --start-bin work/extracted/disc1/iso/START.BIN \
   --allbin work/extracted/disc1/iso/ALLBIN.BIN \
-  --unit 0 \
-  --output-dir work/build/dialogue-u00-order-preserving-nonrelease
-
-.venv/bin/python scripts/build_dialogue_chapter_disc.py \
-  --file-build-dir work/build/dialogue-u00-order-preserving-nonrelease \
-  --output-dir work/build/dialogue-chapter01-order-preserving-nonrelease
-
-# 원본 시작 주소 고정·길이 초과 위치 확인용 의도적 파괴 진단
-.venv/bin/python scripts/build_dialogue_chapter_patch.py \
-  --start-bin work/extracted/disc1/iso/START.BIN \
-  --allbin work/extracted/disc1/iso/ALLBIN.BIN \
+  --workset work/translations/disc1-dialogue.json \
+  --reflow-overlay work/translations/disc1-dialogue-ko-reflowed-nonrelease.json \
+  --reinsertion-audit work/analysis/disc1-dialogue-reinsertion-audit.json \
   --unit 0,21 \
   --placement-policy fixed-original-diagnostic \
-  --output-dir work/build/dialogue-u00-u21-fixed-original-diagnostic
+  --output-dir work/build/dialogue-u00-u21-safe-fixed-original
 
 .venv/bin/python scripts/build_dialogue_chapter_disc.py \
-  --file-build-dir work/build/dialogue-u00-u21-fixed-original-diagnostic \
-  --output-dir work/build/dialogue-chapter01-u21-fixed-original-diagnostic
+  --file-build-dir work/build/dialogue-u00-u21-safe-fixed-original \
+  --output-dir work/build/dialogue-u00-u21-safe-disc
 ```
 
 두 빌더 모두 지원 원본의 강한 해시와 같은 크기를 요구한다. 디스크 빌더는
@@ -224,56 +219,22 @@ Mode 2/Form 1 무결성 계산은 주소를 0으로 두는 이 디스크의 기�
 ## 로컬 산출물
 
 ```text
-work/build/dialogue-u00-order-preserving-nonrelease/
+work/build/dialogue-u00-u21-safe-fixed-original/
   START.BIN
   ALLBIN.BIN
   primary-korean-glyph-map.json
   manifest.json
 
-work/build/dialogue-chapter01-order-preserving-nonrelease/
-  disc1-chapter01-nonrelease-track1.bin
-  disc1-chapter01-nonrelease.cue
-  manifest.json
-
-work/build/dialogue-u00-fixed-original-diagnostic/
-  START.BIN
-  ALLBIN.BIN
-  primary-korean-glyph-map.json
-  manifest.json
-
-work/build/dialogue-chapter01-fixed-original-diagnostic/
-  disc1-chapter01-nonrelease-track1.bin
-  disc1-chapter01-nonrelease.cue
-  manifest.json
-
-work/build/dialogue-u00-u21-fixed-original-diagnostic/
-  START.BIN
-  ALLBIN.BIN
-  primary-korean-glyph-map.json
-  manifest.json
-
-work/build/dialogue-chapter01-u21-fixed-original-diagnostic/
+work/build/dialogue-u00-u21-safe-disc/
   disc1-chapter01-nonrelease-track1.bin
   disc1-chapter01-nonrelease.cue
   manifest.json
 ```
 
-Track 1 SHA-256:
+unit `0` + `21` 안전 슬롯 Track 1 SHA-256:
 
 ```text
-125eeeb51b7d43f9e537cfcc771d3d6660b4b9f27bbbf207672c21b0aec6617a
-```
-
-고정 원본 주소 진단 Track 1 SHA-256:
-
-```text
-6abf48c9e092799202eda341940f46c13f64003ae8344e7a027732ece92a8cd5
-```
-
-unit `0` + `21` 고정 원본 주소 진단 Track 1 SHA-256:
-
-```text
-061c32a605a3d658fb5a6832d552e484be4a34767b7231ce251d91c524f8086c
+9777deaf30e4bade46d5f1fc04f38376287cf7cac5b02b5035e3f6066d053fa5
 ```
 
 전체 이미지와 추출 파일은 `work/` 아래 비커밋 산출물이다. CUE는 Track 1은
@@ -282,18 +243,16 @@ unit `0` + `21` 고정 원본 주소 진단 Track 1 SHA-256:
 
 ## 남은 실행 검증
 
-GUI와 Lua 자동화는 사용하지 않는다. 사용자가 DuckStation에서
-`dialogue-chapter01-u21-fixed-original-diagnostic`의 CUE를 직접 열고 다음을
-확인해야 한다.
+사용자 GUI 실행으로 `u00/u21`의 기존 실패 지점까지 통과했다. 후속 검증은
+다음 범위부터 이어간다.
 
-1. 깨끗한 부팅으로 챕터 1에 진입한다.
-2. `ref0000`의 “드디어 여기까지…” 다음에 `ref0001`의
-   “오늘 테스트에 붙으면…”, 이어서 `ref0002`의
-   “그 카자미 씨처럼…”이 앞부분 손실 없이 나오는지 확인한다.
-3. `ref0003`의 “자네인가? 오늘 테스트생이.”가 끝까지 나오는지 확인한다.
-4. 다음 `ref0004`에서 대사가 깨지거나 중단되는지 기록하고 종료한다.
-5. 진행 가능하다면 unit `21`의 첫 두 대사 뒤 `ref0002`에서 음성·화자
-   상태가 손상되는지 기록한다.
+1. 2챕터의 실제 시작 unit과 분기 흐름을 식별한다.
+2. 대상 unit을 같은 안전 슬롯 기준으로 수작업 교정한다.
+3. 한 unit씩 삽입 범위를 늘리고 초상화·화자명·음성·분기 회귀를 확인한다.
+4. unit `0`의 무포인터 성별 선택, 예/아니오, 설명 페이지 5개를 작업셋에
+   편입해 별도로 번역한다.
+5. 에뮬레이터 이름과 버전, 세이브 상태, 통과한 마지막 안정 ID를 다음
+   런타임 QA 기록에 남긴다.
 
-이 검증이 끝날 때까지 상태는
-`nonrelease-fixed-original-offset-overflow-runtime-diagnostic`이다.
+현재 판정은 `u00/u21-safe-slot-runtime-pass`, 전체 프로젝트는
+`nonrelease-partial-translation`이다.

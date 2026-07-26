@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "status": "mechanically-validated-semantic-review-required",
-  "brief_sha256": "0a0ada7f42e1db47188042f1982e7eff0ac6cb18bf22cc7a58d8a7883bc8f00a",
-  "translation_candidate_sha256": "df134903851bd24ed08bc255f9e81f7eef82b5987fd817ad00f129b36892980f",
+  "brief_sha256": "84361841839a09b5f027a47c904eb25deac51b51d6b0dc801a8abb05c65ea8ba",
+  "translation_candidate_sha256": "b2e3d65db9af06c5c6a5f54fe580eddcbe5e736658f3c66334ef45fabb55d369",
   "glossary_candidate_sha256": "d85647fbc1634233a328b3c073b37d57aac214cfdcf07af91b1339a251d8e58c",
   "mechanical_validation": {
     "entry_count": 5783,
