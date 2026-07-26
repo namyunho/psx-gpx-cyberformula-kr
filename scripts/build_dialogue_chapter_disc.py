@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Insert a verified partial chapter build into the original Disc 1 track."""
+"""Insert a verified dialogue file build into the original Disc 1 track."""
 
 from __future__ import annotations
 
@@ -65,6 +65,8 @@ except ModuleNotFoundError:
 
 OUTPUT_TRACK_NAME = "disc1-chapter01-nonrelease-track1.bin"
 OUTPUT_CUE_NAME = "disc1-chapter01-nonrelease.cue"
+FULL_OUTPUT_TRACK_NAME = "disc1-all-dialogue-nonrelease-track1.bin"
+FULL_OUTPUT_CUE_NAME = "disc1-all-dialogue-nonrelease.cue"
 
 
 @dataclass(frozen=True)
@@ -308,18 +310,22 @@ def build_disc(
 
     file_manifest_path = file_build_dir / "manifest.json"
     file_manifest = load_object(file_manifest_path)
-    selected_units = file_manifest.get("selected_story_units")
-    if selected_units not in ([0], [0, 21]):
+    selected_units = file_manifest.get(
+        "selected_dialogue_units",
+        file_manifest.get("selected_story_units"),
+    )
+    full_dialogue_units = list(range(35))
+    if selected_units not in ([0], [0, 21], full_dialogue_units):
         raise ValueError(
-            "chapter 1 disc builder requires selected_story_units == [0] "
-            "or [0, 21]"
+            "dialogue disc builder requires units [0], [0, 21], or 0..34"
         )
     accepted_file_statuses = {
         "nonrelease-partial-chapter-build",
         "nonrelease-fixed-original-offset-overflow-diagnostic",
+        "nonrelease-all-dialogue-fixed-original-exact-overflow-diagnostic",
     }
     if file_manifest.get("status") not in accepted_file_statuses:
-        raise ValueError("unexpected partial file-build status")
+        raise ValueError("unexpected dialogue file-build status")
 
     replacements = {
         name: (file_build_dir / name).read_bytes()
@@ -397,12 +403,17 @@ def build_disc(
             }
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_track = output_dir / OUTPUT_TRACK_NAME
-    output_cue = output_dir / OUTPUT_CUE_NAME
+    is_full_dialogue = selected_units == full_dialogue_units
+    output_track = output_dir / (
+        FULL_OUTPUT_TRACK_NAME if is_full_dialogue else OUTPUT_TRACK_NAME
+    )
+    output_cue = output_dir / (
+        FULL_OUTPUT_CUE_NAME if is_full_dialogue else OUTPUT_CUE_NAME
+    )
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(
-            prefix=f".{OUTPUT_TRACK_NAME}.",
+            prefix=f".{output_track.name}.",
             suffix=".tmp",
             dir=output_dir,
             delete=False,
@@ -448,26 +459,38 @@ def build_disc(
         output_cue=output_cue,
     )
     manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": (
-            "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
-            if file_manifest.get("status")
-            == "nonrelease-fixed-original-offset-overflow-diagnostic"
-            else "nonrelease-chapter01-runtime-validation-required"
+            "nonrelease-all-dialogue-fixed-original-exact-overflow-runtime-diagnostic"
+            if is_full_dialogue
+            else (
+                "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
+                if file_manifest.get("status")
+                == "nonrelease-fixed-original-offset-overflow-diagnostic"
+                else "nonrelease-chapter01-runtime-validation-required"
+            )
         ),
-        "chapter": {
+        "dialogue_scope": {
             "human_label": (
-                "chapter-01-plus-general-race-u21"
-                if selected_units == [0, 21]
-                else "chapter-01"
+                "all-extracted-dialogue-units-u00-u34"
+                if is_full_dialogue
+                else (
+                    "chapter-01-plus-general-race-u21"
+                    if selected_units == [0, 21]
+                    else "chapter-01"
+                )
             ),
             "selected_units": selected_units,
             "entry_count": file_manifest["selected_entry_count"],
         },
         "warning": (
-            "The global primary font is replaced for the full candidate "
-            f"corpus, but only units {selected_units} are re-encoded. Do not "
-            "enter other dialogue units with this partial build."
+            file_manifest["warning"]
+            if is_full_dialogue
+            else (
+                "The global primary font is replaced for the full candidate "
+                f"corpus, but only units {selected_units} are re-encoded. Do "
+                "not enter other dialogue units with this partial build."
+            )
         ),
         "sources": {
             "original_media_manifest": str(
@@ -538,20 +561,32 @@ def build_disc(
             "status": "not-run-user-gui-required",
             "required": [
                 "boot the generated CUE",
-                "enter chapter 1",
+                (
+                    "sample each reachable dialogue unit and branch"
+                    if is_full_dialogue
+                    else "enter chapter 1"
+                ),
                 "confirm Korean glyph palette/outline/shadow",
                 (
                     "observe fixed-address overlap boundaries; this diagnostic "
                     "is not expected to advance through every entry"
                     if file_manifest.get("status")
-                    == "nonrelease-fixed-original-offset-overflow-diagnostic"
+                    in {
+                        "nonrelease-fixed-original-offset-overflow-diagnostic",
+                        "nonrelease-all-dialogue-fixed-original-exact-overflow-diagnostic",
+                    }
                     else "confirm selected dialogue entries render and advance"
                 ),
                 (
-                    "continue to general-race unit 21 and inspect its first "
-                    "overlap boundary"
-                    if 21 in selected_units
-                    else "do not continue into an unselected dialogue unit"
+                    "record the first freeze or control corruption in each "
+                    "tested unit against the file-build manifest"
+                    if is_full_dialogue
+                    else (
+                        "continue to general-race unit 21 and inspect its first "
+                        "overlap boundary"
+                        if 21 in selected_units
+                        else "do not continue into an unselected dialogue unit"
+                    )
                 ),
             ],
         },
@@ -576,8 +611,9 @@ def main() -> None:
         original_media_manifest=args.original_media_manifest,
     )
     print(
-        f"chapter=1 units={manifest['chapter']['selected_units']} "
-        f"entries={manifest['chapter']['entry_count']} "
+        f"scope={manifest['dialogue_scope']['human_label']} "
+        f"units={manifest['dialogue_scope']['selected_units']} "
+        f"entries={manifest['dialogue_scope']['entry_count']} "
         f"changed_sectors="
         f"{manifest['raw_expected_writes']['changed_sector_count']} "
         f"track={manifest['outputs']['track1']['path']} "

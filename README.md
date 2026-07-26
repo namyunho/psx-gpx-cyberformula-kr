@@ -38,7 +38,9 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 
 현재 공개 패치는 없습니다. Disc 1 구조 분모와 추출·폰트 PoC는 확정됐지만,
 전체 대사 번역 검토·축약, 베이크드 그래픽 현지화와 전편 QA는 아직
-진행 중입니다. 챕터 1만 대상으로 한 비배포 개발 이미지는 생성됐습니다.
+진행 중입니다. 현재 추출된 대사 5,783개를 원본 시작 주소에 그대로 쓴 전체
+비배포 진단 이미지는 생성됐지만, 길이 초과가 뒤 제어 데이터를 덮으므로
+플레이 가능한 통합 패치가 아닙니다.
 
 ## 진행 상태
 
@@ -59,6 +61,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 대사 추출 작업본 | 🚧 직접 포인터 대상 원문 판독 완료 — 대사 5,783개와 UI 60개 미매핑 0, unit 0에서 무포인터 페이지 5개 추가 확인 |
 | 후보 번역 레이아웃 감사 | 🚧 5,759개 기계 배치 가능, 단어 분할 예외 22개, 차단 24개·그중 51글리프 초과 18개 |
 | 챕터 1 재삽입 개발 이미지 | 🚧 정위치 대사 표시 확인 — 미목록 원본 주소 소비 확인, 슬롯 겹침이 다음 화자·음성 제어를 손상 |
+| 전체 정위치 진단 이미지 | 🚧 5,783개·unit 0..34 계획 완료 — 4,449개 바이트 온전, 1,334개 겹침 손상, 실행 검증 필요 |
 | 전체 번역·재삽입 | 🚧 기계 후보 상태 — 의미·용어·축약·보호 토큰 충돌 검토와 전체 실행 QA 필요 |
 | 통합 빌드·실행 QA·차분 배포 | ⏳ 예정 |
 
@@ -68,9 +71,11 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 > 사실이 확인돼 텍스트 모집단 판정을 다시 열었습니다. 순서 보존 재배치도
 > 런타임이 이동 전 주소에서 읽어 앞부분이 잘리는 문제가 확인됐습니다. 현재는
 > 원본 시작 주소를 고정한 대사의 내용·순서는 화면에서 확인됐지만, 긴
-> 스트림이 다음 페이지의 화자·음성 제어를 덮습니다. unit `0`과 `21`을
-> 넣은 의도적 길이 초과 진단 이미지만 제공하며, 번역은 기계 후보이고 실행
-> 검증과 전편 검토가 남아 있으므로 한글 패치 완성으로 판정하지 않습니다.
+> 스트림이 다음 페이지의 화자·음성 제어를 덮습니다. 같은 고정 주소 정책을
+> unit `0..34`의 직접 포인터 대상 5,783개로 확장한 전체 진단 이미지도
+> 만들었지만 1,380개 슬롯 충돌과 무포인터 페이지 글리프 손실이 기록됐습니다.
+> 번역은 기계 후보이고 실행 검증과 전편 검토가 남아 있으므로 한글 패치
+> 완성으로 판정하지 않습니다.
 
 ## 확정된 작업 블록
 
@@ -87,6 +92,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | Galmuri11 | 한글 문자표 2,350자 | TTF 12px 결과가 2,350개 고유 자형을 유지하고 14×14 셀 밖 픽셀 0개 |
 | 첫 대사 PoC | 한글 18자, 변경 763바이트 | `START.BIN`·`ALLBIN.BIN` 변경과 9개 raw LBA 쓰기가 선언 범위와 일치 |
 | 챕터 1+일반 레이스 정위치 진단 | unit 0·21 포인터 대상 156개, 고정 시작 주소, 정적 맵 988자 | 포인터 쓰기 0·원본 값 160개 확인, 슬롯 초과 36개 기록, 49개 Mode 2/Form 1 sector EDC/ECC 검증 |
+| 전체 정위치 진단 | unit 0..34 직접 엔트리 5,783개, 정적 맵 988자 | 원문 위치·후보 줄바꿈 고정, 235개 Mode 2/Form 1 sector Expected Write·EDC/ECC·재추출 검증 |
 
 직접 포인터 대상 기준 일반 플레이 경로는 4,150개 스트림이며, 진단/시험
 경로까지 포함하면 5,230개입니다. Disc 1 정적 실행 코드에서 로더 도달이
@@ -145,6 +151,7 @@ tmp/                    비커밋 임시 캡처
 | [리맵 경로 추적 PoC](docs/remap-path-poc.md) | 텍스트 상태 필드 판정을 남긴 역사적 PoC |
 | [챕터 1 비배포 디스크 빌드](docs/chapter01-disc-build.md) | 정적 폰트·unit 0 대사·raw sector 삽입과 EDC/ECC 검증 |
 | [대사 런타임 검증 기준선](docs/dialogue-runtime-findings.md) | 고정 주소 판정, 초상화·이름 제어 손상, 반각 검토, u21·선택지 후속 과제 |
+| [전체 대사 정위치 진단 빌드](docs/full-dialogue-fixed-insertion.md) | 5,783개 후보 원문 위치 삽입, 충돌 분모와 전체 Disc 정적 검증 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
 | [GPU 업로드 원본 추적](docs/gpu-upload-source-tracing.md) | 화면→VRAM→DMA2/RAM→저장 자산을 연결하는 미실행 조사 절차 |
 
@@ -212,6 +219,30 @@ python3 -m venv .venv
   --file-build-dir work/build/dialogue-u00-u21-fixed-original-diagnostic \
   --output-dir work/build/dialogue-chapter01-u21-fixed-original-diagnostic
 ```
+
+현재 번역 후보를 수정하지 않고 unit `0..34` 전체에 넣는 비배포 진단 이미지는
+다음 순서로 재생성합니다.
+
+```bash
+.venv/bin/python scripts/build_dialogue_chapter_patch.py \
+  --start-bin work/extracted/disc1/iso/START.BIN \
+  --allbin work/extracted/disc1/iso/ALLBIN.BIN \
+  --all-dialogue \
+  --placement-policy fixed-original-exact-diagnostic \
+  --allow-pointerless-gap-glyph-loss \
+  --output-dir work/build/dialogue-all-fixed-original-exact-diagnostic
+.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+  --file-build-dir work/build/dialogue-all-fixed-original-exact-diagnostic \
+  --output-dir work/build/dialogue-all-disc-fixed-original-exact-diagnostic
+```
+
+이 명령은 `disc1-dialogue-ko-candidate.json`의 `entries[].ko`와 줄바꿈을
+그대로 인코딩하며 재배치나 포인터 갱신을 하지 않습니다. 원본 슬롯보다 긴
+대사는 다음 엔트리를 덮고, 미추출 무포인터 페이지의 일본어 글리프는 primary
+폰트 용량 때문에 보존하지 못합니다. 실행용 패치가 아니라 전체 충돌 위치를
+고정하는 진단 산출물이며 상세 수치는
+[`docs/full-dialogue-fixed-insertion.md`](docs/full-dialogue-fixed-insertion.md)를
+따릅니다.
 
 실행 범위와 출력 CUE/BIN은
 [`docs/chapter01-disc-build.md`](docs/chapter01-disc-build.md)를 따릅니다.

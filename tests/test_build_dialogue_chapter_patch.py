@@ -11,6 +11,7 @@ from scripts.build_dialogue_chapter_patch import (
     changed_ranges,
     encode_entry,
     fit_fixed_diagnostic_candidate,
+    parse_units,
     passthrough_gap_glyph_indices,
     physical_entry_ranges,
     repack_unit,
@@ -49,6 +50,20 @@ class DialogueChapterBuildTests(unittest.TestCase):
         self.assertEqual(tokens[0], 0x903F)
         self.assertEqual(tokens[-1], 0x8000)
         self.assertEqual(tokens.count(0xFFFB), 2)
+
+    def test_exact_diagnostic_encoding_preserves_overwide_rows(self) -> None:
+        text = "가" * 18 + "\n" + "나"
+        encoded = encode_entry(
+            self.first,
+            text,
+            {"가": 0x100, "나": 0x101},
+            enforce_frame=False,
+        )
+        tokens = struct.unpack(f"<{len(encoded) // 2}H", encoded)
+        self.assertEqual(tokens[0], 0x903F)
+        self.assertEqual(tokens[-1], 0x8000)
+        self.assertEqual(tokens.count(0x100), 18)
+        self.assertEqual(tokens.count(0xFFFB), 1)
 
     def test_fixed_diagnostic_hard_wrap_preserves_visible_sequence(self) -> None:
         candidate = (
@@ -440,6 +455,13 @@ class DialogueChapterBuildTests(unittest.TestCase):
                 work,
                 [{"id": "b"}, {"id": "a"}],
             )
+
+    def test_all_dialogue_selects_every_extracted_unit(self) -> None:
+        self.assertEqual(parse_units([], False, True), list(range(35)))
+        with self.assertRaisesRegex(ValueError, "mutually exclusive"):
+            parse_units([], True, True)
+        with self.assertRaisesRegex(ValueError, "0..34"):
+            parse_units(["35"], False, False)
 
     def test_expected_write_verifier_accepts_only_declared_ranges(self) -> None:
         before = bytes(16)

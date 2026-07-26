@@ -58,6 +58,8 @@ FIXED_NAMES = {
 NAME_PATTERN = re.compile(r"\{name:(?:surname|given)\}")
 CONTROL_CONTENT_KINDS = {"glyph", "name_surname", "name_given"}
 REMOVABLE_INTERNAL_KINDS = {"align", "name_surname", "name_given"}
+STORY_UNIT_RANGE = range(21)
+ALL_DIALOGUE_UNIT_RANGE = range(35)
 
 
 def sha256_bytes(data: bytes) -> str:
@@ -73,6 +75,14 @@ def load_object(path: Path) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{path}: expected a JSON object")
     return value
+
+
+def load_object_bytes(path: Path) -> tuple[dict[str, Any], bytes]:
+    raw = path.read_bytes()
+    value = json.loads(raw.decode("utf-8"))
+    if not isinstance(value, dict):
+        raise ValueError(f"{path}: expected a JSON object")
+    return value, raw
 
 
 def write_json(path: Path, value: Any) -> None:
@@ -171,16 +181,17 @@ def expand_fixed_names(text: str) -> str:
     return text
 
 
-def required_characters(overlay: dict[str, Any]) -> list[str]:
-    entries = overlay.get("entries")
+def required_characters(
+    translation_document: dict[str, Any],
+    *,
+    text_fields: tuple[str, ...] = ("ko_reflowed", "ko_candidate"),
+) -> list[str]:
+    entries = translation_document.get("entries")
     if not isinstance(entries, list):
-        raise ValueError("reflow overlay entries must be an array")
+        raise ValueError("translation document entries must be an array")
     characters: set[str] = set()
     for entry in entries:
-        texts = [
-            entry.get("ko_reflowed"),
-            entry.get("ko_candidate"),
-        ]
+        texts = [entry.get(field) for field in text_fields]
         text = next((value for value in texts if isinstance(value, str)), None)
         if text is None:
             raise ValueError(f"{entry.get('id')}: no Korean candidate text")
@@ -209,11 +220,12 @@ def load_primary_glyph_map(path: Path) -> dict[str, int]:
 
 def build_static_font(
     source_start: bytes,
-    overlay: dict[str, Any],
+    translation_document: dict[str, Any],
     *,
     glyph_map_path: Path,
     font_profile_path: Path,
     passthrough_original_glyph_indices: Iterable[int] = (),
+    text_fields: tuple[str, ...] = ("ko_reflowed", "ko_candidate"),
 ) -> tuple[bytes, dict[str, int], dict[str, Any]]:
     font_end = FONT_OFFSET + FONT_GLYPH_COUNT * GLYPH_SIZE
     if font_end > len(source_start):
@@ -234,7 +246,10 @@ def build_static_font(
         PROTECTED_ORIGINAL_GLYPH_INDICES | passthrough_indices
     )
 
-    required = required_characters(overlay)
+    required = required_characters(
+        translation_document,
+        text_fields=text_fields,
+    )
     original_map = load_primary_glyph_map(glyph_map_path)
     mapping: dict[str, int] = {}
     occupied = set(byte_exact_indices)
@@ -390,14 +405,21 @@ def encode_entry(
     source_entry: dict[str, Any],
     reflowed_text: str,
     mapping: dict[str, int],
+    *,
+    enforce_frame: bool = True,
 ) -> bytes:
     leading, trailing = split_control_shell(source_entry)
     text = expand_fixed_names(reflowed_text)
     lines = text.split("\n")
-    if not 1 <= len(lines) <= 3:
-        raise ValueError(f"{source_entry['entry_id']}: invalid reflow row count")
-    if any(len(line) > 17 for line in lines):
-        raise ValueError(f"{source_entry['entry_id']}: reflow line exceeds 17")
+    if enforce_frame:
+        if not 1 <= len(lines) <= 3:
+            raise ValueError(
+                f"{source_entry['entry_id']}: invalid reflow row count"
+            )
+        if any(len(line) > 17 for line in lines):
+            raise ValueError(
+                f"{source_entry['entry_id']}: reflow line exceeds 17"
+            )
 
     body: list[int] = []
     for line_index, line in enumerate(lines):
@@ -824,8 +846,12 @@ def repack_unit(
 def write_unit_at_original_offsets_diagnostic(
     allbin: bytearray,
     entries: list[dict[str, Any]],
-    reflow_by_id: dict[str, dict[str, Any]],
+    translation_by_id: dict[str, dict[str, Any]],
     mapping: dict[str, int],
+    *,
+    text_field: str = "ko_candidate",
+    exact_layout: bool = False,
+    unit_byte_size: int | None = None,
 ) -> dict[str, Any]:
     """Write complete translated streams at immutable original entry starts.
 
@@ -840,9 +866,9 @@ def write_unit_at_original_offsets_diagnostic(
     unit_index = int(entries[0]["source"]["unit_index"])
     if any(int(entry["source"]["unit_index"]) != unit_index for entry in entries):
         raise ValueError("fixed diagnostic received mixed units")
-    if not 0 <= unit_index <= 21:
+    if unit_index not in ALL_DIALOGUE_UNIT_RANGE:
         raise ValueError(
-            f"unit {unit_index}: fixed diagnostic supports units 0..21"
+            f"unit {unit_index}: fixed diagnostic supports units 0..34"
         )
 
     ranges = physical_entry_ranges(entries)
@@ -863,16 +889,65 @@ def write_unit_at_original_offsets_diagnostic(
 
     streams: dict[str, bytes] = {}
     layout_adjustments: list[dict[str, Any]] = []
+    layout_violations: list[dict[str, Any]] = []
     for _, _, entry in ranges:
         entry_id = entry["entry_id"]
-        derived = reflow_by_id[entry_id]
-        text = derived.get("ko_candidate")
+        derived = translation_by_id[entry_id]
+        text = derived.get(text_field)
         if not isinstance(text, str):
-            raise ValueError(f"{entry_id}: missing original Korean candidate")
-        fitted_text, adjustment = fit_fixed_diagnostic_candidate(entry, text)
+            raise ValueError(
+                f"{entry_id}: missing Korean text field {text_field!r}"
+            )
+        expanded = expand_fixed_names(text)
+        line_widths = [len(line) for line in expanded.split("\n")]
+        visible_glyphs = sum(line_widths)
+        if len(line_widths) > 3 or any(width > 17 for width in line_widths):
+            layout_violations.append(
+                {
+                    "entry_id": entry_id,
+                    "line_widths": line_widths,
+                    "visible_glyphs": visible_glyphs,
+                    "row_count": len(line_widths),
+                    "row_limit": 3,
+                    "row_width_limit": 17,
+                    "total_frame_capacity": 51,
+                    "over_total_frame_capacity": visible_glyphs > 51,
+                }
+            )
+        if exact_layout:
+            encoded_text = expanded
+            adjustment = None
+        else:
+            encoded_text, adjustment = fit_fixed_diagnostic_candidate(
+                entry,
+                text,
+            )
         if adjustment is not None:
             layout_adjustments.append(adjustment)
-        streams[entry_id] = encode_entry(entry, fitted_text, mapping)
+        streams[entry_id] = encode_entry(
+            entry,
+            encoded_text,
+            mapping,
+            enforce_frame=not exact_layout,
+        )
+
+    write_end = max(
+        start + len(streams[entry["entry_id"]])
+        for start, _, entry in ranges
+    )
+    if unit_byte_size is not None:
+        if unit_byte_size <= 0:
+            raise ValueError(f"unit {unit_index}: invalid scheduled byte size")
+        if write_end > unit_byte_size:
+            raise ValueError(
+                f"unit {unit_index}: fixed diagnostic write ends at "
+                f"0x{write_end:X}, beyond scheduled unit size "
+                f"0x{unit_byte_size:X}"
+            )
+    if unit_file_offset + write_end > len(allbin):
+        raise ValueError(
+            f"unit {unit_index}: fixed diagnostic write exceeds ALLBIN.BIN"
+        )
 
     original_unit = bytes(
         allbin[unit_file_offset : unit_file_offset + ranges[-1][1]]
@@ -1006,16 +1081,23 @@ def write_unit_at_original_offsets_diagnostic(
             changed_gap_count += 1
 
     region_start = ranges[0][0]
-    write_end = max(
-        start + len(streams[entry["entry_id"]])
-        for start, _, entry in ranges
-    )
     return {
         "unit_index": unit_index,
         "unit_file_offset": f"0x{unit_file_offset:X}",
         "entry_count": len(ranges),
-        "placement_policy": "fixed-original-offset-diagnostic",
-        "translation_input_field": "ko_candidate",
+        "placement_policy": (
+            "fixed-original-offset-exact-diagnostic"
+            if exact_layout
+            else "fixed-original-offset-diagnostic"
+        ),
+        "translation_input_field": text_field,
+        "translation_text_and_newlines_preserved": exact_layout,
+        "layout_violation_count": len(layout_violations),
+        "layout_over_total_capacity_count": sum(
+            bool(violation["over_total_frame_capacity"])
+            for violation in layout_violations
+        ),
+        "layout_violations": layout_violations,
         "layout_adjustment_count": len(layout_adjustments),
         "layout_adjustments": layout_adjustments,
         "write_precedence": "lower-source-offset-wins-overlap",
@@ -1024,6 +1106,10 @@ def write_unit_at_original_offsets_diagnostic(
         "original_region_start": f"0x{region_start:04X}",
         "original_region_end_exclusive": f"0x{ranges[-1][1]:04X}",
         "diagnostic_write_end_exclusive": f"0x{write_end:04X}",
+        "scheduled_unit_bytes": unit_byte_size,
+        "write_within_scheduled_unit": (
+            unit_byte_size is None or write_end <= unit_byte_size
+        ),
         "encoded_text_bytes": sum(len(value) for value in streams.values()),
         "slot_overflow_count": len(conflicts),
         "slot_overflows": conflicts,
@@ -1038,25 +1124,37 @@ def write_unit_at_original_offsets_diagnostic(
         "changed_inter_entry_gap_count": changed_gap_count,
         "entries": intact_entries,
         "warning": (
-            "Diagnostic only: complete translations stay at original starts; "
-            "earlier overlong streams intentionally corrupt later content."
+            "Diagnostic only: translations stay at original starts; earlier "
+            "overlong streams intentionally corrupt later content. Exact "
+            "mode also preserves layout violations without reflow."
         ),
     }
 
 
-def parse_units(values: list[str], all_story: bool) -> list[int]:
-    units: set[int] = set(range(21)) if all_story else set()
+def parse_units(
+    values: list[str],
+    all_story: bool,
+    all_dialogue: bool = False,
+) -> list[int]:
+    if all_story and all_dialogue:
+        raise ValueError("--all-story and --all-dialogue are mutually exclusive")
+    units: set[int]
+    if all_dialogue:
+        units = set(ALL_DIALOGUE_UNIT_RANGE)
+    elif all_story:
+        units = set(STORY_UNIT_RANGE)
+    else:
+        units = set()
     for value in values:
         for part in value.split(","):
             part = part.strip()
             if part:
                 units.add(int(part, 0))
     if not units:
-        raise ValueError("select --unit or --all-story")
-    if any(unit < 0 or unit > 21 for unit in units):
+        raise ValueError("select --unit, --all-story, or --all-dialogue")
+    if any(unit not in ALL_DIALOGUE_UNIT_RANGE for unit in units):
         raise ValueError(
-            "chapter builder currently supports story units 0..20 and "
-            "general-race unit 21"
+            "dialogue builder currently supports ALLBIN units 0..34"
         )
     return sorted(units)
 
@@ -1098,6 +1196,36 @@ def validate_stable_id_join(
     }
 
 
+def load_allbin_unit_schedule(path: Path) -> dict[int, dict[str, int]]:
+    document = load_object(path)
+    schedule = document.get("schedules", {}).get("ALLBIN.BIN")
+    if not isinstance(schedule, dict) or not schedule.get("complete_partition"):
+        raise ValueError(f"{path}: ALLBIN schedule is not a complete partition")
+    entries = schedule.get("entries")
+    if not isinstance(entries, list):
+        raise ValueError(f"{path}: ALLBIN schedule entries must be an array")
+    result: dict[int, dict[str, int]] = {}
+    previous_end = 0
+    for entry in entries:
+        index = int(entry["index"])
+        byte_offset = int(entry["byte_offset"])
+        byte_size = int(entry["byte_size"])
+        byte_end = int(entry["byte_end"])
+        if index in result:
+            raise ValueError(f"{path}: duplicate ALLBIN unit {index}")
+        if byte_offset != previous_end or byte_end != byte_offset + byte_size:
+            raise ValueError(f"{path}: ALLBIN unit {index} is not contiguous")
+        result[index] = {
+            "byte_offset": byte_offset,
+            "byte_size": byte_size,
+            "byte_end": byte_end,
+        }
+        previous_end = byte_end
+    if previous_end != int(schedule["file_size"]):
+        raise ValueError(f"{path}: ALLBIN schedule size differs")
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start-bin", type=Path, required=True)
@@ -1112,6 +1240,13 @@ def main() -> None:
         type=Path,
         default=Path(
             "work/translations/disc1-dialogue-ko-reflowed-nonrelease.json"
+        ),
+    )
+    parser.add_argument(
+        "--candidate",
+        type=Path,
+        default=Path(
+            "work/translations/disc1-dialogue-ko-candidate.json"
         ),
     )
     parser.add_argument(
@@ -1132,32 +1267,67 @@ def main() -> None:
         default=Path("config/font-profile.json"),
     )
     parser.add_argument(
+        "--layout-analysis",
+        type=Path,
+        default=Path("work/analysis/disc1-layout.json"),
+    )
+    parser.add_argument(
+        "--allow-pointerless-gap-glyph-loss",
+        action="store_true",
+        help=(
+            "Do not reserve original Japanese glyphs found only in inter-entry "
+            "fall-through gaps. This is allowed only for fixed-original exact "
+            "non-release diagnostics and can garble untranslated pointerless pages."
+        ),
+    )
+    parser.add_argument(
         "--unit",
         action="append",
         default=[],
-        help="story unit number or comma-separated list; repeatable",
+        help="dialogue unit number or comma-separated list; repeatable",
     )
     parser.add_argument("--all-story", action="store_true")
+    parser.add_argument("--all-dialogue", action="store_true")
     parser.add_argument(
         "--placement-policy",
-        choices=("source-order-repack", "fixed-original-diagnostic"),
+        choices=(
+            "source-order-repack",
+            "fixed-original-diagnostic",
+            "fixed-original-exact-diagnostic",
+        ),
         default="source-order-repack",
         help=(
-            "Use fixed-original-diagnostic only for intentional runtime "
-            "overflow localization; it permits destructive entry overlap."
+            "Fixed-original policies are intentional runtime diagnostics that "
+            "permit destructive entry overlap. Exact mode consumes entries[].ko "
+            "without changing text or newlines."
         ),
     )
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
     try:
-        units = parse_units(args.unit, args.all_story)
+        units = parse_units(
+            args.unit,
+            args.all_story,
+            args.all_dialogue,
+        )
     except ValueError as error:
         parser.error(str(error))
-    if 21 in units and args.placement_policy != "fixed-original-diagnostic":
+    fixed_diagnostic = args.placement_policy in {
+        "fixed-original-diagnostic",
+        "fixed-original-exact-diagnostic",
+    }
+    exact_diagnostic = (
+        args.placement_policy == "fixed-original-exact-diagnostic"
+    )
+    if any(unit > 20 for unit in units) and not fixed_diagnostic:
         parser.error(
-            "unit 21 is currently allowed only with "
-            "--placement-policy fixed-original-diagnostic"
+            "units 21..34 currently require a fixed-original diagnostic policy"
+        )
+    if args.allow_pointerless_gap_glyph_loss and not exact_diagnostic:
+        parser.error(
+            "--allow-pointerless-gap-glyph-loss requires "
+            "fixed-original-exact-diagnostic"
         )
 
     source_start = args.start_bin.read_bytes()
@@ -1167,15 +1337,30 @@ def main() -> None:
     if sha256_bytes(source_allbin) != EXPECTED_ALLBIN_SHA256:
         raise ValueError("ALLBIN.BIN hash differs from the verified original")
 
-    workset = load_object(args.workset)
-    overlay = load_object(args.reflow_overlay)
+    workset, workset_bytes = load_object_bytes(args.workset)
+    if exact_diagnostic:
+        translation_document, translation_bytes = load_object_bytes(
+            args.candidate
+        )
+        translation_path = args.candidate
+        text_field = "ko"
+        font_text_fields = ("ko",)
+    else:
+        translation_document, translation_bytes = load_object_bytes(
+            args.reflow_overlay
+        )
+        translation_path = args.reflow_overlay
+        text_field = "ko_candidate"
+        font_text_fields = ("ko_reflowed", "ko_candidate")
     audit = load_object(args.reinsertion_audit)
     work_entries = workset.get("entries")
-    derived_entries = overlay.get("entries")
+    derived_entries = translation_document.get("entries")
     if not isinstance(work_entries, list) or not isinstance(derived_entries, list):
-        raise ValueError("workset and reflow overlay entries must be arrays")
+        raise ValueError(
+            "workset and translation document entries must be arrays"
+        )
     stable_id_join = validate_stable_id_join(work_entries, derived_entries)
-    reflow_by_id = {entry["id"]: entry for entry in derived_entries}
+    translation_by_id = {entry["id"]: entry for entry in derived_entries}
 
     mismatch_ids = {
         entry["id"]
@@ -1187,7 +1372,7 @@ def main() -> None:
         if int(entry["source"]["unit_index"]) in units
     }
     selected_mismatches = sorted(selected_ids & mismatch_ids)
-    if selected_mismatches:
+    if selected_mismatches and not exact_diagnostic:
         raise ValueError(
             "selected units contain protected name-token mismatches: "
             + ", ".join(selected_mismatches)
@@ -1198,32 +1383,86 @@ def main() -> None:
         unit_index = int(entry["source"]["unit_index"])
         if unit_index in units:
             by_unit[unit_index].append(entry)
+    missing_units = sorted(set(units) - set(by_unit))
+    if missing_units:
+        raise ValueError(
+            "selected units contain no extracted dialogue: "
+            + ", ".join(str(unit) for unit in missing_units)
+        )
+    unit_schedule = load_allbin_unit_schedule(args.layout_analysis)
+    for unit_index, unit_entries in by_unit.items():
+        scheduled = unit_schedule.get(unit_index)
+        if scheduled is None:
+            raise ValueError(f"unit {unit_index}: no ALLBIN schedule entry")
+        unit_file_offsets = {
+            int(entry["source"]["file_offset"], 16)
+            - int(entry["source"]["unit_offset"], 16)
+            for entry in unit_entries
+        }
+        if unit_file_offsets != {scheduled["byte_offset"]}:
+            raise ValueError(
+                f"unit {unit_index}: extracted file base differs from schedule"
+            )
     gap_glyph_indices = passthrough_gap_glyph_indices(
         source_allbin,
         by_unit,
     )
+    preserved_gap_glyph_indices = (
+        frozenset()
+        if args.allow_pointerless_gap_glyph_loss
+        else gap_glyph_indices
+    )
     patched_start, mapping, font_report = build_static_font(
         source_start,
-        overlay,
+        translation_document,
         glyph_map_path=args.glyph_map,
         font_profile_path=args.font_profile,
-        passthrough_original_glyph_indices=gap_glyph_indices,
+        passthrough_original_glyph_indices=preserved_gap_glyph_indices,
+        text_fields=font_text_fields,
     )
+    font_report["pointerless_gap_glyph_policy"] = (
+        "not-preserved-nonrelease-diagnostic"
+        if args.allow_pointerless_gap_glyph_loss
+        else "preserve-byte-exact"
+    )
+    font_report["detected_pointerless_gap_glyph_count"] = len(
+        gap_glyph_indices
+    )
+    font_report["unpreserved_pointerless_gap_glyph_count"] = (
+        len(gap_glyph_indices - preserved_gap_glyph_indices)
+    )
+    font_report["unpreserved_pointerless_gap_glyph_indices"] = [
+        f"0x{index:03X}"
+        for index in sorted(
+            gap_glyph_indices - preserved_gap_glyph_indices
+        )
+    ]
     patched_allbin = bytearray(source_allbin)
     unit_writer = (
         write_unit_at_original_offsets_diagnostic
-        if args.placement_policy == "fixed-original-diagnostic"
+        if fixed_diagnostic
         else repack_unit
     )
-    unit_reports = [
-        unit_writer(
-            patched_allbin,
-            by_unit[unit_index],
-            reflow_by_id,
-            mapping,
-        )
-        for unit_index in units
-    ]
+    unit_reports = []
+    for unit_index in units:
+        if fixed_diagnostic:
+            report = unit_writer(
+                patched_allbin,
+                by_unit[unit_index],
+                translation_by_id,
+                mapping,
+                text_field=text_field,
+                exact_layout=exact_diagnostic,
+                unit_byte_size=unit_schedule[unit_index]["byte_size"],
+            )
+        else:
+            report = unit_writer(
+                patched_allbin,
+                by_unit[unit_index],
+                translation_by_id,
+                mapping,
+            )
+        unit_reports.append(report)
     start_expected_writes = verify_expected_writes(
         source_start,
         patched_start,
@@ -1251,7 +1490,7 @@ def main() -> None:
         )
         region_end = (
             int(report["diagnostic_write_end_exclusive"], 16)
-            if args.placement_policy == "fixed-original-diagnostic"
+            if fixed_diagnostic
             else entry_ranges[-1][1]
         )
         allbin_allowed_ranges.append(
@@ -1275,7 +1514,7 @@ def main() -> None:
         allowed_ranges=allbin_allowed_ranges,
         owner=(
             "fixed-original-offset-diagnostic-text"
-            if args.placement_policy == "fixed-original-diagnostic"
+            if fixed_diagnostic
             else "selected-story-unit-text-and-pointers"
         ),
     )
@@ -1300,26 +1539,81 @@ def main() -> None:
             },
         },
     )
-    manifest = {
-        "schema_version": 1,
-        "status": (
-            "nonrelease-fixed-original-offset-overflow-diagnostic"
-            if args.placement_policy == "fixed-original-diagnostic"
-            else "nonrelease-partial-chapter-build"
+    all_dialogue_selected = units == list(ALL_DIALOGUE_UNIT_RANGE)
+    if exact_diagnostic:
+        build_status = (
+            "nonrelease-all-dialogue-fixed-original-exact-overflow-diagnostic"
+            if all_dialogue_selected
+            else "nonrelease-fixed-original-exact-overflow-diagnostic"
+        )
+    elif fixed_diagnostic:
+        build_status = "nonrelease-fixed-original-offset-overflow-diagnostic"
+    else:
+        build_status = "nonrelease-partial-chapter-build"
+    diagnostic_summary = {
+        "selected_unit_count": len(units),
+        "selected_entry_count": len(selected_ids),
+        "layout_violation_count": sum(
+            int(report.get("layout_violation_count", 0))
+            for report in unit_reports
         ),
+        "layout_over_total_capacity_count": sum(
+            int(report.get("layout_over_total_capacity_count", 0))
+            for report in unit_reports
+        ),
+        "slot_overflow_count": sum(
+            int(report.get("slot_overflow_count", 0))
+            for report in unit_reports
+        ),
+        "intact_entry_count": sum(
+            int(report.get("intact_entry_count", report["entry_count"]))
+            for report in unit_reports
+        ),
+        "corrupted_by_overlap_entry_count": sum(
+            int(report.get("corrupted_by_overlap_entry_count", 0))
+            for report in unit_reports
+        ),
+        "corrupted_portrait_or_audio_entry_count": sum(
+            int(report.get("corrupted_portrait_or_audio_entry_count", 0))
+            for report in unit_reports
+        ),
+        "protected_name_token_mismatch_count": len(selected_mismatches),
+        "protected_name_token_mismatch_ids": selected_mismatches,
+    }
+    manifest = {
+        "schema_version": 2,
+        "status": build_status,
         "placement_policy": args.placement_policy,
-        "selected_story_units": units,
+        "selected_dialogue_units": units,
+        "selected_story_units": [
+            unit for unit in units if unit in STORY_UNIT_RANGE
+        ],
         "selected_entry_count": len(selected_ids),
         "font_scope": "all-5783-candidate-corpus",
-        "unselected_dialogue_font_compatible": False,
+        "all_extracted_dialogue_units_selected": all_dialogue_selected,
+        "unselected_dialogue_font_compatible": all_dialogue_selected,
+        "translation_input_field": text_field,
+        "translation_text_and_newlines_preserved": exact_diagnostic,
+        "pointerless_gap_glyphs_preserved": (
+            not args.allow_pointerless_gap_glyph_loss
+        ),
+        "diagnostic_summary": diagnostic_summary,
         "warning": (
-            "Diagnostic only: translated streams stay at original starts and "
-            "overlong earlier entries intentionally overwrite later content. "
-            "Expect the first slot conflict to break subsequent dialogue."
-            if args.placement_policy == "fixed-original-diagnostic"
+            "Diagnostic only: entries[].ko text and newlines are encoded "
+            "unchanged at each original start. Overlong earlier streams "
+            "intentionally overwrite later dialogue/control data, so not every "
+            "planned stream remains byte-intact and runtime freezes are expected."
+            if exact_diagnostic
             else (
-                "Only selected units are encoded with the replaced global "
-                "font. Do not test unselected dialogue in this partial build."
+                "Diagnostic only: translated streams stay at original starts "
+                "and overlong earlier entries intentionally overwrite later "
+                "content. Expect the first slot conflict to break subsequent "
+                "dialogue."
+                if fixed_diagnostic
+                else (
+                    "Only selected units are encoded with the replaced global "
+                    "font. Do not test unselected dialogue in this partial build."
+                )
             )
         ),
         "sources": {
@@ -1331,9 +1625,17 @@ def main() -> None:
                 "path": str(args.allbin.resolve()),
                 "sha256": sha256_bytes(source_allbin),
             },
-            "workset_sha256": sha256_file(args.workset),
-            "reflow_overlay_sha256": sha256_file(args.reflow_overlay),
+            "workset": {
+                "path": str(args.workset.resolve()),
+                "sha256": sha256_bytes(workset_bytes),
+            },
+            "translation_document": {
+                "path": str(translation_path.resolve()),
+                "sha256": sha256_bytes(translation_bytes),
+                "editable_field": text_field,
+            },
             "reinsertion_audit_sha256": sha256_file(args.reinsertion_audit),
+            "layout_analysis_sha256": sha256_file(args.layout_analysis),
         },
         "font": font_report,
         "stable_id_join": stable_id_join,
