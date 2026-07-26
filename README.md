@@ -145,6 +145,8 @@ tmp/                    비커밋 임시 캡처
 | [리맵 경로 추적 PoC](docs/remap-path-poc.md) | 텍스트 상태 필드 판정을 남긴 역사적 PoC |
 | [챕터 1 비배포 디스크 빌드](docs/chapter01-disc-build.md) | 정적 폰트·unit 0 대사·raw sector 삽입과 EDC/ECC 검증 |
 | [대사 런타임 검증 기준선](docs/dialogue-runtime-findings.md) | 고정 주소 판정, 초상화·이름 제어 손상, 반각 검토, u21·선택지 후속 과제 |
+| [17×3 대사 편집기](docs/dialogue-layout-editor.md) | 한국어 후보 수동 편집, 고정 셀 미리보기와 보호 JSON 저장 |
+| [Git 작업 흐름](docs/git-workflow.md) | `main`과 목적별 단기 브랜치, 검증·병합·태그 정책 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
 | [GPU 업로드 원본 추적](docs/gpu-upload-source-tracing.md) | 화면→VRAM→DMA2/RAM→저장 자산을 연결하는 미실행 조사 절차 |
 

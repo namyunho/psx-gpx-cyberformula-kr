@@ -4,8 +4,8 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import importlib.metadata
-import importlib.util
 import json
 from pathlib import Path
 import shutil
@@ -43,13 +43,17 @@ def path_check(name: str, path: Path, *, required: bool = True) -> dict[str, Any
 
 
 def module_check(import_name: str, package_name: str) -> dict[str, Any]:
-    found = importlib.util.find_spec(import_name) is not None
+    found = False
     detail = "not importable"
-    if found:
+    try:
+        importlib.import_module(import_name)
+        found = True
         try:
             detail = importlib.metadata.version(package_name)
         except importlib.metadata.PackageNotFoundError:
             detail = "importable"
+    except (ImportError, OSError) as error:
+        detail = str(error)
     return {
         "name": package_name,
         "kind": "python-module",
@@ -70,6 +74,7 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
         },
         module_check("capstone", "capstone"),
         module_check("PIL", "Pillow"),
+        module_check("tkinter", "Tkinter"),
         command_check("ida-pro-mcp"),
         command_check("idalib-mcp"),
         command_check("ghidraRun"),
