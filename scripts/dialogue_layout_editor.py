@@ -29,8 +29,15 @@ SHORT_LINE_GLYPH_LIMIT = 6
 DEFAULT_INPUT = Path(
     "work/translations/disc1-dialogue-ko-candidate.json"
 )
+DEFAULT_WORKSET = Path("work/translations/disc1-dialogue.json")
 EDITABLE_FIELD_PATTERN = re.compile(r"^entries\[\]\.([A-Za-z_][A-Za-z0-9_]*)$")
 WORD_PATTERN = re.compile(r"\S+")
+CONTROL_CONTENT_KINDS = frozenset(
+    {"glyph", "name_surname", "name_given"}
+)
+MOVABLE_INTERNAL_CONTROL_KINDS = frozenset(
+    {"align", "name_surname", "name_given"}
+)
 NAME_EXPANSIONS = {
     "{name:surname}": "시바",
     "{name:given}": "세이치로",
@@ -40,6 +47,64 @@ PUNCTUATION_ENDINGS = frozenset("…‥.!?。！？,，:：;；)]}）］】」�
 
 class DialogueEditorError(ValueError):
     """Raised when an input document or requested layout is invalid."""
+
+
+@dataclass(frozen=True)
+class ProtectedControlToken:
+    token_index: int
+    raw: str
+    kind: str
+    markup: str
+    policy: str
+
+    @property
+    def description(self) -> str:
+        return f"0x{self.raw} {self.markup} [{self.policy}]"
+
+
+@dataclass(frozen=True)
+class DialogueControlContext:
+    entry_id: str
+    original_stream_bytes: int
+    leading: tuple[ProtectedControlToken, ...]
+    internal_movable: tuple[ProtectedControlToken, ...]
+    trailing: tuple[ProtectedControlToken, ...]
+
+    def inline_markup(self, dialogue_text: str) -> str:
+        leading = "".join(token.markup for token in self.leading)
+        body = dialogue_text.replace("\n", "{align}")
+        trailing = "".join(token.markup for token in self.trailing)
+        return f"{leading}{body}{trailing}"
+
+    def read_only_report(self, dialogue_text: str) -> str:
+        leading = (
+            " · ".join(token.description for token in self.leading)
+            or "없음"
+        )
+        trailing = (
+            " · ".join(token.description for token in self.trailing)
+            or "없음"
+        )
+        align_count = dialogue_text.count("\n")
+        visible_glyphs = len(
+            expand_display_tokens(dialogue_text).replace("\n", "")
+        )
+        estimated_bytes = 2 * (
+            len(self.leading)
+            + visible_glyphs
+            + align_count
+            + len(self.trailing)
+        )
+        return (
+            f"바이트: 원본 스트림 {self.original_stream_bytes}B"
+            f" · 현재 예상 {estimated_bytes}B"
+            " (안전 슬롯 한도는 별도)\n"
+            f"선두 보호: {leading}\n"
+            f"조판: 줄바꿈 {align_count}개"
+            " → 0xFFFB {align} [movable-layout-in-story-only]\n"
+            f"후미 보호: {trailing}\n"
+            f"인라인 스트림: {self.inline_markup(dialogue_text)}"
+        )
 
 
 @dataclass(frozen=True)
@@ -272,6 +337,172 @@ def _protected_entry(
     return protected
 
 
+def load_control_contexts(
+    path: Path,
+    *,
+    required_ids: Iterable[str] | None = None,
+) -> dict[str, DialogueControlContext]:
+    """Load and validate the protected control shell for dialogue entries."""
+    try:
+        workset = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise DialogueEditorError(f"{path}: {error}") from error
+    entries = workset.get("entries") if isinstance(workset, dict) else None
+    if not isinstance(entries, list):
+        raise DialogueEditorError(f"{path}: workset requires an entries list")
+
+    contexts: dict[str, DialogueControlContext] = {}
+    for entry_index, entry in enumerate(entries):
+        if not isinstance(entry, dict):
+            raise DialogueEditorError(
+                f"{path}: entries[{entry_index}] must be an object"
+            )
+        entry_id = _entry_id(entry, entry_index)
+        if entry_id in contexts:
+            raise DialogueEditorError(
+                f"{path}: duplicate workset ID {entry_id}"
+            )
+        original = entry.get("original")
+        if not isinstance(original, dict):
+            raise DialogueEditorError(
+                f"{entry_id}: missing protected original data"
+            )
+        raw_tokens = original.get("tokens")
+        raw_controls = original.get("control_tokens")
+        if not isinstance(raw_tokens, list) or not isinstance(
+            raw_controls, list
+        ):
+            raise DialogueEditorError(
+                f"{entry_id}: missing token/control arrays"
+            )
+        try:
+            tokens = tuple(int(str(raw), 16) for raw in raw_tokens)
+        except ValueError as error:
+            raise DialogueEditorError(
+                f"{entry_id}: invalid raw token"
+            ) from error
+
+        controls: dict[int, ProtectedControlToken] = {}
+        for raw_control in raw_controls:
+            if not isinstance(raw_control, dict):
+                raise DialogueEditorError(
+                    f"{entry_id}: control token must be an object"
+                )
+            token_index = raw_control.get("token_index")
+            raw = raw_control.get("raw")
+            kind = raw_control.get("kind")
+            markup = raw_control.get("markup")
+            policy = raw_control.get("policy")
+            if (
+                not isinstance(token_index, int)
+                or not 0 <= token_index < len(tokens)
+                or not isinstance(raw, str)
+                or not re.fullmatch(r"[0-9A-Fa-f]{4}", raw)
+                or not isinstance(kind, str)
+                or not kind
+                or not isinstance(markup, str)
+                or not markup
+                or not isinstance(policy, str)
+                or not policy
+            ):
+                raise DialogueEditorError(
+                    f"{entry_id}: invalid control token metadata"
+                )
+            if token_index in controls:
+                raise DialogueEditorError(
+                    f"{entry_id}: duplicate control index {token_index}"
+                )
+            if tokens[token_index] != int(raw, 16):
+                raise DialogueEditorError(
+                    f"{entry_id}: control raw value differs at "
+                    f"token {token_index}"
+                )
+            controls[token_index] = ProtectedControlToken(
+                token_index=token_index,
+                raw=raw.upper(),
+                kind=kind,
+                markup=markup,
+                policy=policy,
+            )
+
+        content_indices = [
+            index
+            for index in range(len(tokens))
+            if (
+                controls[index].kind
+                if index in controls
+                else "glyph"
+            )
+            in CONTROL_CONTENT_KINDS
+        ]
+        if not content_indices:
+            raise DialogueEditorError(
+                f"{entry_id}: source stream has no display content"
+            )
+        first_content = min(content_indices)
+        last_content = max(content_indices)
+        leading = tuple(
+            control
+            for index, control in sorted(controls.items())
+            if index < first_content
+        )
+        internal = tuple(
+            control
+            for index, control in sorted(controls.items())
+            if first_content <= index <= last_content
+        )
+        trailing = tuple(
+            control
+            for index, control in sorted(controls.items())
+            if index > last_content
+        )
+        unsupported_internal = [
+            control
+            for control in internal
+            if control.kind not in MOVABLE_INTERNAL_CONTROL_KINDS
+        ]
+        if unsupported_internal:
+            kinds = ", ".join(
+                control.kind for control in unsupported_internal
+            )
+            raise DialogueEditorError(
+                f"{entry_id}: protected internal control cannot move: {kinds}"
+            )
+        if any(index not in controls for index in range(first_content)):
+            raise DialogueEditorError(
+                f"{entry_id}: leading control shell contains a glyph"
+            )
+        if any(
+            index not in controls
+            for index in range(last_content + 1, len(tokens))
+        ):
+            raise DialogueEditorError(
+                f"{entry_id}: trailing control shell contains a glyph"
+            )
+        contexts[entry_id] = DialogueControlContext(
+            entry_id=entry_id,
+            original_stream_bytes=len(tokens) * 2,
+            leading=leading,
+            internal_movable=internal,
+            trailing=trailing,
+        )
+
+    if required_ids is not None:
+        required = tuple(required_ids)
+        missing = [
+            entry_id
+            for entry_id in required
+            if entry_id not in contexts
+        ]
+        if missing:
+            raise DialogueEditorError(
+                f"{path}: workset is missing {len(missing)} editor IDs; "
+                f"first={missing[0]}"
+            )
+        return {entry_id: contexts[entry_id] for entry_id in required}
+    return contexts
+
+
 def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     serialized = (
@@ -307,6 +538,7 @@ class DialogueDocument:
         document: dict[str, Any],
         *,
         editable_field: str | None = None,
+        control_contexts: dict[str, DialogueControlContext] | None = None,
     ) -> None:
         if not isinstance(document, dict):
             raise DialogueEditorError("dialogue JSON root must be an object")
@@ -355,6 +587,13 @@ class DialogueDocument:
         self.ids = ids
         self._saved_values = list(values)
         self._values = list(values)
+        self._control_contexts = dict(control_contexts or {})
+        unknown_context_ids = sorted(set(self._control_contexts) - set(ids))
+        if unknown_context_ids:
+            raise DialogueEditorError(
+                "control context contains unknown editor IDs: "
+                + ", ".join(unknown_context_ids[:10])
+            )
 
     @classmethod
     def load(
@@ -362,12 +601,37 @@ class DialogueDocument:
         path: Path,
         *,
         editable_field: str | None = None,
+        workset_path: Path | None = None,
     ) -> "DialogueDocument":
         try:
             document = json.loads(path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError) as error:
             raise DialogueEditorError(f"{path}: {error}") from error
-        return cls(path, document, editable_field=editable_field)
+        raw_entries = (
+            document.get("entries")
+            if isinstance(document, dict)
+            else None
+        )
+        required_ids = (
+            [_entry_id(entry, index) for index, entry in enumerate(raw_entries)]
+            if isinstance(raw_entries, list)
+            and all(isinstance(entry, dict) for entry in raw_entries)
+            else None
+        )
+        contexts = (
+            load_control_contexts(
+                workset_path,
+                required_ids=required_ids,
+            )
+            if workset_path is not None and required_ids is not None
+            else None
+        )
+        return cls(
+            path,
+            document,
+            editable_field=editable_field,
+            control_contexts=contexts,
+        )
 
     def __len__(self) -> int:
         return len(self.ids)
@@ -400,6 +664,18 @@ class DialogueDocument:
         if not isinstance(value, str):
             raise DialogueEditorError("edited dialogue must be a string")
         self._values[index] = value.replace("\r\n", "\n").replace("\r", "\n")
+
+    def control_context(
+        self,
+        index: int,
+    ) -> DialogueControlContext | None:
+        return self._control_contexts.get(self.ids[index])
+
+    def control_report(self, index: int) -> str:
+        context = self.control_context(index)
+        if context is None:
+            return "보호 workset이 연결되지 않아 제어코드를 표시할 수 없습니다."
+        return context.read_only_report(self.value(index))
 
     def japanese(self, index: int) -> str:
         entry = self.entries[index]
@@ -440,8 +716,19 @@ class DialogueDocument:
         }
 
     def searchable_text(self, index: int) -> str:
+        context = self.control_context(index)
+        control_text = (
+            context.inline_markup(self.value(index))
+            if context is not None
+            else ""
+        )
         return "\n".join(
-            (self.ids[index], self.japanese(index), self.value(index))
+            (
+                self.ids[index],
+                self.japanese(index),
+                self.value(index),
+                control_text,
+            )
         ).casefold()
 
     def layout_overflow_indices(self) -> tuple[int, ...]:
@@ -531,6 +818,19 @@ class DialogueDocument:
             "line_width_overflow": line_width_overflow,
             "row_count_overflow": row_count_overflow,
             "short_line_candidates": short_line_candidates,
+            "control_context_entries": len(self._control_contexts),
+            "leading_control_tokens": sum(
+                len(context.leading)
+                for context in self._control_contexts.values()
+            ),
+            "movable_internal_control_tokens": sum(
+                len(context.internal_movable)
+                for context in self._control_contexts.values()
+            ),
+            "trailing_control_tokens": sum(
+                len(context.trailing)
+                for context in self._control_contexts.values()
+            ),
             "empty": empty,
             "dirty": len(self.dirty_indices),
         }
@@ -739,6 +1039,21 @@ def run_gui(
             ).pack(anchor=tk.W)
             ttk.Label(metadata, textvariable=self.meta_var).pack(anchor=tk.W)
 
+            control_frame = ttk.LabelFrame(
+                right,
+                text="실제 이벤트 스트림 제어 — 읽기 전용",
+                padding=6,
+            )
+            control_frame.pack(fill=tk.X, pady=(8, 0))
+            self.control_text = tk.Text(
+                control_frame,
+                height=5,
+                wrap=tk.WORD,
+                state=tk.DISABLED,
+                font=("Menlo", 11),
+            )
+            self.control_text.pack(fill=tk.X)
+
             text_pane = ttk.Panedwindow(right, orient=tk.VERTICAL)
             text_pane.pack(fill=tk.BOTH, expand=True, pady=(8, 8))
 
@@ -937,9 +1252,16 @@ def run_gui(
                 self.ko_text.edit_modified(False)
             finally:
                 self._loading_editor = False
+            self.update_control_view(index)
             self.update_preview()
             self.message_var.set("한국어 필드만 편집할 수 있습니다.")
             self.update_title()
+
+        def update_control_view(self, index: int) -> None:
+            self.control_text.configure(state=tk.NORMAL)
+            self.control_text.delete("1.0", tk.END)
+            self.control_text.insert("1.0", self.document.control_report(index))
+            self.control_text.configure(state=tk.DISABLED)
 
         def update_metadata(self, index: int) -> None:
             metadata = self.document.metadata(index)
@@ -1009,6 +1331,7 @@ def run_gui(
             else:
                 self.short_line_indices.discard(self.current_index)
             self.update_metadata(self.current_index)
+            self.update_control_view(self.current_index)
             if self.current_index in self.filtered_indices:
                 position = self.filtered_indices.index(self.current_index)
                 marker = (
@@ -1275,6 +1598,14 @@ def main() -> None:
         help="optional default save target; input is used when omitted",
     )
     parser.add_argument(
+        "--workset",
+        type=Path,
+        default=DEFAULT_WORKSET,
+        help=(
+            "protected extracted workset supplying read-only control tokens"
+        ),
+    )
+    parser.add_argument(
         "--editable-field",
         help="override detected Korean field, e.g. ko or ko_reflowed",
     )
@@ -1293,6 +1624,7 @@ def main() -> None:
         document = DialogueDocument.load(
             args.input,
             editable_field=args.editable_field,
+            workset_path=args.workset,
         )
         if args.check:
             print(

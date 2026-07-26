@@ -11,6 +11,7 @@ from scripts.dialogue_layout_editor import (
     conservative_word_wrap,
     expand_display_tokens,
     filter_entry_indices,
+    load_control_contexts,
     measure_layout,
 )
 
@@ -196,6 +197,142 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
         summary = document.validation_summary()
         self.assertEqual(summary["short_line_candidates"], 3)
+
+    def test_loads_protected_control_shell_and_renders_inline_stream(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {
+                    "entry_id": "entry-0",
+                    "original": {
+                        "tokens": [
+                            "903F",
+                            "0001",
+                            "FFFB",
+                            "0002",
+                            "8000",
+                        ],
+                        "control_tokens": [
+                            {
+                                "token_index": 0,
+                                "raw": "903F",
+                                "kind": "speaker_style",
+                                "markup": "{speaker_style:03F}",
+                                "policy": "preserve",
+                            },
+                            {
+                                "token_index": 2,
+                                "raw": "FFFB",
+                                "kind": "align",
+                                "markup": "{align}",
+                                "policy": "movable-layout-in-story-only",
+                            },
+                            {
+                                "token_index": 4,
+                                "raw": "8000",
+                                "kind": "page_end",
+                                "markup": "{page_end}",
+                                "policy": "preserve",
+                            },
+                        ],
+                    },
+                }
+            ]
+        }
+        candidate = {
+            "entries": [
+                {
+                    "id": "entry-0",
+                    "jp": "原文",
+                    "ko": "한국어\n대사",
+                }
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            workset_path = Path(directory) / "workset.json"
+            workset_path.write_text(
+                json.dumps(source, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            contexts = load_control_contexts(
+                workset_path,
+                required_ids=("entry-0",),
+            )
+
+        context = contexts["entry-0"]
+        self.assertEqual(context.original_stream_bytes, 10)
+        self.assertEqual(
+            tuple(token.raw for token in context.leading),
+            ("903F",),
+        )
+        self.assertEqual(
+            tuple(token.raw for token in context.internal_movable),
+            ("FFFB",),
+        )
+        self.assertEqual(
+            tuple(token.raw for token in context.trailing),
+            ("8000",),
+        )
+        document = DialogueDocument(
+            Path("candidate.json"),
+            candidate,
+            control_contexts=contexts,
+        )
+        self.assertIn(
+            "{speaker_style:03F}한국어{align}대사{page_end}",
+            document.control_report(0),
+        )
+        self.assertIn(
+            "원본 스트림 10B · 현재 예상 16B",
+            document.control_report(0),
+        )
+        summary = document.validation_summary()
+        self.assertEqual(summary["control_context_entries"], 1)
+        self.assertEqual(summary["leading_control_tokens"], 1)
+        self.assertEqual(summary["movable_internal_control_tokens"], 1)
+        self.assertEqual(summary["trailing_control_tokens"], 1)
+
+    def test_rejects_control_metadata_that_differs_from_raw_tokens(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {
+                    "entry_id": "entry-0",
+                    "original": {
+                        "tokens": ["903F", "0001", "8000"],
+                        "control_tokens": [
+                            {
+                                "token_index": 0,
+                                "raw": "9000",
+                                "kind": "speaker_style",
+                                "markup": "{speaker_style:000}",
+                                "policy": "preserve",
+                            },
+                            {
+                                "token_index": 2,
+                                "raw": "8000",
+                                "kind": "page_end",
+                                "markup": "{page_end}",
+                                "policy": "preserve",
+                            },
+                        ],
+                    },
+                }
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            workset_path = Path(directory) / "workset.json"
+            workset_path.write_text(
+                json.dumps(source),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(
+                DialogueEditorError,
+                "control raw value differs",
+            ):
+                load_control_contexts(workset_path)
 
     def test_rejects_duplicate_stable_ids(self) -> None:
         source = {
