@@ -360,10 +360,16 @@ def build_disc(
     file_manifest_path = file_build_dir / "manifest.json"
     file_manifest = load_object(file_manifest_path)
     selected_units = file_manifest.get("selected_story_units")
-    if selected_units not in ([0], [0, 21]):
+    is_contiguous_runtime_prefix = (
+        isinstance(selected_units, list)
+        and bool(selected_units)
+        and selected_units == list(range(selected_units[-1] + 1))
+        and 0 <= selected_units[-1] <= 34
+    )
+    if selected_units != [0, 21] and not is_contiguous_runtime_prefix:
         raise ValueError(
-            "chapter 1 disc builder requires selected_story_units == [0] "
-            "or [0, 21]"
+            "partial disc builder requires a contiguous dialogue-unit prefix "
+            "[0..N] where N <= 34, or the legacy replay set [0, 21]"
         )
     accepted_file_statuses = {
         "nonrelease-partial-chapter-build",
@@ -372,6 +378,11 @@ def build_disc(
         (
             "nonrelease-fixed-original-offset-overflow-diagnostic-"
             "with-character-names"
+        ),
+        "nonrelease-partial-chapter-build-with-character-names-and-ui",
+        (
+            "nonrelease-fixed-original-offset-overflow-diagnostic-"
+            "with-character-names-and-ui"
         ),
     }
     if file_manifest.get("status") not in accepted_file_statuses:
@@ -536,18 +547,35 @@ def build_disc(
                     if diagnostic_overflow
                     else "confirm selected dialogue entries render and advance"
                 ),
-                (
-                    (
-                        "continue to general-race unit 21 and inspect its "
-                        "first overlap boundary"
-                        if diagnostic_overflow
-                        else (
-                            "continue through general-race unit 21 and "
-                            "confirm its dialogue control flow"
-                        )
+                *(
+                    [
+                        (
+                            "continue through test-drive unit 21 and confirm "
+                            "its dialogue control flow"
+                        ),
+                        (
+                            "enter the chapter 1 first race in unit 22 and "
+                            "confirm Korean race dialogue and control flow"
+                        ),
+                    ]
+                    if 22 in selected_units
+                    else (
+                        [
+                            (
+                                "continue to test-drive unit 21 and inspect "
+                                "its first overlap boundary"
+                                if diagnostic_overflow
+                                else (
+                                    "continue through test-drive unit 21 and "
+                                    "confirm its dialogue control flow"
+                                )
+                            )
+                        ]
+                        if 21 in selected_units
+                        else [
+                            "do not continue into an unselected dialogue unit"
+                        ]
                     )
-                    if 21 in selected_units
-                    else "do not continue into an unselected dialogue unit"
                 ),
                 *(
                     [
@@ -561,8 +589,32 @@ def build_disc(
                     if "SLPS_019.58" in replacements
                     else []
                 ),
+                *(
+                    [
+                        "confirm name-editor prompts and labels render in Korean",
+                        "confirm all three translated origin choices render and remain selectable",
+                        (
+                            "confirm the preserved kanji, kana, Latin, digit, "
+                            "and symbol input palettes still work"
+                        ),
+                    ]
+                    if "ui_translation" in file_manifest
+                    else []
+                ),
             ],
         }
+    )
+    has_names = "SLPS_019.58" in replacements
+    has_ui = "ui_translation" in file_manifest
+    feature_suffix = (
+        "-with-character-names-and-ui"
+        if has_names and has_ui
+        else ("-with-character-names" if has_names else "")
+    )
+    runtime_scope = (
+        f"u00-through-u{selected_units[-1]:02d}"
+        if is_contiguous_runtime_prefix
+        else "legacy-u00-u21-replay"
     )
     manifest = {
         "schema_version": 1,
@@ -570,39 +622,29 @@ def build_disc(
             "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
             if diagnostic_overflow
             else (
-                (
-                    "nonrelease-chapter01-runtime-verified-"
-                    "with-character-names"
-                    if runtime_verified and "SLPS_019.58" in replacements
-                    else (
-                        "nonrelease-chapter01-runtime-verified"
-                        if runtime_verified
-                        else (
-                            "nonrelease-chapter01-runtime-validation-required-"
-                            "with-character-names"
-                            if "SLPS_019.58" in replacements
-                            else (
-                                "nonrelease-chapter01-runtime-validation-"
-                                "required"
-                            )
-                        )
-                    )
+                f"nonrelease-{runtime_scope}-"
+                + (
+                    "runtime-verified"
+                    if runtime_verified
+                    else "runtime-validation-required"
                 )
+                + feature_suffix
             )
         ),
         "chapter": {
             "human_label": (
-                "chapter-01-plus-general-race-u21"
-                if selected_units == [0, 21]
-                else "chapter-01"
+                f"dialogue-units-u00-through-u{selected_units[-1]:02d}"
+                if is_contiguous_runtime_prefix
+                else "legacy-u00-plus-test-drive-u21"
             ),
             "selected_units": selected_units,
             "entry_count": file_manifest["selected_entry_count"],
         },
         "warning": (
-            "The global primary font is replaced for the full candidate "
-            f"corpus, but only units {selected_units} are re-encoded. Do not "
-            "enter other dialogue units with this partial build."
+            "The global primary font contains the selected dialogue plus "
+            f"integrated name/UI glyphs, and only units {selected_units} are "
+            "re-encoded. Do not enter other dialogue units with this partial "
+            "build."
         ),
         "sources": {
             "original_media_manifest": str(
@@ -686,7 +728,7 @@ def main() -> None:
         original_media_manifest=args.original_media_manifest,
     )
     print(
-        f"chapter=1 units={manifest['chapter']['selected_units']} "
+        f"dialogue_units={manifest['chapter']['selected_units']} "
         f"entries={manifest['chapter']['entry_count']} "
         f"changed_sectors="
         f"{manifest['raw_expected_writes']['changed_sector_count']} "

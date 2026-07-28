@@ -331,6 +331,8 @@
         "classification": {
           "enum": [
             "story",
+            "test_drive",
+            "race",
             "general_race",
             "diagnostic_test",
             "dormant_unreachable",

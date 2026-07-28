@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Build non-release Korean dialogue files for selected ALLBIN story units.
 
-The primary font mapping is global and deterministic across every candidate
-entry, while the ALLBIN repack can be limited to one or more independently
-loaded story units.  Unselected units are not compatible with the replaced
-font and must not be treated as playable content in a partial build.
+The primary font mapping is deterministic for the selected dialogue plus the
+integrated Korean name/UI artifacts. Unselected units are not compatible with
+the replaced font and must not be treated as playable content in a partial
+build.
 """
 
 from __future__ import annotations
@@ -84,6 +84,186 @@ UNIT_SHARED_POOL_REFERENCE_PROFILES = {
             ),
         },
     },
+    1: {
+        "scheduled_bytes": 0x1800,
+        "reference_count": 92,
+        "entry_start_reference_count": 88,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "612c1b45af94768af4a92abb2af58e65e41fab5d2c5d0d791027f46f3efb75f1"
+        ),
+    },
+    2: {
+        "scheduled_bytes": 0x8800,
+        "reference_count": 590,
+        "entry_start_reference_count": 590,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "53910a9eb313de0cea3cb8c305e92d68015c5ef9e6c01f0718e86909233f6520"
+        ),
+    },
+    3: {
+        "scheduled_bytes": 0x3800,
+        "reference_count": 183,
+        "entry_start_reference_count": 180,
+        "gap_reference_count": 3,
+        "catalog_sha256": (
+            "3de6c56afb7ed54923dbbe932d4466a6aad13b24c1d6f945e926f0b6f69271e0"
+        ),
+    },
+    4: {
+        "scheduled_bytes": 0x3800,
+        "reference_count": 228,
+        "entry_start_reference_count": 226,
+        "gap_reference_count": 2,
+        "catalog_sha256": (
+            "f2d872aa08e723c9d7e60b6c35a72d3deadc0a86a11af4ce02e238465868d5d4"
+        ),
+    },
+    5: {
+        "scheduled_bytes": 0x6800,
+        "reference_count": 436,
+        "entry_start_reference_count": 412,
+        "gap_reference_count": 24,
+        "catalog_sha256": (
+            "8ba15409ad3e13bde91e3179f2c1e9325122c210179c4388a55feb98b888702a"
+        ),
+    },
+    6: {
+        "scheduled_bytes": 0x5000,
+        "reference_count": 328,
+        "entry_start_reference_count": 325,
+        "gap_reference_count": 3,
+        "catalog_sha256": (
+            "83af234eff96e16cfa7f17b69df96bbfd705a942eab412794cbd92ccf7df78e5"
+        ),
+    },
+    7: {
+        "scheduled_bytes": 0x6800,
+        "reference_count": 453,
+        "entry_start_reference_count": 450,
+        "gap_reference_count": 3,
+        "catalog_sha256": (
+            "89788af5df009f714d829623b3f9027c1822149774cf4b96f38736a7ac4e763c"
+        ),
+    },
+    8: {
+        "scheduled_bytes": 0x4800,
+        "reference_count": 306,
+        "entry_start_reference_count": 306,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "ef3bea769fd9961aec6f2cc7a5d871934da2a775c4124117b3bc5accfc3e603c"
+        ),
+    },
+    9: {
+        "scheduled_bytes": 0xC000,
+        "reference_count": 800,
+        "entry_start_reference_count": 788,
+        "gap_reference_count": 12,
+        "catalog_sha256": (
+            "0d199f29ffe2284e0db74b7d288e2cdf3e516377128868ebb629a088ca13aa0d"
+        ),
+    },
+    10: {
+        "scheduled_bytes": 0x5800,
+        "reference_count": 311,
+        "entry_start_reference_count": 310,
+        "gap_reference_count": 1,
+        "catalog_sha256": (
+            "d0816ea6e9207d7e5c215f5e7cad961895bf4e5976ada37315e47271dbc5ee65"
+        ),
+    },
+    11: {
+        "scheduled_bytes": 0x2800,
+        "reference_count": 141,
+        "entry_start_reference_count": 139,
+        "gap_reference_count": 2,
+        "catalog_sha256": (
+            "1dca7ac50cecaf096f63c087ce8e88321fac9c7c4135df1c85e7903782e49299"
+        ),
+    },
+    12: {
+        "scheduled_bytes": 0x9000,
+        "reference_count": 669,
+        "entry_start_reference_count": 664,
+        "gap_reference_count": 5,
+        "catalog_sha256": (
+            "610b7c323b9cd7fc0e550952fde72606b13f2c4e651846d8627fb9aa7a47e9f8"
+        ),
+    },
+    13: {
+        "scheduled_bytes": 0x4800,
+        "reference_count": 299,
+        "entry_start_reference_count": 298,
+        "gap_reference_count": 1,
+        "catalog_sha256": (
+            "09d798d8789e20cee27bcb455a7740d6bb6ee6d8e78920569c8affab5ef73a66"
+        ),
+    },
+    14: {
+        "scheduled_bytes": 0xD000,
+        "reference_count": 977,
+        "entry_start_reference_count": 977,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "4c8b2d565e109dda127aba6ac068c9c3babcdaa710055d73034ffdbe7a47efe4"
+        ),
+    },
+    15: {
+        "scheduled_bytes": 0x4000,
+        "reference_count": 290,
+        "entry_start_reference_count": 290,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "265144f1311d53968637b1b2c13ed10b3a5e54ee347a5412be2694a8eb058b47"
+        ),
+    },
+    16: {
+        "scheduled_bytes": 0x8800,
+        "reference_count": 582,
+        "entry_start_reference_count": 564,
+        "gap_reference_count": 18,
+        "catalog_sha256": (
+            "78bf18f8e558689a214d3fbcfe7c8d93f550f17e9033a4572637a5ac03f99a35"
+        ),
+    },
+    17: {
+        "scheduled_bytes": 0x6000,
+        "reference_count": 403,
+        "entry_start_reference_count": 403,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "a1d25c4469068f1df792b5101a518034650cb1135521c957197383db8e9f9b2c"
+        ),
+    },
+    18: {
+        "scheduled_bytes": 0x7800,
+        "reference_count": 554,
+        "entry_start_reference_count": 551,
+        "gap_reference_count": 3,
+        "catalog_sha256": (
+            "5fc4a8fb11750f67406df2f3e2786033dc2037a060afa0a29213d04a328389bc"
+        ),
+    },
+    19: {
+        "scheduled_bytes": 0x2000,
+        "reference_count": 106,
+        "entry_start_reference_count": 106,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "e81ede673d6ee3ee8ee3ae5427259ce4816c8531905b1ec150f33dc024ef5a24"
+        ),
+    },
+    20: {
+        "scheduled_bytes": 0x5000,
+        "reference_count": 374,
+        "entry_start_reference_count": 374,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "d15da78a122e3f207a3667670e39791300cfad28a64e3a5175f54d37eb8362a7"
+        ),
+    },
     21: {
         "scheduled_bytes": 0x5000,
         "reference_count": 135,
@@ -100,6 +280,123 @@ UNIT_SHARED_POOL_REFERENCE_PROFILES = {
                 "39da4bc7eb8d49944be5ad95f4acd73364d1ca1172f186772ca884c15a024b3f"
             ),
         },
+    },
+    22: {
+        "scheduled_bytes": 0x8000,
+        "reference_count": 323,
+        "entry_start_reference_count": 323,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "397c6402933263e24ca057ec84c7d13371b78d4480a24a6b76f1d0091505eb3d"
+        ),
+    },
+    23: {
+        "scheduled_bytes": 0x6000,
+        "reference_count": 290,
+        "entry_start_reference_count": 290,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "0b71794c34962fc418a6798327eb5a3b5ada9bb1249a5cadec5cc664d0b39d39"
+        ),
+    },
+    24: {
+        "scheduled_bytes": 0x6800,
+        "reference_count": 321,
+        "entry_start_reference_count": 321,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "eb9c658407c14bf708a866960932cc641215919bf19d6911017fee1c9ddea1c8"
+        ),
+    },
+    25: {
+        "scheduled_bytes": 0x6800,
+        "reference_count": 202,
+        "entry_start_reference_count": 202,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "a0c81526ae4b41cc9dea07f77f2c803df9fff2c37790e5f5f1308fc9358a2f2b"
+        ),
+    },
+    26: {
+        "scheduled_bytes": 0x3800,
+        "reference_count": 134,
+        "entry_start_reference_count": 134,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "dcae579f01d9315dfee90caf25a66d724771c3446b8d4ca8f44ccafd0993344a"
+        ),
+    },
+    27: {
+        "scheduled_bytes": 0x6800,
+        "reference_count": 195,
+        "entry_start_reference_count": 195,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "0feaeca88e51c96af35ab4b0d4e87ac006965f8638b142f54fc170ba5ebb9c5a"
+        ),
+    },
+    28: {
+        "scheduled_bytes": 0x4800,
+        "reference_count": 157,
+        "entry_start_reference_count": 157,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "da56c168478148a277dfb713744841a1ca203ffdb1f8555d3b48df68cb24cae9"
+        ),
+    },
+    29: {
+        "scheduled_bytes": 0x6000,
+        "reference_count": 189,
+        "entry_start_reference_count": 189,
+        "gap_reference_count": 0,
+        "catalog_sha256": (
+            "cbbd6ae681bb0558fa1fedfa890795c86c5a6798a18d87cdaf196f23b9a27107"
+        ),
+    },
+    30: {
+        "scheduled_bytes": 0xC000,
+        "reference_count": 171,
+        "entry_start_reference_count": 167,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "6abc1ce354d0cb98fc2898e363f95a752aaba9e54572e83c95a2ef4e54d6a084"
+        ),
+    },
+    31: {
+        "scheduled_bytes": 0xA000,
+        "reference_count": 169,
+        "entry_start_reference_count": 165,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "72c6ddb3e2aafa985dc8f4a8a7056d154b6de7eede280a1a4aeef9047e85d3eb"
+        ),
+    },
+    32: {
+        "scheduled_bytes": 0xC000,
+        "reference_count": 170,
+        "entry_start_reference_count": 166,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "da15fc4b806bd2283e6c86de4c1b3b672ef6bab61b87b12e2eefe50f97b25cf6"
+        ),
+    },
+    33: {
+        "scheduled_bytes": 0x9800,
+        "reference_count": 119,
+        "entry_start_reference_count": 115,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "d6eb845537c6df793016a89911bb02958fd223f998a45977e1313209aa63061a"
+        ),
+    },
+    34: {
+        "scheduled_bytes": 0xC000,
+        "reference_count": 174,
+        "entry_start_reference_count": 170,
+        "gap_reference_count": 4,
+        "catalog_sha256": (
+            "6b6bb899d84d101924aece491cdfedf4c802a8c0a5fbf26236740cc47a93ade3"
+        ),
     },
 }
 
@@ -215,12 +512,20 @@ def expand_fixed_names(text: str) -> str:
     return text
 
 
-def required_characters(overlay: dict[str, Any]) -> list[str]:
+def required_characters(
+    overlay: dict[str, Any],
+    *,
+    entry_ids: Iterable[str] | None = None,
+    extra_texts: Iterable[str] = (),
+) -> list[str]:
     entries = overlay.get("entries")
     if not isinstance(entries, list):
         raise ValueError("reflow overlay entries must be an array")
+    selected_ids = None if entry_ids is None else frozenset(entry_ids)
     characters: set[str] = set()
     for entry in entries:
+        if selected_ids is not None and entry.get("id") not in selected_ids:
+            continue
         texts = [
             entry.get("ko_reflowed"),
             entry.get("ko_candidate"),
@@ -228,6 +533,11 @@ def required_characters(overlay: dict[str, Any]) -> list[str]:
         text = next((value for value in texts if isinstance(value, str)), None)
         if text is None:
             raise ValueError(f"{entry.get('id')}: no Korean candidate text")
+        text = expand_fixed_names(text)
+        characters.update(character for character in text if not character.isspace())
+        if any(character.isspace() for character in text):
+            characters.add(" ")
+    for text in extra_texts:
         text = expand_fixed_names(text)
         characters.update(character for character in text if not character.isspace())
         if any(character.isspace() for character in text):
@@ -258,6 +568,8 @@ def build_static_font(
     glyph_map_path: Path,
     font_profile_path: Path,
     passthrough_original_glyph_indices: Iterable[int] = (),
+    entry_ids: Iterable[str] | None = None,
+    extra_texts: Iterable[str] = (),
 ) -> tuple[bytes, dict[str, int], dict[str, Any]]:
     font_end = FONT_OFFSET + FONT_GLYPH_COUNT * GLYPH_SIZE
     if font_end > len(source_start):
@@ -278,7 +590,11 @@ def build_static_font(
         PROTECTED_ORIGINAL_GLYPH_INDICES | passthrough_indices
     )
 
-    required = required_characters(overlay)
+    required = required_characters(
+        overlay,
+        entry_ids=entry_ids,
+        extra_texts=extra_texts,
+    )
     original_map = load_primary_glyph_map(glyph_map_path)
     mapping: dict[str, int] = {}
     occupied = set(byte_exact_indices)
@@ -457,6 +773,326 @@ def encode_entry(
     if any(not 0 <= token <= 0xFFFF for token in tokens):
         raise ValueError(f"{source_entry['entry_id']}: token out of range")
     return struct.pack(f"<{len(tokens)}H", *tokens)
+
+
+def compact_unit_translation_spaces(
+    entries: list[dict[str, Any]],
+    texts: dict[str, str],
+    streams: dict[str, bytes],
+    mapping: dict[str, int],
+    *,
+    required_bytes: int,
+) -> dict[str, Any]:
+    """Remove only spaces, deterministically, to recover a unit byte deficit."""
+    if required_bytes <= 0 or required_bytes % 2:
+        raise ValueError(
+            f"unit space compaction requires a positive even byte count: "
+            f"{required_bytes}"
+        )
+    spaces_required = required_bytes // 2
+    adjusted = dict(texts)
+    removed_by_id: dict[str, int] = defaultdict(int)
+    entry_order = {
+        entry["entry_id"]: index
+        for index, entry in enumerate(entries)
+    }
+    punctuation = frozenset(
+        ".,!?…·:;'\"()[]{}<>。！？、，．：；「」『』（）"
+    )
+
+    for _ in range(spaces_required):
+        candidates: list[tuple[tuple[int, int, int, int, int], str, int]] = []
+        for entry in entries:
+            entry_id = entry["entry_id"]
+            text = adjusted[entry_id]
+            space_count = text.count(" ")
+            for position, character in enumerate(text):
+                if character != " ":
+                    continue
+                previous = text[position - 1] if position else ""
+                following = (
+                    text[position + 1]
+                    if position + 1 < len(text)
+                    else ""
+                )
+                punctuation_adjacent = int(
+                    previous not in punctuation and following not in punctuation
+                )
+                candidates.append(
+                    (
+                        (
+                            punctuation_adjacent,
+                            removed_by_id[entry_id],
+                            -space_count,
+                            entry_order[entry_id],
+                            -position,
+                        ),
+                        entry_id,
+                        position,
+                    )
+                )
+        if not candidates:
+            raise ValueError(
+                "unit translation does not contain enough removable spaces "
+                f"for {required_bytes} bytes"
+            )
+        _, entry_id, position = min(candidates)
+        value = adjusted[entry_id]
+        adjusted[entry_id] = value[:position] + value[position + 1 :]
+        removed_by_id[entry_id] += 1
+
+    changes: list[dict[str, Any]] = []
+    for entry in entries:
+        entry_id = entry["entry_id"]
+        removed = removed_by_id.get(entry_id, 0)
+        if not removed:
+            continue
+        before = texts[entry_id]
+        after = adjusted[entry_id]
+        if re.sub(r"\s+", "", before) != re.sub(r"\s+", "", after):
+            raise ValueError(
+                f"{entry_id}: unit compaction changed non-space content"
+            )
+        encoded = encode_entry(entry, after, mapping)
+        expected_reduction = removed * 2
+        actual_reduction = len(streams[entry_id]) - len(encoded)
+        if actual_reduction != expected_reduction:
+            raise ValueError(
+                f"{entry_id}: space compaction reduced {actual_reduction} "
+                f"bytes instead of {expected_reduction}"
+            )
+        streams[entry_id] = encoded
+        changes.append(
+            {
+                "entry_id": entry_id,
+                "removed_space_count": removed,
+                "before_line_widths": [
+                    len(expand_fixed_names(line))
+                    for line in before.split("\n")
+                ],
+                "after_line_widths": [
+                    len(expand_fixed_names(line))
+                    for line in after.split("\n")
+                ],
+            }
+        )
+
+    if sum(change["removed_space_count"] for change in changes) != (
+        spaces_required
+    ):
+        raise AssertionError("unit space compaction count differs")
+    texts.clear()
+    texts.update(adjusted)
+    return {
+        "status": "applied-nonrelease",
+        "required_reduction_bytes": required_bytes,
+        "removed_space_count": spaces_required,
+        "actual_reduction_bytes": spaces_required * 2,
+        "changed_entry_count": len(changes),
+        "non_space_content_preserved": True,
+        "control_shells_unchanged": True,
+        "changes": changes,
+    }
+
+
+def pointerless_template_parts(
+    source_entry: dict[str, Any],
+) -> list[tuple[str, list[int]]]:
+    tokens = [int(value, 16) for value in source_entry["original"]["tokens"]]
+    controls = {
+        int(control["token_index"]): str(control["kind"])
+        for control in source_entry["original"]["control_tokens"]
+    }
+    parts: list[tuple[str, list[int]]] = []
+    current_kind: str | None = None
+    current_tokens: list[int] = []
+    for index, token in enumerate(tokens):
+        kind = controls.get(index)
+        part_kind = (
+            "mutable"
+            if kind is None or kind in REMOVABLE_INTERNAL_KINDS
+            else "immutable"
+        )
+        if current_kind is not None and part_kind != current_kind:
+            parts.append((current_kind, current_tokens))
+            current_tokens = []
+        current_kind = part_kind
+        current_tokens.append(token)
+    if current_kind is not None:
+        parts.append((current_kind, current_tokens))
+    return parts
+
+
+def encode_pointerless_entry(
+    source_entry: dict[str, Any],
+    translation: dict[str, Any],
+    mapping: dict[str, int],
+) -> tuple[bytes, dict[str, Any]]:
+    parts = pointerless_template_parts(source_entry)
+    mutable_parts = [
+        tokens for kind, tokens in parts if kind == "mutable"
+    ]
+    raw_segments = translation.get("ko_segments")
+    raw_text = translation.get("ko")
+    if raw_segments is not None:
+        if not isinstance(raw_segments, list) or not all(
+            isinstance(text, str) for text in raw_segments
+        ):
+            raise ValueError(
+                f"{source_entry['entry_id']}: ko_segments must be strings"
+            )
+        texts = raw_segments
+    elif isinstance(raw_text, str):
+        texts = [] if not mutable_parts and raw_text == "" else [raw_text]
+    else:
+        raise ValueError(
+            f"{source_entry['entry_id']}: Korean pointerless text is missing"
+        )
+    if len(texts) != len(mutable_parts):
+        raise ValueError(
+            f"{source_entry['entry_id']}: {len(texts)} translated segments != "
+            f"{len(mutable_parts)} source segments"
+        )
+
+    encoded_segments: list[list[int]] = []
+    segment_reports: list[dict[str, Any]] = []
+    is_choice = source_entry.get("classification") == "pointerless_choice"
+    for segment_index, (source_tokens, text) in enumerate(
+        zip(mutable_parts, texts)
+    ):
+        lines = text.split("\n")
+        source_rows = source_tokens.count(0xFFFB) + 1
+        if is_choice:
+            if len(lines) != source_rows:
+                raise ValueError(
+                    f"{source_entry['entry_id']}: choice segment "
+                    f"{segment_index} rows changed: "
+                    f"{len(lines)} != {source_rows}"
+                )
+        elif not 1 <= len(lines) <= 3:
+            raise ValueError(
+                f"{source_entry['entry_id']}: dialogue segment row count "
+                f"{len(lines)} is outside 1..3"
+            )
+        if any(len(line) > 17 for line in lines):
+            raise ValueError(
+                f"{source_entry['entry_id']}: pointerless line exceeds 17"
+            )
+        body: list[int] = []
+        for line_index, line in enumerate(lines):
+            if line_index:
+                body.append(0xFFFB)
+            for character in line:
+                try:
+                    body.append(mapping[character])
+                except KeyError as error:
+                    raise ValueError(
+                        f"{source_entry['entry_id']}: unmapped pointerless "
+                        f"character {character!r}"
+                    ) from error
+        encoded_segments.append(body)
+        segment_reports.append(
+            {
+                "segment_index": segment_index,
+                "source_rows": source_rows,
+                "output_rows": len(lines),
+                "line_widths": [len(line) for line in lines],
+                "visible_glyph_count": sum(len(line) for line in lines),
+            }
+        )
+
+    output_tokens: list[int] = []
+    segment_cursor = 0
+    immutable_tokens: list[int] = []
+    for kind, tokens in parts:
+        if kind == "mutable":
+            output_tokens.extend(encoded_segments[segment_cursor])
+            segment_cursor += 1
+        else:
+            output_tokens.extend(tokens)
+            immutable_tokens.extend(tokens)
+    encoded = struct.pack(f"<{len(output_tokens)}H", *output_tokens)
+    immutable_raw = struct.pack(
+        f"<{len(immutable_tokens)}H",
+        *immutable_tokens,
+    )
+    return encoded, {
+        "entry_id": source_entry["entry_id"],
+        "classification": source_entry["classification"],
+        "segment_count": len(mutable_parts),
+        "segments": segment_reports,
+        "immutable_control_token_count": len(immutable_tokens),
+        "immutable_control_sha256": sha256_bytes(immutable_raw),
+        "immutable_controls_preserved": True,
+        "source_bytes": int(source_entry["source"]["byte_size"]),
+        "encoded_bytes": len(encoded),
+    }
+
+
+def validate_pointerless_artifacts(
+    workset: dict[str, Any],
+    translations: dict[str, Any],
+) -> tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]:
+    expected_baseline = f"disc1-allbin-{EXPECTED_ALLBIN_SHA256[:16]}"
+    if workset.get("baseline_id") != expected_baseline:
+        raise ValueError("pointerless workset baseline differs")
+    if translations.get("baseline_id") != expected_baseline:
+        raise ValueError("pointerless translation baseline differs")
+    work_entries = workset.get("entries")
+    translated_entries = translations.get("entries")
+    if not isinstance(work_entries, list) or not isinstance(
+        translated_entries,
+        list,
+    ):
+        raise ValueError("pointerless artifacts require entry arrays")
+    by_id: dict[str, dict[str, Any]] = {}
+    for entry in work_entries:
+        entry_id = entry.get("entry_id")
+        if not isinstance(entry_id, str) or entry_id in by_id:
+            raise ValueError(
+                f"invalid or duplicate pointerless entry ID: {entry_id!r}"
+            )
+        by_id[entry_id] = entry
+    translation_by_id: dict[str, dict[str, Any]] = {}
+    for entry in translated_entries:
+        entry_id = entry.get("id")
+        if not isinstance(entry_id, str) or entry_id in translation_by_id:
+            raise ValueError(
+                f"invalid or duplicate pointerless translation ID: "
+                f"{entry_id!r}"
+            )
+        translation_by_id[entry_id] = entry
+    if set(by_id) != set(translation_by_id):
+        missing = sorted(set(by_id) - set(translation_by_id))
+        extra = sorted(set(translation_by_id) - set(by_id))
+        raise ValueError(
+            f"pointerless stable ID mismatch: missing={missing} extra={extra}"
+        )
+    expected_count = translations.get("scope", {}).get(
+        "expected_entry_count"
+    )
+    if len(by_id) != expected_count:
+        raise ValueError("pointerless entry count differs from translation scope")
+    return by_id, translation_by_id
+
+
+def pointerless_translation_texts(
+    translations: Iterable[dict[str, Any]],
+) -> list[str]:
+    texts: list[str] = []
+    for translation in translations:
+        segments = translation.get("ko_segments")
+        if segments is not None:
+            if not isinstance(segments, list):
+                raise ValueError("pointerless ko_segments must be an array")
+            texts.extend(str(text) for text in segments)
+        else:
+            text = translation.get("ko")
+            if not isinstance(text, str):
+                raise ValueError("pointerless Korean text is missing")
+            if text:
+                texts.append(text)
+    return texts
 
 
 def fit_fixed_diagnostic_candidate(
@@ -776,6 +1412,9 @@ def relink_unit_shared_pool(
     mapping: dict[str, int],
     *,
     reference_profile: dict[str, Any] | None = None,
+    pointerless_entries: Iterable[dict[str, Any]] = (),
+    pointerless_translation_by_id: dict[str, dict[str, Any]] | None = None,
+    allow_unit_capacity_space_compaction: bool = False,
 ) -> dict[str, Any]:
     """Repack a complete unit-local dialogue arena and relink every consumer."""
     if not entries:
@@ -783,6 +1422,16 @@ def relink_unit_shared_pool(
     unit_index = int(entries[0]["source"]["unit_index"])
     if any(int(entry["source"]["unit_index"]) != unit_index for entry in entries):
         raise ValueError("unit shared pool received mixed units")
+    promoted_entries = list(pointerless_entries)
+    if any(
+        int(entry["source"]["unit_index"]) != unit_index
+        for entry in promoted_entries
+    ):
+        raise ValueError("unit shared pool received mixed pointerless units")
+    if promoted_entries and pointerless_translation_by_id is None:
+        raise ValueError("pointerless translations are required")
+    if pointerless_translation_by_id is None:
+        pointerless_translation_by_id = {}
     if reference_profile is None:
         try:
             reference_profile = UNIT_SHARED_POOL_REFERENCE_PROFILES[unit_index]
@@ -791,11 +1440,12 @@ def relink_unit_shared_pool(
                 f"unit {unit_index}: no frozen shared-pool reference profile"
             ) from error
 
-    ranges = physical_entry_ranges(entries)
+    direct_ranges = physical_entry_ranges(entries)
+    promoted_ranges = physical_entry_ranges(promoted_entries)
     unit_file_offsets = {
         int(entry["source"]["file_offset"], 16)
         - int(entry["source"]["unit_offset"], 16)
-        for _, _, entry in ranges
+        for _, _, entry in [*direct_ranges, *promoted_ranges]
     }
     if len(unit_file_offsets) != 1:
         raise ValueError(f"unit {unit_index}: inconsistent file offset")
@@ -807,24 +1457,62 @@ def relink_unit_shared_pool(
     if len(source_unit) != scheduled_bytes:
         raise ValueError(f"unit {unit_index}: source ALLBIN unit is truncated")
 
-    for _, _, entry in ranges:
+    for _, _, entry in [*direct_ranges, *promoted_ranges]:
         offset = int(entry["source"]["unit_offset"], 16)
         raw = bytes.fromhex(entry["original"]["raw_hex"])
         if source_unit[offset : offset + len(raw)] != raw:
             raise ValueError(f"{entry['entry_id']}: source ALLBIN bytes differ")
 
+    original_direct_streams = {
+        entry["entry_id"]: bytes.fromhex(entry["original"]["raw_hex"])
+        for _, _, entry in direct_ranges
+    }
+    original_direct_layout = build_source_ordered_stream(
+        source_unit,
+        entries,
+        original_direct_streams,
+    )
+    baseline_references = scan_unit_dialogue_references(
+        source_unit,
+        entries,
+        original_direct_layout,
+    )
+    reference_report = verify_unit_reference_profile(
+        unit_index,
+        source_unit,
+        baseline_references,
+        reference_profile,
+    )
+
     streams: dict[str, bytes] = {}
+    reflow_texts: dict[str, str] = {}
+    translation_input_counts: dict[str, int] = defaultdict(int)
     shell_token_count = 0
-    for _, _, entry in ranges:
+    for _, _, entry in direct_ranges:
         entry_id = entry["entry_id"]
         derived = reflow_by_id[entry_id]
         if derived.get("status") != "ready":
             raise ValueError(
                 f"{entry_id}: reinsertion blocker {derived.get('status')}"
             )
-        text = derived.get("ko_candidate")
-        if not isinstance(text, str):
+        candidate_text = derived.get("ko_candidate")
+        reflowed_text = derived.get("ko_reflowed")
+        if not isinstance(candidate_text, str):
             raise ValueError(f"{entry_id}: missing reviewed Korean candidate")
+        expanded_candidate = expand_fixed_names(candidate_text)
+        candidate_lines = expanded_candidate.split("\n")
+        candidate_fits = (
+            1 <= len(candidate_lines) <= 3
+            and all(len(line) <= 17 for line in candidate_lines)
+        )
+        if candidate_fits:
+            text = candidate_text
+            translation_input_counts["ko_candidate"] += 1
+        else:
+            if not isinstance(reflowed_text, str):
+                raise ValueError(f"{entry_id}: missing audited Korean reflow")
+            text = reflowed_text
+            translation_input_counts["ko_reflowed"] += 1
         encoded = encode_entry(entry, text, mapping)
         leading, trailing = split_control_shell(entry)
         leading_raw = struct.pack(f"<{len(leading)}H", *leading)
@@ -835,8 +1523,74 @@ def relink_unit_shared_pool(
             raise ValueError(f"{entry_id}: protected control shell changed")
         shell_token_count += len(leading) + len(trailing)
         streams[entry_id] = encoded
+        reflow_texts[entry_id] = text
 
-    layout = build_source_ordered_stream(source_unit, entries, streams)
+    pointerless_reports: list[dict[str, Any]] = []
+    for _, _, entry in promoted_ranges:
+        entry_id = entry["entry_id"]
+        try:
+            translation = pointerless_translation_by_id[entry_id]
+        except KeyError as error:
+            raise ValueError(
+                f"{entry_id}: pointerless translation is missing"
+            ) from error
+        encoded, report = encode_pointerless_entry(
+            entry,
+            translation,
+            mapping,
+        )
+        streams[entry_id] = encoded
+        shell_token_count += int(report["immutable_control_token_count"])
+        pointerless_reports.append(report)
+
+    combined_entries = [*entries, *promoted_entries]
+    ranges = physical_entry_ranges(combined_entries)
+    region_start = ranges[0][0]
+    region_end = ranges[-1][1]
+    capacity = region_end - region_start
+    cursor = region_start
+    preserved_gap_bytes = 0
+    for start, end, _ in ranges:
+        preserved_gap_bytes += start - cursor
+        cursor = end
+    required_output_bytes = (
+        sum(len(stream) for stream in streams.values())
+        + preserved_gap_bytes
+    )
+    unit_capacity_space_compaction: dict[str, Any] = {
+        "status": "not-needed",
+        "required_reduction_bytes": 0,
+        "removed_space_count": 0,
+        "actual_reduction_bytes": 0,
+        "changed_entry_count": 0,
+        "non_space_content_preserved": True,
+        "control_shells_unchanged": True,
+        "changes": [],
+    }
+    if required_output_bytes > capacity:
+        deficit = required_output_bytes - capacity
+        if not allow_unit_capacity_space_compaction:
+            raise ValueError(
+                f"unit {unit_index}: translated arena requires "
+                f"{required_output_bytes} bytes but the original physical "
+                f"run has {capacity}; deficit={deficit}"
+            )
+        unit_capacity_space_compaction = compact_unit_translation_spaces(
+            entries,
+            reflow_texts,
+            streams,
+            mapping,
+            required_bytes=deficit,
+        )
+
+    try:
+        layout = build_source_ordered_stream(
+            source_unit,
+            combined_entries,
+            streams,
+        )
+    except ValueError as error:
+        raise ValueError(f"unit {unit_index}: {error}") from error
     region_start = int(layout["region_start"])
     region_end = int(layout["region_end"])
     capacity = int(layout["capacity"])
@@ -849,20 +1603,28 @@ def relink_unit_shared_pool(
 
     references = scan_unit_dialogue_references(
         source_unit,
-        entries,
+        combined_entries,
         layout,
     )
-    reference_report = verify_unit_reference_profile(
-        unit_index,
-        source_unit,
-        references,
-        reference_profile,
-    )
+    if (
+        len(references) != len(baseline_references)
+        or reference_catalog_sha256(references)
+        != reference_catalog_sha256(baseline_references)
+    ):
+        raise ValueError(
+            f"unit {unit_index}: promoted reference catalog changed"
+        )
     known_storages = {
         int(reference["storage_unit_offset"], 16)
         for entry in entries
         for reference in entry["source"]["pointer_references"]
     }
+    promoted_storages = {
+        int(offset, 16)
+        for entry in promoted_entries
+        for offset in entry["source"]["reference_unit_offsets"]
+    }
+    known_storages.update(promoted_storages)
     catalog_storages = {
         int(reference["storage_unit_offset"])
         for reference in references
@@ -874,17 +1636,20 @@ def relink_unit_shared_pool(
             + ", ".join(f"0x{offset:04X}" for offset in missing)
         )
 
-    # The physical arena always retains its original byte length. Remaining
-    # capacity is placed after the final repacked span, never between
-    # dialogue/control spans. No catalogued pointer targets this tail, but
-    # u00/u21 runtime replay confirmed that the final padding is not consumed
-    # as a dialogue/control continuation. Other profiles remain unverified
-    # until they carry their own runtime evidence.
-    runtime_validation = reference_profile.get(
-        "runtime_validation",
-        {"status": "not-run"},
-    )
-    runtime_passed = runtime_validation.get("status") == "passed"
+    runtime_validation = {
+        "status": "not-run",
+        "reason": (
+            (
+                "pointerless pages were promoted, translated, and repacked; "
+                "the exact output requires a new runtime replay"
+            )
+            if promoted_entries
+            else (
+                "the unit dialogue arena was repacked and all consumers were "
+                "relocated; the exact output requires a runtime replay"
+            )
+        ),
+    }
     output_region = packed_stream + bytes(padding_bytes)
     if len(output_region) != capacity:
         raise ValueError(f"unit {unit_index}: shared arena size changed")
@@ -896,7 +1661,7 @@ def relink_unit_shared_pool(
     load_addresses = {
         int(entry["source"]["runtime_pointer"], 16)
         - int(entry["source"]["unit_offset"], 16)
-        for entry in entries
+        for entry in combined_entries
     }
     if len(load_addresses) != 1:
         raise ValueError(f"unit {unit_index}: inconsistent runtime load address")
@@ -938,7 +1703,7 @@ def relink_unit_shared_pool(
 
     safe_slots = {
         record.entry_id: record
-        for record in fixed_original_safe_slots(source_unit, entries)
+        for record in fixed_original_safe_slots(source_unit, combined_entries)
     }
     original_slot_overflows = [
         {
@@ -965,10 +1730,18 @@ def relink_unit_shared_pool(
         "unit_index": unit_index,
         "unit_file_offset": f"0x{unit_file_offset:X}",
         "entry_count": len(ranges),
+        "direct_entry_count": len(entries),
+        "promoted_pointerless_entry_count": len(promoted_entries),
         "placement_policy": "unit-shared-pool",
-        "translation_input_field": "ko_candidate",
+        "translation_input_policy": (
+            "preserve ko_candidate when it already fits 17x3; otherwise use "
+            "audited ko_reflowed; pointerless pages use ko/ko_segments"
+        ),
+        "translation_input_counts": dict(
+            sorted(translation_input_counts.items())
+        ),
         "original_text_bytes": sum(
-            int(entry["source"]["byte_size"]) for entry in entries
+            int(entry["source"]["byte_size"]) for entry in combined_entries
         ),
         "encoded_text_bytes": sum(len(stream) for stream in streams.values()),
         "physical_region_start": f"0x{region_start:04X}",
@@ -979,25 +1752,27 @@ def relink_unit_shared_pool(
         "tail_padding_token": "0x0000",
         "tail_padding_position": "after-final-repacked-span",
         "tail_padding_runtime_status": (
-            "runtime-verified-no-fallthrough-observed"
-            if runtime_passed
-            else "no-catalogued-target-runtime-fallthrough-validation-required"
+            "no-catalogued-target-runtime-fallthrough-validation-required"
         ),
         "output_physical_region_bytes": len(output_region),
         "unit_capacity_preserved": len(output_region) == capacity,
         "original_slot_overflow_count": len(original_slot_overflows),
         "original_slot_overflows": original_slot_overflows,
         "protected_control_shell_token_count": shell_token_count,
-        "protected_control_shell_entry_count": len(entries),
+        "protected_control_shell_entry_count": len(combined_entries),
         "protected_control_shells_byte_exact": True,
+        "unit_capacity_space_compaction": unit_capacity_space_compaction,
         "inter_entry_gap_count": len(gaps),
         "inter_entry_gap_bytes": sum(int(gap["byte_size"]) for gap in gaps),
         "inter_entry_gaps_byte_exact": True,
-        "pointerless_page_count": sum(
-            int(gap["page_end_count"]) for gap in layout["gaps"]
-        ),
+        "pointerless_page_count": len(promoted_entries),
+        "pointerless_pages_promoted_and_translated": bool(promoted_entries),
+        "pointerless_entries": pointerless_reports,
         "reference_catalog": {
             **reference_report,
+            "relocated_reference_count": len(references),
+            "relocated_catalog_sha256": reference_catalog_sha256(references),
+            "promoted_pointerless_reference_count": len(promoted_storages),
             "known_extractor_reference_count": len(known_storages),
             "additional_event_consumer_reference_count": (
                 len(references) - len(known_storages)
@@ -1027,7 +1802,7 @@ def relink_unit_shared_pool(
                 "entry_id": entry_id,
                 "source_unit_offset": next(
                     entry["source"]["unit_offset"]
-                    for entry in entries
+                    for entry in combined_entries
                     if entry["entry_id"] == entry_id
                 ),
                 "output_unit_offset": (
@@ -1039,12 +1814,9 @@ def relink_unit_shared_pool(
         ],
         "warning": (
             "Unit-local relink: every frozen event/table reference is "
-            "updated and this profile passed its recorded runtime replay."
-            if runtime_passed
-            else
-            "Unit-local relink: every frozen event/table reference is "
-            "updated. Post-final padding and full control flow still require "
-            "runtime replay."
+            "updated, and pointerless pages are promoted as translated "
+            "physical entries. Post-final padding and full control flow still "
+            "require runtime replay."
         ),
     }
 
@@ -1516,10 +2288,10 @@ def parse_units(values: list[str], all_story: bool) -> list[int]:
                 units.add(int(part, 0))
     if not units:
         raise ValueError("select --unit or --all-story")
-    if any(unit < 0 or unit > 21 for unit in units):
+    if any(unit < 0 or unit > 34 for unit in units):
         raise ValueError(
-            "chapter builder currently supports story units 0..20 and "
-            "general-race unit 21"
+            "dialogue builder supports story units 0..20 and runtime race "
+            "units 21..34"
         )
     return sorted(units)
 
@@ -1561,6 +2333,38 @@ def validate_stable_id_join(
     }
 
 
+def integrated_font_extra_texts(
+    character_names: dict[str, Any],
+    ui_translation: dict[str, Any],
+) -> list[str]:
+    fixed = character_names.get("fixed_player_name")
+    speaker_table = character_names.get("speaker_name_table")
+    ui_items = ui_translation.get("translations")
+    if (
+        not isinstance(fixed, dict)
+        or not isinstance(speaker_table, dict)
+        or not isinstance(speaker_table.get("records"), list)
+        or not isinstance(ui_items, list)
+    ):
+        raise ValueError("integrated name/UI font artifacts are incomplete")
+    texts = [
+        str(fixed.get("surname", "")),
+        str(fixed.get("given_name", "")),
+        *[
+            str(record.get("ko", ""))
+            for record in speaker_table["records"]
+        ],
+        *[
+            str(item.get("ko", ""))
+            for item in ui_items
+            if item.get("renderer") == "primary"
+        ],
+    ]
+    if any(not text for text in texts):
+        raise ValueError("integrated name/UI font text is empty")
+    return texts
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--start-bin", type=Path, required=True)
@@ -1595,6 +2399,32 @@ def main() -> None:
         default=Path("config/font-profile.json"),
     )
     parser.add_argument(
+        "--character-names",
+        type=Path,
+        default=Path("data/translations/disc1-character-names.json"),
+        help="Korean fixed/speaker names whose primary glyphs must be mapped",
+    )
+    parser.add_argument(
+        "--ui-translation",
+        type=Path,
+        default=Path("data/translations/disc1-ui-ko.json"),
+        help="Korean primary-renderer UI whose glyphs must be mapped",
+    )
+    parser.add_argument(
+        "--pointerless-workset",
+        type=Path,
+        default=Path(
+            "work/translations/disc1-pointerless-pages-u00-u21.json"
+        ),
+    )
+    parser.add_argument(
+        "--pointerless-translation",
+        type=Path,
+        default=Path(
+            "data/translations/disc1-pointerless-pages-u00-u21-ko.json"
+        ),
+    )
+    parser.add_argument(
         "--unit",
         action="append",
         default=[],
@@ -1615,6 +2445,15 @@ def main() -> None:
             "localization; the latter permits destructive entry overlap."
         ),
     )
+    parser.add_argument(
+        "--allow-unit-capacity-space-compaction",
+        action="store_true",
+        help=(
+            "Non-release only: when a unit-local arena is short, remove the "
+            "minimum number of spaces while preserving every non-space glyph "
+            "and all control bytes"
+        ),
+    )
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
 
@@ -1622,12 +2461,18 @@ def main() -> None:
         units = parse_units(args.unit, args.all_story)
     except ValueError as error:
         parser.error(str(error))
+    if any(unit >= 22 for unit in units) and (
+        args.placement_policy != "unit-shared-pool"
+    ):
+        parser.error(
+            "race units 22..34 require --placement-policy unit-shared-pool"
+        )
     if 21 in units and args.placement_policy not in {
         "fixed-original-diagnostic",
         "unit-shared-pool",
     }:
         parser.error(
-            "unit 21 is currently allowed only with --placement-policy "
+            "race unit 21 is allowed only with --placement-policy "
             "fixed-original-diagnostic or unit-shared-pool"
         )
 
@@ -1641,6 +2486,16 @@ def main() -> None:
     workset = load_object(args.workset)
     overlay = load_object(args.reflow_overlay)
     audit = load_object(args.reinsertion_audit)
+    character_names = load_object(args.character_names)
+    ui_translation = load_object(args.ui_translation)
+    pointerless_workset = load_object(args.pointerless_workset)
+    pointerless_translation = load_object(args.pointerless_translation)
+    pointerless_by_id, pointerless_translation_by_id = (
+        validate_pointerless_artifacts(
+            pointerless_workset,
+            pointerless_translation,
+        )
+    )
     work_entries = workset.get("entries")
     derived_entries = overlay.get("entries")
     if not isinstance(work_entries, list) or not isinstance(derived_entries, list):
@@ -1669,9 +2524,20 @@ def main() -> None:
         unit_index = int(entry["source"]["unit_index"])
         if unit_index in units:
             by_unit[unit_index].append(entry)
-    gap_glyph_indices = passthrough_gap_glyph_indices(
-        source_allbin,
-        by_unit,
+    pointerless_by_unit: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for entry in pointerless_by_id.values():
+        unit_index = int(entry["source"]["unit_index"])
+        if unit_index in units:
+            pointerless_by_unit[unit_index].append(entry)
+    selected_pointerless_translations = [
+        pointerless_translation_by_id[entry["entry_id"]]
+        for unit_index in units
+        for entry in pointerless_by_unit[unit_index]
+    ]
+    gap_glyph_indices = (
+        frozenset()
+        if args.placement_policy == "unit-shared-pool"
+        else passthrough_gap_glyph_indices(source_allbin, by_unit)
     )
     patched_start, mapping, font_report = build_static_font(
         source_start,
@@ -1679,24 +2545,46 @@ def main() -> None:
         glyph_map_path=args.glyph_map,
         font_profile_path=args.font_profile,
         passthrough_original_glyph_indices=gap_glyph_indices,
+        entry_ids=selected_ids,
+        extra_texts=[
+            *integrated_font_extra_texts(character_names, ui_translation),
+            *pointerless_translation_texts(
+                selected_pointerless_translations
+            ),
+        ],
     )
     patched_allbin = bytearray(source_allbin)
-    unit_writer = {
-        "fixed-original-diagnostic": (
-            write_unit_at_original_offsets_diagnostic
-        ),
-        "source-order-repack": repack_unit,
-        "unit-shared-pool": relink_unit_shared_pool,
-    }[args.placement_policy]
-    unit_reports = [
-        unit_writer(
-            patched_allbin,
-            by_unit[unit_index],
-            reflow_by_id,
-            mapping,
-        )
-        for unit_index in units
-    ]
+    if args.placement_policy == "unit-shared-pool":
+        unit_reports = [
+            relink_unit_shared_pool(
+                patched_allbin,
+                by_unit[unit_index],
+                reflow_by_id,
+                mapping,
+                pointerless_entries=pointerless_by_unit[unit_index],
+                pointerless_translation_by_id=pointerless_translation_by_id,
+                allow_unit_capacity_space_compaction=(
+                    args.allow_unit_capacity_space_compaction
+                ),
+            )
+            for unit_index in units
+        ]
+    else:
+        unit_writer = {
+            "fixed-original-diagnostic": (
+                write_unit_at_original_offsets_diagnostic
+            ),
+            "source-order-repack": repack_unit,
+        }[args.placement_policy]
+        unit_reports = [
+            unit_writer(
+                patched_allbin,
+                by_unit[unit_index],
+                reflow_by_id,
+                mapping,
+            )
+            for unit_index in units
+        ]
     start_expected_writes = verify_expected_writes(
         source_start,
         patched_start,
@@ -1725,7 +2613,11 @@ def main() -> None:
         region_end = (
             int(report["diagnostic_write_end_exclusive"], 16)
             if args.placement_policy == "fixed-original-diagnostic"
-            else entry_ranges[-1][1]
+            else (
+                int(report["physical_region_end_exclusive"], 16)
+                if args.placement_policy == "unit-shared-pool"
+                else entry_ranges[-1][1]
+            )
         )
         allbin_allowed_ranges.append(
             (
@@ -1779,7 +2671,7 @@ def main() -> None:
         map_output,
         {
             "schema_version": 1,
-            "status": "nonrelease-candidate-corpus-static-map",
+            "status": "nonrelease-selected-corpus-static-map",
             "mapping": {
                 character: f"0x{index:03X}"
                 for character, index in sorted(
@@ -1797,8 +2689,49 @@ def main() -> None:
         ),
         "placement_policy": args.placement_policy,
         "selected_story_units": units,
-        "selected_entry_count": len(selected_ids),
-        "font_scope": "all-5783-candidate-corpus",
+        "selected_entry_count": (
+            len(selected_ids)
+            + (
+                len(selected_pointerless_translations)
+                if args.placement_policy == "unit-shared-pool"
+                else 0
+            )
+        ),
+        "selected_direct_entry_count": len(selected_ids),
+        "selected_pointerless_entry_count": (
+            len(selected_pointerless_translations)
+            if args.placement_policy == "unit-shared-pool"
+            else 0
+        ),
+        "translation_status": "incomplete-user-editing-in-progress",
+        "release_eligible": False,
+        "unit_capacity_space_compaction": {
+            "enabled": args.allow_unit_capacity_space_compaction,
+            "applied_unit_count": sum(
+                unit.get("unit_capacity_space_compaction", {}).get("status")
+                == "applied-nonrelease"
+                for unit in unit_reports
+            ),
+            "removed_space_count": sum(
+                int(
+                    unit.get(
+                        "unit_capacity_space_compaction",
+                        {},
+                    ).get("removed_space_count", 0)
+                )
+                for unit in unit_reports
+            ),
+            "non_space_content_preserved": all(
+                unit.get(
+                    "unit_capacity_space_compaction",
+                    {},
+                ).get("non_space_content_preserved", True)
+                for unit in unit_reports
+            ),
+        },
+        "font_scope": (
+            "selected-direct-and-pointerless-dialogue-plus-integrated-names-ui"
+        ),
         "unselected_dialogue_font_compatible": False,
         "warning": (
             "Diagnostic only: translated streams stay at original starts and "
@@ -1808,8 +2741,19 @@ def main() -> None:
             else (
                 "Unit-local pool: every frozen event/table reference is "
                 "relinked and each physical arena keeps its original byte "
-                "capacity. Selected profiles carry recorded runtime replay "
-                "evidence."
+                "capacity. Frozen references are statically verified for "
+                "every selected unit. "
+                + (
+                    "Some units use explicitly recorded space-only "
+                    "compaction; no non-space content or control shell was "
+                    "removed. "
+                    if args.allow_unit_capacity_space_compaction
+                    else ""
+                )
+                + (
+                    "Pointerless pages are promoted and translated, so this "
+                    "exact combined Track 1 requires a new runtime replay."
+                )
                 if args.placement_policy == "unit-shared-pool"
                 else
                 "Only selected units are encoded with the replaced global "
@@ -1828,6 +2772,14 @@ def main() -> None:
             "workset_sha256": sha256_file(args.workset),
             "reflow_overlay_sha256": sha256_file(args.reflow_overlay),
             "reinsertion_audit_sha256": sha256_file(args.reinsertion_audit),
+            "character_names_sha256": sha256_file(args.character_names),
+            "ui_translation_sha256": sha256_file(args.ui_translation),
+            "pointerless_workset_sha256": sha256_file(
+                args.pointerless_workset
+            ),
+            "pointerless_translation_sha256": sha256_file(
+                args.pointerless_translation
+            ),
         },
         "font": font_report,
         "stable_id_join": stable_id_join,
@@ -1857,7 +2809,7 @@ def main() -> None:
     print(
         f"units={','.join(str(unit) for unit in units)} "
         f"placement={args.placement_policy} "
-        f"entries={len(selected_ids)} glyphs={len(mapping)} "
+        f"entries={manifest['selected_entry_count']} glyphs={len(mapping)} "
         f"START={manifest['outputs']['START.BIN']['sha256']} "
         f"ALLBIN={manifest['outputs']['ALLBIN.BIN']['sha256']}"
     )

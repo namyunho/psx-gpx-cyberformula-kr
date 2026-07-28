@@ -142,18 +142,49 @@ record를 모두 등록한다.
 | 한국어 사용량 | 212바이트 |
 | 남는 원본 영역 | 72바이트 |
 
+## 이름 등록 화면의 폰트 UI
+
+`work/translations/disc1-ui.json`의 60개는 게임 전체 UI가 아니라 unit
+`40`의 이름 등록 화면 글꼴 스트림이다. 이 중 문장·라벨인 4개만
+`data/translations/disc1-ui-ko.json`에서 번역한다.
+
+| 역할 | 수 | 처리 |
+|---|---:|---|
+| 한자 입력 팔레트 | 47 | 원본 보존 |
+| 입력·확인 문구 | 2 | 한국어 |
+| 가나·영문·숫자·기호 팔레트 | 6 | 원본 보존 |
+| 이름·출신 라벨 | 1 | 한국어 |
+| 출신 선택지 | 1 | 한국어 |
+| 가상 주인공명 스트림 | 2 | 런타임 코드 보존 |
+| 출신 표시 가변 버퍼 | 1 | 런타임 버퍼 보존 |
+
+한국어 네 스트림은 원본의 1·3·4·6행 수와 `FFFB` 개수를 그대로
+유지한다. primary 렌더러 세 스트림은 전체 대사 빌드의 정적 한글 맵을
+공유하고, alternate 출신 선택지는 이름용 여섯 글리프 다음의 zero tail
+`0x5D2..0x5DC`에 11글리프를 추가한다. 입력 팔레트 53개를 번역문으로
+오인해 덮어쓰지 않으며, 가변 스트림 세 개도 런타임 소비를 보존한다.
+
+현재 정적 검사는 네 스트림의 원본 슬롯, 행 경계, 제어 셸과 alternate
+zero tail을 통과했다. 상태는
+`static-translation-complete-runtime-review-required`이며 이름 등록의
+각 입력 모드·출신 선택을 전부 눌러 보는 실행 검토가 남아 있다.
+
 ## 재현 빌드
 
-먼저 대사·primary font 파일 빌드를 만든 뒤 이름 패치를 겹친다.
+먼저 대사·primary font 파일 빌드를 만든 뒤 이름과 UI 패치를 차례로 겹친다.
 
 ```bash
 .venv/bin/python scripts/build_character_name_patch.py \
   --file-build-dir work/build/dialogue-u00-u21-safe-fixed-original \
   --output-dir work/build/dialogue-u00-u21-safe-names
 
-.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+.venv/bin/python scripts/build_ui_translation_patch.py \
   --file-build-dir work/build/dialogue-u00-u21-safe-names \
-  --output-dir work/build/dialogue-u00-u21-safe-names-disc
+  --output-dir work/build/dialogue-u00-u21-safe-names-ui
+
+.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+  --file-build-dir work/build/dialogue-u00-u21-safe-names-ui \
+  --output-dir work/build/dialogue-u00-u21-safe-names-ui-disc
 ```
 
 첫 명령은 다음을 모두 검사한다.
@@ -165,7 +196,9 @@ record를 모두 등록한다.
 - MIPS instruction의 원본 word/immediate가 분석값과 정확히 일치하는지
 - 선언된 글꼴·코드·문자열 범위 밖 변경이 없는지
 
-두 번째 명령은 `START.BIN`, `ALLBIN.BIN`, `SLPS_019.58`을 원본
+두 번째 명령은 UI 4개와 필요한 alternate 한글 11자만 추가하고 보호 대상
+56개를 바이트 단위로 유지한다. 마지막 명령은 `START.BIN`, `ALLBIN.BIN`,
+`SLPS_019.58`을 원본
 Mode 2/Form 1 트랙에 넣고 변경 sector의 EDC/ECC를 다시 계산한다. 완성
 트랙에서 세 파일을 재추출해 입력 파일과 byte-for-byte로 비교한다.
 

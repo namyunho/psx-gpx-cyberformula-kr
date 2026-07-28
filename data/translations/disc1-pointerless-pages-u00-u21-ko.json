@@ -1,0 +1,353 @@
+{
+  "schema_version": 1,
+  "status": "complete-machine-assisted-runtime-review-required",
+  "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
+  "scope": {
+    "unit_range": [
+      0,
+      21
+    ],
+    "expected_entry_count": 83,
+    "note": "These pages were omitted from the direct-pointer dialogue candidate and are required for a font-compatible u00-u21 build."
+  },
+  "entries": [
+    {
+      "id": "disc1/allbin/u00/pointerless_page/p0B8C",
+      "ko": "시스템 성별을 선택해 주세요.\n남성\n여성"
+    },
+    {
+      "id": "disc1/allbin/u00/pointerless_page/p0E18",
+      "ko": "네\n아니요"
+    },
+    {
+      "id": "disc1/allbin/u00/pointerless_page/p132C",
+      "ko": "(‘익스트림 스피드’라는\n시범 경기 같은 대회였던\n것 같은데…)"
+    },
+    {
+      "id": "disc1/allbin/u00/pointerless_page/p1388",
+      "ko": "(사이버 정상급 드라이버와\n팀 추천 선수가 함께 달리는\n꿈같은 이벤트다)"
+    },
+    {
+      "id": "disc1/allbin/u00/pointerless_page/p13F0",
+      "ko": "(…설마!?)"
+    },
+    {
+      "id": "disc1/allbin/u01/pointerless_page/p02A8",
+      "ko": "(소꿉친구 유우키 레나다.\n초·중학교도 함께였고,\n고등학교도 왠지 같다)"
+    },
+    {
+      "id": "disc1/allbin/u01/pointerless_page/p02F4",
+      "ko": "(오래 알고 지내 서로의\n속마음도 꽤 잘 안다)"
+    },
+    {
+      "id": "disc1/allbin/u01/pointerless_page/p0330",
+      "ko": "(하지만 나와 잘 맞는지\n안 맞는지, 싸움이\n끊이지 않지만…💧)"
+    },
+    {
+      "id": "disc1/allbin/u01/pointerless_page/p0384",
+      "ko": "뭐가 늦었다는 거야💢\n아직 지각할 시간 아니야."
+    },
+    {
+      "id": "disc1/allbin/u03/pointerless_page/p077C",
+      "ko": "계속 이야기를 듣는다.\n다른 곳으로 간다."
+    },
+    {
+      "id": "disc1/allbin/u03/pointerless_page/p08D8",
+      "ko": "그래. 다른 곳에 가 본다.\n아니, 스고 위너스로 돌아간다."
+    },
+    {
+      "id": "disc1/allbin/u04/pointerless_page/p0084",
+      "ko": "그래, 좋아.\n아직 안 돼."
+    },
+    {
+      "id": "disc1/allbin/u04/pointerless_page/p12FC",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1190",
+      "ko": "네메시스, 오늘 내 주행은\n어땠어?"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p11BC",
+      "ko": "아직 경험이 많이\n부족한 듯합니다."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p11F0",
+      "ko": "브레이킹만 보아도\n다른 드라이버보다 확실히\n뒤처지고 있습니다."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1248",
+      "ko": "그렇구나, 아직 내 주행은\n미숙하단 거네. 네 도움으로\n간신히 달리는 느낌이야."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p12B4",
+      "ko": "레이스는 이제 시작입니다.\n빨리 제게 정확한 지시를\n내릴 수 있게 되세요."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p130C",
+      "ko": "그래, 열심히 할게."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1324",
+      "ko": "하지만 오늘은 피곤하다.\n역시 지금까지의 레이스와\n완전히 달라."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1368",
+      "ko": "겨우 1전 끝났는데,\n이런 상태로 7전까지\n버틸 수 있을까?"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p13BC",
+      "ko": "뭐야, 벌써 약한 소리야.\n스고 팀에 들어가고 싶지?\n그럼 힘내야지!"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p141C",
+      "ko": "(깜짝이야…\n레나도 있었냐)"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1444",
+      "ko": "그래도 내겐 첫\n사이버 포뮬러\n레이스라고."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p149C",
+      "ko": "그래서 뭐 어쨌다는 거야."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p14C0",
+      "ko": "그리드에 선 순간부터\n넌 한 사람의 드라이버야.\n그런 약한 소린 안 통해."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1528",
+      "ko": "…확실히 그렇지."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1540",
+      "ko": "하하, 네게 레이스 설교를\n듣다니 나도 한물갔나?"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1588",
+      "ko": "그래, 정신 차려!\n이래 봬도 난 널\n기대하고 있으니까."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p15D4",
+      "ko": "어?"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p15DC",
+      "ko": "앗!\n착각하지 마💦"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p15FC",
+      "ko": "봐, 소꿉친구가 유명해지면\n나도 자랑스러우니까.\n…그뿐이야."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1650",
+      "ko": "뭐, 그 전에 내가 먼저\n유명해질지도 모르지만."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p1688",
+      "ko": "그럴 줄 알았어.\n그래도 고마워.\n갑자기 의욕이 생겼어."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p16DC",
+      "ko": "좋아, 다음 레이스도\n힘낼게!"
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p30D4",
+      "ko": "배도 부르니\n네메시스 세팅이나\n해 볼까."
+    },
+    {
+      "id": "disc1/allbin/u05/pointerless_page/p31D8",
+      "ko": "배도 부르니\n네메시스 세팅이나\n해 볼까."
+    },
+    {
+      "id": "disc1/allbin/u06/pointerless_page/p1548",
+      "ko": "역시 레이스가 좋아서요?\n다른 데선 일 못 해서요?\n혼기 늦은 핑계인가요?"
+    },
+    {
+      "id": "disc1/allbin/u06/pointerless_page/p1EC4",
+      "ko": "혹시 훈련 중인가요?\n혹시 헌팅 중인가요?\n아뇨, 전혀 모르겠는데요."
+    },
+    {
+      "id": "disc1/allbin/u06/pointerless_page/p25A0",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다."
+    },
+    {
+      "id": "disc1/allbin/u07/pointerless_page/p1068",
+      "ko": "완벽했어.\n응, 그럭저럭이었어.\n자신감을 잃었어."
+    },
+    {
+      "id": "disc1/allbin/u07/pointerless_page/p1284",
+      "ko": "그냥 산책이라든가.\n밤마실이라든가.\n스파이라든가."
+    },
+    {
+      "id": "disc1/allbin/u07/pointerless_page/p1FD8",
+      "ko": "네\n아니요"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p0D18",
+      "ko": "밤 산책을 간다\n오늘은 그냥 잔다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p15EC",
+      "ko": "너한테 말한 거야.\n레나한테 말한 거야.\n오너한테 말한 거야."
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p1DA8",
+      "ko": "시끄럽네요.\n재미있네요.\n재주가 없네요."
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p3104",
+      "ko": "가게가 끝나 버렸네.\n그러고 보니 아까\n뭐라고 했던 것 같은데……."
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p31FC",
+      "ko": "카운터\n테이블\n술집을 나간다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p36D4",
+      "ko": "리틀에게 부탁한다\n마스터에게 부탁한다\n다시 곡을 틀어 달라 한다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p3C5C",
+      "ko": "리틀에게 부탁한다\n마스터에게 부탁한다\n"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p3D40",
+      "ko": "네, 부탁합니다\n이제 됐습니다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p3E24",
+      "ko": "리틀에게 부탁한다\n마스터에게 부탁한다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p4DB8",
+      "ko": "질문을 계속한다\n질문을 그만한다"
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p5C1C",
+      "ko": "레나 녀석, 화나서 또\n어디론가 가 버렸어."
+    },
+    {
+      "id": "disc1/allbin/u09/pointerless_page/p5C50",
+      "ko_segments": [
+        "어쩌지\n찾으러 간다.\n그냥 잔다.",
+        "내일 레이스 준비를\n한다\n안 한다"
+      ]
+    },
+    {
+      "id": "disc1/allbin/u10/pointerless_page/p02E0",
+      "ko": "그래, 준비할까.\n아직 됐어. 이야기를 더 듣자."
+    },
+    {
+      "id": "disc1/allbin/u11/pointerless_page/p05B8",
+      "ko": ""
+    },
+    {
+      "id": "disc1/allbin/u11/pointerless_page/p1054",
+      "ko": "고마워……"
+    },
+    {
+      "id": "disc1/allbin/u12/pointerless_page/p38B0",
+      "ko_segments": [
+        "전반 B, 후반 C 타이어\nB 타이어만\n전반 C, 후반 B 타이어",
+        "좋아, 작전은…\n전반 B, 후반 C 타이어\nB 타이어만\n"
+      ]
+    },
+    {
+      "id": "disc1/allbin/u12/pointerless_page/p395C",
+      "ko": "이걸로 좋아!\n다시 선택한다."
+    },
+    {
+      "id": "disc1/allbin/u12/pointerless_page/p4410",
+      "ko": "이제 완벽해!\n눈 감고 있었어"
+    },
+    {
+      "id": "disc1/allbin/u13/pointerless_page/p1054",
+      "ko": "어젯밤 자네 팀이 꽤\n소란스러웠던 것 같은데,\n무슨 일 있었나?"
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p03A4",
+      "ko": "레나를 데리고 도망친다\n약속이니 포기한다"
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0DBC",
+      "ko": "오늘은 전보다 훨씬\n격렬한 레이스였어. 역시\n란돌 씨는 천재야."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0E08",
+      "ko": "하지만 그 천재를 이겼습니다.\n당신은 훌륭한 파트너입니다.\n저는 자랑스럽습니다."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0E6C",
+      "ko": "고마워.\n내 실력 이상의 힘을 낸 건\n너와 레나 덕분이야."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0EBC",
+      "ko": "그렇군요. 주행 수준이\n완전히 다릅니다. 더 많은\n레이스 경험이 필요합니다."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0F24",
+      "ko": "그래, 이제 2전 남았어.\n난 꼭 카자미 씨와\n달려 보고 싶어."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0F78",
+      "ko": "저는 당신의 승리를 위해\n존재합니다.\n저를 믿어 주세요."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0FC4",
+      "ko": "알고 있어, 네메시스.\n하지만 그건 틀렸어."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p0FFC",
+      "ko": "무슨 뜻인가요?\n정확히 지적해\n주시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p1044",
+      "ko": "넌 레이스에서 이기기\n위해서만 존재하는 게 아냐."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p107C",
+      "ko": "적어도 내게 넌\n무엇과도 바꿀 수 없는\n친구야."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p10B8",
+      "ko": "…친구, 말인가요?"
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p10D0",
+      "ko": "그래, 친구야.\n그리고 믿을 수 있는\n파트너이기도 해."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p1110",
+      "ko": "고맙습니다."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p112C",
+      "ko": "그럼 잘 자, 네메시스.\n내일은 카가 씨와 승부야."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p1164",
+      "ko": "카자미 씨의 라이벌이니\n만만한 상대가 아닐 거야.\n긴장하고 가자."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p11B8",
+      "ko": "알겠습니다."
+    },
+    {
+      "id": "disc1/allbin/u16/pointerless_page/p30DC",
+      "ko": "오늘 피자 맛있었어.\n잘못했으니 사과한다.\n레나, 가슴이 꽤 크네."
+    },
+    {
+      "id": "disc1/allbin/u18/pointerless_page/p0914",
+      "ko": "어쩔래? 더 들으러 갈까?"
+    },
+    {
+      "id": "disc1/allbin/u18/pointerless_page/p3988",
+      "ko": "내일 레이스 준비를\n한다\n안 한다"
+    },
+    {
+      "id": "disc1/allbin/u18/pointerless_page/p3A40",
+      "ko": "아직 이야기를 더 들으러\n가는 게 좋겠어."
+    }
+  ]
+}

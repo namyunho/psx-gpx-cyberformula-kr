@@ -17,8 +17,10 @@ roms/
 # Generated or extracted binary data
 out/
 work/
+tmp/
 __pycache__/
 *.pyc
+*.bak
 .venv/
 .DS_Store
 

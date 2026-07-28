@@ -31,6 +31,13 @@ fi
 required_files=(
     "work/translations/disc1-dialogue-ko-candidate.json"
     "work/translations/disc1-dialogue.json"
+    "work/translations/disc1-pointerless-pages-u00-u21.json"
+    "work/translations/disc1-special-screen-text.json"
+    "work/translations/disc1-ui.json"
+    "data/translations/disc1-pointerless-pages-u00-u21-ko.json"
+    "data/translations/disc1-special-screen-ko.json"
+    "data/translations/disc1-ui-ko.json"
+    "data/translations/disc1-character-names.json"
     "work/extracted/disc1/iso/ALLBIN.BIN"
 )
 
@@ -49,9 +56,9 @@ print "안전 슬롯 자료를 원본 ALLBIN에서 갱신합니다."
     || pause_and_exit 1 "안전 슬롯 자료 생성에 실패했습니다."
 
 print ""
-print "대사 편집기를 실행합니다."
+print "그래픽 에셋을 제외한 통합 폰트 번역 편집기를 실행합니다."
 exec "${python_path}" scripts/dialogue_layout_editor.py \
-    --input work/translations/disc1-dialogue-ko-candidate.json \
+    --all-font-text \
     --workset work/translations/disc1-dialogue.json \
     --safe-slots work/analysis/disc1-dialogue-safe-slots.json \
     "$@"

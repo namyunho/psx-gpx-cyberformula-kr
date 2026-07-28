@@ -368,14 +368,12 @@ def classification_for_unit(
     if ui:
         return "font_rendered_ui", "direct_or_shared_ui"
     if embedded:
-        if unit_index == 30:
-            return "diagnostic_test", "diagnostic_path"
-        return "dormant_unreachable", "dormant_unreachable"
+        return "race", "main_path"
     if unit_index <= 20:
         return "story", "main_path"
     if unit_index == 21:
-        return "general_race", "main_path"
-    return "diagnostic_test", "diagnostic_path"
+        return "test_drive", "main_path"
+    return "race", "main_path"
 
 
 def pointer_table_references(
@@ -458,11 +456,6 @@ def build_entry(
         flags.append("mapping_incomplete")
     if entry.get("reference_count", 1) > 1:
         flags.append("shared_by_multiple_references")
-    if classification == "diagnostic_test":
-        flags.append("diagnostic_only")
-    if classification == "dormant_unreachable":
-        flags.append("dormant_unreachable")
-
     layout = None
     if layout_profile is not None:
         original_layout = measure_story_layout(

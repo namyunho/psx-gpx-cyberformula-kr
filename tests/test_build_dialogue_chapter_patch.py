@@ -10,8 +10,10 @@ from scripts.build_dialogue_chapter_patch import (
     UNIT_SHARED_POOL_REFERENCE_PROFILES,
     build_source_ordered_stream,
     changed_ranges,
+    compact_unit_translation_spaces,
     encode_entry,
     fit_fixed_diagnostic_candidate,
+    parse_units,
     passthrough_gap_glyph_indices,
     physical_entry_ranges,
     reference_catalog_sha256,
@@ -83,6 +85,24 @@ class DialogueChapterBuildTests(unittest.TestCase):
             [len(line) for line in adjusted.split("\n")],
             [17, 17, 17],
         )
+
+    def test_unit_capacity_compaction_removes_only_spaces(self) -> None:
+        mapping = {"가": 0x100, "나": 0x101, " ": 0x102}
+        entry_id = self.first["entry_id"]
+        texts = {entry_id: "가 나"}
+        streams = {
+            entry_id: encode_entry(self.first, texts[entry_id], mapping)
+        }
+        report = compact_unit_translation_spaces(
+            [self.first],
+            texts,
+            streams,
+            mapping,
+            required_bytes=2,
+        )
+        self.assertEqual(texts[entry_id], "가나")
+        self.assertEqual(report["removed_space_count"], 1)
+        self.assertTrue(report["non_space_content_preserved"])
 
     def test_sorts_physical_entry_ranges_without_overlap(self) -> None:
         entries = [
@@ -346,7 +366,11 @@ class DialogueChapterBuildTests(unittest.TestCase):
         source_allbin = (
             ROOT / "work/extracted/disc1/iso/ALLBIN.BIN"
         ).read_bytes()
-        for unit_index in (0, 21):
+        self.assertEqual(
+            sorted(UNIT_SHARED_POOL_REFERENCE_PROFILES),
+            list(range(35)),
+        )
+        for unit_index in range(35):
             entries = [
                 entry
                 for entry in workset["entries"]
@@ -388,6 +412,11 @@ class DialogueChapterBuildTests(unittest.TestCase):
                 report["catalog_sha256"],
                 profile["catalog_sha256"],
             )
+
+    def test_runtime_race_units_extend_through_u34(self) -> None:
+        self.assertEqual(parse_units(["22,34"], False), [22, 34])
+        with self.assertRaisesRegex(ValueError, "units 21..34"):
+            parse_units(["35"], False)
 
     def test_unit_shared_pool_relinks_hidden_and_gap_consumers(self) -> None:
         def entry(

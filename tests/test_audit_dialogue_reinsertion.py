@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import re
 import unittest
 
 from scripts.audit_dialogue_reinsertion import (
     MAX_GLYPHS,
+    chapter_label,
     minimum_required_glyph_count,
     visible_width,
     wrap_with_word_splitting,
@@ -70,6 +72,41 @@ class DialogueWordWrapTests(unittest.TestCase):
         result = wrap_words("첫째 줄은\n둘째 줄과 다시 계산")
         self.assertEqual(result.status, "ready")
         self.assertNotIn("\n", "".join(result.lines))
+
+    def test_drops_only_spaces_when_non_space_text_fits_17x3(self) -> None:
+        text = (
+            "말도 안 돼…!\n"
+            "이렇게 짧은 기간에 저런 기술을…?\n"
+            "대체 어떤 내비게이션 시스템을 싣고 있는 거야!?"
+        )
+        result = wrap_words(text)
+        self.assertEqual(result.status, "ready")
+        self.assertEqual(
+            result.wrap_mode,
+            "space-drop-word-split-fallback",
+        )
+        self.assertLessEqual(len(result.lines), 3)
+        self.assertTrue(
+            all(visible_width(line) <= 17 for line in result.lines)
+        )
+        self.assertEqual(
+            re.sub(r"\s+", "", text),
+            re.sub(r"\s+", "", result.text),
+        )
+
+    def test_runtime_unit_labels_distinguish_test_drive_and_races(self) -> None:
+        self.assertEqual(chapter_label(20, "story"), "story-u20")
+        self.assertEqual(chapter_label(21, "test_drive"), "test-drive-u21")
+        self.assertEqual(chapter_label(22, "race"), "race-u22")
+        self.assertEqual(chapter_label(29, "race"), "race-u29")
+        self.assertEqual(
+            chapter_label(30, "embedded_race"),
+            "embedded-race-u30",
+        )
+        self.assertEqual(
+            chapter_label(34, "embedded_race"),
+            "embedded-race-u34",
+        )
 
 
 if __name__ == "__main__":

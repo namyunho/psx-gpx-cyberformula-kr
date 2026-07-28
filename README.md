@@ -38,7 +38,9 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 
 현재 공개 패치는 없습니다. Disc 1 구조 분모와 추출·폰트 PoC는 확정됐지만,
 전체 대사 번역 검토·축약, 베이크드 그래픽 현지화와 전편 QA는 아직
-진행 중입니다. 챕터 1만 대상으로 한 비배포 개발 이미지는 생성됐습니다.
+진행 중입니다. `u00..u34`의 직접·무포인터 대사, 고정 이름과 이름 등록 UI를
+담은 비배포 개발 이미지는 생성됐습니다. 미니게임·코스·머신 설정의 폰트
+대사 391개는 번역 초안을 병합했지만 아직 그 이미지에는 주입하지 않았습니다.
 
 ## 진행 상태
 
@@ -47,39 +49,46 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 원본 매체 식별·무결성 | ✅ 완료 — 멀티트랙 CUE와 Track 1 크기·CRC32·MD5·SHA-256 고정 |
 | PS-X EXE·파일 로더·schedule 역공학 | ✅ 완료 — 19개 파일 record, 164개 descriptor, 11개 scheduled 파일 분할 |
 | Disc 1 전량 추출·압축해제 | ✅ 완료 — 1,935 state 재결합, XA·VAB·CDDA·MDEC 검증 |
-| 글꼴 렌더 스트림 모집단 | 🚧 재감사 — 직접 포인터 대상 5,843개 분류 완료, 포인터 없는 연속 페이지를 전 unit에서 추가 조사 중 |
+| 글꼴 렌더 스트림 모집단 | 🚧 확대 조사 — 직접 포인터/UI 5,843개, `u00..u21` 무포인터 83개, 특수 화면 391개 확인; `u22..u34` 무포인터 전수 재감사 필요 |
 | 일본어 글리프 대응표 | ✅ 완료 — primary 1,229자와 alternate 1,484자 전 슬롯, JIS 순서·수정 아틀라스 교차 검증 |
 | 본문·UI 폰트 구조 | ✅ 완료 — primary/alternate 14×14, 3bpp, 74바이트 record |
 | Galmuri11 사용 프로필 | ✅ 완료 — TTF 12px, 실제 최대 11×11 잉크, 14×14 셀 배치 |
 | 최초 한글 가시성 PoC | ✅ 통과 — 역사적 Galmuri14 시험으로 DuckStation 본문 렌더 경로 확인 |
-| Galmuri11 첫 대사 PoC | 🟡 정적 검증 통과 — 18자 삽입과 raw Track diff 확인, 실제 화면 최종 확인 대기 |
-| 한글 저장·인코딩 | ✅ 정적 경로 확정 — 후보 988자를 primary 1,229슬롯에 배치하고 대사 토큰 직접 재인코딩, 훅 불필요 |
+| Galmuri11 본문 출력 | ✅ 실행 확인 — 첫 대사 PoC 이후 전체 대사 개발 빌드에서도 14×14 셀 렌더 경로 확인 |
+| 한글 저장·인코딩 | ✅ 정적 경로 확정 — 현재 전체 대사 빌드의 998자를 primary 1,229슬롯에 배치하고 대사 토큰 직접 재인코딩, 훅 불필요 |
 | 고정 주인공명·화자명 | ✅ 실행 확인 — `시바` 2칸+`세이치로` 4칸과 화자명·용어집 표기가 실제 화면에서 정상 표시 |
 | 그래픽 현지화 분모 | ✅ 구조 완료 — 1,739개 그래픽 관련 state 역할 분류 |
 | 베이크드 문자 소비 경로 | 🚧 진행 전 — 1,463개 검토 state를 화면→VRAM→RAM→저장 위치에 연결해야 함 |
-| 대사 추출 작업본 | 🚧 직접 포인터 대상 원문 판독 완료 — 대사 5,783개와 UI 60개 미매핑 0, unit 0에서 무포인터 페이지 5개 추가 확인 |
-| 후보 번역 레이아웃 감사 | 🚧 5,759개 기계 배치 가능, 단어 분할 예외 22개, 차단 24개·그중 51글리프 초과 18개 |
-| 챕터 1 재삽입 개발 이미지 | 🚧 정위치 대사 표시 확인 — 미목록 원본 주소 소비 확인, 슬롯 겹침이 다음 화자·음성 제어를 손상 |
-| 전체 번역·재삽입 | 🚧 기계 후보 상태 — 의미·용어·축약·보호 토큰 충돌 검토와 전체 실행 QA 필요 |
+| 대사 추출 작업본 | 🚧 직접 대사 5,783개, `u00..u21` 무포인터 83개, 이름 등록 UI 60개와 특수 화면 391개 원문 보호 기준선 확보 |
+| 후보 번역 레이아웃 감사 | 🚧 직접 대사 5,783개 기계 배치 가능·차단 0 — 단어 분할 16건, 동일 원문 표기 후보 63건·용어집 후보 71건 사람 검토 필요 |
+| 특수 화면 폰트 번역 | 🚧 391개 외부 AI 교정본 병합 — 빈값·일본어 잔존·보호 필드 충돌 0, 코스 안전 슬롯 초과 4건, ROM 미주입 |
+| 이름 등록 폰트 UI | 🚧 고정 리터럴 4개 정적 주입 완료 — 입력 팔레트·런타임 버퍼 56개 원본 보존, 실행 전수 검토 필요 |
+| 전체 대사 재삽입 개발 이미지 | 🚧 `u00..u34` 직접+무포인터 5,866개 정적 주입 — 제2장 종료까지 사용자 진행 확인, 이후 경로와 특수 화면은 미검증 |
+| 전체 번역·재삽입 | 🚧 초벌 후보 상태 — 의미·용어·자연스러운 줄바꿈과 전편 실행 QA 필요 |
 | 통합 빌드·실행 QA·차분 배포 | ⏳ 예정 |
 
 > **현재 판정 요약**: 원본 유래 데이터의 무손실 추출, 일본어 글리프 판독과
 > 정적 한글 글꼴·직접 인코딩 경로는 완료됐습니다. 다만 기존 대사 작업본이
 > 직접 포인터 대상만 수집해 물리 스트림 안의 무포인터 연속 페이지를 누락한
-> 사실이 확인돼 텍스트 모집단 판정을 다시 열었습니다. 순서 보존 재배치도
-> 런타임이 이동 전 주소에서 읽어 앞부분이 잘리는 문제가 확인됐습니다. 현재는
-> 원본 시작 주소를 고정한 대사의 내용·순서는 화면에서 확인됐지만, 긴
-> 스트림이 다음 페이지의 화자·음성 제어를 덮습니다. unit `0`과 `21`을
-> 넣은 의도적 길이 초과 진단 이미지만 제공하며, 번역은 기계 후보이고 실행
-> 검증과 전편 검토가 남아 있으므로 한글 패치 완성으로 판정하지 않습니다.
+> 사실이 확인돼 텍스트 모집단 판정을 다시 열었습니다. 현재는
+> `u00..u21`에서 무포인터 83개를 추가했고, 별도 소비자를 쓰는 `u38/u43`의
+> 미니게임·코스·머신 설정 391개도 분리했습니다. unit 공용 arena 재배치
+> 방식은 `u00`과 테스트 주행 `u21`에서 구조 실험을 통과했고, 같은 정적
+> 불변식으로 만든 `u00..u34` 개발 이미지는 사용자가 제2장 종료까지 진행해
+> 프리즈가 없음을 확인했습니다. 이는 이후 장·모든 분기·특수 화면의 전수
+> 통과를 뜻하지 않습니다. 391개 특수 화면 번역도 아직 ROM에 주입하지
+> 않았고, 번역은 기계 후보와 수작업 교정이 섞여 있으므로 한글 패치
+> 완성으로 판정하지 않습니다.
 
 ## 확정된 작업 블록
 
 | 시스템 | 규모 | 확정 내용 |
 |---|---:|---|
 | ISO·scheduled 컨테이너 | ISO 파일 16개, scheduled 파일 11개, state 1,935개 | 원본 경계·해시와 state 재결합 일치 |
-| 직접 포인터 대상 글꼴 스트림 | 총 5,843개 | 스토리 4,022, 일반 레이스 68, 진단/시험 1,080, 휴면 613, UI 60 |
-| 대사 협업 작업본 | 포인터 대상 대사 5,783개, UI 60개 | 가역 원문·안정 ID·보호 필드와 빈 완역본/축약본을 JSON으로 분리, 무포인터 페이지 추가 필요 |
+| 직접 포인터 대상 글꼴 스트림 | 총 5,843개 | 스토리 4,022, 테스트 주행 68, 실제 경기 914, 경기 내장 메시지 779, 이름 등록 UI 60 |
+| 무포인터 연속 페이지 | `u00..u21` 83개 | 선택 29, 대사 54; 원문 제어 셸과 안정 ID를 보존하고 한국어 정본 분리 |
+| 특수 화면 폰트 문자열 | 391개 | `u38` 미니게임 322, `u43` 코스 57·머신 설정 12; 그래픽 버튼·라벨 제외 |
+| 통합 폰트 편집기 | 6,298행 | 직접 대사, 무포인터, 특수 화면, UI 리터럴 4, 고정 이름·화자명 36을 원본별로 안전 저장 |
 | 텍스트 저장 | little-endian u16 | 커스텀 글리프 index, `FFFB` 정렬/줄 경계, `8000` 페이지 대기 |
 | 폰트 공급자 | primary 1,229 slot, alternate 1,484 slot | 두 표 모두 14×14, 3bpp, 글리프당 74바이트 |
 | 초상 | 625 block | 32바이트 CLUT + 48×56 4bpp |
@@ -87,13 +96,12 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 오디오·영상 | XA 33, VAB 81 bank/1,663 sample, CDDA 3, MDEC 2 | PCM16 WAV·FFV1로 해제하고 frame·해시 검증 |
 | Galmuri11 | 한글 문자표 2,350자 | TTF 12px 결과가 2,350개 고유 자형을 유지하고 14×14 셀 밖 픽셀 0개 |
 | 첫 대사 PoC | 한글 18자, 변경 763바이트 | `START.BIN`·`ALLBIN.BIN` 변경과 9개 raw LBA 쓰기가 선언 범위와 일치 |
-| 챕터 1+일반 레이스 정위치 진단 | unit 0·21 포인터 대상 156개, 고정 시작 주소, 정적 맵 988자 | 포인터 쓰기 0·원본 값 160개 확인, 슬롯 초과 36개 기록, 49개 Mode 2/Form 1 sector EDC/ECC 검증 |
+| 전체 대사 비배포 빌드 | unit `u00..u34`, 직접+무포인터 5,866개, 정적 맵 998자 | 453개 raw sector Expected Write·EDC/ECC 검증, 제2장 종료까지 사용자 진행 확인 |
 
-직접 포인터 대상 기준 일반 플레이 경로는 4,150개 스트림이며, 진단/시험
-경로까지 포함하면 5,230개입니다. Disc 1 정적 실행 코드에서 로더 도달이
-확인되지 않은 613개는 삭제하거나 번역 대상으로 단정하지 않고 휴면 자산으로
-보존합니다. 이 수치는 포인터 없는 연속 페이지를 포함한 최종 페이지 수가
-아니다.
+정상 경기 선택 코드는 현재 경기 상태 `0..13`에 21을 더해 `u21..u34`를
+고르므로, 직접 포인터 대상 대사 5,783개는 모두 정상 실행 후보 경로다.
+내용상 `u21`은 입단 직후 테스트 주행이며 제1장 진입 후 실제 첫 경기는
+`u22`다. 이 수치는 포인터 없는 연속 페이지를 포함한 최종 페이지 수가 아니다.
 
 ## 번역판 고정 방침
 
@@ -115,6 +123,7 @@ data/
   dialogue-extraction-schema.json
                         대사 협업 작업본 JSON Schema
   glyph-map.json        primary·alternate 전체 일본어 글리프 대응표
+  translations/         한국어 정본, 용어집, 고정 이름과 UI·특수 화면 번역
 docs/
   *.md                  구조 기준선·추출·폰트·PoC·역공학 판정 기록
 fonts/galmuri11/
@@ -137,6 +146,7 @@ tmp/                    비커밋 임시 캡처
 | [수정 전 역공학 기준선](docs/reverse-engineering-baseline.md) | 대상 리비전, 로더·schedule·텍스트·폰트·초상·그래픽 분모의 현재 결론 |
 | [Disc 1 전량 추출·압축해제](docs/disc1-extraction.md) | 추출 경계, 출력 구조, 압축해제 수량과 전량 검증 |
 | [Disc 1 대사 추출 작업본](docs/dialogue-extraction.md) | 번역 없는 가역 JSON, 협업 필드 정책, 17×3 대사창과 저장 공간 판정 |
+| [미니게임·코스·머신 설정 폰트 문자열](docs/special-screen-font-text.md) | `u38/u43` 391개 소비자·추출·외부 AI 병합 검증과 ROM 미주입 상태 |
 | [그래픽 문자 인벤토리](docs/graphics-text-inventory.md) | 베이크드 문자 검토 state와 편집 승격 조건 |
 | [폰트 포맷](docs/font-format.md) | primary/alternate 14×14 3bpp 공급자와 렌더러 |
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
@@ -149,7 +159,8 @@ tmp/                    비커밋 임시 캡처
 | [대사 런타임 검증 기준선](docs/dialogue-runtime-findings.md) | 고정 주소 판정, 초상화·이름 제어 손상, 반각 검토, u21·선택지 후속 과제 |
 | [대사별 검증 안전 슬롯](docs/dialogue-safe-slots.md) | 5,783개 고정 원위치 바이트 경계, 생성 JSON·CSV와 엄격 보호 정책 |
 | [unit 공용 대사 arena](docs/unit-dialogue-pool-experiment.md) | u00/u21 전수 포인터 재연결, 공용 용량과 실행 검증 결과 |
-| [17×3 대사 편집기](docs/dialogue-layout-editor.md) | 화면·개별 슬롯·unit 공용 용량을 분리한 한국어 후보 편집 |
+| [`u00..u34` 전체 대사 비배포 빌드](docs/full-dialogue-nonrelease-build.md) | 직접+무포인터 5,866개, 이름·UI, 453 sector 검증과 제2장 종료 관측 |
+| [통합 폰트 번역 편집기](docs/dialogue-layout-editor.md) | 본편·무포인터·미니게임·코스·머신 설정·UI·이름을 원본별로 안전 저장하는 검수 GUI |
 | [Git 작업 흐름](docs/git-workflow.md) | `main`과 목적별 단기 브랜치, 검증·병합·태그 정책 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
 | [GPU 업로드 원본 추적](docs/gpu-upload-source-tracing.md) | 화면→VRAM→DMA2/RAM→저장 자산을 연결하는 미실행 조사 절차 |
@@ -191,6 +202,8 @@ python3 -m venv .venv
   --output work/analysis/disc1-text.json
 .venv/bin/python scripts/build_japanese_glyph_map.py
 .venv/bin/python scripts/extract_disc1_dialogue.py
+.venv/bin/python scripts/extract_pointerless_pages.py
+.venv/bin/python scripts/extract_special_screen_text.py
 .venv/bin/python scripts/psx_font_inventory.py \
   --output work/analysis/disc1-fonts.json
 .venv/bin/python scripts/psx_portrait_inventory.py \
@@ -204,7 +217,21 @@ python3 -m venv .venv
 .venv/bin/python scripts/mcp_probe.py
 ```
 
-챕터 1 비배포 개발 이미지는 다음 순서로 재생성합니다.
+그래픽을 제외한 통합 폰트 번역 편집기와 특수 화면 번역 검사는 다음 명령으로
+실행합니다.
+
+```bash
+.venv/bin/python scripts/dialogue_layout_editor.py --check
+.venv/bin/python scripts/import_special_screen_translation_batches.py --check
+.venv/bin/python scripts/dialogue_layout_editor.py
+```
+
+macOS에서는 저장소 최상위의 `대사-편집기.command`를 더블클릭해 같은
+편집기를 열 수 있습니다. 특수 화면 `-ko` 배치가 없는 환경에서는 이미
+병합된 `data/translations/disc1-special-screen-ko.json`을 정본으로
+사용하며, 배치 재병합 명령은 실행할 필요가 없습니다.
+
+실행 검증을 통과한 `u00/u21` 기준 빌드는 다음 순서로 재생성합니다.
 
 ```bash
 .venv/bin/python scripts/audit_dialogue_reinsertion.py
@@ -217,9 +244,12 @@ python3 -m venv .venv
 .venv/bin/python scripts/build_character_name_patch.py \
   --file-build-dir work/build/dialogue-u00-u21-unit-shared-pool \
   --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names
-.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+.venv/bin/python scripts/build_ui_translation_patch.py \
   --file-build-dir work/build/dialogue-u00-u21-unit-shared-pool-names \
-  --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names-disc
+  --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names-ui
+.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+  --file-build-dir work/build/dialogue-u00-u21-unit-shared-pool-names-ui \
+  --output-dir work/build/dialogue-u00-u21-unit-shared-pool-names-ui-disc
 ```
 
 실행 범위와 출력 CUE/BIN은
@@ -233,6 +263,14 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
 대상으로 자동 승격하지 않습니다. primary 글꼴의 `0x000..0x045`,
 `0x0E4..0x0E5`는 영문·숫자·특수문자 보호 슬롯으로 예약되어 한글 배정에
 사용되지 않습니다.
+
+현재의 `u00..u34` 개발 이미지는 `--all-story`,
+`--allow-unit-capacity-space-compaction`을 명시한 비배포 빌드다. 8개
+unit에서 공백 266개만 제거했고 비공백 글리프와 제어 셸은 보존했다. 원본
+Track 1과 같은 602,020,272바이트이며 SHA-256은
+`d290859416e3573177c4e1e3df40bdad2013fa9ded31c8baae4ed6fb178f851f`다.
+이 해시는 로컬 회귀 식별값이지 배포 파일이 아니며, 전체 BIN/CUE는 Git에
+커밋하지 않습니다. 특수 화면 391개는 이 빌드에 포함되지 않습니다.
 
 ## 도구체인
 

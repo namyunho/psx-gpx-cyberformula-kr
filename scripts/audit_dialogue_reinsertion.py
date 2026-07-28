@@ -127,6 +127,18 @@ def wrap_words(
             oversized_words=oversized,
             wrap_mode="word-split-fallback",
         )
+    compact_lines = wrap_with_minimum_space_dropping(
+        text,
+        columns=columns,
+        rows=rows,
+    )
+    if compact_lines is not None:
+        return WrapResult(
+            "ready",
+            compact_lines,
+            oversized_words=oversized,
+            wrap_mode="space-drop-word-split-fallback",
+        )
     if oversized:
         return WrapResult("word-overflow", hard_lines, oversized)
     return WrapResult("row-overflow", tuple(lines))
@@ -249,6 +261,92 @@ def wrap_with_word_splitting(
     return tuple(lines)
 
 
+def wrap_with_minimum_space_dropping(
+    text: str,
+    *,
+    columns: int = COLUMNS,
+    rows: int = ROWS,
+) -> tuple[str, ...] | None:
+    """Fit without deleting non-space content, dropping as few spaces as possible."""
+    normalized = " ".join(WORD_PATTERN.findall(text))
+    if not normalized:
+        return ()
+
+    units: list[tuple[str, int, bool]] = []
+    cursor = 0
+    for match in NAME_PATTERN.finditer(normalized):
+        units.extend(
+            (character, 1, character == " ")
+            for character in normalized[cursor : match.start()]
+        )
+        units.append((match.group(), NAME_WIDTHS[match.group()], False))
+        cursor = match.end()
+    units.extend(
+        (character, 1, character == " ")
+        for character in normalized[cursor:]
+    )
+    if sum(width for _, width, is_space in units if not is_space) > (
+        columns * rows
+    ):
+        return None
+
+    @lru_cache(maxsize=None)
+    def fit(
+        index: int,
+        row_index: int,
+        row_width: int,
+    ) -> tuple[int, int, str] | None:
+        if index == len(units):
+            return (0, 0, "")
+
+        candidates: list[tuple[int, int, str]] = []
+        value, width, is_space = units[index]
+        if is_space:
+            tail = fit(index + 1, row_index, row_width)
+            if tail is not None:
+                candidates.append((tail[0] + 1, tail[1], tail[2]))
+        if row_width + width <= columns and not (
+            is_space and row_width == 0
+        ):
+            tail = fit(index + 1, row_index, row_width + width)
+            if tail is not None:
+                candidates.append((tail[0], tail[1], value + tail[2]))
+        if row_width and row_index + 1 < rows:
+            tail = fit(index, row_index + 1, 0)
+            if tail is not None:
+                split_word = (
+                    index > 0
+                    and not is_space
+                    and not units[index - 1][2]
+                )
+                candidates.append(
+                    (tail[0], tail[1] + int(split_word), "\n" + tail[2])
+                )
+        if not candidates:
+            return None
+
+        def candidate_key(candidate: tuple[int, int, str]) -> tuple[Any, ...]:
+            lines = candidate[2].split("\n")
+            widths = tuple(visible_width(line) for line in lines)
+            return (
+                candidate[0],
+                candidate[1],
+                len(lines),
+                tuple(-width for width in widths),
+                candidate[2],
+            )
+
+        return min(candidates, key=candidate_key)
+
+    result = fit(0, 0, 0)
+    if result is None or result[0] == 0:
+        return None
+    lines = tuple(result[2].split("\n"))
+    if len(lines) > rows or any(visible_width(line) > columns for line in lines):
+        raise AssertionError("minimum-space fallback produced an invalid layout")
+    return lines
+
+
 def minimum_required_glyph_count(
     text: str,
     *,
@@ -267,9 +365,9 @@ def chapter_label(unit_index: int, classification: str) -> str:
     if unit_index <= 20:
         return f"story-u{unit_index:02d}"
     if unit_index == 21:
-        return "general-race-u21"
+        return "test-drive-u21"
     if unit_index <= 29:
-        return f"diagnostic-race-u{unit_index:02d}"
+        return f"race-u{unit_index:02d}"
     return f"embedded-race-u{unit_index:02d}"
 
 
@@ -399,7 +497,19 @@ def build_outputs(
             ),
             "maximum_glyph_count": MAX_GLYPHS,
         }
-        if result.wrap_mode == "word-split-fallback":
+        if result.wrap_mode == "space-drop-word-split-fallback":
+            normalized_candidate = " ".join(WORD_PATTERN.findall(korean))
+            derived["dropped_space_count"] = (
+                normalized_candidate.count(" ") - result.text.count(" ")
+            )
+            derived["non_space_content_preserved"] = (
+                re.sub(r"\s+", "", normalized_candidate)
+                == re.sub(r"\s+", "", result.text)
+            )
+        if result.wrap_mode in {
+            "word-split-fallback",
+            "space-drop-word-split-fallback",
+        }:
             word_split_fallbacks.append(
                 {
                     "id": entry_id,
@@ -410,6 +520,19 @@ def build_outputs(
                     "line_widths": [
                         visible_width(line) for line in result.lines
                     ],
+                    **(
+                        {
+                            "dropped_space_count": derived[
+                                "dropped_space_count"
+                            ],
+                            "non_space_content_preserved": derived[
+                                "non_space_content_preserved"
+                            ],
+                        }
+                        if result.wrap_mode
+                        == "space-drop-word-split-fallback"
+                        else {}
+                    ),
                 }
             )
         if result.status == "word-overflow":
@@ -532,7 +655,8 @@ def build_outputs(
             "columns": COLUMNS,
             "rows": ROWS,
             "wrap_policy": (
-                "greedy-word-boundary-then-word-split-fallback-if-17x3-fits"
+                "word-boundary, then word-split, then minimum-space-drop "
+                "fallback while preserving every non-space glyph"
             ),
         },
         "entry_count": len(derived_entries),
@@ -634,7 +758,7 @@ def main() -> None:
     parser.add_argument(
         "--candidate",
         type=Path,
-        default=Path("data/translations/disc1-dialogue-ko-candidate.json"),
+        default=Path("work/translations/disc1-dialogue-ko-candidate.json"),
     )
     parser.add_argument(
         "--glossary",

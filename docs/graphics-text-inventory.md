@@ -40,6 +40,55 @@ scheduled state
 
 ## 파일별 판정
 
+### 글꼴 렌더 UI 60개와 일반 UI의 구분
+
+`work/translations/disc1-ui.json`의 60개는 게임 전체 UI 목록이 아니다. 전부
+`ALLBIN.BIN` unit 40의 이름 등록 화면에서 alternate/primary 글꼴로 그리는
+스트림이다.
+
+| 역할 | 수 | 현재 처리 |
+|---|---:|---|
+| 한자 입력 팔레트 | 47 | 원본 보존 |
+| 이름 입력·확인 문구 | 2 | 한국어 주입 |
+| 가나·영문·기호 입력 팔레트 | 6 | 원본 보존 |
+| 이름·출신 라벨 | 1 | 한국어 주입 |
+| 출신 선택지 | 1 | 한국어 주입 |
+| 가상 플레이어명 스트림 | 2 | 런타임 코드 보존 |
+| 출신 표시 가변 버퍼 | 1 | 런타임 버퍼 보존 |
+
+따라서 현재 UI 빌드가 번역한 고정 문구는 4개이고, 56개는 입력 팔레트 또는
+가변 버퍼라 의도적으로 보존했다. 미니게임 HUD, 머신 설정, 결과·랭킹,
+장 카드 등의 일본어는 이 60개와 별개다. 접촉표에서 다음 베이크드 후보를
+확인했으며, 프로젝트 방침대로 그래픽 현지화 단계에서 마지막에 처리한다.
+
+- `MINI_G1..4.BIN`: HUD/menu texture state 10개
+- `START.BIN`: title/menu, selection, race result/ranking, chapter card 후보 39개
+- `OUTSIDE.BIN`: cockpit/external UI state 11개
+- `COURSE.BIN`: course/environment/HUD visual state 27개
+- `AVM_MAP.BIN`: 장면 속 UI·간판·포스터를 포함할 수 있는 state 1,334개
+
+`MACHINE.BIN` 42개는 차량 텍스처 atlas라는 구조 판정만 끝났다. 머신 설정
+화면의 UI 소비자가 이 파일이라고 단정하지 않으며, 화면→VRAM→RAM→저장
+위치의 소비 경로를 먼저 연결한다.
+
+### 특수 화면 폰트 대사와 그래픽 라벨의 구분
+
+사용자 화면 관측과 `u38/u43` 소비자 교차 분석으로 다음 391개는 이미지가
+아니라 primary 글꼴 스트림임을 확인했다.
+
+| 화면 | 폰트 번역 범위 | 그래픽 범위 |
+|---|---:|---|
+| 미니게임 | 규칙·블랙잭·카메라·요리 대사와 런타임 단어 322개 | HUD·버튼·타이틀 |
+| 코스 정보 | 코스 설명 57개 | `Course Information`, 지도·날씨 라벨 |
+| 머신 설정 | 타이어·전략·윙·부스트 설명 12개 | `Machine Setting`, A/B/C Tire와 버튼 |
+
+폰트 문자열은 `scripts/extract_special_screen_text.py`와
+`data/translations/disc1-special-screen-ko.json`에서 다룬다. 그래픽
+라벨은 이 문서의 1,463 state 분모에 그대로 남는다. 한 화면에 둘이 함께
+보인다는 이유로 폰트 대사를 베이크드 그래픽으로 분류하거나, 반대로 버튼
+이미지를 폰트 재삽입기로 수정하지 않는다. 상세 주소·수량·번역 병합 상태는
+[`special-screen-font-text.md`](special-screen-font-text.md)를 따른다.
+
 ### START
 
 - unit 2: primary dialogue font, 그래픽 수정 대상 아님

@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "status": "static-translation-complete-runtime-review-required",
+  "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
+  "scope": {
+    "workset": "work/translations/disc1-ui.json",
+    "unit_index": 40,
+    "entry_count": 60,
+    "literal_translation_count": 4,
+    "preserved_input_or_runtime_count": 56
+  },
+  "policy": {
+    "release_eligible": false,
+    "reason": "The four literal UI streams are translated and statically checked, but the exact output still requires user runtime review.",
+    "align_tokens": "preserve-count-and-row-boundaries",
+    "input_palettes": "Preserve name-entry kanji, kana, Latin, digit, and symbol palettes; they are selectable input data rather than prose.",
+    "runtime_streams": "Preserve virtual player-name streams and the mutable origin display buffer."
+  },
+  "coverage": [
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e000..e046",
+      "expected_count": 47,
+      "role": "name-input-kanji-palette",
+      "action": "preserve-original"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e047..e048",
+      "expected_count": 2,
+      "role": "primary-font-name-editor-prompt",
+      "action": "translate"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e049..e054",
+      "expected_count": 6,
+      "role": "name-input-kana-latin-symbol-palette",
+      "action": "preserve-original"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e055..e055",
+      "expected_count": 1,
+      "role": "primary-font-name-editor-label",
+      "action": "translate"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e056..e056",
+      "expected_count": 1,
+      "role": "alternate-font-origin-options",
+      "action": "translate"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e057..e058",
+      "expected_count": 2,
+      "role": "virtual-player-name-stream",
+      "action": "preserve-runtime-codes"
+    },
+    {
+      "entry_id_range": "disc1/allbin/u40/font_rendered_ui/e059..e059",
+      "expected_count": 1,
+      "role": "mutable-origin-display-buffer",
+      "action": "preserve-runtime-buffer"
+    }
+  ],
+  "translations": [
+    {
+      "id": "disc1/allbin/u40/font_rendered_ui/e047",
+      "renderer": "primary",
+      "ko": "이름을\n입력해 주세요.\n이름을 영문으로\n입력해 주세요.\n출신을\n선택해 주세요.",
+      "review_status": "needs-human-runtime-review",
+      "notes": "Six source rows are preserved; Japanese ローマ字 is localized as 영문."
+    },
+    {
+      "id": "disc1/allbin/u40/font_rendered_ui/e048",
+      "renderer": "primary",
+      "ko": "이대로 하시겠습니까?",
+      "review_status": "needs-human-runtime-review",
+      "notes": "Name and origin confirmation prompt."
+    },
+    {
+      "id": "disc1/allbin/u40/font_rendered_ui/e055",
+      "renderer": "primary",
+      "ko": "이름\n \n \n출신",
+      "review_status": "needs-human-runtime-review",
+      "notes": "Two blank spacer rows and all three source align tokens are preserved."
+    },
+    {
+      "id": "disc1/allbin/u40/font_rendered_ui/e056",
+      "renderer": "alternate",
+      "ko": "아마 레이스\n테스트 서킷\n랠리",
+      "review_status": "needs-human-runtime-review",
+      "notes": "草レース means grassroots/amateur racing here, not racing on grass. 아마 레이스 is the slot-safe compact form."
+    }
+  ]
+}

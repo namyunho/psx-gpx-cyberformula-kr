@@ -1,6 +1,8 @@
 # Disc 1 수정 전 역공학 기준선
 
-검토일: 2026-07-24
+최초 검토일: 2026-07-24
+
+최근 구조 갱신: 2026-07-29
 대상: `Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1)`
 
 이 문서는 한국어 데이터를 쓰기 전에 고정한 구조 기준선이다. 여기서 “완전”은
@@ -87,25 +89,27 @@ SHA-256을 `work/analysis/disc1-layout.json`에 재현한다.
 
 ## 실제 폰트로 그리는 문자열
 
-증거가 있는 글꼴 스트림은 총 5,843개다.
+기존 직접 포인터·이름 등록 UI 조사에서 증명한 글꼴 스트림은 5,843개다.
 
 | 구분 | 스트림 | 도달 판정 |
 |---|---:|---|
 | `ALLBIN` 0..20 | 4,022 | 일반 스토리 경로 |
-| `ALLBIN` 21 | 68 | 일반 레이스 경로 |
-| `ALLBIN` 22..29 | 914 | unit 42 진단/시험 메뉴에서 선택 |
-| `ALLBIN` 30 | 166 | unit 42 진단/시험 메뉴에서 선택 |
-| `ALLBIN` 31..34 | 613 | 저장 구조 확정, Disc 1 코드에서 로더 도달 없음 |
+| `ALLBIN` 21 | 68 | 입단 직후 테스트 주행 |
+| `ALLBIN` 22..29 | 914 | 실제 경기 경로 |
+| `ALLBIN` 30..34 | 779 | 실제 경기 경로, 혼합 code/data overlay |
 | `ALLBIN` 40 UI | 60 | main/overlay 직접 참조 또는 공유 mutable buffer |
 
-따라서 일반 경로는 4,150개, 진단 경로까지 포함하면 5,230개다. 나머지 613개는
-삭제하거나 번역 대상으로 추정하지 않고 **휴면 자산**으로 보존한다.
+따라서 직접 포인터 대상 대사 5,783개는 모두 정상 스토리·테스트 주행·실제
+경기 경로에 포함된다. unit 42의 진단 메뉴에서도 일부 경기 unit을 고를 수
+있지만, 그것은 정상 경로 도달성을 배제하는 증거가 아니다.
 
 0..29번의 5,004개 엔트리는 각 scheduled unit 끝의 포인터 배열과 count로
 증명된다. 30..34번은 짧은 MIPS 초기화 코드와 데이터가 섞인 overlay다.
 정렬된 in-unit u32 참조가 같은 unit 안의 토큰 스트림을 가리키며 각 스트림은
 `FFFF` 또는 `D003`에 도달한다. 우연히 종료자처럼 보이는 u32 값 표는
-명시적으로 제외한다. 포인터가 없는 바이트열은 대사로 승격하지 않는다.
+명시적으로 제외한다. 이 표에서 포인터가 없는 바이트열은 직접 포인터
+모집단으로 승격하지 않는다. 물리 fall-through와 별도 코드 소비자가 증명된
+문자열은 아래의 독립 추출기로 분리한다.
 
 핵심 총계:
 
@@ -116,6 +120,30 @@ SHA-256을 `work/analysis/disc1-layout.json`에 재현한다.
 - 전체 glyph index: `0x000..0x5CB`, 서로 다른 index 1,478개
 
 기계 판독 보고서는 `scripts/psx_text_inventory.py`로 생성한다.
+
+### 후속 확인한 무포인터·특수 화면 문자열
+
+직접 포인터 모집단만으로 게임의 모든 폰트 문자열을 대표할 수 없다는 사실을
+재삽입 실행 실패와 별도 화면 소비자 조사로 확인했다.
+
+| 범위 | 원본 엔트리 | 현재 분류 |
+|---|---:|---|
+| `u00..u21` 물리 gap의 연속 페이지 | 83 | 선택 29, 대사 54 |
+| `u38` 미니게임 | 322 | 포인터 페이지 260, 직접 대사 39, 요리 런타임 단어 23 |
+| `u43` 코스 설명 | 57 | 코스 상태 switch가 고르는 7개 포인터 표 |
+| `u43` 머신 설정 설명 | 12 | 타이어·전략·윙·부스트 고정 시작점 |
+
+무포인터 83개는 `scripts/extract_pointerless_pages.py`가 직접 대사 사이의
+보호 gap과 참조 카탈로그를 함께 검사해 추출한다. 특수 화면 391개는
+`scripts/extract_special_screen_text.py`가 `u38/u43`의 고정 unit 해시,
+포인터·직접 시작점과 모집단 수를 검증한다.
+
+이 수치는 기존 5,843개에 단순히 더해 “Disc 1 최종 총계”라고 부르지 않는다.
+기존 5,843개에는 번역하지 않는 이름 입력 팔레트·런타임 버퍼까지 포함되고,
+무포인터는 `u22..u34` 전수 조사가 남아 있다. 번역 편집기는 현재 확인된 범위
+중 실제로 편집할 항목만 정규화해 6,298행으로 보여준다. 세부 산출물과
+현재 391개 번역 초안 상태는
+[`special-screen-font-text.md`](special-screen-font-text.md)를 따른다.
 
 ## 폰트 공급자와 렌더러
 
@@ -167,14 +195,19 @@ primary 범위 안이고, UI 최대 index `0x5CB`는 alternate의 마지막 정�
 | 항목 | IDA/idalib | Ghidra | 결론 |
 |---|---|---|---|
 | main EXE | 정확한 주소·xref·descriptor write 전수 검색 | 긴 상태 분기와 pointer 전달 복원 | loader와 상태 선택 일치 |
+| 정상 경기 진입 | `0x80058FF6` write xref와 `sub_8003C94C` 명령열 확인 | `0x8003CE34..0x8003CE78` delay slot 포함 교차 확인 | 현재 경기 상태 `0..13`에 21을 더해 `u21..u34` 선택 |
 | `ALLBIN` 42 | 직접 write와 call address 확인 | 진단 switch 디컴파일 | 21..30 선택은 대사, 12..35 선택은 SOUND라는 구분 확정 |
 | `ALLBIN` 30 | entry와 혼합 code/data 경계 확인 | 별도 PS-X EXE import 후 entry 디컴파일 | 같은 초기화 흐름, `0x80048E3C` 오판 철회 |
+| `ALLBIN` 38·43 | 직접 문자열 시작·정렬 포인터와 수량 대조 | 미니게임·코스 상태 switch와 런타임 단어 전달 복원 | 그래픽이 아닌 폰트 문자열 391개 분리 |
 | 초상화 | 토큰 bitfield와 block stride xref | 로드→선택 흐름 대조 | START 41..64 공급자 확정 |
 
-`ALLBIN` 31..34의 휴면 판정은 main EXE와 `ALLBIN`의 실행 unit 30..43
-전체에서 descriptor 5의 sub-id write와 loader call을 전수 조사한 결과다.
-main은 21을 고정하고 unit 42만 21..30을 쓴다. 이 결론은 “데이터가 없다”가
-아니라 “Disc 1 정적 실행 코드에서 적재 경로가 없다”는 뜻이다.
+이전의 `u22..u30=진단 전용`, `u31..u34=휴면` 판정은
+`0x8003CE58`의 동적 계산을 고정 descriptor write 조사에서 놓친 결과이므로
+폐기한다. `sub_8003C94C`는 현재 경기 상태 byte를 읽어 `addiu +0x15`한 값을
+descriptor 5의 sub-id `0x80058FF6`에 저장하고 loader
+`sub_80041294(5)`를 호출한다. MIPS delay slot 때문에 저장은 호출 직전에
+실행된다. 상태 범위가 `0..13`이므로 정상 경기는 `u21..u34` 전체를 선택한다.
+내용상 `u21`은 테스트 주행이고 `u22`가 제1장 진입 후 실제 첫 경기다.
 
 ## 수정 전 게이트
 
@@ -198,6 +231,8 @@ main은 21을 고정하고 unit 42만 21..30을 쓴다. 이 결론은 “데이�
   --output work/analysis/disc1-layout.json
 .venv/bin/python scripts/psx_text_inventory.py \
   --output work/analysis/disc1-text.json
+.venv/bin/python scripts/extract_pointerless_pages.py
+.venv/bin/python scripts/extract_special_screen_text.py
 .venv/bin/python scripts/psx_font_inventory.py \
   --output work/analysis/disc1-fonts.json
 .venv/bin/python scripts/psx_portrait_inventory.py \

@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
-"""Edit Korean dialogue in a protected 17-column by 3-row GUI.
+"""Edit every confirmed font-rendered Korean string in a protected GUI.
 
-The editor changes one detected Korean text field only. Stable IDs, Japanese
-source text, layout limits, and every other protected value are copied from
-the loaded document when saving. Existing output files receive a recoverable
-``.bak`` copy before an atomic replacement.
+The default workspace combines story dialogue, pointerless pages, mini-games,
+course and machine-setting text, UI literals, and character names. Baked
+graphical text is deliberately excluded. Each edit is written back to its
+own canonical translation artifact; stable IDs, Japanese source text, layout
+limits, and every other protected value stay read-only. Existing output files
+receive a recoverable ``.bak`` copy before an atomic replacement.
 """
 
 from __future__ import annotations
@@ -34,6 +36,24 @@ DEFAULT_WORKSET = Path("work/translations/disc1-dialogue.json")
 DEFAULT_SAFE_SLOTS = Path(
     "work/analysis/disc1-dialogue-safe-slots.json"
 )
+DEFAULT_POINTERLESS_TRANSLATION = Path(
+    "data/translations/disc1-pointerless-pages-u00-u21-ko.json"
+)
+DEFAULT_POINTERLESS_WORKSET = Path(
+    "work/translations/disc1-pointerless-pages-u00-u21.json"
+)
+DEFAULT_SPECIAL_TRANSLATION = Path(
+    "data/translations/disc1-special-screen-ko.json"
+)
+DEFAULT_SPECIAL_WORKSET = Path(
+    "work/translations/disc1-special-screen-text.json"
+)
+DEFAULT_UI_TRANSLATION = Path("data/translations/disc1-ui-ko.json")
+DEFAULT_UI_WORKSET = Path("work/translations/disc1-ui.json")
+DEFAULT_CHARACTER_NAMES = Path(
+    "data/translations/disc1-character-names.json"
+)
+WORKSPACE_DISPLAY_PATH = Path("통합-폰트-번역-작업공간")
 EDITABLE_FIELD_PATTERN = re.compile(r"^entries\[\]\.([A-Za-z_][A-Za-z0-9_]*)$")
 WORD_PATTERN = re.compile(r"\S+")
 CONTROL_CONTENT_KINDS = frozenset(
@@ -64,6 +84,33 @@ SAFE_SLOT_BOUNDARY_LABELS = {
     "protected-zero-fallthrough-gap": "런타임 통과 0x0000 간격 보호",
     "protected-nonzero-gap": "비영(非零) 무포인터·이벤트 데이터 보호",
     "last-extracted-entry-original-end": "유닛 끝 미분류 영역 보호",
+    "original-stream-size-reference": (
+        "원본 스트림 크기 기준(공용 재배치·확장 미검증)"
+    ),
+}
+SOURCE_GROUP_LABELS = {
+    "story_dialogue": "본편 대사",
+    "pointerless_page": "무포인터 선택·대사",
+    "minigame": "미니게임",
+    "course_information": "코스 설명",
+    "machine_setting": "머신 설정",
+    "font_ui": "폰트 UI",
+    "character_name": "캐릭터 이름",
+}
+SOURCE_GROUP_ORDER = tuple(SOURCE_GROUP_LABELS)
+UI_JAPANESE_TEXT = {
+    "disc1/allbin/u40/font_rendered_ui/e047": (
+        "名前を\n入力してください。\n"
+        "名前をローマ字で\n入力してください。\n"
+        "出身を\n選択してください。"
+    ),
+    "disc1/allbin/u40/font_rendered_ui/e048": (
+        "このままでよろしいですか？"
+    ),
+    "disc1/allbin/u40/font_rendered_ui/e055": "名前\n　\n　\n出身",
+    "disc1/allbin/u40/font_rendered_ui/e056": (
+        "草レース\nテストサーキット\nラリー"
+    ),
 }
 UNIT_SHARED_POOL_RUNTIME_VALIDATION = {
     0: {
@@ -89,6 +136,43 @@ UNIT_SHARED_POOL_RUNTIME_VALIDATION = {
 
 class DialogueEditorError(ValueError):
     """Raised when an input document or requested layout is invalid."""
+
+
+@dataclass(frozen=True)
+class EditorLayoutProfile:
+    columns: int
+    rows: int
+    row_policy: str = "maximum"
+    label: str = "고정 셀"
+
+    def __post_init__(self) -> None:
+        if self.columns <= 0 or self.rows <= 0:
+            raise DialogueEditorError("layout columns/rows must be positive")
+        if self.row_policy not in {"maximum", "exact"}:
+            raise DialogueEditorError(
+                f"unsupported row policy: {self.row_policy}"
+            )
+
+    @property
+    def capacity(self) -> int:
+        return self.columns * self.rows
+
+
+@dataclass(frozen=True)
+class TranslationBinding:
+    source_path: Path
+    value_path: tuple[str | int, ...]
+    source_group: str
+    source_label: str
+
+
+@dataclass(frozen=True)
+class LiteralReplacementChange:
+    index: int
+    entry_id: str
+    occurrence_count: int
+    before: str
+    after: str
 
 
 @dataclass(frozen=True)
@@ -598,6 +682,211 @@ def _protected_entry(
     return protected
 
 
+def _load_json_object(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as error:
+        raise DialogueEditorError(f"{path}: {error}") from error
+    if not isinstance(value, dict):
+        raise DialogueEditorError(f"{path}: JSON root must be an object")
+    return value
+
+
+def _set_json_path_value(
+    document: dict[str, Any],
+    value_path: tuple[str | int, ...],
+    value: str,
+) -> None:
+    if not value_path:
+        raise DialogueEditorError("translation value path cannot be empty")
+    target: Any = document
+    for component in value_path[:-1]:
+        try:
+            target = target[component]
+        except (KeyError, IndexError, TypeError) as error:
+            raise DialogueEditorError(
+                f"invalid translation value path: {value_path!r}"
+            ) from error
+    try:
+        target[value_path[-1]] = value
+    except (KeyError, IndexError, TypeError) as error:
+        raise DialogueEditorError(
+            f"invalid translation value path: {value_path!r}"
+        ) from error
+
+
+def _default_control_markup(kind: str, raw: str) -> str:
+    if kind == "speaker_style":
+        return f"{{speaker_style:{int(raw, 16) & 0x0FFF:03X}}}"
+    if kind == "voice_transition":
+        return f"{{voice_transition:{raw}}}"
+    if kind in CONTROL_VISUAL_LABELS:
+        return "{" + kind + "}"
+    return f"{{control:{raw}}}"
+
+
+def _context_from_workset_entry(
+    entry: dict[str, Any],
+    *,
+    entry_id: str,
+) -> DialogueControlContext | None:
+    """Build a display/size context from an extracted font stream.
+
+    Older pointerless and special-screen worksets predate the explicit
+    ``markup``/``policy`` fields. Their raw token index, value, and kind are
+    still sufficient to reconstruct the immutable shell. A stream containing
+    an immutable control between two editable text segments is returned as
+    ``None`` here and is represented as separate workspace segment entries.
+    """
+    original = entry.get("original")
+    if not isinstance(original, dict):
+        return None
+    raw_tokens = original.get("tokens")
+    raw_controls = original.get("control_tokens")
+    if not isinstance(raw_tokens, list) or not isinstance(
+        raw_controls, list
+    ):
+        return None
+    try:
+        tokens = tuple(int(str(raw), 16) for raw in raw_tokens)
+    except ValueError as error:
+        raise DialogueEditorError(
+            f"{entry_id}: invalid raw token"
+        ) from error
+
+    controls: dict[int, ProtectedControlToken] = {}
+    for raw_control in raw_controls:
+        if not isinstance(raw_control, dict):
+            raise DialogueEditorError(
+                f"{entry_id}: control token must be an object"
+            )
+        token_index = raw_control.get("token_index")
+        raw = raw_control.get("raw")
+        kind = raw_control.get("kind")
+        if (
+            not isinstance(token_index, int)
+            or not 0 <= token_index < len(tokens)
+            or not isinstance(raw, str)
+            or not re.fullmatch(r"[0-9A-Fa-f]{4}", raw)
+            or not isinstance(kind, str)
+            or not kind
+        ):
+            raise DialogueEditorError(
+                f"{entry_id}: invalid control token metadata"
+            )
+        markup = raw_control.get("markup")
+        policy = raw_control.get("policy")
+        if not isinstance(markup, str) or not markup:
+            markup = _default_control_markup(kind, raw)
+        if not isinstance(policy, str) or not policy:
+            policy = (
+                "movable-layout-in-story-only"
+                if kind in MOVABLE_INTERNAL_CONTROL_KINDS
+                else "preserve"
+            )
+        if tokens[token_index] != int(raw, 16):
+            raise DialogueEditorError(
+                f"{entry_id}: control raw value differs at "
+                f"token {token_index}"
+            )
+        controls[token_index] = ProtectedControlToken(
+            token_index=token_index,
+            raw=raw.upper(),
+            kind=kind,
+            markup=markup,
+            policy=policy,
+        )
+
+    content_indices = [
+        index
+        for index in range(len(tokens))
+        if (controls[index].kind if index in controls else "glyph")
+        in CONTROL_CONTENT_KINDS
+    ]
+    if not content_indices:
+        return None
+    first_content = min(content_indices)
+    last_content = max(content_indices)
+    leading = tuple(
+        control
+        for index, control in sorted(controls.items())
+        if index < first_content
+    )
+    internal = tuple(
+        control
+        for index, control in sorted(controls.items())
+        if first_content <= index <= last_content
+    )
+    trailing = tuple(
+        control
+        for index, control in sorted(controls.items())
+        if index > last_content
+    )
+    if any(
+        control.kind not in MOVABLE_INTERNAL_CONTROL_KINDS
+        for control in internal
+    ):
+        return None
+    if any(index not in controls for index in range(first_content)):
+        return None
+    if any(
+        index not in controls
+        for index in range(last_content + 1, len(tokens))
+    ):
+        return None
+    return DialogueControlContext(
+        entry_id=entry_id,
+        original_stream_bytes=len(tokens) * 2,
+        leading=leading,
+        internal_movable=internal,
+        trailing=trailing,
+    )
+
+
+def _source_size_slot(
+    entry: dict[str, Any],
+    *,
+    entry_id: str,
+) -> SafeSlotRecord | None:
+    source = entry.get("source")
+    if not isinstance(source, dict):
+        return None
+    file_offset = source.get("file_offset")
+    unit_offset = source.get("unit_offset")
+    byte_size = source.get("byte_size")
+    unit_index = source.get("unit_index")
+    subsystem = source.get("subsystem", entry.get("classification", "font"))
+    if (
+        not isinstance(file_offset, str)
+        or not re.fullmatch(r"0x[0-9A-Fa-f]+", file_offset)
+        or not isinstance(unit_offset, str)
+        or not re.fullmatch(r"0x[0-9A-Fa-f]+", unit_offset)
+        or not isinstance(byte_size, int)
+        or byte_size <= 0
+        or byte_size % 2
+        or not isinstance(unit_index, int)
+    ):
+        return None
+    file_end = int(file_offset, 16) + byte_size
+    unit_end = int(unit_offset, 16) + byte_size
+    return SafeSlotRecord(
+        entry_id=entry_id,
+        unit_index=unit_index,
+        subsystem=str(subsystem),
+        file_offset=f"0x{int(file_offset, 16):06X}",
+        unit_offset=f"0x{int(unit_offset, 16):04X}",
+        safe_end_file_offset=f"0x{file_end:06X}",
+        safe_end_unit_offset=f"0x{unit_end:04X}",
+        original_stream_bytes=byte_size,
+        safe_slot_bytes=byte_size,
+        safe_slot_words=byte_size // 2,
+        additional_zero_gap_bytes=0,
+        boundary_kind="original-stream-size-reference",
+        next_physical_entry_id=None,
+        protected_target="original stream end",
+    )
+
+
 def load_control_contexts(
     path: Path,
     *,
@@ -989,6 +1278,311 @@ def _write_json_atomic(path: Path, value: dict[str, Any]) -> None:
         temporary.unlink(missing_ok=True)
 
 
+def _entries_by_id(
+    document: dict[str, Any],
+    *,
+    path: Path,
+    container: str,
+    id_field: str,
+) -> tuple[list[dict[str, Any]], dict[str, dict[str, Any]]]:
+    raw_entries = document.get(container)
+    if not isinstance(raw_entries, list) or not all(
+        isinstance(entry, dict) for entry in raw_entries
+    ):
+        raise DialogueEditorError(
+            f"{path}: {container} must be an object array"
+        )
+    result: dict[str, dict[str, Any]] = {}
+    for index, entry in enumerate(raw_entries):
+        entry_id = entry.get(id_field)
+        if not isinstance(entry_id, str) or not entry_id:
+            raise DialogueEditorError(
+                f"{path}: {container}[{index}].{id_field} is invalid"
+            )
+        if entry_id in result:
+            raise DialogueEditorError(
+                f"{path}: duplicate stable ID {entry_id}"
+            )
+        result[entry_id] = entry
+    return list(raw_entries), result
+
+
+def _source_japanese(entry: dict[str, Any]) -> str:
+    original = entry.get("original")
+    if not isinstance(original, dict):
+        return ""
+    display = original.get("display_text")
+    if isinstance(display, str):
+        return display
+    japanese = original.get("japanese")
+    if isinstance(japanese, dict):
+        display = japanese.get("display_text", japanese.get("text"))
+        if isinstance(display, str):
+            return display
+    return ""
+
+
+def _source_unit(entry: dict[str, Any]) -> int | None:
+    source = entry.get("source")
+    if not isinstance(source, dict):
+        return None
+    value = source.get("unit_index")
+    return value if isinstance(value, int) else None
+
+
+def _normalized_workspace_entry(
+    *,
+    entry_id: str,
+    jp: str,
+    ko: str,
+    source_group: str,
+    source_file: Path,
+    classification: str,
+    status: str,
+    layout: EditorLayoutProfile,
+    unit_index: int | None = None,
+    source_id: str | None = None,
+    renderer: str | None = None,
+    notes: str | None = None,
+) -> dict[str, Any]:
+    entry: dict[str, Any] = {
+        "id": entry_id,
+        "jp": jp,
+        "ko": ko,
+        "source_group": source_group,
+        "source_file": str(source_file),
+        "classification": classification,
+        "status": status,
+        "max_glyphs": layout.capacity,
+        "editor_layout": {
+            "columns": layout.columns,
+            "rows": layout.rows,
+            "row_policy": layout.row_policy,
+            "label": layout.label,
+        },
+    }
+    if unit_index is not None:
+        entry["unit_index"] = unit_index
+    if source_id is not None:
+        entry["source_id"] = source_id
+    if renderer is not None:
+        entry["renderer"] = renderer
+    if notes is not None:
+        entry["notes"] = notes
+    return entry
+
+
+def _pointerless_mutable_parts(
+    entry: dict[str, Any],
+) -> list[list[tuple[int, str | None]]]:
+    original = entry.get("original")
+    if not isinstance(original, dict):
+        return []
+    raw_tokens = original.get("tokens")
+    raw_controls = original.get("control_tokens")
+    if not isinstance(raw_tokens, list) or not isinstance(
+        raw_controls, list
+    ):
+        return []
+    controls = {
+        int(control["token_index"]): str(control["kind"])
+        for control in raw_controls
+        if isinstance(control, dict)
+        and isinstance(control.get("token_index"), int)
+        and isinstance(control.get("kind"), str)
+    }
+    parts: list[list[tuple[int, str | None]]] = []
+    current: list[tuple[int, str | None]] = []
+    current_mutable: bool | None = None
+    for index, raw in enumerate(raw_tokens):
+        try:
+            token = int(str(raw), 16)
+        except ValueError as error:
+            raise DialogueEditorError(
+                f"{entry.get('entry_id')}: invalid pointerless token"
+            ) from error
+        kind = controls.get(index)
+        mutable = kind is None or kind in MOVABLE_INTERNAL_CONTROL_KINDS
+        if current_mutable is not None and mutable != current_mutable:
+            if current_mutable:
+                parts.append(current)
+            current = []
+        current_mutable = mutable
+        current.append((token, kind))
+    if current and current_mutable:
+        parts.append(current)
+    return parts
+
+
+def _split_pointerless_japanese(
+    entry: dict[str, Any],
+    mutable_parts: list[list[tuple[int, str | None]]],
+) -> list[str]:
+    display = _source_japanese(entry)
+    cursor = 0
+    segments: list[str] = []
+    for part in mutable_parts:
+        output: list[str] = []
+        for _token, kind in part:
+            if kind == "align":
+                while cursor < len(display) and display[cursor] != "\n":
+                    cursor += 1
+                if cursor < len(display):
+                    cursor += 1
+                output.append("\n")
+            elif kind in {"name_surname", "name_given"}:
+                output.append(
+                    "{name:surname}"
+                    if kind == "name_surname"
+                    else "{name:given}"
+                )
+            elif kind is None:
+                while cursor < len(display) and display[cursor] == "\n":
+                    cursor += 1
+                if cursor < len(display):
+                    output.append(display[cursor])
+                    cursor += 1
+        segments.append("".join(output))
+    if segments and not any(segments):
+        return [display for _part in mutable_parts]
+    return segments
+
+
+def _pointerless_segment_contexts(
+    entry: dict[str, Any],
+    *,
+    entry_ids: list[str],
+) -> list[DialogueControlContext | None]:
+    """Expose each editable segment's surrounding immutable controls."""
+    original = entry.get("original")
+    if not isinstance(original, dict):
+        return [None] * len(entry_ids)
+    raw_tokens = original.get("tokens")
+    raw_controls = original.get("control_tokens")
+    if not isinstance(raw_tokens, list) or not isinstance(
+        raw_controls, list
+    ):
+        return [None] * len(entry_ids)
+    controls_by_index: dict[int, ProtectedControlToken] = {}
+    kinds: dict[int, str] = {}
+    for control in raw_controls:
+        if not isinstance(control, dict):
+            continue
+        index = control.get("token_index")
+        raw = control.get("raw")
+        kind = control.get("kind")
+        if (
+            not isinstance(index, int)
+            or not isinstance(raw, str)
+            or not isinstance(kind, str)
+        ):
+            continue
+        kinds[index] = kind
+        controls_by_index[index] = ProtectedControlToken(
+            token_index=index,
+            raw=raw.upper(),
+            kind=kind,
+            markup=(
+                str(control["markup"])
+                if isinstance(control.get("markup"), str)
+                else _default_control_markup(kind, raw)
+            ),
+            policy=(
+                str(control["policy"])
+                if isinstance(control.get("policy"), str)
+                else (
+                    "movable-layout-in-story-only"
+                    if kind in MOVABLE_INTERNAL_CONTROL_KINDS
+                    else "preserve"
+                )
+            ),
+        )
+
+    mutable_ranges: list[tuple[int, int]] = []
+    range_start: int | None = None
+    for index in range(len(raw_tokens)):
+        kind = kinds.get(index)
+        mutable = kind is None or kind in MOVABLE_INTERNAL_CONTROL_KINDS
+        if mutable and range_start is None:
+            range_start = index
+        if not mutable and range_start is not None:
+            mutable_ranges.append((range_start, index))
+            range_start = None
+    if range_start is not None:
+        mutable_ranges.append((range_start, len(raw_tokens)))
+    if len(mutable_ranges) != len(entry_ids):
+        return [None] * len(entry_ids)
+
+    leading: list[list[ProtectedControlToken]] = [
+        [] for _entry_id in entry_ids
+    ]
+    trailing: list[list[ProtectedControlToken]] = [
+        [] for _entry_id in entry_ids
+    ]
+    internal: list[list[ProtectedControlToken]] = [
+        [] for _entry_id in entry_ids
+    ]
+    trailing_kinds = {
+        "voice_transition",
+        "page_end",
+        "stream_end",
+        "style_off",
+    }
+    for segment_index, (start, end) in enumerate(mutable_ranges):
+        internal[segment_index].extend(
+            controls_by_index[index]
+            for index in range(start, end)
+            if index in controls_by_index
+        )
+        previous_end = (
+            mutable_ranges[segment_index - 1][1]
+            if segment_index
+            else 0
+        )
+        for index in range(previous_end, start):
+            control = controls_by_index.get(index)
+            if control is None:
+                continue
+            if segment_index and control.kind in trailing_kinds:
+                trailing[segment_index - 1].append(control)
+            else:
+                leading[segment_index].append(control)
+    last_end = mutable_ranges[-1][1]
+    trailing[-1].extend(
+        controls_by_index[index]
+        for index in range(last_end, len(raw_tokens))
+        if index in controls_by_index
+    )
+
+    result: list[DialogueControlContext | None] = []
+    for segment_index, entry_id in enumerate(entry_ids):
+        start, end = mutable_ranges[segment_index]
+        original_words = (
+            end
+            - start
+            + len(leading[segment_index])
+            + len(trailing[segment_index])
+        )
+        result.append(
+            DialogueControlContext(
+                entry_id=entry_id,
+                original_stream_bytes=original_words * 2,
+                leading=tuple(leading[segment_index]),
+                internal_movable=tuple(internal[segment_index]),
+                trailing=tuple(trailing[segment_index]),
+            )
+        )
+    return result
+
+
+def _special_source_group(classification: str) -> str:
+    if classification == "course_information_dialogue":
+        return "course_information"
+    if classification == "machine_setting_dialogue":
+        return "machine_setting"
+    return "minigame"
+
+
 class DialogueDocument:
     """Protected in-memory view of one supported dialogue JSON document."""
 
@@ -1184,6 +1778,97 @@ class DialogueDocument:
             raise DialogueEditorError("edited dialogue must be a string")
         self._values[index] = value.replace("\r\n", "\n").replace("\r", "\n")
 
+    @property
+    def workspace_mode(self) -> bool:
+        return False
+
+    @property
+    def supports_save_as(self) -> bool:
+        return True
+
+    @property
+    def display_path(self) -> Path:
+        return self.path
+
+    def source_group(self, index: int) -> str:
+        value = self.entries[index].get("source_group")
+        return value if isinstance(value, str) else "story_dialogue"
+
+    def source_group_label(self, index: int) -> str:
+        group = self.source_group(index)
+        return SOURCE_GROUP_LABELS.get(group, group)
+
+    def source_groups(self) -> tuple[tuple[str, str], ...]:
+        present = {self.source_group(index) for index in range(len(self))}
+        ordered = [
+            group for group in SOURCE_GROUP_ORDER if group in present
+        ]
+        ordered.extend(sorted(present - set(ordered)))
+        return tuple(
+            (group, SOURCE_GROUP_LABELS.get(group, group))
+            for group in ordered
+        )
+
+    def layout_profile(self, index: int) -> EditorLayoutProfile:
+        raw = self.entries[index].get("editor_layout")
+        if not isinstance(raw, dict):
+            return EditorLayoutProfile(COLUMNS, ROWS, label="대사창")
+        columns = raw.get("columns", COLUMNS)
+        rows = raw.get("rows", ROWS)
+        row_policy = raw.get("row_policy", "maximum")
+        label = raw.get("label", "고정 셀")
+        if (
+            not isinstance(columns, int)
+            or not isinstance(rows, int)
+            or not isinstance(row_policy, str)
+            or not isinstance(label, str)
+        ):
+            raise DialogueEditorError(
+                f"{self.ids[index]}: invalid editor layout profile"
+            )
+        return EditorLayoutProfile(
+            columns=columns,
+            rows=rows,
+            row_policy=row_policy,
+            label=label,
+        )
+
+    def layout_measurement(
+        self,
+        index: int,
+        text: str | None = None,
+    ) -> LayoutMeasurement:
+        profile = self.layout_profile(index)
+        return measure_layout(
+            self.value(index) if text is None else text,
+            columns=profile.columns,
+            rows=profile.rows,
+        )
+
+    def layout_policy_violated(self, index: int) -> bool:
+        profile = self.layout_profile(index)
+        measurement = self.layout_measurement(index)
+        return measurement.exceeds_limits or (
+            profile.row_policy == "exact"
+            and len(measurement.lines) != profile.rows
+        )
+
+    def _validate_dirty_row_policies(self) -> None:
+        for index in self.dirty_indices:
+            profile = self.layout_profile(index)
+            measurement = self.layout_measurement(index)
+            line_count = len(measurement.lines)
+            if profile.row_policy == "exact" and line_count != profile.rows:
+                raise DialogueEditorError(
+                    f"{self.ids[index]}: 행 수를 {profile.rows}행으로 "
+                    f"보존해야 합니다(현재 {line_count}행)."
+                )
+            if profile.row_policy == "maximum" and measurement.row_overflow:
+                raise DialogueEditorError(
+                    f"{profile.rows}줄을 넘는 수정 대사는 저장할 수 "
+                    f"없습니다: {self.ids[index]} ({line_count}줄)"
+                )
+
     def control_context(
         self,
         index: int,
@@ -1284,7 +1969,9 @@ class DialogueDocument:
 
     def maximum_glyphs(self, index: int) -> int | None:
         value = self.entries[index].get("max_glyphs")
-        return value if isinstance(value, int) and value > 0 else None
+        if isinstance(value, int) and value > 0:
+            return value
+        return self.layout_profile(index).capacity
 
     def metadata(self, index: int) -> dict[str, str]:
         entry = self.entries[index]
@@ -1300,6 +1987,8 @@ class DialogueDocument:
             "classification": (
                 "" if classification is None else str(classification)
             ),
+            "source_group": self.source_group_label(index),
+            "source_file": str(entry.get("source_file", "")),
         }
 
     def searchable_text(self, index: int) -> str:
@@ -1312,6 +2001,7 @@ class DialogueDocument:
         return "\n".join(
             (
                 self.ids[index],
+                self.source_group_label(index),
                 self.japanese(index),
                 self.value(index),
                 control_text,
@@ -1320,16 +2010,14 @@ class DialogueDocument:
 
     def layout_overflow_indices(self) -> tuple[int, ...]:
         return tuple(
-            index
-            for index, value in enumerate(self._values)
-            if measure_layout(value).exceeds_limits
+            index for index in range(len(self))
+            if self.layout_policy_violated(index)
         )
 
     def short_line_candidate_indices(self) -> tuple[int, ...]:
         return tuple(
-            index
-            for index, value in enumerate(self._values)
-            if measure_layout(value).short_line_rows
+            index for index in range(len(self))
+            if self.layout_measurement(index).short_line_rows
         )
 
     def storage_slot_overflow_indices(self) -> tuple[int, ...]:
@@ -1379,18 +2067,7 @@ class DialogueDocument:
 
     def save(self, path: Path | None = None) -> Path | None:
         target = self.path if path is None else path
-        dirty_row_overflows = [
-            index
-            for index in self.dirty_indices
-            if measure_layout(self._values[index]).row_overflow
-        ]
-        if dirty_row_overflows:
-            first = dirty_row_overflows[0]
-            raise DialogueEditorError(
-                "3줄을 넘는 수정 대사는 저장할 수 없습니다: "
-                f"{self.ids[first]} "
-                f"({len(measure_layout(self._values[first]).lines)}줄)"
-            )
+        self._validate_dirty_row_policies()
         output = self.output_document()
         backup: Path | None = None
         if target.exists():
@@ -1415,6 +2092,7 @@ class DialogueDocument:
         glyph_capacity_overflow = 0
         line_width_overflow = 0
         row_count_overflow = 0
+        exact_row_mismatch = 0
         storage_slot_measurable = 0
         storage_slot_exact = 0
         storage_slot_under_capacity = 0
@@ -1422,7 +2100,12 @@ class DialogueDocument:
         maximum_storage_overflow_bytes = 0
         empty = 0
         for index, value in enumerate(self._values):
-            measurement = measure_layout(value)
+            measurement = self.layout_measurement(index, value)
+            profile = self.layout_profile(index)
+            exact_mismatch = (
+                profile.row_policy == "exact"
+                and len(measurement.lines) != profile.rows
+            )
             storage = self.storage_slot_measurement(index)
             if not value.strip():
                 empty += 1
@@ -1432,9 +2115,11 @@ class DialogueDocument:
                 line_width_overflow += 1
             if measurement.row_overflow:
                 row_count_overflow += 1
+            if exact_mismatch:
+                exact_row_mismatch += 1
             if measurement.short_line_rows:
                 short_line_candidates += 1
-            if measurement.fits:
+            if measurement.fits and not exact_mismatch:
                 fits += 1
             else:
                 overflow += 1
@@ -1460,13 +2145,38 @@ class DialogueDocument:
         ]
         return {
             "path": str(self.path),
+            "workspace_mode": self.workspace_mode,
             "editable_field": self.editable_field,
             "entries": len(self),
+            "source_group_counts": dict(
+                sorted(
+                    Counter(
+                        self.source_group(index)
+                        for index in range(len(self))
+                    ).items()
+                )
+            ),
+            "layout_profile_counts": dict(
+                sorted(
+                    Counter(
+                        (
+                            f"{profile.columns}x{profile.rows}:"
+                            f"{profile.row_policy}"
+                        )
+                        for profile in (
+                            self.layout_profile(index)
+                            for index in range(len(self))
+                        )
+                    ).items()
+                )
+            ),
             "fits_17x3": fits,
+            "layout_fits": fits,
             "layout_overflow": overflow,
             "glyph_capacity_overflow": glyph_capacity_overflow,
             "line_width_overflow": line_width_overflow,
             "row_count_overflow": row_count_overflow,
+            "exact_row_mismatch": exact_row_mismatch,
             "short_line_candidates": short_line_candidates,
             "control_context_entries": len(self._control_contexts),
             "safe_slot_entries": len(self._safe_slots),
@@ -1511,10 +2221,764 @@ class DialogueDocument:
         }
 
 
+class FontTranslationWorkspaceDocument(DialogueDocument):
+    """One protected editor view backed by several canonical JSON files."""
+
+    def __init__(
+        self,
+        path: Path,
+        document: dict[str, Any],
+        *,
+        bindings: list[TranslationBinding],
+        source_documents: dict[Path, dict[str, Any]],
+        control_contexts: dict[str, DialogueControlContext],
+        safe_slots: dict[str, SafeSlotRecord],
+        unit_storage_profiles: dict[int, UnitStorageProfile],
+    ) -> None:
+        if len(bindings) != len(document.get("entries", [])):
+            raise DialogueEditorError(
+                "workspace binding count differs from entry count"
+            )
+        self._bindings = tuple(bindings)
+        self._source_documents = {
+            source_path: copy.deepcopy(source)
+            for source_path, source in source_documents.items()
+        }
+        super().__init__(
+            path,
+            document,
+            editable_field="ko",
+            control_contexts=control_contexts,
+            safe_slots=safe_slots,
+            unit_storage_profiles=unit_storage_profiles,
+        )
+
+    @property
+    def workspace_mode(self) -> bool:
+        return True
+
+    @property
+    def supports_save_as(self) -> bool:
+        return False
+
+    @property
+    def display_path(self) -> Path:
+        return WORKSPACE_DISPLAY_PATH
+
+    @property
+    def source_paths(self) -> tuple[Path, ...]:
+        return tuple(self._source_documents)
+
+    @classmethod
+    def load(
+        cls,
+        *,
+        dialogue_translation_path: Path = DEFAULT_INPUT,
+        dialogue_workset_path: Path = DEFAULT_WORKSET,
+        safe_slots_path: Path = DEFAULT_SAFE_SLOTS,
+        pointerless_translation_path: Path = (
+            DEFAULT_POINTERLESS_TRANSLATION
+        ),
+        pointerless_workset_path: Path = DEFAULT_POINTERLESS_WORKSET,
+        special_translation_path: Path = DEFAULT_SPECIAL_TRANSLATION,
+        special_workset_path: Path = DEFAULT_SPECIAL_WORKSET,
+        ui_translation_path: Path = DEFAULT_UI_TRANSLATION,
+        ui_workset_path: Path = DEFAULT_UI_WORKSET,
+        character_names_path: Path = DEFAULT_CHARACTER_NAMES,
+    ) -> "FontTranslationWorkspaceDocument":
+        translation_paths = (
+            dialogue_translation_path,
+            pointerless_translation_path,
+            special_translation_path,
+            ui_translation_path,
+            character_names_path,
+        )
+        source_documents = {
+            path: _load_json_object(path) for path in translation_paths
+        }
+        dialogue_translation = source_documents[dialogue_translation_path]
+        pointerless_translation = source_documents[
+            pointerless_translation_path
+        ]
+        special_translation = source_documents[special_translation_path]
+        ui_translation = source_documents[ui_translation_path]
+        character_names = source_documents[character_names_path]
+
+        dialogue_workset = _load_json_object(dialogue_workset_path)
+        pointerless_workset = _load_json_object(pointerless_workset_path)
+        special_workset = _load_json_object(special_workset_path)
+        ui_workset = _load_json_object(ui_workset_path)
+
+        entries: list[dict[str, Any]] = []
+        bindings: list[TranslationBinding] = []
+        contexts: dict[str, DialogueControlContext] = {}
+        safe_slots: dict[str, SafeSlotRecord] = {}
+        entry_ids_seen: set[str] = set()
+
+        def add_entry(
+            entry: dict[str, Any],
+            binding: TranslationBinding,
+            *,
+            context: DialogueControlContext | None = None,
+            safe_slot: SafeSlotRecord | None = None,
+        ) -> None:
+            entry_id = str(entry["id"])
+            if entry_id in entry_ids_seen:
+                raise DialogueEditorError(
+                    f"workspace duplicate stable ID {entry_id}"
+                )
+            entry_ids_seen.add(entry_id)
+            entries.append(entry)
+            bindings.append(binding)
+            if context is not None:
+                contexts[entry_id] = context
+            if safe_slot is not None:
+                safe_slots[entry_id] = safe_slot
+
+        dialogue_items, _dialogue_by_id = _entries_by_id(
+            dialogue_translation,
+            path=dialogue_translation_path,
+            container="entries",
+            id_field="id",
+        )
+        work_items, work_by_id = _entries_by_id(
+            dialogue_workset,
+            path=dialogue_workset_path,
+            container="entries",
+            id_field="entry_id",
+        )
+        dialogue_ids = [str(entry["id"]) for entry in dialogue_items]
+        work_ids = [str(entry["entry_id"]) for entry in work_items]
+        if dialogue_ids != work_ids:
+            raise DialogueEditorError(
+                "main dialogue translation/workset stable ID order differs"
+            )
+        main_contexts = load_control_contexts(
+            dialogue_workset_path,
+            required_ids=dialogue_ids,
+        )
+        main_slots = load_safe_slot_records(
+            safe_slots_path,
+            required_ids=dialogue_ids,
+            workset_path=dialogue_workset_path,
+        )
+        for index, translation in enumerate(dialogue_items):
+            entry_id = str(translation["id"])
+            ko = translation.get("ko")
+            if not isinstance(ko, str):
+                raise DialogueEditorError(
+                    f"{entry_id}: main dialogue ko must be a string"
+                )
+            source = work_by_id[entry_id]
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=_source_japanese(source),
+                    ko=ko,
+                    source_group="story_dialogue",
+                    source_file=dialogue_translation_path,
+                    classification=str(
+                        source.get("classification", "story")
+                    ),
+                    status=str(
+                        dialogue_translation.get("status", "")
+                    ),
+                    layout=EditorLayoutProfile(
+                        COLUMNS,
+                        ROWS,
+                        label="본편 대사창",
+                    ),
+                    unit_index=_source_unit(source),
+                ),
+                TranslationBinding(
+                    dialogue_translation_path,
+                    ("entries", index, "ko"),
+                    "story_dialogue",
+                    "본편 대사",
+                ),
+                context=main_contexts[entry_id],
+                safe_slot=main_slots[entry_id],
+            )
+
+        pointerless_items, _pointerless_translation_by_id = _entries_by_id(
+            pointerless_translation,
+            path=pointerless_translation_path,
+            container="entries",
+            id_field="id",
+        )
+        _pointerless_sources, pointerless_by_id = _entries_by_id(
+            pointerless_workset,
+            path=pointerless_workset_path,
+            container="entries",
+            id_field="entry_id",
+        )
+        pointerless_ids = {str(entry["id"]) for entry in pointerless_items}
+        if pointerless_ids != set(pointerless_by_id):
+            raise DialogueEditorError(
+                "pointerless translation/workset stable ID set differs"
+            )
+        for translation_index, translation in enumerate(pointerless_items):
+            source_id = str(translation["id"])
+            source = pointerless_by_id[source_id]
+            mutable_parts = _pointerless_mutable_parts(source)
+            japanese_segments = _split_pointerless_japanese(
+                source,
+                mutable_parts,
+            )
+            raw_segments = translation.get("ko_segments")
+            if (
+                not mutable_parts
+                and raw_segments is None
+                and translation.get("ko") == ""
+            ):
+                # A control-only sentinel is part of the pointerless build
+                # artifact but has no font-rendered translation field to edit.
+                continue
+            if raw_segments is None:
+                ko = translation.get("ko")
+                if not isinstance(ko, str):
+                    raise DialogueEditorError(
+                        f"{source_id}: pointerless ko is missing"
+                    )
+                translated_segments = [ko]
+                value_paths = [
+                    ("entries", translation_index, "ko")
+                ]
+            else:
+                if not isinstance(raw_segments, list) or not all(
+                    isinstance(value, str) for value in raw_segments
+                ):
+                    raise DialogueEditorError(
+                        f"{source_id}: ko_segments must be strings"
+                    )
+                translated_segments = list(raw_segments)
+                value_paths = [
+                    (
+                        "entries",
+                        translation_index,
+                        "ko_segments",
+                        segment_index,
+                    )
+                    for segment_index in range(len(translated_segments))
+                ]
+            if len(translated_segments) != len(mutable_parts):
+                raise DialogueEditorError(
+                    f"{source_id}: translated/source segment count differs"
+                )
+            classification = str(
+                source.get("classification", "pointerless_page")
+            )
+            editor_ids = [
+                (
+                    source_id
+                    if len(translated_segments) == 1
+                    else f"{source_id}#segment-{segment_index + 1:02d}"
+                )
+                for segment_index in range(len(translated_segments))
+            ]
+            if len(editor_ids) == 1:
+                segment_contexts = [
+                    _context_from_workset_entry(
+                        source,
+                        entry_id=source_id,
+                    )
+                ]
+            else:
+                segment_contexts = _pointerless_segment_contexts(
+                    source,
+                    entry_ids=editor_ids,
+                )
+            single_context = segment_contexts[0]
+            single_slot = (
+                _source_size_slot(source, entry_id=source_id)
+                if single_context is not None and len(editor_ids) == 1
+                else None
+            )
+            for segment_index, (
+                ko,
+                value_path,
+                mutable_part,
+                entry_id,
+                segment_context,
+            ) in enumerate(
+                zip(
+                    translated_segments,
+                    value_paths,
+                    mutable_parts,
+                    editor_ids,
+                    segment_contexts,
+                )
+            ):
+                source_rows = (
+                    sum(kind == "align" for _token, kind in mutable_part) + 1
+                )
+                is_choice = classification == "pointerless_choice"
+                layout = EditorLayoutProfile(
+                    COLUMNS,
+                    source_rows if is_choice else ROWS,
+                    row_policy="exact" if is_choice else "maximum",
+                    label=(
+                        "무포인터 선택지"
+                        if is_choice
+                        else "무포인터 대사창"
+                    ),
+                )
+                add_entry(
+                    _normalized_workspace_entry(
+                        entry_id=entry_id,
+                        jp=(
+                            japanese_segments[segment_index]
+                            if segment_index < len(japanese_segments)
+                            else _source_japanese(source)
+                        ),
+                        ko=ko,
+                        source_group="pointerless_page",
+                        source_file=pointerless_translation_path,
+                        classification=classification,
+                        status=str(
+                            pointerless_translation.get("status", "")
+                        ),
+                        layout=layout,
+                        unit_index=_source_unit(source),
+                        source_id=source_id,
+                        notes=(
+                            f"원본 스트림의 편집 구간 "
+                            f"{segment_index + 1}/{len(translated_segments)}"
+                            if len(translated_segments) > 1
+                            else None
+                        ),
+                    ),
+                    TranslationBinding(
+                        pointerless_translation_path,
+                        value_path,
+                        "pointerless_page",
+                        "무포인터 선택·대사",
+                    ),
+                    context=segment_context,
+                    safe_slot=single_slot,
+                )
+
+        special_items, _special_translation_by_id = _entries_by_id(
+            special_translation,
+            path=special_translation_path,
+            container="translations",
+            id_field="id",
+        )
+        _special_sources, special_by_id = _entries_by_id(
+            special_workset,
+            path=special_workset_path,
+            container="entries",
+            id_field="entry_id",
+        )
+        special_ids = {str(entry["id"]) for entry in special_items}
+        if special_ids != set(special_by_id):
+            raise DialogueEditorError(
+                "special-screen translation/workset stable ID set differs"
+            )
+        for index, translation in enumerate(special_items):
+            entry_id = str(translation["id"])
+            ko = translation.get("ko")
+            if not isinstance(ko, str):
+                raise DialogueEditorError(
+                    f"{entry_id}: special-screen ko must be a string"
+                )
+            source = special_by_id[entry_id]
+            classification = str(source.get("classification", "special"))
+            raw_layout = source.get("layout")
+            columns = (
+                raw_layout.get("columns", COLUMNS)
+                if isinstance(raw_layout, dict)
+                else COLUMNS
+            )
+            rows = (
+                raw_layout.get("rows", ROWS)
+                if isinstance(raw_layout, dict)
+                else ROWS
+            )
+            if not isinstance(columns, int) or not isinstance(rows, int):
+                raise DialogueEditorError(
+                    f"{entry_id}: invalid special-screen layout"
+                )
+            group = _special_source_group(classification)
+            context = _context_from_workset_entry(
+                source,
+                entry_id=entry_id,
+            )
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=_source_japanese(source),
+                    ko=ko,
+                    source_group=group,
+                    source_file=special_translation_path,
+                    classification=classification,
+                    status=str(special_translation.get("status", "")),
+                    layout=EditorLayoutProfile(
+                        columns,
+                        rows,
+                        label=SOURCE_GROUP_LABELS[group],
+                    ),
+                    unit_index=_source_unit(source),
+                ),
+                TranslationBinding(
+                    special_translation_path,
+                    ("translations", index, "ko"),
+                    group,
+                    SOURCE_GROUP_LABELS[group],
+                ),
+                context=context,
+                safe_slot=(
+                    _source_size_slot(source, entry_id=entry_id)
+                    if context is not None
+                    else None
+                ),
+            )
+
+        ui_items, _ui_translation_by_id = _entries_by_id(
+            ui_translation,
+            path=ui_translation_path,
+            container="translations",
+            id_field="id",
+        )
+        _ui_sources, ui_by_id = _entries_by_id(
+            ui_workset,
+            path=ui_workset_path,
+            container="entries",
+            id_field="entry_id",
+        )
+        missing_ui = [
+            str(entry["id"])
+            for entry in ui_items
+            if str(entry["id"]) not in ui_by_id
+        ]
+        if missing_ui:
+            raise DialogueEditorError(
+                f"UI workset is missing {missing_ui[0]}"
+            )
+        for index, translation in enumerate(ui_items):
+            entry_id = str(translation["id"])
+            ko = translation.get("ko")
+            if not isinstance(ko, str):
+                raise DialogueEditorError(
+                    f"{entry_id}: UI ko must be a string"
+                )
+            source = ui_by_id[entry_id]
+            original = source.get("original")
+            controls = (
+                original.get("control_tokens", [])
+                if isinstance(original, dict)
+                else []
+            )
+            rows = (
+                sum(
+                    isinstance(control, dict)
+                    and control.get("kind") == "align"
+                    for control in controls
+                )
+                + 1
+            )
+            context = _context_from_workset_entry(
+                source,
+                entry_id=entry_id,
+            )
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=UI_JAPANESE_TEXT.get(
+                        entry_id,
+                        _source_japanese(source),
+                    ),
+                    ko=ko,
+                    source_group="font_ui",
+                    source_file=ui_translation_path,
+                    classification="font_rendered_ui",
+                    status=str(translation.get("review_status", "")),
+                    layout=EditorLayoutProfile(
+                        COLUMNS,
+                        rows,
+                        row_policy="exact",
+                        label="폰트 UI 고정 행",
+                    ),
+                    unit_index=_source_unit(source),
+                    renderer=(
+                        str(translation["renderer"])
+                        if "renderer" in translation
+                        else None
+                    ),
+                    notes=(
+                        str(translation["notes"])
+                        if "notes" in translation
+                        else None
+                    ),
+                ),
+                TranslationBinding(
+                    ui_translation_path,
+                    ("translations", index, "ko"),
+                    "font_ui",
+                    "폰트 UI",
+                ),
+                context=context,
+                safe_slot=(
+                    _source_size_slot(source, entry_id=entry_id)
+                    if context is not None
+                    else None
+                ),
+            )
+
+        fixed = character_names.get("fixed_player_name")
+        speaker_table = character_names.get("speaker_name_table")
+        if (
+            not isinstance(fixed, dict)
+            or not isinstance(speaker_table, dict)
+            or not isinstance(speaker_table.get("records"), list)
+        ):
+            raise DialogueEditorError(
+                f"{character_names_path}: incomplete character-name artifact"
+            )
+        source_field_words = fixed.get("source_field_words")
+        if not isinstance(source_field_words, dict):
+            raise DialogueEditorError(
+                f"{character_names_path}: fixed name field sizes are missing"
+            )
+        for field, jp, label in (
+            ("surname", "司馬", "고정 주인공 성"),
+            ("given_name", "誠一郎", "고정 주인공 이름"),
+        ):
+            ko = fixed.get(field)
+            columns = source_field_words.get(field)
+            if not isinstance(ko, str) or not isinstance(columns, int):
+                raise DialogueEditorError(
+                    f"{character_names_path}: invalid fixed {field}"
+                )
+            entry_id = f"disc1/character_name/fixed_player/{field}"
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=jp,
+                    ko=ko,
+                    source_group="character_name",
+                    source_file=character_names_path,
+                    classification="fixed_player_name",
+                    status=str(fixed.get("policy", "")),
+                    layout=EditorLayoutProfile(
+                        columns,
+                        1,
+                        label=label,
+                    ),
+                ),
+                TranslationBinding(
+                    character_names_path,
+                    ("fixed_player_name", field),
+                    "character_name",
+                    label,
+                ),
+            )
+        records = speaker_table["records"]
+        safe_limit = speaker_table.get("safe_glyph_limit")
+        if not isinstance(safe_limit, int) or not all(
+            isinstance(record, dict) for record in records
+        ):
+            raise DialogueEditorError(
+                f"{character_names_path}: invalid speaker-name table"
+            )
+        for record_index, record in enumerate(records):
+            jp = record.get("jp")
+            ko = record.get("ko")
+            table_index = record.get("index")
+            if (
+                not isinstance(jp, str)
+                or not isinstance(ko, str)
+                or not isinstance(table_index, int)
+            ):
+                raise DialogueEditorError(
+                    f"{character_names_path}: invalid speaker record "
+                    f"{record_index}"
+                )
+            entry_id = (
+                f"disc1/character_name/speaker/{table_index:02d}"
+            )
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=jp,
+                    ko=ko,
+                    source_group="character_name",
+                    source_file=character_names_path,
+                    classification="speaker_name",
+                    status=str(character_names.get("status", "")),
+                    layout=EditorLayoutProfile(
+                        safe_limit,
+                        1,
+                        label="화자명 테이블",
+                    ),
+                    notes=(
+                        str(record["glossary_term_id"])
+                        if record.get("glossary_term_id") is not None
+                        else None
+                    ),
+                ),
+                TranslationBinding(
+                    character_names_path,
+                    (
+                        "speaker_name_table",
+                        "records",
+                        record_index,
+                        "ko",
+                    ),
+                    "character_name",
+                    "캐릭터 화자명",
+                ),
+            )
+
+        workspace = {
+            "schema_version": 1,
+            "workspace_kind": "disc1-font-rendered-translation-editor",
+            "status": "editor-view-not-a-build-artifact",
+            "entry_count": len(entries),
+            "rules": {"editable_field": "entries[].ko"},
+            "scope": {
+                "included": [
+                    SOURCE_GROUP_LABELS[group]
+                    for group in SOURCE_GROUP_ORDER
+                ],
+                "excluded": [
+                    "그래픽에 직접 새겨진 버튼·라벨·타이틀 문자",
+                    "이름 입력용 원문 문자 팔레트와 런타임 버퍼",
+                    "표시 글리프가 없는 제어 전용 센티널",
+                ],
+            },
+            "entries": entries,
+        }
+        return cls(
+            WORKSPACE_DISPLAY_PATH,
+            workspace,
+            bindings=bindings,
+            source_documents=source_documents,
+            control_contexts=contexts,
+            safe_slots=safe_slots,
+            unit_storage_profiles=build_unit_storage_profiles(main_slots),
+        )
+
+    def _validate_workspace_constraints(self) -> None:
+        self._validate_dirty_row_policies()
+        for index in self.dirty_indices:
+            if self.source_group(index) != "character_name":
+                continue
+            measurement = self.layout_measurement(index)
+            if measurement.exceeds_limits:
+                profile = self.layout_profile(index)
+                raise DialogueEditorError(
+                    f"{self.ids[index]}: 이름은 {profile.columns}글리프 "
+                    "안에 들어가야 합니다."
+                )
+        names_path = next(
+            (
+                path
+                for path in self._source_documents
+                if path.name == DEFAULT_CHARACTER_NAMES.name
+            ),
+            None,
+        )
+        if names_path is not None:
+            name_output = copy.deepcopy(self._source_documents[names_path])
+            for index, binding in enumerate(self._bindings):
+                if binding.source_path == names_path:
+                    _set_json_path_value(
+                        name_output,
+                        binding.value_path,
+                        self.value(index),
+                    )
+            fixed = name_output["fixed_player_name"]
+            combined = len(str(fixed["surname"])) + len(
+                str(fixed["given_name"])
+            )
+            shared = int(fixed["runtime_shared_glyph_slots"])
+            if combined > shared:
+                raise DialogueEditorError(
+                    f"고정 주인공명은 공유 {shared}글리프를 초과할 수 "
+                    f"없습니다(현재 {combined})."
+                )
+
+    def save(
+        self,
+        path: Path | None = None,
+    ) -> tuple[Path, ...]:
+        if path is not None and path != self.path:
+            raise DialogueEditorError(
+                "통합 작업공간은 다른 이름으로 저장할 수 없습니다. "
+                "각 수정은 원본 번역 JSON으로 되돌아갑니다."
+            )
+        self._validate_workspace_constraints()
+        dirty = self.dirty_indices
+        if not dirty:
+            return ()
+
+        changed_paths = tuple(
+            dict.fromkeys(self._bindings[index].source_path for index in dirty)
+        )
+        outputs = {
+            source_path: copy.deepcopy(self._source_documents[source_path])
+            for source_path in changed_paths
+        }
+        for index in dirty:
+            binding = self._bindings[index]
+            _set_json_path_value(
+                outputs[binding.source_path],
+                binding.value_path,
+                self.value(index),
+            )
+
+        for source_path in changed_paths:
+            current = _load_json_object(source_path)
+            if current != self._source_documents[source_path]:
+                raise DialogueEditorError(
+                    f"{source_path}: 편집기를 연 뒤 파일이 외부에서 "
+                    "변경되었습니다. 덮어쓰지 않았습니다."
+                )
+
+        backups: list[Path] = []
+        for source_path in changed_paths:
+            backup = source_path.with_name(f"{source_path.name}.bak")
+            shutil.copy2(source_path, backup)
+            backups.append(backup)
+
+        written: list[Path] = []
+        try:
+            for source_path in changed_paths:
+                _write_json_atomic(source_path, outputs[source_path])
+                written.append(source_path)
+            for source_path in changed_paths:
+                if _load_json_object(source_path) != outputs[source_path]:
+                    raise DialogueEditorError(
+                        f"{source_path}: saved JSON verification differs"
+                    )
+        except Exception:
+            for source_path in written:
+                backup = source_path.with_name(f"{source_path.name}.bak")
+                shutil.copy2(backup, source_path)
+            raise
+
+        for source_path in changed_paths:
+            self._source_documents[source_path] = outputs[source_path]
+        for index in dirty:
+            self.document["entries"][index]["ko"] = self.value(index)
+        self._saved_values = list(self._values)
+        return tuple(backups)
+
+    def validation_summary(self) -> dict[str, Any]:
+        summary = super().validation_summary()
+        summary["source_files"] = [
+            str(path) for path in self.source_paths
+        ]
+        summary["excluded_graphics"] = True
+        return summary
+
+
 def filter_entry_indices(
     document: DialogueDocument,
     *,
     query: str = "",
+    source_group: str | None = None,
     overflow_only: bool = False,
     storage_overflow_only: bool = False,
     unit_storage_overflow_only: bool = False,
@@ -1545,7 +3009,8 @@ def filter_entry_indices(
     return [
         index
         for index in range(len(document))
-        if (overflow_indices is None or index in overflow_indices)
+        if (source_group is None or document.source_group(index) == source_group)
+        and (overflow_indices is None or index in overflow_indices)
         and (
             storage_overflow_indices is None
             or index in storage_overflow_indices
@@ -1562,12 +3027,214 @@ def filter_entry_indices(
     ]
 
 
+def _literal_pattern(
+    find_text: str,
+    *,
+    case_sensitive: bool,
+) -> re.Pattern[str]:
+    if not isinstance(find_text, str) or not find_text:
+        raise DialogueEditorError("찾을 용어를 입력하세요.")
+    return re.compile(
+        re.escape(find_text),
+        0 if case_sensitive else re.IGNORECASE,
+    )
+
+
+def literal_match_count(
+    text: str,
+    find_text: str,
+    *,
+    case_sensitive: bool = True,
+) -> int:
+    return len(
+        _literal_pattern(
+            find_text,
+            case_sensitive=case_sensitive,
+        ).findall(text)
+    )
+
+
+def plan_literal_replacement(
+    document: DialogueDocument,
+    *,
+    find_text: str,
+    replace_text: str,
+    indices: Iterable[int] | None = None,
+    case_sensitive: bool = True,
+) -> tuple[LiteralReplacementChange, ...]:
+    """Plan a literal Korean-field-only replacement without mutating data."""
+    if not isinstance(replace_text, str):
+        raise DialogueEditorError("바꿀 문자열은 문자열이어야 합니다.")
+    pattern = _literal_pattern(
+        find_text,
+        case_sensitive=case_sensitive,
+    )
+    selected = (
+        range(len(document))
+        if indices is None
+        else tuple(dict.fromkeys(indices))
+    )
+    changes: list[LiteralReplacementChange] = []
+    for index in selected:
+        if not isinstance(index, int) or not 0 <= index < len(document):
+            raise DialogueEditorError(
+                f"찾기/바꾸기 대상 인덱스가 잘못되었습니다: {index!r}"
+            )
+        before = document.value(index)
+        after, count = pattern.subn(lambda _match: replace_text, before)
+        if count and after != before:
+            changes.append(
+                LiteralReplacementChange(
+                    index=index,
+                    entry_id=document.ids[index],
+                    occurrence_count=count,
+                    before=before,
+                    after=after,
+                )
+            )
+    return tuple(changes)
+
+
+def apply_literal_replacement(
+    document: DialogueDocument,
+    changes: Iterable[LiteralReplacementChange],
+) -> tuple[LiteralReplacementChange, ...]:
+    """Apply an approved replacement plan after checking it is not stale."""
+    planned = tuple(changes)
+    for change in planned:
+        if (
+            document.ids[change.index] != change.entry_id
+            or document.value(change.index) != change.before
+        ):
+            raise DialogueEditorError(
+                f"{change.entry_id}: 미리보기 이후 내용이 변경되어 "
+                "일괄 바꾸기를 적용하지 않았습니다."
+            )
+    for change in planned:
+        document.set_value(change.index, change.after)
+    return planned
+
+
+def undo_literal_replacement(
+    document: DialogueDocument,
+    changes: Iterable[LiteralReplacementChange],
+) -> tuple[LiteralReplacementChange, ...]:
+    """Undo one complete replacement batch unless later edits conflict."""
+    planned = tuple(changes)
+    for change in planned:
+        if (
+            document.ids[change.index] != change.entry_id
+            or document.value(change.index) != change.after
+        ):
+            raise DialogueEditorError(
+                f"{change.entry_id}: 일괄 변경 뒤 추가 수정이 있어 "
+                "자동으로 되돌릴 수 없습니다."
+            )
+    for change in planned:
+        document.set_value(change.index, change.before)
+    return planned
+
+
+def format_entry_metadata(
+    document: DialogueDocument,
+    index: int,
+) -> str:
+    """Format GUI metadata without depending on a live Tk window."""
+    metadata = document.metadata(index)
+    limit = document.maximum_glyphs(index)
+    layout_profile = document.layout_profile(index)
+    measurement = document.layout_measurement(index)
+    reason_labels: list[str] = []
+    if measurement.glyph_capacity_overflow:
+        reason_labels.append(
+            f"총 {measurement.visible_glyph_count}/"
+            f"{layout_profile.capacity}"
+        )
+    if measurement.column_overflow_rows:
+        rows = ",".join(
+            str(row) for row in measurement.column_overflow_rows
+        )
+        reason_labels.append(
+            f"{layout_profile.columns}자 초과 행={rows}"
+        )
+    if measurement.row_overflow:
+        reason_labels.append(
+            f"행 {len(measurement.lines)}/{layout_profile.rows}"
+        )
+    if (
+        layout_profile.row_policy == "exact"
+        and len(measurement.lines) != layout_profile.rows
+    ):
+        reason_labels.append(
+            f"행 수 보존 {len(measurement.lines)}/{layout_profile.rows}"
+        )
+    limit_state = ", ".join(reason_labels) if reason_labels else "적합"
+
+    storage = document.storage_slot_measurement(index)
+    storage_state = "자료 없음"
+    if storage is not None:
+        storage_state = (
+            f"{storage.estimated_stream_bytes}/"
+            f"{storage.safe_slot.safe_slot_bytes}B "
+            + (
+                (
+                    f"({storage.remaining_bytes}B 미사용)"
+                    if storage.remaining_bytes
+                    else "(정확히 일치)"
+                )
+                if storage.fits
+                else f"({storage.overflow_bytes}B 초과)"
+            )
+        )
+
+    unit_storage = document.unit_storage_measurement(index)
+    unit_storage_state = "자료 없음"
+    if unit_storage is not None:
+        unit_profile = unit_storage.profile
+        unit_storage_state = (
+            f"u{unit_profile.unit_index:02d} "
+            f"{unit_storage.estimated_stream_bytes}/"
+            f"{unit_profile.original_stream_capacity_bytes}B "
+            + (
+                (
+                    f"({unit_storage.remaining_bytes}B 여유)"
+                    if unit_storage.remaining_bytes
+                    else "(정확히 일치)"
+                )
+                if unit_storage.fits
+                else f"({unit_storage.overflow_bytes}B 초과·빌드 차단)"
+            )
+            + f" [{unit_profile.runtime_validation_label}]"
+        )
+
+    source_file = metadata["source_file"]
+    source_name = Path(source_file).name if source_file else "?"
+    return (
+        f"{index + 1}/{len(document)}  "
+        f"분류={metadata['source_group']}  "
+        f"source={source_name}  "
+        f"unit={metadata['unit'] or '?'}  "
+        f"class={metadata['classification'] or '?'}  "
+        f"status={metadata['status'] or '?'}  "
+        f"max_glyphs={limit if limit is not None else '미확정'}  "
+        f"profile={layout_profile.columns}×{layout_profile.rows}/"
+        f"{'행고정' if layout_profile.row_policy == 'exact' else '최대'}  "
+        f"layout={limit_state}  "
+        f"slot={storage_state}  "
+        f"unit_pool={unit_storage_state}"
+    )
+
+
 def _short_entry_label(document: DialogueDocument, index: int) -> str:
     entry_id = document.ids[index]
+    group_label = document.source_group_label(index)
     match = re.search(r"/u(\d+)/[^/]+/(ref\d+)$", entry_id)
     if match:
-        return f"{index + 1:04d}  u{int(match.group(1)):02d}  {match.group(2)}"
-    return f"{index + 1:04d}  {entry_id[-42:]}"
+        return (
+            f"{index + 1:04d}  {group_label[:6]:<6} "
+            f"u{int(match.group(1)):02d}  {match.group(2)}"
+        )
+    return f"{index + 1:04d}  {group_label[:6]:<6} {entry_id[-34:]}"
 
 
 def run_gui(
@@ -1599,13 +3266,23 @@ def run_gui(
                 document.short_line_candidate_indices()
             )
             self._loading_editor = False
+            self._last_replacement_batch: tuple[
+                LiteralReplacementChange, ...
+            ] = ()
+            self.replace_window: tk.Toplevel | None = None
 
-            root.title("PSX 대사 17×3 편집기")
-            root.geometry("1180x760")
-            root.minsize(980, 660)
+            root.title("PSX 폰트 번역 편집기")
+            root.geometry("1240x820")
+            root.minsize(1040, 700)
             root.protocol("WM_DELETE_WINDOW", self.close)
 
             self.search_var = tk.StringVar()
+            self.source_group_var = tk.StringVar(value="전체 폰트 문자열")
+            self.source_group_by_label = {
+                label: group
+                for group, label in self.document.source_groups()
+            }
+            self.source_group_by_label["전체 폰트 문자열"] = None
             self.overflow_only_var = tk.BooleanVar(value=False)
             self.storage_overflow_only_var = tk.BooleanVar(value=False)
             self.unit_storage_overflow_only_var = tk.BooleanVar(value=False)
@@ -1648,9 +3325,17 @@ def run_gui(
             ttk.Button(top, text="저장", command=self.save).pack(side=tk.LEFT)
             ttk.Button(
                 top,
+                text="찾기/바꾸기",
+                command=self.open_find_replace,
+            ).pack(side=tk.LEFT, padx=(6, 0))
+            self.save_as_button = ttk.Button(
+                top,
                 text="다른 이름으로 저장",
                 command=self.save_as,
-            ).pack(side=tk.LEFT, padx=(6, 0))
+            )
+            self.save_as_button.pack(side=tk.LEFT, padx=(6, 0))
+            if not self.document.supports_save_as:
+                self.save_as_button.configure(state=tk.DISABLED)
 
             pane = ttk.Panedwindow(outer, orient=tk.HORIZONTAL)
             pane.pack(fill=tk.BOTH, expand=True)
@@ -1676,6 +3361,32 @@ def run_gui(
             self.search_var.trace_add(
                 "write",
                 lambda *_: self.refresh_filter(),
+            )
+
+            source_filter = ttk.Frame(left)
+            source_filter.pack(fill=tk.X, pady=(0, 6))
+            ttk.Label(source_filter, text="분류").pack(side=tk.LEFT)
+            self.source_group_combo = ttk.Combobox(
+                source_filter,
+                state="readonly",
+                textvariable=self.source_group_var,
+                values=(
+                    "전체 폰트 문자열",
+                    *[
+                        label
+                        for _group, label in self.document.source_groups()
+                    ],
+                ),
+            )
+            self.source_group_combo.pack(
+                side=tk.LEFT,
+                fill=tk.X,
+                expand=True,
+                padx=(6, 0),
+            )
+            self.source_group_combo.bind(
+                "<<ComboboxSelected>>",
+                lambda _event: self.refresh_filter(),
             )
 
             filter_bar = ttk.Frame(left)
@@ -1843,13 +3554,13 @@ def run_gui(
                 text="일본어 원문 — 읽기 전용",
                 padding=6,
             )
-            ko_frame = ttk.LabelFrame(
+            self.ko_frame = ttk.LabelFrame(
                 text_pane,
                 text=f"한국어 편집 — {document.editable_field}",
                 padding=6,
             )
             text_pane.add(jp_frame, weight=1)
-            text_pane.add(ko_frame, weight=1)
+            text_pane.add(self.ko_frame, weight=1)
 
             self.jp_text = tk.Text(
                 jp_frame,
@@ -1861,7 +3572,7 @@ def run_gui(
             self.jp_text.pack(fill=tk.BOTH, expand=True)
 
             self.ko_text = tk.Text(
-                ko_frame,
+                self.ko_frame,
                 height=5,
                 wrap=tk.NONE,
                 undo=True,
@@ -1888,25 +3599,25 @@ def run_gui(
                 text="자동 배치는 띄어쓰기 경계만 사용하며 단어를 쪼개지 않습니다.",
             ).pack(side=tk.RIGHT)
 
-            preview = ttk.LabelFrame(
+            self.preview_frame = ttk.LabelFrame(
                 right,
                 text="17×3 고정 셀 미리보기 — 자형은 참고용",
                 padding=8,
             )
-            preview.pack(fill=tk.X)
+            self.preview_frame.pack(fill=tk.X)
             ttk.Label(
-                preview,
+                self.preview_frame,
                 textvariable=self.preview_control_var,
             ).pack(anchor=tk.W, pady=(0, 3))
             ttk.Label(
-                preview,
+                self.preview_frame,
                 textvariable=self.counter_var,
             ).pack(anchor=tk.W, pady=(0, 5))
             self.cell_size = 30
             self.canvas_margin = 28
             self.canvas_marker_width = 64
             self.preview_canvas = tk.Canvas(
-                preview,
+                self.preview_frame,
                 width=(
                     self.canvas_margin
                     + COLUMNS * self.cell_size
@@ -1919,7 +3630,7 @@ def run_gui(
             )
             self.preview_canvas.pack(anchor=tk.W)
             ttk.Label(
-                preview,
+                self.preview_frame,
                 text=(
                     "주황 셀은 FFFB 줄바꿈이 건너뛴 위치이며, "
                     "제어토큰 자체는 글리프 셀을 차지하지 않습니다."
@@ -1954,6 +3665,11 @@ def run_gui(
                 self.root.bind(sequence, lambda _event: self.save_as())
             for sequence in ("<Command-f>", "<Control-f>"):
                 self.root.bind(sequence, self.focus_search)
+            for sequence in ("<Command-Option-f>", "<Control-h>"):
+                self.root.bind(
+                    sequence,
+                    lambda _event: self.open_find_replace(),
+                )
             self.root.bind("<Alt-Left>", lambda _event: self.previous())
             self.root.bind("<Alt-Right>", lambda _event: self.next())
 
@@ -1961,6 +3677,423 @@ def run_gui(
             self.search_entry.focus_set()
             self.search_entry.selection_range(0, tk.END)
             return "break"
+
+        def open_find_replace(self) -> str:
+            if (
+                self.replace_window is not None
+                and self.replace_window.winfo_exists()
+            ):
+                self.replace_window.deiconify()
+                self.replace_window.lift()
+                self.replace_find_entry.focus_set()
+                return "break"
+
+            window = tk.Toplevel(self.root)
+            self.replace_window = window
+            window.title("용어 찾기/바꾸기")
+            window.geometry("760x470")
+            window.minsize(640, 410)
+            window.transient(self.root)
+
+            self.replace_find_var = tk.StringVar()
+            self.replace_with_var = tk.StringVar()
+            self.replace_scope_var = tk.StringVar(
+                value=self.source_group_var.get()
+            )
+            self.replace_case_var = tk.BooleanVar(value=True)
+            self.replace_summary_var = tk.StringVar(
+                value=(
+                    "미리보기 후 ‘모두 바꾸기’를 누르면 "
+                    "적용 전 확인 창이 나타납니다."
+                )
+            )
+
+            outer = ttk.Frame(window, padding=12)
+            outer.pack(fill=tk.BOTH, expand=True)
+            ttk.Label(outer, text="찾을 용어").grid(
+                row=0,
+                column=0,
+                sticky=tk.W,
+            )
+            self.replace_find_entry = ttk.Entry(
+                outer,
+                textvariable=self.replace_find_var,
+            )
+            self.replace_find_entry.grid(
+                row=0,
+                column=1,
+                sticky=tk.EW,
+                padx=(8, 0),
+            )
+            ttk.Label(outer, text="바꿀 용어").grid(
+                row=1,
+                column=0,
+                sticky=tk.W,
+                pady=(8, 0),
+            )
+            ttk.Entry(
+                outer,
+                textvariable=self.replace_with_var,
+            ).grid(
+                row=1,
+                column=1,
+                sticky=tk.EW,
+                padx=(8, 0),
+                pady=(8, 0),
+            )
+            options = ttk.Frame(outer)
+            options.grid(
+                row=2,
+                column=0,
+                columnspan=2,
+                sticky=tk.EW,
+                pady=(10, 8),
+            )
+            ttk.Label(options, text="범위").pack(side=tk.LEFT)
+            ttk.Combobox(
+                options,
+                state="readonly",
+                width=22,
+                textvariable=self.replace_scope_var,
+                values=(
+                    "전체 폰트 문자열",
+                    *[
+                        label
+                        for _group, label
+                        in self.document.source_groups()
+                    ],
+                ),
+            ).pack(side=tk.LEFT, padx=(6, 12))
+            ttk.Checkbutton(
+                options,
+                text="대소문자 구분",
+                variable=self.replace_case_var,
+            ).pack(side=tk.LEFT)
+
+            buttons = ttk.Frame(outer)
+            buttons.grid(
+                row=3,
+                column=0,
+                columnspan=2,
+                sticky=tk.EW,
+                pady=(0, 8),
+            )
+            ttk.Button(
+                buttons,
+                text="다음 항목 찾기",
+                command=self.find_next_replacement_term,
+            ).pack(side=tk.LEFT)
+            ttk.Button(
+                buttons,
+                text="대상 미리보기",
+                command=self.preview_literal_replacement,
+            ).pack(side=tk.LEFT, padx=(6, 0))
+            ttk.Button(
+                buttons,
+                text="현재 항목에서 모두 바꾸기",
+                command=self.replace_literal_in_current_entry,
+            ).pack(side=tk.LEFT, padx=(6, 0))
+            ttk.Button(
+                buttons,
+                text="모두 바꾸기",
+                command=self.replace_literal_in_scope,
+            ).pack(side=tk.LEFT, padx=(6, 0))
+            ttk.Button(
+                buttons,
+                text="방금 일괄 변경 취소",
+                command=self.undo_last_literal_replacement,
+            ).pack(side=tk.RIGHT)
+
+            self.replace_preview = tk.Text(
+                outer,
+                height=13,
+                wrap=tk.WORD,
+                state=tk.DISABLED,
+                font=("Menlo", 11),
+                padx=6,
+                pady=6,
+            )
+            self.replace_preview.grid(
+                row=4,
+                column=0,
+                columnspan=2,
+                sticky=tk.NSEW,
+            )
+            ttk.Label(
+                outer,
+                textvariable=self.replace_summary_var,
+                relief=tk.SUNKEN,
+                anchor=tk.W,
+                padding=(6, 3),
+            ).grid(
+                row=5,
+                column=0,
+                columnspan=2,
+                sticky=tk.EW,
+                pady=(8, 0),
+            )
+            outer.columnconfigure(1, weight=1)
+            outer.rowconfigure(4, weight=1)
+
+            def close_window() -> None:
+                window.destroy()
+                self.replace_window = None
+
+            window.protocol("WM_DELETE_WINDOW", close_window)
+            window.bind("<Escape>", lambda _event: close_window())
+            self.replace_find_entry.focus_set()
+            return "break"
+
+        def _replacement_scope_indices(self) -> tuple[int, ...]:
+            label = self.replace_scope_var.get()
+            group = self.source_group_by_label.get(label)
+            if group is None:
+                return tuple(range(len(self.document)))
+            return tuple(
+                index
+                for index in range(len(self.document))
+                if self.document.source_group(index) == group
+            )
+
+        def _planned_literal_replacement(
+            self,
+            *,
+            indices: Iterable[int] | None = None,
+        ) -> tuple[LiteralReplacementChange, ...]:
+            self.commit_current()
+            return plan_literal_replacement(
+                self.document,
+                find_text=self.replace_find_var.get(),
+                replace_text=self.replace_with_var.get(),
+                indices=(
+                    self._replacement_scope_indices()
+                    if indices is None
+                    else indices
+                ),
+                case_sensitive=self.replace_case_var.get(),
+            )
+
+        def _show_replacement_preview(
+            self,
+            changes: tuple[LiteralReplacementChange, ...],
+        ) -> None:
+            widget = self.replace_preview
+            widget.configure(state=tk.NORMAL)
+            widget.delete("1.0", tk.END)
+            total = sum(change.occurrence_count for change in changes)
+            if not changes:
+                widget.insert("1.0", "변경될 항목이 없습니다.")
+            else:
+                for change in changes[:30]:
+                    widget.insert(
+                        tk.END,
+                        (
+                            f"{change.entry_id} "
+                            f"({change.occurrence_count}회)\n"
+                            f"  전: {change.before.replace(chr(10), ' ↵ ')}\n"
+                            f"  후: {change.after.replace(chr(10), ' ↵ ')}\n\n"
+                        ),
+                    )
+                if len(changes) > 30:
+                    widget.insert(
+                        tk.END,
+                        f"… 나머지 {len(changes) - 30}개 항목\n",
+                    )
+            widget.configure(state=tk.DISABLED)
+            self.replace_summary_var.set(
+                f"범위: {self.replace_scope_var.get()} · "
+                f"대상 {len(changes)}개 항목 · 실제 치환 {total}회"
+            )
+
+        def preview_literal_replacement(self) -> None:
+            try:
+                changes = self._planned_literal_replacement()
+            except DialogueEditorError as error:
+                messagebox.showwarning("미리보기 불가", str(error))
+                return
+            self._show_replacement_preview(changes)
+
+        def _highlight_literal_in_editor(self, find_text: str) -> None:
+            self.ko_text.tag_remove("replacement_find", "1.0", tk.END)
+            pattern = _literal_pattern(
+                find_text,
+                case_sensitive=self.replace_case_var.get(),
+            )
+            match = pattern.search(self.current_text())
+            if match is None:
+                return
+            self.ko_text.tag_configure(
+                "replacement_find",
+                background="#ffe166",
+                foreground="#111111",
+            )
+            start = f"1.0+{match.start()}c"
+            end = f"1.0+{match.end()}c"
+            self.ko_text.tag_add("replacement_find", start, end)
+            self.ko_text.see(start)
+
+        def find_next_replacement_term(self) -> None:
+            try:
+                pattern = _literal_pattern(
+                    self.replace_find_var.get(),
+                    case_sensitive=self.replace_case_var.get(),
+                )
+            except DialogueEditorError as error:
+                messagebox.showwarning("찾기 불가", str(error))
+                return
+            scope = self._replacement_scope_indices()
+            if not scope:
+                messagebox.showinfo("찾기", "선택한 범위가 비어 있습니다.")
+                return
+            current = self.current_index
+            start = (
+                scope.index(current) + 1
+                if current in scope
+                else 0
+            )
+            ordered = (*scope[start:], *scope[:start])
+            target = next(
+                (
+                    index
+                    for index in ordered
+                    if pattern.search(self.document.value(index))
+                    is not None
+                ),
+                None,
+            )
+            if target is None:
+                messagebox.showinfo(
+                    "찾기",
+                    "선택한 범위에서 용어를 찾지 못했습니다.",
+                )
+                return
+            self.select_document_index(target)
+            self._highlight_literal_in_editor(self.replace_find_var.get())
+            self.replace_summary_var.set(
+                f"찾음: {self.document.ids[target]}"
+            )
+
+        def _refresh_after_literal_replacement(self) -> None:
+            current = self.current_index
+            if current is not None:
+                self._loading_editor = True
+                try:
+                    self.ko_text.delete("1.0", tk.END)
+                    self.ko_text.insert(
+                        "1.0",
+                        self.document.value(current),
+                    )
+                    self.ko_text.edit_modified(False)
+                finally:
+                    self._loading_editor = False
+            self.refresh_filter()
+            if current is not None:
+                self.select_document_index(current)
+            self.update_title()
+
+        def replace_literal_in_current_entry(self) -> None:
+            if self.current_index is None:
+                return
+            try:
+                changes = self._planned_literal_replacement(
+                    indices=(self.current_index,),
+                )
+                if not changes:
+                    messagebox.showinfo(
+                        "현재 항목 바꾸기",
+                        "현재 항목에서 변경할 용어를 찾지 못했습니다.",
+                    )
+                    return
+                applied = apply_literal_replacement(
+                    self.document,
+                    changes,
+                )
+            except DialogueEditorError as error:
+                messagebox.showwarning("바꾸기 불가", str(error))
+                return
+            self._last_replacement_batch = applied
+            self._show_replacement_preview(applied)
+            self._refresh_after_literal_replacement()
+            self.message_var.set(
+                f"현재 항목에서 "
+                f"{sum(change.occurrence_count for change in applied)}회 "
+                "바꿨습니다. 아직 저장하지 않았습니다."
+            )
+
+        def replace_literal_in_scope(self) -> None:
+            try:
+                changes = self._planned_literal_replacement()
+            except DialogueEditorError as error:
+                messagebox.showwarning("일괄 바꾸기 불가", str(error))
+                return
+            self._show_replacement_preview(changes)
+            if not changes:
+                messagebox.showinfo(
+                    "모두 바꾸기",
+                    "선택한 범위에서 변경할 용어를 찾지 못했습니다.",
+                )
+                return
+            total = sum(change.occurrence_count for change in changes)
+            sample = "\n".join(
+                f"• {change.entry_id}"
+                for change in changes[:6]
+            )
+            if len(changes) > 6:
+                sample += f"\n• 외 {len(changes) - 6}개 항목"
+            if not messagebox.askyesno(
+                "일괄 변경 승인",
+                (
+                    f"찾기: {self.replace_find_var.get()!r}\n"
+                    f"바꾸기: {self.replace_with_var.get()!r}\n"
+                    f"범위: {self.replace_scope_var.get()}\n"
+                    f"대상: {len(changes)}개 항목 / {total}회\n\n"
+                    f"{sample}\n\n"
+                    "한국어 편집 필드만 변경합니다. 적용 후 저장 전까지 "
+                    "‘방금 일괄 변경 취소’로 되돌릴 수 있습니다.\n"
+                    "이 범위와 규칙으로 일괄 변경할까요?"
+                ),
+            ):
+                return
+            try:
+                applied = apply_literal_replacement(
+                    self.document,
+                    changes,
+                )
+            except DialogueEditorError as error:
+                messagebox.showerror("일괄 변경 실패", str(error))
+                return
+            self._last_replacement_batch = applied
+            self._refresh_after_literal_replacement()
+            self.message_var.set(
+                f"일괄 변경: {len(applied)}개 항목, {total}회. "
+                "아직 저장하지 않았습니다."
+            )
+
+        def undo_last_literal_replacement(self) -> None:
+            if not self._last_replacement_batch:
+                messagebox.showinfo(
+                    "일괄 변경 취소",
+                    "되돌릴 일괄 변경이 없습니다.",
+                )
+                return
+            try:
+                undone = undo_literal_replacement(
+                    self.document,
+                    self._last_replacement_batch,
+                )
+            except DialogueEditorError as error:
+                messagebox.showwarning("자동 취소 불가", str(error))
+                return
+            total = sum(change.occurrence_count for change in undone)
+            self._last_replacement_batch = ()
+            self._refresh_after_literal_replacement()
+            self.replace_summary_var.set(
+                f"방금 일괄 변경을 취소했습니다: "
+                f"{len(undone)}개 항목 / {total}회"
+            )
+            self.message_var.set(
+                "방금 일괄 변경을 취소했습니다."
+            )
 
         def current_text(self) -> str:
             return self.ko_text.get("1.0", "end-1c")
@@ -1989,6 +4122,9 @@ def run_gui(
             self.filtered_indices = filter_entry_indices(
                 self.document,
                 query=self.search_var.get(),
+                source_group=self.source_group_by_label.get(
+                    self.source_group_var.get()
+                ),
                 overflow_only=self.overflow_only_var.get(),
                 storage_overflow_only=(
                     self.storage_overflow_only_var.get()
@@ -2040,6 +4176,7 @@ def run_gui(
 
         def update_filter_summary(self) -> None:
             self.filter_summary_var.set(
+                f"{self.source_group_var.get()} · "
                 f"목록 {len(self.filtered_indices)}건"
                 f" / 한도 초과 {len(self.overflow_indices)}건"
                 f" / 슬롯 초과 {len(self.storage_overflow_indices)}건"
@@ -2067,6 +4204,14 @@ def run_gui(
             try:
                 self.id_var.set(self.document.ids[index])
                 self.update_metadata(index)
+                profile = self.document.layout_profile(index)
+                self.ko_frame.configure(
+                    text=(
+                        f"한국어 편집 — "
+                        f"{self.document.source_group_label(index)} · "
+                        f"{profile.label}"
+                    )
+                )
                 self.jp_text.configure(state=tk.NORMAL)
                 self.jp_text.delete("1.0", tk.END)
                 self.jp_text.insert("1.0", self.document.japanese(index))
@@ -2078,7 +4223,10 @@ def run_gui(
                 self._loading_editor = False
             self.update_control_view(index)
             self.update_preview()
-            self.message_var.set("한국어 필드만 편집할 수 있습니다.")
+            self.message_var.set(
+                "한국어 문자열만 편집할 수 있으며 저장 시 원본 JSON의 "
+                "해당 필드로 돌아갑니다."
+            )
             self.update_title()
 
         def update_control_view(self, index: int) -> None:
@@ -2089,8 +4237,8 @@ def run_gui(
             if context is None:
                 widget.insert(
                     "1.0",
-                    "보호 workset이 연결되지 않아 제어코드를 "
-                    "표시할 수 없습니다.",
+                    "이 항목에는 개별 표시 스트림 제어 셸이 없거나, "
+                    "여러 편집 구간이 하나의 스트림을 공유합니다.",
                 )
                 widget.configure(state=tk.DISABLED)
                 self.update_slot_meter(index)
@@ -2287,73 +4435,8 @@ def run_gui(
             )
 
         def update_metadata(self, index: int) -> None:
-            metadata = self.document.metadata(index)
-            limit = self.document.maximum_glyphs(index)
-            measurement = measure_layout(self.document.value(index))
-            reason_labels: list[str] = []
-            if measurement.glyph_capacity_overflow:
-                reason_labels.append(
-                    f"총 {measurement.visible_glyph_count}/{CAPACITY}"
-                )
-            if measurement.column_overflow_rows:
-                rows = ",".join(
-                    str(row)
-                    for row in measurement.column_overflow_rows
-                )
-                reason_labels.append(f"17자 초과 행={rows}")
-            if measurement.row_overflow:
-                reason_labels.append(
-                    f"행 {len(measurement.lines)}/{ROWS}"
-                )
-            limit_state = (
-                ", ".join(reason_labels) if reason_labels else "적합"
-            )
-            storage = self.document.storage_slot_measurement(index)
-            storage_state = "자료 없음"
-            if storage is not None:
-                storage_state = (
-                    f"{storage.estimated_stream_bytes}/"
-                    f"{storage.safe_slot.safe_slot_bytes}B "
-                    + (
-                        (
-                            f"({storage.remaining_bytes}B 미사용)"
-                            if storage.remaining_bytes
-                            else "(정확히 일치)"
-                        )
-                        if storage.fits
-                        else f"({storage.overflow_bytes}B 초과)"
-                    )
-                )
-            unit_storage = self.document.unit_storage_measurement(index)
-            unit_storage_state = "자료 없음"
-            if unit_storage is not None:
-                profile = unit_storage.profile
-                unit_storage_state = (
-                    f"u{profile.unit_index:02d} "
-                    f"{unit_storage.estimated_stream_bytes}/"
-                    f"{profile.original_stream_capacity_bytes}B "
-                    + (
-                        (
-                            f"({unit_storage.remaining_bytes}B 여유)"
-                            if unit_storage.remaining_bytes
-                            else "(정확히 일치)"
-                        )
-                        if unit_storage.fits
-                        else (
-                            f"({unit_storage.overflow_bytes}B 초과·빌드 차단)"
-                        )
-                    )
-                    + f" [{profile.runtime_validation_label}]"
-                )
             self.meta_var.set(
-                f"{index + 1}/{len(self.document)}  "
-                f"unit={metadata['unit'] or '?'}  "
-                f"class={metadata['classification'] or '?'}  "
-                f"status={metadata['status'] or '?'}  "
-                f"max_glyphs={limit if limit is not None else '미확정'}  "
-                f"layout={limit_state}  "
-                f"slot={storage_state}  "
-                f"unit_pool={unit_storage_state}"
+                format_entry_metadata(self.document, index)
             )
 
         def on_list_select(self, _event: object) -> None:
@@ -2381,10 +4464,10 @@ def run_gui(
         def update_current_filter_state(self) -> None:
             if self.current_index is None:
                 return
-            measurement = measure_layout(
-                self.document.value(self.current_index)
+            measurement = self.document.layout_measurement(
+                self.current_index
             )
-            if measurement.exceeds_limits:
+            if self.document.layout_policy_violated(self.current_index):
                 self.overflow_indices.add(self.current_index)
             else:
                 self.overflow_indices.discard(self.current_index)
@@ -2444,15 +4527,31 @@ def run_gui(
             self.update_filter_summary()
 
         def update_title(self) -> None:
-            target = self.save_target or self.document.path
+            target = self.save_target or self.document.display_path
             dirty = "*" if self.document.dirty else ""
-            self.root.title(f"{dirty}PSX 대사 17×3 편집기 — {target.name}")
-            self.file_var.set(
-                f"{target}  |  수정 {len(self.document.dirty_indices)}건"
-            )
+            self.root.title(f"{dirty}PSX 폰트 번역 편집기 — {target.name}")
+            if self.document.workspace_mode:
+                source_count = len(
+                    getattr(self.document, "source_paths", ())
+                )
+                self.file_var.set(
+                    f"{target}  |  원본 JSON {source_count}개  |  "
+                    f"수정 {len(self.document.dirty_indices)}건"
+                )
+            else:
+                self.file_var.set(
+                    f"{target}  |  수정 "
+                    f"{len(self.document.dirty_indices)}건"
+                )
 
         def update_preview(self) -> None:
-            measurement = measure_layout(self.current_text())
+            if self.current_index is None:
+                return
+            profile = self.document.layout_profile(self.current_index)
+            measurement = self.document.layout_measurement(
+                self.current_index,
+                self.current_text(),
+            )
             context = (
                 self.document.control_context(self.current_index)
                 if self.current_index is not None
@@ -2464,7 +4563,7 @@ def run_gui(
                 else "보호 제어코드 정보 없음"
             )
             width_parts = [
-                f"{index + 1}행 {width}/{COLUMNS}"
+                f"{index + 1}행 {width}/{profile.columns}"
                 for index, width in enumerate(measurement.line_widths)
             ]
             reason_parts: list[str] = []
@@ -2477,6 +4576,11 @@ def run_gui(
                 reason_parts.append(f"{rows}행 폭")
             if measurement.row_overflow:
                 reason_parts.append("행 수")
+            if (
+                profile.row_policy == "exact"
+                and len(measurement.lines) != profile.rows
+            ):
+                reason_parts.append(f"행 수 {profile.rows} 고정")
             short_line_note = ""
             if measurement.short_line_rows:
                 rows = ",".join(
@@ -2490,20 +4594,48 @@ def run_gui(
             )
             self.counter_var.set(
                 " · ".join(width_parts)
-                + f"  |  표시 {measurement.visible_glyph_count}/{CAPACITY}"
+                + (
+                    f"  |  표시 {measurement.visible_glyph_count}/"
+                    f"{profile.capacity}"
+                )
                 + f"  |  {state}"
                 + short_line_note
             )
 
             canvas = self.preview_canvas
+            canvas_width = (
+                self.canvas_margin
+                + profile.columns * self.cell_size
+                + self.canvas_marker_width
+                + 2
+            )
+            canvas_height = profile.rows * self.cell_size + 2
+            canvas.configure(
+                width=canvas_width,
+                height=canvas_height,
+            )
+            self.preview_frame.configure(
+                text=(
+                    f"{profile.columns}×{profile.rows} {profile.label} "
+                    f"미리보기 — "
+                    + (
+                        "행 수 고정 · "
+                        if profile.row_policy == "exact"
+                        else ""
+                    )
+                    + "자형은 참고용"
+                )
+            )
             canvas.delete("all")
             normal_grid = "#4e75a7"
             overflow_grid = "#f05b63"
             align_grid = "#a85d00"
             align_fill = "#4c3b22"
             normal_fill = "#163b71"
-            grid_end = self.canvas_margin + COLUMNS * self.cell_size
-            for row in range(ROWS):
+            grid_end = (
+                self.canvas_margin + profile.columns * self.cell_size
+            )
+            for row in range(profile.rows):
                 canvas.create_text(
                     self.canvas_margin // 2,
                     row * self.cell_size + self.cell_size // 2,
@@ -2516,9 +4648,9 @@ def run_gui(
                     if row < len(measurement.lines)
                     else ""
                 )
-                row_overflow = len(line) > COLUMNS
+                row_overflow = len(line) > profile.columns
                 explicit_align = row < len(measurement.lines) - 1
-                for column in range(COLUMNS):
+                for column in range(profile.columns):
                     left = self.canvas_margin + column * self.cell_size
                     top = row * self.cell_size
                     skipped_by_align = (
@@ -2567,24 +4699,49 @@ def run_gui(
                 canvas.create_rectangle(
                     self.canvas_margin,
                     0,
-                    self.canvas_margin + COLUMNS * self.cell_size,
-                    ROWS * self.cell_size,
+                    (
+                        self.canvas_margin
+                        + profile.columns * self.cell_size
+                    ),
+                    profile.rows * self.cell_size,
                     outline=overflow_grid,
                     width=3,
                 )
 
         def apply_conservative_wrap(self) -> None:
+            if self.current_index is None:
+                return
+            profile = self.document.layout_profile(self.current_index)
+            if profile.row_policy == "exact":
+                messagebox.showwarning(
+                    "자동 배치 제외",
+                    f"이 항목은 {profile.rows}행 위치를 정확히 보존해야 "
+                    "하므로 자동 배치를 적용하지 않습니다.",
+                )
+                return
             before = self.current_text()
             try:
-                after = conservative_word_wrap(before)
+                after = conservative_word_wrap(
+                    before,
+                    columns=profile.columns,
+                    rows=profile.rows,
+                )
             except DialogueEditorError as error:
                 messagebox.showwarning("자동 배치 불가", str(error))
                 return
             if after == before:
                 self.message_var.set("현재 줄바꿈이 이미 선택 결과와 같습니다.")
                 return
-            before_widths = measure_layout(before).line_widths
-            after_widths = measure_layout(after).line_widths
+            before_widths = measure_layout(
+                before,
+                columns=profile.columns,
+                rows=profile.rows,
+            ).line_widths
+            after_widths = measure_layout(
+                after,
+                columns=profile.columns,
+                rows=profile.rows,
+            ).line_widths
             if not messagebox.askyesno(
                 "보수적 자동 배치",
                 "띄어쓰기 경계만 사용해 줄바꿈을 바꿉니다.\n\n"
@@ -2657,25 +4814,46 @@ def run_gui(
 
         def save(self) -> str:
             self.commit_current()
-            target = self.save_target or self.document.path
+            target = self.save_target or self.document.display_path
             modified = len(self.document.dirty_indices)
             try:
-                backup = self.document.save(target)
+                backup = self.document.save(
+                    None if self.document.workspace_mode else target
+                )
             except (OSError, DialogueEditorError) as error:
                 messagebox.showerror("저장 실패", str(error))
                 return "break"
-            self.save_target = target
+            if not self.document.workspace_mode:
+                self.save_target = target
             self.update_title()
-            backup_text = f"\n백업: {backup}" if backup else ""
+            if isinstance(backup, tuple):
+                backup_text = (
+                    "\n백업:\n"
+                    + "\n".join(str(path) for path in backup)
+                    if backup
+                    else ""
+                )
+            else:
+                backup_text = f"\n백업: {backup}" if backup else ""
             messagebox.showinfo(
                 "저장 완료",
-                f"{target}\n수정 엔트리: {modified}건{backup_text}",
+                (
+                    f"{target}\n수정 엔트리: {modified}건"
+                    f"{backup_text}"
+                ),
             )
             self.message_var.set(f"저장 완료: {target}")
             return "break"
 
         def save_as(self) -> str:
             self.commit_current()
+            if not self.document.supports_save_as:
+                messagebox.showwarning(
+                    "다른 이름으로 저장 불가",
+                    "통합 작업공간은 각 원본 번역 JSON에 안전하게 "
+                    "되돌려 저장합니다.",
+                )
+                return "break"
             initial = self.save_target or self.document.path
             selected = filedialog.asksaveasfilename(
                 title="편집한 대사 JSON 저장",
@@ -2715,8 +4893,18 @@ def main() -> None:
     parser.add_argument(
         "--input",
         type=Path,
-        default=DEFAULT_INPUT,
-        help="dialogue JSON to edit",
+        help=(
+            "single dialogue JSON to edit; omitted means the complete "
+            "font-translation workspace"
+        ),
+    )
+    parser.add_argument(
+        "--all-font-text",
+        action="store_true",
+        help=(
+            "load the default complete font-translation workspace "
+            "(this is already the default when --input is omitted)"
+        ),
     )
     parser.add_argument(
         "--output",
@@ -2744,6 +4932,41 @@ def main() -> None:
         help="override detected Korean field, e.g. ko or ko_reflowed",
     )
     parser.add_argument(
+        "--pointerless-translation",
+        type=Path,
+        default=DEFAULT_POINTERLESS_TRANSLATION,
+    )
+    parser.add_argument(
+        "--pointerless-workset",
+        type=Path,
+        default=DEFAULT_POINTERLESS_WORKSET,
+    )
+    parser.add_argument(
+        "--special-translation",
+        type=Path,
+        default=DEFAULT_SPECIAL_TRANSLATION,
+    )
+    parser.add_argument(
+        "--special-workset",
+        type=Path,
+        default=DEFAULT_SPECIAL_WORKSET,
+    )
+    parser.add_argument(
+        "--ui-translation",
+        type=Path,
+        default=DEFAULT_UI_TRANSLATION,
+    )
+    parser.add_argument(
+        "--ui-workset",
+        type=Path,
+        default=DEFAULT_UI_WORKSET,
+    )
+    parser.add_argument(
+        "--character-names",
+        type=Path,
+        default=DEFAULT_CHARACTER_NAMES,
+    )
+    parser.add_argument(
         "--entry-id",
         help="stable ID to select on launch",
     )
@@ -2755,12 +4978,40 @@ def main() -> None:
     args = parser.parse_args()
 
     try:
-        document = DialogueDocument.load(
-            args.input,
-            editable_field=args.editable_field,
-            workset_path=args.workset,
-            safe_slots_path=args.safe_slots,
-        )
+        if args.all_font_text and args.input is not None:
+            raise DialogueEditorError(
+                "--all-font-text and --input cannot be used together"
+            )
+        workspace_mode = args.input is None or args.all_font_text
+        if workspace_mode:
+            if args.output is not None:
+                raise DialogueEditorError(
+                    "--output is unavailable for the complete workspace; "
+                    "edits return to their canonical source JSON"
+                )
+            if args.editable_field is not None:
+                raise DialogueEditorError(
+                    "--editable-field is only available with --input"
+                )
+            document = FontTranslationWorkspaceDocument.load(
+                dialogue_translation_path=DEFAULT_INPUT,
+                dialogue_workset_path=args.workset,
+                safe_slots_path=args.safe_slots,
+                pointerless_translation_path=args.pointerless_translation,
+                pointerless_workset_path=args.pointerless_workset,
+                special_translation_path=args.special_translation,
+                special_workset_path=args.special_workset,
+                ui_translation_path=args.ui_translation,
+                ui_workset_path=args.ui_workset,
+                character_names_path=args.character_names,
+            )
+        else:
+            document = DialogueDocument.load(
+                args.input,
+                editable_field=args.editable_field,
+                workset_path=args.workset,
+                safe_slots_path=args.safe_slots,
+            )
         if args.check:
             print(
                 json.dumps(

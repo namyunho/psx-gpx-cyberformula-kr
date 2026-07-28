@@ -2,8 +2,11 @@
 
 이 저장소는 PlayStation용 《신세기 GPX 사이버 포뮬러 새로운 도전자》 Disc 1의
 한국어 패치를 만든다. 현재 상태는 `README.md`, 매체·실행 파일 식별값은
-`docs/initial-survey.md`, 다음 런타임 계측은 `docs/remap-path-poc.md`와
-`docs/remap-table-strategy.md`를 정본으로 삼는다.
+`docs/reverse-engineering-baseline.md`, 대사 협업 형식과 레이아웃 한계는
+`docs/dialogue-extraction.md`, 통합 편집기는
+`docs/dialogue-layout-editor.md`, 미니게임·코스·머신 설정 폰트 문자열은
+`docs/special-screen-font-text.md`를 정본으로 삼는다. 리맵 관련 문서는
+현재 직접 인코딩 방식으로 대체된 역사적 PoC다.
 
 ## 하드 불변식
 
@@ -21,6 +24,8 @@
    수명을 검산한다. 생성한 모든 명령은 armips와 독립 디스어셈블 결과로 대조한다.
 7. 추출·재조립은 무수정 round-trip을 먼저 통과한다. 최종 이미지 변경은 불변
    원본에 대한 예상 쓰기 범위로 모두 설명돼야 한다.
+8. 대사 작업본을 외부 도구나 AI와 교환할 때 `entry_id`와 보호 필드는 변경하지
+   않는다. 번역 단계 전 기준선의 완역본·축약본 필드는 모두 비어 있어야 한다.
 
 ## 원본 매체
 

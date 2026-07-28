@@ -9,18 +9,294 @@ from scripts.dialogue_layout_editor import (
     DialogueControlContext,
     DialogueDocument,
     DialogueEditorError,
+    FontTranslationWorkspaceDocument,
     ProtectedControlToken,
     SafeSlotRecord,
+    TranslationBinding,
+    apply_literal_replacement,
     conservative_word_wrap,
     expand_display_tokens,
     filter_entry_indices,
+    format_entry_metadata,
+    literal_match_count,
     load_control_contexts,
     load_safe_slot_records,
     measure_layout,
+    plan_literal_replacement,
+    undo_literal_replacement,
 )
 
 
 class DialogueLayoutEditorTests(unittest.TestCase):
+    def test_plans_applies_and_undoes_literal_term_replacement(
+        self,
+    ) -> None:
+        source = {
+            "protected": "unchanged",
+            "entries": [
+                {
+                    "id": "entry-0",
+                    "jp": "チーム",
+                    "ko": "스고 팀과 스고 머신",
+                    "source_group": "story_dialogue",
+                },
+                {
+                    "id": "entry-1",
+                    "jp": "別",
+                    "ko": "다른 팀",
+                    "source_group": "font_ui",
+                },
+            ],
+        }
+        document = DialogueDocument(Path("input.json"), source)
+        changes = plan_literal_replacement(
+            document,
+            find_text="스고",
+            replace_text="스고우",
+        )
+
+        self.assertEqual(len(changes), 1)
+        self.assertEqual(changes[0].occurrence_count, 2)
+        self.assertEqual(document.value(0), "스고 팀과 스고 머신")
+        apply_literal_replacement(document, changes)
+        self.assertEqual(document.value(0), "스고우 팀과 스고우 머신")
+        self.assertEqual(document.entries[0]["jp"], "チーム")
+        undo_literal_replacement(document, changes)
+        self.assertEqual(document.value(0), "스고 팀과 스고 머신")
+        self.assertEqual(document.document["protected"], "unchanged")
+
+    def test_literal_replacement_can_limit_group_and_ignore_case(
+        self,
+    ) -> None:
+        source = {
+            "entries": [
+                {
+                    "id": "story",
+                    "ko": "TEAM Team team",
+                    "source_group": "story_dialogue",
+                },
+                {
+                    "id": "ui",
+                    "ko": "TEAM",
+                    "source_group": "font_ui",
+                },
+            ]
+        }
+        document = DialogueDocument(Path("input.json"), source)
+        story_indices = filter_entry_indices(
+            document,
+            source_group="story_dialogue",
+        )
+        changes = plan_literal_replacement(
+            document,
+            find_text="team",
+            replace_text="팀",
+            indices=story_indices,
+            case_sensitive=False,
+        )
+
+        self.assertEqual(literal_match_count(
+            document.value(0),
+            "team",
+            case_sensitive=False,
+        ), 3)
+        self.assertEqual(
+            [(change.entry_id, change.occurrence_count) for change in changes],
+            [("story", 3)],
+        )
+        apply_literal_replacement(document, changes)
+        self.assertEqual(document.value(0), "팀 팀 팀")
+        self.assertEqual(document.value(1), "TEAM")
+
+    def test_replacement_plan_refuses_stale_batch(self) -> None:
+        document = DialogueDocument(
+            Path("input.json"),
+            {"entries": [{"id": "entry", "ko": "스고"}]},
+        )
+        changes = plan_literal_replacement(
+            document,
+            find_text="스고",
+            replace_text="스고우",
+        )
+        document.set_value(0, "수동 수정")
+        with self.assertRaisesRegex(
+            DialogueEditorError,
+            "미리보기 이후 내용이 변경",
+        ):
+            apply_literal_replacement(document, changes)
+
+    def test_complete_workspace_loads_every_font_translation_group(
+        self,
+    ) -> None:
+        root = Path(__file__).resolve().parents[1]
+        required = (
+            root / "work/translations/disc1-dialogue-ko-candidate.json",
+            root / "work/translations/disc1-dialogue.json",
+            root / "work/analysis/disc1-dialogue-safe-slots.json",
+            root
+            / "work/translations/disc1-pointerless-pages-u00-u21.json",
+            root / "work/translations/disc1-special-screen-text.json",
+            root / "work/translations/disc1-ui.json",
+            root
+            / "data/translations/disc1-pointerless-pages-u00-u21-ko.json",
+            root / "data/translations/disc1-special-screen-ko.json",
+            root / "data/translations/disc1-ui-ko.json",
+            root / "data/translations/disc1-character-names.json",
+        )
+        if not all(path.is_file() for path in required):
+            self.skipTest("complete local translation workspace unavailable")
+
+        document = FontTranslationWorkspaceDocument.load(
+            dialogue_translation_path=required[0],
+            dialogue_workset_path=required[1],
+            safe_slots_path=required[2],
+            pointerless_workset_path=required[3],
+            special_workset_path=required[4],
+            ui_workset_path=required[5],
+            pointerless_translation_path=required[6],
+            special_translation_path=required[7],
+            ui_translation_path=required[8],
+            character_names_path=required[9],
+        )
+
+        summary = document.validation_summary()
+        self.assertEqual(len(document), 6298)
+        self.assertEqual(
+            summary["source_group_counts"],
+            {
+                "character_name": 36,
+                "course_information": 57,
+                "font_ui": 4,
+                "machine_setting": 12,
+                "minigame": 322,
+                "pointerless_page": 84,
+                "story_dialogue": 5783,
+            },
+        )
+        self.assertTrue(summary["excluded_graphics"])
+        minigame_index = document.ids.index(
+            "disc1/allbin/u38/minigame_page/ref0000"
+        )
+        self.assertEqual(
+            document.source_group(minigame_index),
+            "minigame",
+        )
+        self.assertEqual(
+            document.layout_profile(minigame_index).rows,
+            3,
+        )
+        ui_index = document.ids.index(
+            "disc1/allbin/u40/font_rendered_ui/e047"
+        )
+        ui_profile = document.layout_profile(ui_index)
+        self.assertEqual((ui_profile.columns, ui_profile.rows), (17, 6))
+        self.assertEqual(ui_profile.row_policy, "exact")
+        self.assertIn("名前を", document.japanese(ui_index))
+        speaker_index = document.ids.index(
+            "disc1/character_name/speaker/00"
+        )
+        self.assertEqual(
+            document.layout_profile(speaker_index).columns,
+            6,
+        )
+        first_metadata = format_entry_metadata(document, 0)
+        self.assertIn("profile=17×3/최대", first_metadata)
+        self.assertIn("unit_pool=u00", first_metadata)
+        ui_metadata = format_entry_metadata(document, ui_index)
+        self.assertIn("profile=17×6/행고정", ui_metadata)
+
+    def test_workspace_saves_each_value_back_to_its_source_only(
+        self,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first_path = root / "first.json"
+            second_path = root / "second.json"
+            first = {
+                "protected": "first",
+                "entries": [{"id": "a", "ko": "하나", "jp": "一"}],
+            }
+            second = {
+                "protected": "second",
+                "translations": [{"id": "b", "ko": "둘"}],
+            }
+            first_path.write_text(
+                json.dumps(first, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            second_path.write_text(
+                json.dumps(second, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            editor_document = {
+                "entry_count": 2,
+                "entries": [
+                    {
+                        "id": "a",
+                        "jp": "一",
+                        "ko": "하나",
+                        "source_group": "story_dialogue",
+                    },
+                    {
+                        "id": "b",
+                        "jp": "二",
+                        "ko": "둘",
+                        "source_group": "font_ui",
+                        "editor_layout": {
+                            "columns": 17,
+                            "rows": 1,
+                            "row_policy": "exact",
+                            "label": "UI",
+                        },
+                    },
+                ],
+            }
+            document = FontTranslationWorkspaceDocument(
+                Path("workspace"),
+                editor_document,
+                bindings=[
+                    TranslationBinding(
+                        first_path,
+                        ("entries", 0, "ko"),
+                        "story_dialogue",
+                        "story",
+                    ),
+                    TranslationBinding(
+                        second_path,
+                        ("translations", 0, "ko"),
+                        "font_ui",
+                        "ui",
+                    ),
+                ],
+                source_documents={
+                    first_path: first,
+                    second_path: second,
+                },
+                control_contexts={},
+                safe_slots={},
+                unit_storage_profiles={},
+            )
+            document.set_value(0, "수정 하나")
+            document.set_value(1, "수정 둘")
+            backups = document.save()
+
+            self.assertEqual(
+                backups,
+                (
+                    first_path.with_name("first.json.bak"),
+                    second_path.with_name("second.json.bak"),
+                ),
+            )
+            saved_first = json.loads(first_path.read_text(encoding="utf-8"))
+            saved_second = json.loads(
+                second_path.read_text(encoding="utf-8")
+            )
+            self.assertEqual(saved_first["entries"][0]["ko"], "수정 하나")
+            self.assertEqual(saved_second["translations"][0]["ko"], "수정 둘")
+            self.assertEqual(saved_first["protected"], "first")
+            self.assertEqual(saved_second["protected"], "second")
+            self.assertFalse(document.dirty)
+
     def test_measures_explicit_17_by_3_layout(self) -> None:
         measurement = measure_layout(
             "가" * 17 + "\n" + "나" * 17 + "\n" + "다" * 17
