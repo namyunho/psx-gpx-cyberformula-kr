@@ -1584,7 +1584,7 @@
     }
   ],
   "batch_import": {
-    "status": "merged-static-review-required",
+    "status": "merged-static-layout-clean-runtime-review-required",
     "entry_count": 391,
     "stable_id_order_exact": true,
     "protected_batch_fields_unchanged": true,
@@ -1607,67 +1607,13 @@
       }
     ],
     "validation": {
-      "issue_entry_count": 4,
-      "issue_counts": {
-        "slot_limit": 4
-      },
+      "issue_entry_count": 0,
+      "issue_counts": {},
       "empty_translation_count": 0,
       "placeholder_mismatch_count": 0,
       "meaningful_symbol_missing_count": 0,
-      "issues": [
-        {
-          "id": "disc1/allbin/u43/course_page/ref0027",
-          "issues": [
-            "slot_limit"
-          ],
-          "line_widths": [
-            12,
-            16
-          ],
-          "encoded_positions": 29,
-          "max_encoded_positions": 26,
-          "slot_overflow_positions": 3
-        },
-        {
-          "id": "disc1/allbin/u43/course_page/ref0038",
-          "issues": [
-            "slot_limit"
-          ],
-          "line_widths": [
-            13,
-            15
-          ],
-          "encoded_positions": 29,
-          "max_encoded_positions": 28,
-          "slot_overflow_positions": 1
-        },
-        {
-          "id": "disc1/allbin/u43/course_page/ref0042",
-          "issues": [
-            "slot_limit"
-          ],
-          "line_widths": [
-            11,
-            15
-          ],
-          "encoded_positions": 27,
-          "max_encoded_positions": 24,
-          "slot_overflow_positions": 3
-        },
-        {
-          "id": "disc1/allbin/u43/course_page/ref0050",
-          "issues": [
-            "slot_limit"
-          ],
-          "line_widths": [
-            7,
-            12
-          ],
-          "encoded_positions": 20,
-          "max_encoded_positions": 18,
-          "slot_overflow_positions": 2
-        }
-      ]
+      "issues": [],
+      "dynamic_name_storage_rule": "{name:*} is one stored u16 token; screen width is checked separately"
     }
   }
 }

@@ -18,11 +18,15 @@ from typing import Any
 try:
     from scripts.export_special_screen_translation_brief import (
         draft_issues,
+        editable_position_capacity,
+        stored_position_count,
         visible_length,
     )
 except ModuleNotFoundError:
     from export_special_screen_translation_brief import (
         draft_issues,
+        editable_position_capacity,
+        stored_position_count,
         visible_length,
     )
 
@@ -55,11 +59,6 @@ def protected_batch(batch: dict[str, Any]) -> dict[str, Any]:
             raise ValueError("batch entry must be an object")
         entry.pop("ko", None)
     return protected
-
-
-def encoded_positions(text: str) -> int:
-    lines = text.split("\n")
-    return sum(visible_length(line) for line in lines) + len(lines) - 1
 
 
 def merge_translation_batches(
@@ -191,8 +190,8 @@ def merge_translation_batches(
         issues = draft_issues(work_by_id[entry_id], text)
         issue_counts.update(issues)
         if issues:
-            positions = encoded_positions(text)
-            maximum = int(item["max_encoded_positions"])
+            positions = stored_position_count(text)
+            maximum = editable_position_capacity(work_by_id[entry_id])
             issue_entries.append(
                 {
                     "id": entry_id,

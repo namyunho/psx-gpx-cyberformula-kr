@@ -415,6 +415,7 @@ class DialogueChapterBuildTests(unittest.TestCase):
 
     def test_runtime_race_units_extend_through_u34(self) -> None:
         self.assertEqual(parse_units(["22,34"], False), [22, 34])
+        self.assertEqual(parse_units([], True), list(range(35)))
         with self.assertRaisesRegex(ValueError, "units 21..34"):
             parse_units(["35"], False)
 

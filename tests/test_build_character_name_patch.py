@@ -57,10 +57,10 @@ class CharacterNamePatchTests(unittest.TestCase):
         )
         self.assertEqual(
             sum(len(record["ko"]) for record in records) * 2,
-            212,
+            208,
         )
         self.assertLessEqual(
-            212,
+            208,
             SPEAKER_STRING_END - SPEAKER_STRING_START,
         )
 
@@ -125,7 +125,7 @@ class CharacterNamePatchTests(unittest.TestCase):
             [len(values) for values in encoded],
             [len(record["ko"]) for record in records],
         )
-        self.assertEqual(byte_count, 212)
+        self.assertEqual(byte_count, 208)
 
     def test_instruction_patches_require_exact_source(self) -> None:
         immediate = bytearray(struct.pack("<I", 0x24030038))

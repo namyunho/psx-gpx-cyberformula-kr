@@ -384,6 +384,14 @@ def build_disc(
             "nonrelease-fixed-original-offset-overflow-diagnostic-"
             "with-character-names-and-ui"
         ),
+        (
+            "nonrelease-partial-chapter-build-with-character-names-and-ui-"
+            "and-special-screen"
+        ),
+        (
+            "nonrelease-fixed-original-offset-overflow-diagnostic-"
+            "with-character-names-and-ui-and-special-screen"
+        ),
     }
     if file_manifest.get("status") not in accepted_file_statuses:
         raise ValueError("unexpected partial file-build status")
@@ -601,15 +609,42 @@ def build_disc(
                     if "ui_translation" in file_manifest
                     else []
                 ),
+                *(
+                    [
+                        (
+                            "play all four mini-games and inspect their "
+                            "Korean rules and results"
+                        ),
+                        (
+                            "inspect Course Information dialogue for all "
+                            "course states"
+                        ),
+                        (
+                            "inspect tire, strategy, wing, and boost setting "
+                            "dialogue"
+                        ),
+                        (
+                            "confirm dynamic player-name tokens render in "
+                            "u43 course dialogue"
+                        ),
+                    ]
+                    if "special_screen" in file_manifest
+                    else []
+                ),
             ],
         }
     )
     has_names = "SLPS_019.58" in replacements
     has_ui = "ui_translation" in file_manifest
+    has_special_screen = "special_screen" in file_manifest
     feature_suffix = (
-        "-with-character-names-and-ui"
-        if has_names and has_ui
-        else ("-with-character-names" if has_names else "")
+        "-with-character-names-and-ui-and-special-screen"
+        if has_names and has_ui and has_special_screen
+        else (
+            "-with-character-names-and-ui"
+            if has_names and has_ui
+            else ("-with-character-names" if has_names else "")
+        )
     )
     runtime_scope = (
         f"u00-through-u{selected_units[-1]:02d}"
@@ -641,10 +676,29 @@ def build_disc(
             "entry_count": file_manifest["selected_entry_count"],
         },
         "warning": (
-            "The global primary font contains the selected dialogue plus "
-            f"integrated name/UI glyphs, and only units {selected_units} are "
-            "re-encoded. Do not enter other dialogue units with this partial "
-            "build."
+            (
+                "The global primary font contains all known non-graphical "
+                "font text: story units u00..u34, integrated name/UI text, "
+                "and u38/u43 special-screen text. Runtime validation is still "
+                "required for untested routes."
+                if has_special_screen and selected_units == list(range(35))
+                else (
+                    "The global primary font contains the selected dialogue "
+                    f"plus integrated name/UI glyphs, and only units "
+                    f"{selected_units} are re-encoded. Do not enter other "
+                    "dialogue units with this partial build."
+                )
+            )
+        ),
+        "special_screen": (
+            {
+                "included": True,
+                "entry_count": file_manifest["special_screen"]["entry_count"],
+                "units": file_manifest["special_screen"]["unit_entry_counts"],
+                "runtime_validation_required": True,
+            }
+            if has_special_screen
+            else {"included": False}
         ),
         "sources": {
             "original_media_manifest": str(

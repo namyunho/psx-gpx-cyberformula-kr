@@ -2280,7 +2280,7 @@ def write_unit_at_original_offsets_diagnostic(
 
 
 def parse_units(values: list[str], all_story: bool) -> list[int]:
-    units: set[int] = set(range(21)) if all_story else set()
+    units: set[int] = set(range(35)) if all_story else set()
     for value in values:
         for part in value.split(","):
             part = part.strip()
@@ -2430,7 +2430,11 @@ def main() -> None:
         default=[],
         help="story unit number or comma-separated list; repeatable",
     )
-    parser.add_argument("--all-story", action="store_true")
+    parser.add_argument(
+        "--all-story",
+        action="store_true",
+        help="select every supported dialogue unit u00..u34",
+    )
     parser.add_argument(
         "--placement-policy",
         choices=(

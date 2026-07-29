@@ -1957,15 +1957,17 @@
       "category": "machine",
       "jp": "ブイハチ",
       "reading": "ぶいはち",
-      "ko_candidate": "브이하치",
-      "variants": [],
+      "ko_candidate": "V8",
+      "variants": [
+        "브이하치"
+      ],
       "occurrences": 2,
       "evidence_ids": [
         "disc1/allbin/u07/event_page/ref0026",
         "disc1/allbin/u09/event_page/ref0109"
       ],
       "confidence": "high",
-      "notes": "Dialogue spelling and speaker-name table index 25 agree.",
+      "notes": "Machine name and speaker-name table index 25 use the compact official-style label V8; 브이하치 is retained as a search variant.",
       "status": "candidate"
     }
   ]

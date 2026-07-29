@@ -80,11 +80,8 @@ class ImportSpecialScreenTranslationBatchesTests(unittest.TestCase):
             merged["translations"][0]["ko"],
             self.translated_batches[0]["entries"][0]["ko"],
         )
-        self.assertEqual(report["validation"]["issue_entry_count"], 4)
-        self.assertEqual(
-            report["validation"]["issue_counts"],
-            {"slot_limit": 4},
-        )
+        self.assertEqual(report["validation"]["issue_entry_count"], 0)
+        self.assertEqual(report["validation"]["issue_counts"], {})
         self.assertTrue(report["protected_batch_fields_unchanged"])
 
     def test_rejects_changes_outside_the_ko_field(self) -> None:

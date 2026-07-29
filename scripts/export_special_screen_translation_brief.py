@@ -43,23 +43,37 @@ def visible_length(text: str) -> int:
     return len(text)
 
 
-def draft_issues(entry: dict[str, Any], text: str) -> list[str]:
+def stored_position_count(text: str) -> int:
+    """Count encoded u16 positions, with dynamic-name tokens stored once."""
+    for token in PLACEHOLDER_DISPLAY:
+        text = text.replace(token, "\uFFF0")
     lines = text.split("\n")
-    fixed_control_words = sum(
-        control["kind"] != "align"
+    return sum(len(line) for line in lines) + len(lines) - 1
+
+
+def editable_position_capacity(entry: dict[str, Any]) -> int:
+    """Return body positions after immutable shell controls are removed.
+
+    ``name_surname`` and ``name_given`` are editable body tokens represented
+    by one stored u16 word.  Their on-screen width is checked separately by
+    :func:`visible_length`.
+    """
+    shell_control_words = sum(
+        control["kind"] not in {"align", "name_surname", "name_given"}
         for control in entry["original"]["control_tokens"]
     )
-    max_positions = (
-        int(entry["source"]["byte_size"]) // 2 - fixed_control_words
-    )
+    return int(entry["source"]["byte_size"]) // 2 - shell_control_words
+
+
+def draft_issues(entry: dict[str, Any], text: str) -> list[str]:
+    lines = text.split("\n")
+    max_positions = editable_position_capacity(entry)
     issues: list[str] = []
     if len(lines) > int(entry["layout"]["rows"]):
         issues.append("row_limit")
     if any(visible_length(line) > 17 for line in lines):
         issues.append("column_limit")
-    positions = (
-        sum(visible_length(line) for line in lines) + len(lines) - 1
-    )
+    positions = stored_position_count(text)
     if positions > max_positions:
         issues.append("slot_limit")
     if JP_PATTERN.search(text):
@@ -100,13 +114,7 @@ def build_brief(
     for entry in entries:
         entry_id = entry["entry_id"]
         ko = draft_by_id[entry_id]
-        fixed_control_words = sum(
-            control["kind"] != "align"
-            for control in entry["original"]["control_tokens"]
-        )
-        max_positions = (
-            int(entry["source"]["byte_size"]) // 2 - fixed_control_words
-        )
+        max_positions = editable_position_capacity(entry)
         issues = draft_issues(entry, ko)
         issue_count += bool(issues)
         brief_entries.append(

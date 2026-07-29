@@ -38,9 +38,10 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 
 현재 공개 패치는 없습니다. Disc 1 구조 분모와 추출·폰트 PoC는 확정됐지만,
 전체 대사 번역 검토·축약, 베이크드 그래픽 현지화와 전편 QA는 아직
-진행 중입니다. `u00..u34`의 직접·무포인터 대사, 고정 이름과 이름 등록 UI를
-담은 비배포 개발 이미지는 생성됐습니다. 미니게임·코스·머신 설정의 폰트
-대사 391개는 번역 초안을 병합했지만 아직 그 이미지에는 주입하지 않았습니다.
+진행 중입니다. `u00..u34`의 직접·무포인터 대사, 고정 이름, 이름 등록 UI,
+미니게임·코스·머신 설정 폰트 대사 391개까지 현재 식별한 그래픽 제외
+폰트 문자열을 담은 비배포 개발 이미지를 생성했습니다. 정적 검증은
+통과했지만 새 특수 화면 범위의 사용자 실행 검증은 남아 있습니다.
 
 ## 진행 상태
 
@@ -61,9 +62,9 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | 베이크드 문자 소비 경로 | 🚧 진행 전 — 1,463개 검토 state를 화면→VRAM→RAM→저장 위치에 연결해야 함 |
 | 대사 추출 작업본 | 🚧 직접 대사 5,783개, `u00..u21` 무포인터 83개, 이름 등록 UI 60개와 특수 화면 391개 원문 보호 기준선 확보 |
 | 후보 번역 레이아웃 감사 | 🚧 직접 대사 5,783개 기계 배치 가능·차단 0 — 단어 분할 16건, 동일 원문 표기 후보 63건·용어집 후보 71건 사람 검토 필요 |
-| 특수 화면 폰트 번역 | 🚧 391개 외부 AI 교정본 병합 — 빈값·일본어 잔존·보호 필드 충돌 0, 코스 안전 슬롯 초과 4건, ROM 미주입 |
+| 특수 화면 폰트 번역 | 🚧 391개 정적 주입 — 미매핑·빈값·고정 슬롯 초과·보호 필드 충돌 0, 사용자 실행 검토 필요 |
 | 이름 등록 폰트 UI | 🚧 고정 리터럴 4개 정적 주입 완료 — 입력 팔레트·런타임 버퍼 56개 원본 보존, 실행 전수 검토 필요 |
-| 전체 대사 재삽입 개발 이미지 | 🚧 `u00..u34` 직접+무포인터 5,866개 정적 주입 — 제2장 종료까지 사용자 진행 확인, 이후 경로와 특수 화면은 미검증 |
+| 전체 대사 재삽입 개발 이미지 | 🚧 `u00..u34` 직접+무포인터 5,866개와 특수 화면 391개 정적 주입 — 기존판은 제2장 종료까지 사용자 진행 확인, 새 특수 화면 통합판은 실행 검증 필요 |
 | 전체 번역·재삽입 | 🚧 초벌 후보 상태 — 의미·용어·자연스러운 줄바꿈과 전편 실행 QA 필요 |
 | 통합 빌드·실행 QA·차분 배포 | ⏳ 예정 |
 
@@ -72,12 +73,12 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 > 직접 포인터 대상만 수집해 물리 스트림 안의 무포인터 연속 페이지를 누락한
 > 사실이 확인돼 텍스트 모집단 판정을 다시 열었습니다. 현재는
 > `u00..u21`에서 무포인터 83개를 추가했고, 별도 소비자를 쓰는 `u38/u43`의
-> 미니게임·코스·머신 설정 391개도 분리했습니다. unit 공용 arena 재배치
+> 미니게임·코스·머신 설정 391개도 분리해 정적 주입했습니다. unit 공용 arena 재배치
 > 방식은 `u00`과 테스트 주행 `u21`에서 구조 실험을 통과했고, 같은 정적
 > 불변식으로 만든 `u00..u34` 개발 이미지는 사용자가 제2장 종료까지 진행해
 > 프리즈가 없음을 확인했습니다. 이는 이후 장·모든 분기·특수 화면의 전수
-> 통과를 뜻하지 않습니다. 391개 특수 화면 번역도 아직 ROM에 주입하지
-> 않았고, 번역은 기계 후보와 수작업 교정이 섞여 있으므로 한글 패치
+> 통과를 뜻하지 않습니다. 특수 화면 통합판은 아직 사용자 실행 검증 전이고,
+> 번역은 기계 후보와 수작업 교정이 섞여 있으므로 한글 패치
 > 완성으로 판정하지 않습니다.
 
 ## 확정된 작업 블록
@@ -97,6 +98,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 | Galmuri11 | 한글 문자표 2,350자 | TTF 12px 결과가 2,350개 고유 자형을 유지하고 14×14 셀 밖 픽셀 0개 |
 | 첫 대사 PoC | 한글 18자, 변경 763바이트 | `START.BIN`·`ALLBIN.BIN` 변경과 9개 raw LBA 쓰기가 선언 범위와 일치 |
 | 전체 대사 비배포 빌드 | unit `u00..u34`, 직접+무포인터 5,866개, 정적 맵 998자 | 453개 raw sector Expected Write·EDC/ECC 검증, 제2장 종료까지 사용자 진행 확인 |
+| 그래픽 제외 전체 폰트 빌드 | 위 5,866개+특수 화면 391개, primary 미매핑 0 | 469개 raw sector Expected Write·EDC/ECC 검증, 특수 화면 실행 검토 필요 |
 
 정상 경기 선택 코드는 현재 경기 상태 `0..13`에 21을 더해 `u21..u34`를
 고르므로, 직접 포인터 대상 대사 5,783개는 모두 정상 실행 후보 경로다.
@@ -146,7 +148,7 @@ tmp/                    비커밋 임시 캡처
 | [수정 전 역공학 기준선](docs/reverse-engineering-baseline.md) | 대상 리비전, 로더·schedule·텍스트·폰트·초상·그래픽 분모의 현재 결론 |
 | [Disc 1 전량 추출·압축해제](docs/disc1-extraction.md) | 추출 경계, 출력 구조, 압축해제 수량과 전량 검증 |
 | [Disc 1 대사 추출 작업본](docs/dialogue-extraction.md) | 번역 없는 가역 JSON, 협업 필드 정책, 17×3 대사창과 저장 공간 판정 |
-| [미니게임·코스·머신 설정 폰트 문자열](docs/special-screen-font-text.md) | `u38/u43` 391개 소비자·추출·외부 AI 병합 검증과 ROM 미주입 상태 |
+| [미니게임·코스·머신 설정 폰트 문자열](docs/special-screen-font-text.md) | `u38/u43` 391개 소비자·추출·외부 AI 병합과 고정 슬롯 정적 주입 |
 | [그래픽 문자 인벤토리](docs/graphics-text-inventory.md) | 베이크드 문자 검토 state와 편집 승격 조건 |
 | [폰트 포맷](docs/font-format.md) | primary/alternate 14×14 3bpp 공급자와 렌더러 |
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
@@ -160,6 +162,8 @@ tmp/                    비커밋 임시 캡처
 | [대사별 검증 안전 슬롯](docs/dialogue-safe-slots.md) | 5,783개 고정 원위치 바이트 경계, 생성 JSON·CSV와 엄격 보호 정책 |
 | [unit 공용 대사 arena](docs/unit-dialogue-pool-experiment.md) | u00/u21 전수 포인터 재연결, 공용 용량과 실행 검증 결과 |
 | [`u00..u34` 전체 대사 비배포 빌드](docs/full-dialogue-nonrelease-build.md) | 직접+무포인터 5,866개, 이름·UI, 453 sector 검증과 제2장 종료 관측 |
+| [그래픽 제외 전체 폰트 문자열 비배포 빌드](docs/all-font-text-nonrelease-build.md) | 전체 대사·이름·UI·특수 화면 391개, 글꼴 완전성과 469 sector 검증 |
+| [프로젝트 진행 요약](docs/project-progress-summary.md) | 원본 조사부터 현재 통합 비배포 빌드와 남은 작업까지의 전체 작업 요약 |
 | [통합 폰트 번역 편집기](docs/dialogue-layout-editor.md) | 본편·무포인터·미니게임·코스·머신 설정·UI·이름을 원본별로 안전 저장하는 검수 GUI |
 | [Git 작업 흐름](docs/git-workflow.md) | `main`과 목적별 단기 브랜치, 검증·병합·태그 정책 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
@@ -264,13 +268,35 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
 `0x0E4..0x0E5`는 영문·숫자·특수문자 보호 슬롯으로 예약되어 한글 배정에
 사용되지 않습니다.
 
-현재의 `u00..u34` 개발 이미지는 `--all-story`,
-`--allow-unit-capacity-space-compaction`을 명시한 비배포 빌드다. 8개
-unit에서 공백 266개만 제거했고 비공백 글리프와 제어 셸은 보존했다. 원본
-Track 1과 같은 602,020,272바이트이며 SHA-256은
-`d290859416e3573177c4e1e3df40bdad2013fa9ded31c8baae4ed6fb178f851f`다.
-이 해시는 로컬 회귀 식별값이지 배포 파일이 아니며, 전체 BIN/CUE는 Git에
-커밋하지 않습니다. 특수 화면 391개는 이 빌드에 포함되지 않습니다.
+현재의 `u00..u34` 그래픽 제외 전체 폰트 개발 이미지는 다음 단계를
+추가해 생성합니다.
+
+```bash
+.venv/bin/python scripts/build_dialogue_chapter_patch.py \
+  --start-bin work/extracted/disc1/iso/START.BIN \
+  --allbin work/extracted/disc1/iso/ALLBIN.BIN \
+  --all-story \
+  --placement-policy unit-shared-pool \
+  --output-dir work/build/dialogue-u00-u34-all-font-current
+.venv/bin/python scripts/build_character_name_patch.py \
+  --file-build-dir work/build/dialogue-u00-u34-all-font-current \
+  --output-dir work/build/dialogue-u00-u34-all-font-current-names
+.venv/bin/python scripts/build_ui_translation_patch.py \
+  --file-build-dir work/build/dialogue-u00-u34-all-font-current-names \
+  --output-dir work/build/dialogue-u00-u34-all-font-current-names-ui
+.venv/bin/python scripts/build_special_screen_patch.py \
+  --file-build-dir work/build/dialogue-u00-u34-all-font-current-names-ui \
+  --output-dir work/build/dialogue-u00-u34-all-font-current-names-ui-special
+.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+  --file-build-dir work/build/dialogue-u00-u34-all-font-current-names-ui-special \
+  --output-dir work/build/disc1-all-known-font-text-2026-07-29
+```
+
+원본 Track 1과 같은 602,020,272바이트이며 SHA-256은
+`66025f1527a85b459cc09ea4e3b6750de3db82536df2e7d05f140d37cfea1757`다.
+469개 raw sector Expected Write와 EDC/ECC를 검증했다. 이 해시는 로컬
+회귀 식별값이지 배포 파일이 아니며, 전체 BIN/CUE는 Git에 커밋하지
+않습니다.
 
 ## 도구체인
 
