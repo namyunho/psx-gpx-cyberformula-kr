@@ -136,10 +136,12 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             root
             / "work/translations/disc1-pointerless-pages-u00-u21.json",
             root / "work/translations/disc1-special-screen-text.json",
+            root / "work/translations/disc1-unindexed-font-text.json",
             root / "work/translations/disc1-ui.json",
             root
             / "data/translations/disc1-pointerless-pages-u00-u21-ko.json",
             root / "data/translations/disc1-special-screen-ko.json",
+            root / "data/translations/disc1-unindexed-font-ko.json",
             root / "data/translations/disc1-ui-ko.json",
             root / "data/translations/disc1-character-names.json",
         )
@@ -152,15 +154,17 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             safe_slots_path=required[2],
             pointerless_workset_path=required[3],
             special_workset_path=required[4],
-            ui_workset_path=required[5],
-            pointerless_translation_path=required[6],
-            special_translation_path=required[7],
-            ui_translation_path=required[8],
-            character_names_path=required[9],
+            unindexed_workset_path=required[5],
+            ui_workset_path=required[6],
+            pointerless_translation_path=required[7],
+            special_translation_path=required[8],
+            unindexed_translation_path=required[9],
+            ui_translation_path=required[10],
+            character_names_path=required[11],
         )
 
         summary = document.validation_summary()
-        self.assertEqual(len(document), 6298)
+        self.assertEqual(len(document), 7014)
         self.assertEqual(
             summary["source_group_counts"],
             {
@@ -168,8 +172,11 @@ class DialogueLayoutEditorTests(unittest.TestCase):
                 "course_information": 57,
                 "font_ui": 4,
                 "machine_setting": 12,
-                "minigame": 322,
+                "minigame": 395,
                 "pointerless_page": 84,
+                "race_dialogue": 325,
+                "save_system": 27,
+                "sequential_dialogue": 291,
                 "story_dialogue": 5783,
             },
         )
@@ -184,6 +191,17 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         self.assertEqual(
             document.layout_profile(minigame_index).rows,
             3,
+        )
+        save_index = document.ids.index(
+            "disc1/allbin/u39/unindexed_font/p05F98"
+        )
+        self.assertEqual(
+            document.source_group(save_index),
+            "save_system",
+        )
+        self.assertEqual(
+            document.layout_profile(save_index).columns,
+            17,
         )
         ui_index = document.ids.index(
             "disc1/allbin/u40/font_rendered_ui/e047"

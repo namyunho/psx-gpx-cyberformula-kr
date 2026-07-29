@@ -1,0 +1,4328 @@
+{
+  "schema_version": 1,
+  "status": "complete-draft-translation-needs-independent-language-and-runtime-review",
+  "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
+  "source_workset": "work/translations/disc1-unindexed-font-text.json",
+  "source_workset_sha256": "2df58bf28867c9a547b9eb41c482eeb95367151bda7477dc96e2b16b30604e20",
+  "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
+  "manual_translation_source_sha256": "aa89a1bcebdd5b1227629e754cd21c73d902c152beab1d66822fcdfbf1a951be",
+  "scope": {
+    "entry_count": 716,
+    "new_unique_text_count": 288,
+    "ambiguous_context_override_count": 14,
+    "graphics_text_excluded": true
+  },
+  "policy": {
+    "original_and_control_tokens": "protected-in-source-workset",
+    "identical_japanese_reuse": "reuse only when the existing Korean decision is unambiguous",
+    "review": "Codex draft; independent language review and user runtime review are required before release eligibility"
+  },
+  "summary": {
+    "translation_count": 716,
+    "empty_translation_count": 0,
+    "provenance_counts": {
+      "manual-context-or-new-translation": 298,
+      "manual-existing-ambiguity-resolution": 5,
+      "reused-identical-existing-japanese": 378,
+      "reused-identical-new-japanese": 35
+    }
+  },
+  "translations": [
+    {
+      "id": "disc1/allbin/u02/unindexed_font/p02FFE",
+      "ko": "레나! 그 말은 금기야!\n그 사람 귀에 들어가면\n어찌 될지 모른다고!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p0009A",
+      "ko": "노크한다.\n다른 곳으로 간다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p000BC",
+      "ko": "어디로 갈까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p008AE",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p0105E",
+      "ko": "스고 위너스로 돌아간다.\n아직 돌아가지 않는다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p0112E",
+      "ko": "일단 모터홈으로 돌아갈까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p01164",
+      "ko": "내일 정보를 본다\n네메시스를 세팅한다\n그냥 잔다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00BE8",
+      "ko": "좋은 아침, 네메시스.\n상태는 어때?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00C12",
+      "ko": "좋은 아침입니다.\n시스템은 올 그린.\n이상 없습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00C5E",
+      "ko": "그렇구나.\n오늘부터 우리 레이스가\n시작돼. 함께 힘내자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00CA2",
+      "ko": "저는 당신을 지원하기 위해\n존재합니다. 그 이상의 일도\n그 이하의 일도 못 합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00D0A",
+      "ko": "알아. 네 지시를 듣고\n마지막 판단을 내리는 건\n결국 나니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00D52",
+      "ko": "걱정 마. 네 기대를\n저버리지 않는 주행을 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p01366",
+      "ko": "아무도 없네….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p0137C",
+      "ko": "저는 클레어 포트란. 이…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p0139E",
+      "ko": "도쿄 게임쇼에 오신 걸\n환영해요♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p00BC4",
+      "ko": "어쩔래?\n모터홈으로 돌아갈까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p00BEA",
+      "ko": "모터홈으로 돌아가자.\n아직 돌아가지 않는다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p01122",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p0114A",
+      "ko": "그러자. 다른 곳에 가 보자.\n아니, 스고 위너스로 돌아간다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p032DC",
+      "ko": "아무도 없네….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p01172",
+      "ko": "어제는 좋은 주행을 했어.\n그것도 네 덕분이야.\n오늘도 잘 부탁해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p011C2",
+      "ko": "어제처럼 정확한 판단을\n부탁드립니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p011F2",
+      "ko": "그러면 저도 최적의\n코스 라인을 당신에게\n제공할 수 있습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0123E",
+      "ko": "그래, 힘낼게.\n그러니 너도 내게\n힘을 빌려줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p01282",
+      "ko": "알겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p01290",
+      "ko": "이기진 못했지만,\n어제 레이스를 어떻게 봤어?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p012CA",
+      "ko": "당신의 주행을 분석한 결과,\n상황 판단이 안일한 점이\n두드러집니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0130C",
+      "ko": "이는 레이스 전개에\n큰 지장을 주고 있습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0133E",
+      "ko": "레이스 경험 부족에서\n비롯된 것입니다. 한층 더\n노력하시길 바랍니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0139C",
+      "ko": "알아. 오늘 레이스에선\n반드시 승리를 거머쥘게.\n그러니 힘을 빌려줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p013FE",
+      "ko": "알겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u07/unindexed_font/p030A8",
+      "ko": "여러모로 참고가 됐네. 자,\n내일 레이스를 위해 정보와\n세팅을 확인하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u07/unindexed_font/p03108",
+      "ko": "잘 자",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u07/unindexed_font/p0311A",
+      "ko": "일단 모터홈으로 돌아갈까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u07/unindexed_font/p03150",
+      "ko": "내일 레이스 준비를\n한다\n안 한다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u08/unindexed_font/p01750",
+      "ko": "알았어. 널 믿을게.\n이번 레이스는 둘이 함께\n승리를 쟁취하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u08/unindexed_font/p020FC",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p00F84",
+      "ko": "어라? 레나 녀석 벌써 가\n버렸네. 됐나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p00FC0",
+      "ko": "밤 산책을 간다\n오늘은 그냥 잔다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p01440",
+      "ko": "해냈어! 네메시스에게 보고하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p01494",
+      "ko": "흥! …우쭐해져서는…! 두고\n봐. 이대로 끝나진 않을\n테니까…!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p014E8",
+      "ko": "크크크크….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p0237E",
+      "ko": "앙리 씨는 왜 늘\n저렇게 기분이 나쁠까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p023BE",
+      "ko": "…글쎄.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02AF4",
+      "ko": "좋은 이야기 들어서 다행이네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02B16",
+      "ko": "응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02C0C",
+      "ko": "어머~ 가 버렸네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05434",
+      "ko": "음~ 기분 좋다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05D92",
+      "ko": "자, 어쩔까.\n그냥 잔다\n레나를 찾으러 간다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05DCA",
+      "ko": "하아… 왠지 피곤하네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p002B0",
+      "ko": "그래, 그러자.\n모터홈으로 돌아가자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0130A",
+      "ko": "(미키 씨가 있다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01322",
+      "ko": "이야, 꽤 거칠게\n활약하고 있나 보네.\n이번 대회의 태풍의 눈이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01376",
+      "ko": "그렇게 대단하진 않아요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01392",
+      "ko": "아니긴. 실제로 잘하잖아.\n신인인데 하야토의 기술까지\n쓰고 말이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p013EE",
+      "ko": "하아…. 하지만 거의\n우연이었어요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0141A",
+      "ko": "우연이어도 해냈잖아.\n좀 더 자신감을 가져.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0144C",
+      "ko": "나오키도 그러더라.\n'스고 신인이 신경 쓰인다'고.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0148A",
+      "ko": "정말인가요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0149E",
+      "ko": "진짜야. 널 치켜세워 봐야\n내게 득 될 것도 없잖아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p014DC",
+      "ko": "대단하잖아, {name:given}.\n신죠 씨에게 그런 말까지\n듣다니.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01522",
+      "ko": "이제 더더욱\n대충 달릴 순 없겠네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01558",
+      "ko": "잠깐, 난 언제나\n대충 달린 적 없다고.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01598",
+      "ko": "뭐, 그건 알지만.\n지금보다 더 힘내라는 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p015DA",
+      "ko": "앞으로는 더 힘들어질 거지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01608",
+      "ko": "그렇지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01616",
+      "ko": "그 말이야. 널 점점\n경계할 거야. 다음 레이스도\n정신 바짝 차려. …그럼.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01684",
+      "ko": "아, 감사합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01AB6",
+      "ko": "왠지 좋은 냄새가 나네. 어머,\n저기 있는 거 카가 씨 아냐?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01B02",
+      "ko": "정말이다. 잠깐 가 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01B26",
+      "ko": "뭐야 뭐야? 냄새에 이끌려 온\n거냐?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01B5A",
+      "ko": "와, 라멘이네요. 맛있겠다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01B84",
+      "ko": "그래, 여기서 먹는 라멘도 꽤\n각별하다고. 너희도 먹을래?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01BD0",
+      "ko": "아, 아뇨, 사양하겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01BF0",
+      "ko": "그런데 카가 씨, 그렇게 먹어도\n괜찮으세요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01C28",
+      "ko": "게다가 아침부터\n라멘이 잘도 들어가네요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01C62",
+      "ko": "바~보, 내 위는 그렇게 약하지\n않아. 이 정도야 가뿐하지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01CA8",
+      "ko": "하아, 그런가요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01CC4",
+      "ko": "아무튼 난 지금 식사 중이야.\n얘기는 나중에 해 줘. 라멘\n불겠다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D10",
+      "ko": "그렇군요. 죄송했습니다.\n실례하겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D40",
+      "ko": "앗, 카가 씨가 있어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D5C",
+      "ko": "정말이네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D6A",
+      "ko": "잠깐 가 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D8E",
+      "ko": "여어, 너희냐. 뭐야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01DB0",
+      "ko": "초밥 드시고 계셨어요?\n맛있겠다~.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01DDE",
+      "ko": "우리 드라이버는 해외 생활이\n길어져서, 아무래도\n일본 음식이 그리워져.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E3C",
+      "ko": "그래서 가끔 쿄코 씨에게\n일본 음식을 부탁하지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E7C",
+      "ko": "역시 아오이네요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E96",
+      "ko": "하지만 이렇게 더우면\n초밥 재료가 금세 말라서\n안 되겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01EE0",
+      "ko": "뭐, 사치 부릴 순 없지만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F08",
+      "ko": "그럼 레나, 먹어 볼래?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F2E",
+      "ko": "아뇨, 사양할게요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F52",
+      "ko": "응, 그래.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F66",
+      "ko": "그럼 카가 씨,\n저희는 이만 가 보겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F98",
+      "ko": "그래, 그럼.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01FAE",
+      "ko": "아~ 카가 씨 또\n뭔가 먹고 있어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01FDC",
+      "ko": "정말이네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01FEA",
+      "ko": "앗, 카가 씨, 이번엔 핫도그\n먹고 있어~.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02022",
+      "ko": "뭐야? 너희, 또 온 거냐!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02052",
+      "ko": "어떻게 그렇게 많이 드세요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02072",
+      "ko": "바~보, 이 정도는 아직 시작일\n뿐이야. 이제 위에 부스트 걸고\n마구 먹을 거야~.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p020CE",
+      "ko": "상상하니 속이 메스꺼워…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p020F4",
+      "ko": "잠깐, 괜찮아?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0210A",
+      "ko": "응, 어떻게든.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02120",
+      "ko": "정말! 칠칠치 못하네. 먹을 수\n있을 때 먹어 둬야 중요할 때\n힘을 내지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0217A",
+      "ko": "그런데 카가 씨,\n너무 많이 먹는 거 아녜요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p021A0",
+      "ko": "괜찮아, 괜찮아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p021B4",
+      "ko": "슬슬 우리 실례하자. 왠지 나도\n속이 안 좋아졌어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p021FA",
+      "ko": "……그러게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0220E",
+      "ko": "부츠홀츠 씨,\n또 마시고 있나 봐.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0223E",
+      "ko": "말 한번 걸어 볼까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02260",
+      "ko": "응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0226C",
+      "ko": "부츠홀츠 씨,\n잠깐 괜찮으세요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02298",
+      "ko": "아, 너였나.\n미안하지만 혼자 있게 해 줘.\n오늘은 조용히 마시고 싶군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p022F8",
+      "ko": "아, 네. 죄송했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02318",
+      "ko": "무슨 생각이라도 하나?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02338",
+      "ko": "음~.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02344",
+      "ko": "부츠홀츠 씨가 있어. 어쩔래?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02370",
+      "ko": "좋아, 인사하고 오자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0238A",
+      "ko": "여어, 스고의 신인. 좋은\n주행이야. 네 멋진 주행에\n건배~! 와하하하하하…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p023F8",
+      "ko": "왠지 취한 것 같아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02418",
+      "ko": "완벽하게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02428",
+      "ko": "뭐야 뭐야? 수군대고. 어때?\n너희도 마실래?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02468",
+      "ko": "저, 저희는 미성년자라서요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02486",
+      "ko": "너무 딱딱하게 굴지 마.\n이건 약이야. 정신을 위한.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p024D0",
+      "ko": "하하하하…… 안 되겠네, 이건.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p024F2",
+      "ko": "그런 것 같아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02508",
+      "ko": "물러날까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0251A",
+      "ko": "그러자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0252A",
+      "ko": "부츠홀츠 씨, 저희는 볼일이\n있어서 실례하겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02562",
+      "ko": "어이 어이, 도망가지 마!\n비겁하다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0258E",
+      "ko": "아니, 정말 이제…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p025AC",
+      "ko": "정신 회복은 무엇보다 중요하다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p025CC",
+      "ko": "안 되겠다, 이거. 정말\n도망치자, 레나!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p025FA",
+      "ko": "응. 그게 좋겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02616",
+      "ko": "어이, 너희 어디 가냐?\n야, 이야기는 안 끝났어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02902",
+      "ko": "자! 기다렸지!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02D8C",
+      "ko": "아직 여러 이야기를\n더 들어보는 게 좋겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02E22",
+      "ko": "마침내, 스파이럴 부스트가 내\n것이…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p005BC",
+      "ko": "드라이버와 관계자 여러분,\n기내에서 잠시나마 휴식을\n즐기고 계십니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00616",
+      "ko": "갑작스럽지만 FICCY 주최\n게임 대회를 개최하겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00672",
+      "ko": "우승자에게는 레이스 퀸\n미스 레나의 축하 키스가\n주어집니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p006C4",
+      "ko": "여러분, 힘내 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p006E0",
+      "ko": "우오~! 삐익삐익!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00A1A",
+      "ko": "그럼 게임 시작입니다.\n여러분, 모니터를 봐 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01192",
+      "ko": "카자미 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011A4",
+      "ko": "구데리안 씨다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011BA",
+      "ko": "하이넬 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011D0",
+      "ko": "신죠 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011E0",
+      "ko": "오사무 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011EE",
+      "ko": "메구 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01200",
+      "ko": "카가 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01210",
+      "ko": "부츠홀츠 씨다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u12/unindexed_font/p035D0",
+      "ko": "일단 모터홈으로\n돌아갈까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p011BA",
+      "ko": "좋은 아침, 네메시스.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p011D4",
+      "ko": "무슨 일입니까?\n목소리가 좋지 않습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p011FE",
+      "ko": "역시 타이어 부담을 생각하면\n끝까지 달릴 수 있을지….\n왠지 우울해져.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p0125E",
+      "ko": "무엇을 망설이십니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01286",
+      "ko": "파트너인 당신은 저를\n믿는다고 하지 않았습니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p012D0",
+      "ko": "물론 제 시뮬레이션에서도\n타이어 상황은 상당히\n어렵습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p0131C",
+      "ko": "하지만 처음부터 포기하면\n좋은 결과를 얻을 수 없습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01360",
+      "ko": "달릴 수 있는 한 1센티라도\n앞으로 나아갈 각오로\n레이스에 임합시다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013A6",
+      "ko": "하아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013B4",
+      "ko": "무슨 일입니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013CC",
+      "ko": "네게 설교를 들을 줄은\n몰랐어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013FE",
+      "ko": "그래. 처음부터 포기하면\n레이스를 포기하는 것과\n마찬가지니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01454",
+      "ko": "좋아, 할 수 있는 데까지\n해 볼게. 네메시스,\n머신 지원을 부탁해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p014A0",
+      "ko": "알겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01F68",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0042A",
+      "ko": "그럼 난 갈 데가 있어서.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00454",
+      "ko": "어, 어이, 레나.\n가 버렸네….\n어쩌지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00488",
+      "ko": "그냥 잔다.\n뒤쫓아 간다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0054E",
+      "ko": "어라, 레나다!\n…안 들리네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00574",
+      "ko": "뭐야, 돌아와 있었구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00590",
+      "ko": "앗!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00C78",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00EAC",
+      "ko": "레나!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00EB6",
+      "ko": "앗! {name:given}….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00ECA",
+      "ko": "무슨 일이야?\n얼굴이 빨개.\n열이라도 나?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00EFE",
+      "ko": "아무것도 아니야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F18",
+      "ko": "그렇구나. 건강 조심해.\n하하, 나도 나름\n널 걱정한다고.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F6E",
+      "ko": "왜, 왜 갑자기\n그런 말을 하는 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F9E",
+      "ko": "왜냐니… 그, 그건….\n그보다 무슨 일이야?\n평소의 너답지 않아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00FF6",
+      "ko": "알고 있어!\n아무튼 방금 일은\n잊어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0103A",
+      "ko": "(뭔지 잘 모르겠지만…)\n응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01066",
+      "ko": "꼭이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01076",
+      "ko": "그래, 그래.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01086",
+      "ko": "그럼 난 갈 데가 있어서.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p010B0",
+      "ko": "어, 어이, 레나.\n가 버렸네….\n어쩌지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p010E6",
+      "ko": "그냥 잔다.\n뒤쫓아 간다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01106",
+      "ko": "남의 사생활에 참견하는 건\n좋지 않아. 내일을 생각하며\n그냥 자자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01162",
+      "ko": "잘 자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01172",
+      "ko": "왠지 신경 쓰이네. 한밤중이고,\n걱정되니 따라가 볼까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p011B6",
+      "ko": "어라, 레나다!\n같이 있는 건 아스카 씨네.\n무슨 이야기를 하지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01204",
+      "ko": "여기선 안 들리네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0371C",
+      "ko": "해냈어! 네메시스에게 보고하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p037D8",
+      "ko": "레나는 아직\n안 돌아왔나 보네….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p03890",
+      "ko": "내일 레이스 준비를\n한다\n안 한다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u15/unindexed_font/p01F8C",
+      "ko": "마침내, 스파이럴 부스트가 내\n것이…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p00D8A",
+      "ko": "자, 모터홈으로\n돌아갈까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p011C4",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p011D0",
+      "ko": "…다시 한번 축하해.\n나… 기뻤어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p011FE",
+      "ko": "그래, 어떻게든 란돌 씨를\n이겼고 내기도 해결됐으니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0124C",
+      "ko": "바보… 그런 말이 아니야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01284",
+      "ko": "레이스 중에 한 말….\n진심이야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p012B4",
+      "ko": "…진심이야. 내가 아직\n부족할지 몰라도,\n레나를 지키고 싶어!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01306",
+      "ko": "고마워…♥",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0131C",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01328",
+      "ko": "오늘 레이스… 아쉬웠지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0134A",
+      "ko": "미안해. 네 키스를\n지켜 주지 못했어.\n한심하지, 나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01394",
+      "ko": "아냐. 애초에 내가\n멋대로 내기했을 뿐이야.\n…신경 쓰지 마.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p013F0",
+      "ko": "넌 충분히 힘냈어.\n그래도 졌으니 어쩔 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0143C",
+      "ko": "레나… 미안해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0144E",
+      "ko": "…그럼 약속했으니\n란돌 씨 별장에 다녀올게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0149A",
+      "ko": "레나…💧\n(젠장, 이렇게 레나를\n보내야만 하는 건가?)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p014E8",
+      "ko": "방해 중에 죄송합니다만,\n란돌 님의 편지를\n전해 드리러 왔습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01542",
+      "ko": "그레이슨 씨!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01558",
+      "ko": "란돌 씨의 편지!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01576",
+      "ko": "네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01584",
+      "ko": "아하, 란돌 씨는 의외로\n좋은 사람이네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p015BC",
+      "ko": "'키스받은 일이 프로일라인\n아스카 귀에 들어가면 곤란해\n내기를 취소한다'고 하네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0161C",
+      "ko": "정말이야!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0162A",
+      "ko": "응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01638",
+      "ko": "그럼 저는 이만 실례하겠습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0165E",
+      "ko": "이걸로 란돌 씨에게\n빚 하나를 졌네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01694",
+      "ko": "후후, 그러네♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03B98",
+      "ko": "여러모로 참고가 됐네. 자,\n내일 레이스를 위해 정보와\n세팅을 확인하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03BF8",
+      "ko": "일단 모터홈으로 돌아갈까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03C2C",
+      "ko": "내일 레이스 준비를\n한다\n안 한다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03C56",
+      "ko": "레나…… 어라? 어디로 가 버린\n거지…. 어쩔 수 없네, 찾으러\n갈까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03F62",
+      "ko": "바쁜 것 같네…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p0087A",
+      "ko": "(아침인가……)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p0088C",
+      "ko": "(어제 레이스에서 란돌 씨를\n이겼어. 역시 레나가\n있었기 때문일까…?)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p008F0",
+      "ko": "(오늘은 카가 씨와 같은 조야.\n각오하지 않으면 따라잡는\n것조차 어려울 거야.)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p0094E",
+      "ko": "(좋아, 힘내자.\n카가 씨와 승부하는 거야.\n네메시스와 함께.)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p009A0",
+      "ko": "(…하지만 앙리 씨가 한 말이\n정말일까? 네메시스….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p009E8",
+      "ko": "(아침인가……)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p009F8",
+      "ko": "(어제 난 레나를\n지키지 못했어.)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00A1C",
+      "ko": "(젠장, 정말 한심해.\n결국 란돌 씨에게\n도움받은 꼴이 됐어….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00A72",
+      "ko": "(하루 지나니 오히려\n레나를 볼 낯이 없어.)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00AAC",
+      "ko": "(…나로선 란돌 씨를\n이기는 게 꿈일 뿐인가….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00AEA",
+      "ko": "(안 돼. 부정적인 생각은\n그만하자. 어제 결과를 딛고\n오늘 레이스에 힘쓰면 돼.)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00B52",
+      "ko": "(…하지만 앙리 씨가 한 말이\n정말일까? 네메시스….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00B9C",
+      "ko": "잠깐, 아까부터 불렀는데\n왜 대답 안 하는 거야💢",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00BE2",
+      "ko": "미안, 미안.\n잠깐 생각할 게 있었어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00C16",
+      "ko": "혹시 어제 일…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00C36",
+      "ko": "응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00C42",
+      "ko": "사실 나도 어젯밤에\n잘 못 잤어. 두근거렸달까.\n…다 네 탓이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00CB0",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00CBC",
+      "ko": "오늘은 카가 씨와 레이스지.\n나도 열심히 응원할게.\n너도 최선을 다해 달려.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00D1E",
+      "ko": "물론이야. 레나, 너와\n나 자신을 위해 전력으로 갈게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00D68",
+      "ko": "응.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p012FE",
+      "ko": "앙리 씨 말은\n신경 쓰지 마.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01336",
+      "ko": "알아. 알지만….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B06",
+      "ko": "여어, '카자미의 재림'.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B24",
+      "ko": "신죠 씨, 그렇게\n부르지 마세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B52",
+      "ko": "맞아, 나오키.\n레이스는 아직 안 끝났어.\n놀리는 건 그만둬.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01BA4",
+      "ko": "미안. 하지만 난\n놀리려던 게 아니야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01BE0",
+      "ko": "하지만 전 아직 카자미 씨의\n주행을 따라잡으려면 멀었어요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C1C",
+      "ko": "하지만 넌 실제로 나와\n란돌을 따라붙는 주행을\n보여 줬어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C68",
+      "ko": "카자미를 따라잡는 것도\n불가능하진 않을 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C9C",
+      "ko": "그럴까요?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01CB4",
+      "ko": "자신을 좀 더 믿어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01CD0",
+      "ko": "그래. 드라이버에겐 기술도\n필요하지만… 역시 마음,\n헝그리 정신이 필요해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01D2E",
+      "ko": "스스로 안 된다고 생각하면\n정말 이룰 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01D6C",
+      "ko": "미키 말이 맞아.\n괜찮아, 너라면 할 수 있어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01DA4",
+      "ko": "오늘은 카가와 같은 조지.\n그 녀석과 달리며\n자기 틀을 깨고 와.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01DEE",
+      "ko": "나오키, 슬슬 레이스 준비를\n시작하자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01E1C",
+      "ko": "그래, 알았어.\n그럼 이만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01E42",
+      "ko": "네, 감사합니다.\n(내 틀을 깬다….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p034A0",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p034F4",
+      "ko": "바쁜 것 같네…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p00108",
+      "ko": "회의 중인 것 같아.\n나중에 다시 오자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C30",
+      "ko": "클레어 씨, 그 네메시스\n말인데요….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C64",
+      "ko": "그만해, 레나!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C76",
+      "ko": "…하지만!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C88",
+      "ko": "됐으니 그만해!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C9A",
+      "ko": "…대체 무슨 일이야?\n무슨 얘긴지 모르겠는데.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01FFC",
+      "ko": "앙리 씨가 한 말,\n아직도 신경 써?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p02030",
+      "ko": "그건 전부 헛소리야!\n지금까지 달려 온\n네 실력을 믿으라고!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p0207E",
+      "ko": "뭐, 뭐랄까, 나는\n널 믿고 있으니까!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p020B0",
+      "ko": "…고마워, 레나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p03A8E",
+      "ko": "바쁜 것 같네…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p0034C",
+      "ko": "오늘 난 최고 컨디션이야!\n절대 안 질 테니까!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p0037C",
+      "ko": "오늘은 지난번처럼\n되진 않을 거다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p003A0",
+      "ko": "여어, 카미카제 보이!\n하지만 오늘 승리의 여신은\n분명 미에게 미소 짓는다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p003F8",
+      "ko": "신인에게 쉽게 지진 않지.\n나도 말이야. 각오해라.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p00434",
+      "ko": "드디어 마지막이군.\n좋은 레이스를 하자!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p00464",
+      "ko": "뭐, 힘내라. 하지만\n지난번처럼 되진 않을 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p00E54",
+      "ko": "레이스 준비를\n한다.\n아직 안 한다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04692",
+      "ko": "전방에 슈틸 2대를 포착.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p046D6",
+      "ko": "여기서부터 앞으로 이겨 나가기\n위해 시스템상 모든 처리를\n최적화 계산에 사용합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04734",
+      "ko": "그게 무슨 뜻이야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04750",
+      "ko": "\"집중\"하고 있으므로 \"말수가\n줄어든다\"는 정도일까요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04798",
+      "ko": "그렇구나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p047AA",
+      "ko": "이번에는 전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p047D2",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04830",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04878",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04924",
+      "ko": "뭐라고!? 이렇게도 쉽게\n추월당하다니…. 녀석은 대체\n뭐지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04968",
+      "ko": "큭… 무슨 스피드야. 정말 그\n카미카제 보이인가?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p049AA",
+      "ko": "내 슈틸 2대가 있으면 이제\n무적이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p049E8",
+      "ko": "나이스 블록이야! 하이넬!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04A6C",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04A80",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04AB6",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04B02",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04B42",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04D04",
+      "ko": "미셔넬 접근 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04D22",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04D54",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. 와라! 승부다!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04D98",
+      "ko": "네메시스! 부스트 어시스트는\n가능해?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04DC4",
+      "ko": "당연합니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04E38",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p052AE",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p052D8",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0530E",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0534E",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05400",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05438",
+      "ko": "전력으로 덤벼라! 끝까지 승부해\n주마!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0546C",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p054D0",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p054FE",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05518",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0553E",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0558A",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p055CA",
+      "ko": "이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0590C",
+      "ko": "전방, 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05934",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0598A",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p059D0",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p059FE",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05A6C",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05A8A",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05AC4",
+      "ko": "(이런 때에 뭐 생각하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05AEA",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04292",
+      "ko": "헤이, 하이넬! 둘로 갈라져\n밸런스를 무너뜨리자! 미가\n승부를 걸게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p045DA",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04692",
+      "ko": "전방에 슈틸 2대를 포착.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p046D6",
+      "ko": "여기서부터 앞으로 이겨 나가기\n위해 시스템상 모든 처리를\n최적화 계산에 사용합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04734",
+      "ko": "그게 무슨 뜻이야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04750",
+      "ko": "\"집중\"하고 있으므로 \"말수가\n줄어든다\"는 정도일까요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04798",
+      "ko": "그렇구나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p047AA",
+      "ko": "이번에는 전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p047D2",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04830",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04878",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04924",
+      "ko": "뭐라고!? 이렇게도 쉽게\n추월당하다니…. 녀석은 대체\n뭐지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04968",
+      "ko": "큭… 무슨 스피드야. 정말 그\n카미카제 보이인가?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p049AA",
+      "ko": "내 슈틸 2대가 있으면 이제\n무적이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p049E8",
+      "ko": "나이스 블록이야! 하이넬!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-existing-ambiguity-resolution"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04A6C",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04A80",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04AB6",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04B02",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04B42",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04D04",
+      "ko": "미셔넬 접근 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04D22",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04D54",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. 와라! 승부다!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04D98",
+      "ko": "네메시스! 부스트 어시스트는\n가능해?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04DC4",
+      "ko": "당연합니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p04E38",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p052AE",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p052D8",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0530E",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0534E",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05400",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05438",
+      "ko": "전력으로 덤벼라! 끝까지 승부해\n주마!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0546C",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p054D0",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p054FE",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05518",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0553E",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0558A",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p055CA",
+      "ko": "이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p056A2",
+      "ko": "후방, 이슈자크입니다.\n드라이버는 칼 리히터 폰\n란돌.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p056F8",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0574E",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05794",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p057C2",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 급정지해 볼까. 부딪칠\n생각으로 블록이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05820",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0583E",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05878",
+      "ko": "(이런 때에 뭐 하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0589E",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04692",
+      "ko": "전방에 슈틸 2대를 포착.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p046D6",
+      "ko": "여기서부터 앞으로 이겨 나가기\n위해 시스템상 모든 처리를\n최적화 계산에 사용합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04734",
+      "ko": "그게 무슨 뜻이야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04750",
+      "ko": "\"집중\"하고 있으므로 \"말수가\n줄어든다\"는 정도일까요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04798",
+      "ko": "그렇구나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p047AA",
+      "ko": "이번에는 전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p047D2",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04830",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04878",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04924",
+      "ko": "뭐라고!? 이렇게도 쉽게\n추월당하다니…. 녀석은 대체\n뭐지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04968",
+      "ko": "큭… 무슨 스피드야. 정말 그\n카미카제 보이인가?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p049AA",
+      "ko": "내 슈틸 2대가 있으면 이제\n무적이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p049E8",
+      "ko": "나이스 블록이야! 하이넬!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-existing-ambiguity-resolution"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04A6C",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04A80",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04AB6",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04B02",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04B42",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04D04",
+      "ko": "미셔넬 접근 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04D22",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04D54",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. 와라! 승부다!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04D98",
+      "ko": "네메시스! 부스트 어시스트는\n가능해?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04DC4",
+      "ko": "당연합니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04E38",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04E62",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04E8C",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04EC2",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04F02",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04FAE",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04FE8",
+      "ko": "더 진심을 내! 기합이 부족해!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05018",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p0507C",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p050AA",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p050C4",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p050EA",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05136",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05176",
+      "ko": "좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p051CA",
+      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p056A2",
+      "ko": "후방, 이슈자크입니다.\n드라이버는 카를 리히터 폰\n란돌.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p0589E",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05934",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p0598A",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p059D0",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p059FE",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05A6C",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05A8A",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05AC4",
+      "ko": "(이런 때에 뭐 생각하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04230",
+      "ko": "후방에서 슈틸 2대 접근.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04272",
+      "ko": "전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04292",
+      "ko": "헤이, 하이넬! 둘로 갈라져\n밸런스를 무너뜨리자! 미가\n승부를 걸게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p042E8",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04330",
+      "ko": "헤이, 하이넬! 둘로 갈라져\n밸런스를 무너뜨리자! 미가\n승부를 걸게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04380",
+      "ko": "부스트 온! 따돌려라! 페인트를\n건다! 추월하게 해 줍시다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p043D0",
+      "ko": "하이넬! 미를 방해해서 어쩌자는\n거야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04400",
+      "ko": "바, 바보 녀석! 작전을 틀린\n건 네 쪽이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04434",
+      "ko": "헤이, 보이! 제대로 함정에\n걸렸네!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04468",
+      "ko": "빨리 가라! 구데리안! 여기는\n내가 막겠다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p044A2",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-existing-ambiguity-resolution"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04504",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04518",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0454E",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0459A",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p045DA",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0462E",
+      "ko": "큭…! 라인을 읽혔다는 건가?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0465C",
+      "ko": "노! 이 무슨 억지스러운\n돌진이야. 데인저러스!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04692",
+      "ko": "전방에 슈틸 2대를 포착.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p046D6",
+      "ko": "여기서부터 앞으로 이겨 나가기\n위해 시스템상 모든 처리를\n최적화 계산에 사용합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04734",
+      "ko": "그게 무슨 뜻이야?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04750",
+      "ko": "\"집중\"하고 있으므로 \"말수가\n줄어든다\"는 정도일까요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04798",
+      "ko": "그렇구나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p047AA",
+      "ko": "이번에는 전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p047D2",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04830",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04878",
+      "ko": "헤이, 하이넬! 미가 톱을 노릴\n테니까, 카미카제 보이를 제대로\n블록해 줘!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04924",
+      "ko": "뭐라고!? 이렇게도 쉽게\n추월당하다니…. 녀석은 대체\n뭐지?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04968",
+      "ko": "큭… 무슨 스피드야. 정말 그\n카미카제 보이인가?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p049AA",
+      "ko": "내 슈틸 2대가 있으면 이제\n무적이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p049E8",
+      "ko": "나이스 블록이야! 하이넬!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-existing-ambiguity-resolution"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04A6C",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04A80",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04AB6",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04B02",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04B42",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04B96",
+      "ko": "미셔넬 접근 중입니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04BB6",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04BE8",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. …가겠다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04C2E",
+      "ko": "부츠홀츠 씨의 술수에 빠지기\n전에 따돌린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04C66",
+      "ko": "알겠습니다! 부스트 어시스트\n시작!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04C8C",
+      "ko": "부스트 온! 부스트 온! 부스트\n온!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04CC0",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…. 따라갈 수가 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04D04",
+      "ko": "미셔넬 접근 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04D22",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04D54",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. 와라! 승부다!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04D98",
+      "ko": "네메시스! 부스트 어시스트는\n가능해?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04DC4",
+      "ko": "당연합니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04E38",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04E62",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04E8C",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04EC2",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04F02",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04FAE",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04FE8",
+      "ko": "더 진심을 내! 기합이 부족해!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05018",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0507C",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p050AA",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p050C4",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p050EA",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05136",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05176",
+      "ko": "좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p051CA",
+      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p052AE",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p052D8",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0530E",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0534E",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05400",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05438",
+      "ko": "전력으로 덤벼라! 끝까지 승부해\n주마!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0546C",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p054D0",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p054FE",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05518",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0553E",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0558A",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p055CA",
+      "ko": "이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p056A2",
+      "ko": "후방, 이슈자크입니다.\n드라이버는 카를 리히터 폰\n란돌.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p056F8",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0574E",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05794",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p057C2",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 급정지해 볼까. 부딪칠\n생각으로 블록이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05820",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0583E",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05878",
+      "ko": "(이런 때에 뭐 하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0589E",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0590C",
+      "ko": "전방, 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05934",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0598A",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p059D0",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p059FE",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05A6C",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05A8A",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05AC4",
+      "ko": "(이런 때에 뭐 생각하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05AEA",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04230",
+      "ko": "후방에서 슈틸 2대 접근.\n하이넬과 구데리안입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04272",
+      "ko": "전처럼은 안 됩니닷!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04292",
+      "ko": "헤이, 하이넬! 둘로 갈라져\n밸런스를 무너뜨리자! 미가\n승부를 걸게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p042E8",
+      "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04330",
+      "ko": "헤이, 하이넬! 둘로 갈라져\n밸런스를 무너뜨리자! 미가\n승부를 걸게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04380",
+      "ko": "부스트 온! 따돌려라! 페인트를\n건다! 추월하게 해 줍시다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p043D0",
+      "ko": "하이넬! 미를 방해해서 어쩌자는\n거야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04400",
+      "ko": "바, 바보 녀석! 작전을 틀린\n건 네 쪽이다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04434",
+      "ko": "헤이, 보이! 제대로 함정에\n걸렸네!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04468",
+      "ko": "빨리 가라! 구데리안! 여기는\n내가 막겠다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-existing-ambiguity-resolution"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04A6C",
+      "ko": "뭐라고오오!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04A80",
+      "ko": "핫하! 아쉽게 됐네, 카미카제\n보이.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04AB6",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04B02",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04B42",
+      "ko": "콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.\n콤비네이션을 무너뜨린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04B96",
+      "ko": "미셔넬 접근 중입니다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04BB6",
+      "ko": "이 며칠 사이에 꽤 성장한 것\n같군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04BE8",
+      "ko": "…정말 우리 레온에게 배우게\n하고 싶군. …가겠다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04C2E",
+      "ko": "부츠홀츠 씨의 술수에 빠지기\n전에 따돌린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04C66",
+      "ko": "알겠습니다! 부스트 어시스트\n시작!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04CC0",
+      "ko": "우왓! 믿을 수 없을 정도의\n기백이다…. 따라갈 수가 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04E62",
+      "ko": "신죠의 이슈자크를 포착했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04E8C",
+      "ko": "솔직히 여기까지 할 줄은\n생각하지 못했어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04EC2",
+      "ko": "제4 스테이지에서는 졌지만,\n이번엔 그렇게 두지 않아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04F02",
+      "ko": "미안하지만 네가 이기게 둘 수는\n없어. 우승을 손에 넣는 건 이\n나다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04FAE",
+      "ko": "그 신인인가? 정말… 내가\n기세에서 밀리고 있어…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04FE8",
+      "ko": "더 진심을 내! 기합이 부족해!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05018",
+      "ko": "액셀을 힘껏 밟는다! 근성의\n몸통박치기밖에 없다!!\n스티어링을 힘껏 돌린다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p0507C",
+      "ko": "스핀 위험성 있음. 중지해\n주십시오.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p050AA",
+      "ko": "(그야 그렇지…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p050C4",
+      "ko": "왜 그래? 배짱이 부족하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p050EA",
+      "ko": "여기서 타임 로스하면 카자미\n하야토를 따라잡을 가능성이\n급감합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05136",
+      "ko": "DNA 계산을 실행해 최적\n패턴을 검색합니다… 완료.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05176",
+      "ko": "좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!\n좌우로 흔들어 실수를 유도한다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p051CA",
+      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p056A2",
+      "ko": "후방, 이슈자크입니다.\n드라이버는 카를 리히터 폰\n란돌.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p0589E",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05934",
+      "ko": "앞선 승부에서 이겼다고 우쭐대지\n마라. 네 쾌진격도 여기서\n끝이다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p0598A",
+      "ko": "호오… 이런 곳에 있었나. 내가\n눈여겨본 보람이 있군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p059D0",
+      "ko": "하지만 지난번과 마찬가지다.\n이기게 둘 수는 없다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p059FE",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 란돌 씨는 부자구나.\n란돌 씨는 멋있구나.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05A6C",
+      "ko": "뭐, 무슨 일이 일어난 거지…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05A8A",
+      "ko": "무슨 생각을 해도 소용없다.\n훗… 마음껏 발버둥쳐 보게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05AC4",
+      "ko": "(이런 때에 뭐 생각하는 거야,\n나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p18F2C",
+      "ko": "좀 더 버텨야지….\n포기하면 이길 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1936E",
+      "ko": "정말……! 그렇게 약해져선!\n남자라면 근성을 보여!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p197D6",
+      "ko": "또 그런다~.\n처음부터 포기하는 건\n아저씨나 하는 생각이야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p19D1A",
+      "ko": "……남자답지 못하네.\n그러면 앞으로 레이스도\n걱정되겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p19FF2",
+      "ko": "악마도 눈물을 흘린다잖아.\n……무슨 말을 시키는 거야!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A258",
+      "ko": "아아악. 그러지 말라고!\n더 뜨겁게 가자! 더!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A70E",
+      "ko": "참 아쉽네요.\n……그렇게 꽝이었나요?\n……운도 없으시네요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A892",
+      "ko": "어머, 그럼 제가\n레나 씨에게 키스를\n받게 되는 걸까요? 어쩌죠.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1ABBC",
+      "ko": "세상에! 어이없는 녀석이군.\n한심하다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1AF82",
+      "ko": "그건 무슨 작전입니까?\n당신의 사고 패턴에서\n혼란이 감지됩니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1B370",
+      "ko": "어머나…… 포기한다고?!\n그건 너무하잖아!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1B826",
+      "ko": "냉정한 건 인정하지만\n스스로 승부를 버리면 안 돼.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1BD16",
+      "ko": "뭐, 그런 냉정함도\n때로는 필요하지만….\n재미없군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1BFB2",
+      "ko": "구데리안보다는 좋은\n드라이버가 될지도 모르겠군.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C232",
+      "ko": "너에겐 중요한 게 빠져 있다!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C36C",
+      "ko": "귀여운 얼굴을 하고는….\n나조차 몇 번이나\n호되게 당했는지.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C698",
+      "ko": "흥! 그렇게 약해서 어쩌려고?!\n해 보지 않으면 모르는 법이다.\n승부란 그런 것이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C958",
+      "ko": "선전을 빌겠다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CB50",
+      "ko": "뭐야~! 남자답지 못하네!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD7E",
+      "ko": "네",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD8A",
+      "ko": "받으세요",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD98",
+      "ko": "버스트해 버렸네요",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDB6",
+      "ko": "어머나",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDC4",
+      "ko": "어라라",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDD0",
+      "ko": "해냈다~",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDDE",
+      "ko": "해냈네",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDEE",
+      "ko": "힘내~",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CE02",
+      "ko": "져 버렸네~",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CE1A",
+      "ko": "져 버렸네~",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CFDC",
+      "ko": "엣…?\n(손밖에 안 보이는데\n누군지 어떻게 알아….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D026",
+      "ko": "아, 고마워.\n참고가 됐어💧",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D04A",
+      "ko": "(카자미 씨, 별로\n기뻐 보이지 않았어….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D082",
+      "ko": "엣…?\n(발밖에 안 보이는데\n누군지 어떻게 알아….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D0CE",
+      "ko": "아, 고마워.\n참고가 됐어💧",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D0F2",
+      "ko": "(카자미 씨, 별로\n기뻐 보이지 않았어….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D12A",
+      "ko": "으음…. 구데리안 씨는 아닌 것\n같아. 카메라를 보고 있잖아💧",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D174",
+      "ko": "(어라💦 저, 정말이다….\n들켰던 걸까…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D1AC",
+      "ko": "어려운 부탁을 해서 미안해.\n역시 내가 어떻게든 해 볼게.\n정말 고마워.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D204",
+      "ko": "(으윽~! 모처럼 카자미 씨에게\n도움이 될 줄 알았는데💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D246",
+      "ko": "어? 아스카는 아니지 않을까?\n게다가 포즈를 취하고 있고.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D292",
+      "ko": "(어라💦 저, 정말이다….\n들켰던 걸까…💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D2CA",
+      "ko": "어려운 부탁을 해서 미안해.\n역시 내가 어떻게든 해 볼게.\n정말 고마워.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D322",
+      "ko": "(으윽~! 모처럼 카자미 씨에게\n도움이 될 줄 알았는데💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D364",
+      "ko": "으음, 아무리 그래도 클레어\n씨가 범인일 리는 없지 않을까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D3AC",
+      "ko": "애초에 클레어 씨는 드링크를\n주는 쪽이니까, 밤마다 내\n드링크를 가져간다니…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D410",
+      "ko": "(으으, 듣고 보니 맞네💧\n전혀 도움 안 됐잖아, 나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D45A",
+      "ko": "어려운 부탁을 해서 미안해.\n역시 내가 어떻게든 해 볼게.\n정말 고마워.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D4B2",
+      "ko": "(으윽~! 모처럼 카자미 씨에게\n도움이 될 줄 알았는데💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D4F4",
+      "ko": "그렇군, 범인은 레온이었어.\n부츠홀츠 씨에게 단단히\n말해 달라고 해야겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D550",
+      "ko": "정말 고마워.\n그럼 이만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D570",
+      "ko": "해냈다!\n카자미 씨에게 감사받았어♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D5A2",
+      "ko": "그렇군, 범인은 앙리였어.\n나중에 따끔히 말해 둬야지💢",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D5EE",
+      "ko": "맞아, 더 세게 혼내세요\n그렇게 화낼 것까지 있나요?\n제 이야기는 비밀로 해 주세요",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D658",
+      "ko": "그래.\n때로는 엄하게 대하는 것도\n선배의 의무니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D692",
+      "ko": "정말 고마워.\n그럼 이만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D6B2",
+      "ko": "해냈다!\n카자미 씨에게 감사받았어♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D6E6",
+      "ko": "그래.\n하지만 때로는 엄하게 하는 것도\n선배의 의무니까.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D728",
+      "ko": "정말 고마워.\n그럼 이만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D748",
+      "ko": "해냈다!\n카자미 씨에게 감사받았어♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D77A",
+      "ko": "(그래도 앙리 씨에게\n미안한 짓을 한 걸까….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D7B2",
+      "ko": "하하.\n그렇게 겁먹지 않아도\n{name:surname} 군 얘긴 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D7F8",
+      "ko": "정말 고마워.\n그럼 이만.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D818",
+      "ko": "해냈다!\n카자미 씨에게 감사받았어♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DA42",
+      "ko": "우물우물….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DBE4",
+      "ko": "(이, 이게 회심작이라고!?)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DCCC",
+      "ko": "(맛은 있지만,\n조금 덜 익었네….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DD70",
+      "ko": "(맛을 따질 때가\n아니잖아, 나!)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DE1A",
+      "ko": "(…조금 쓰네💦)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DEBC",
+      "ko": "(이렇게까지 태우는 것도\n생각해 보면 재주야💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DFC0",
+      "ko": "(양초도 탈 수 있구나…\n몰랐어💧)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E018",
+      "ko": "(맛있고 없고 이전에\n이걸 음식이라 할 수 있나….)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E05C",
+      "ko": "…냠, 우물우물💧",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E070",
+      "ko": "(내일 사회면에 '사이버 신인,\n레이스 아닌 식사로 쓰러져!'\n라고 실리진 않겠지…💦)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05F98",
+      "ko": "메모리 카드 확인 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05FBA",
+      "ko": "메모리 카드가\n삽입되지 않았습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05FE4",
+      "ko": "메모리 카드를 삽입한 뒤\n저장해 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06016",
+      "ko": "메모리 카드가\n삽입되지 않았습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06040",
+      "ko": "메모리 카드를 삽입한 뒤\n불러와 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06072",
+      "ko": "어느 파일에\n저장하시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06098",
+      "ko": "저장할 파일을\n선택해 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p060C0",
+      "ko": "어느 파일을\n불러오시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p060E4",
+      "ko": "불러올 파일을\n선택해 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0610C",
+      "ko": "저장 중입니다.\n메모리 카드를\n빼지 마세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06144",
+      "ko": "불러오는 중입니다.\n메모리 카드를\n빼지 마세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0617C",
+      "ko": "저장이 완료되었습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06196",
+      "ko": "불러오기가 완료되었습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p061B2",
+      "ko": "이미 데이터가 있습니다.\n덮어쓰시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p061F4",
+      "ko": "메모리 카드가\n포맷되지 않았습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06226",
+      "ko": "포맷하시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06250",
+      "ko": "포맷 중입니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06268",
+      "ko": "포맷이 완료되었습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06288",
+      "ko": "포맷에 실패했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p062A8",
+      "ko": "저장에 실패했습니다.\n다시 저장하시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p062DC",
+      "ko": "불러오기에 실패했습니다.\n다시 불러오시겠습니까?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06310",
+      "ko": "메모리 카드 접근에\n실패했습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0633E",
+      "ko": "여유 공간이 부족합니다",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06358",
+      "ko": "메모리 카드가 가득 차\n저장할 수 없습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06386",
+      "ko": "이 게임에는 빈 블록\n1개가 필요합니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p063C0",
+      "ko": "불필요한 데이터를 지운 뒤\n저장해 주세요.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p063F2",
+      "ko": "메모리 카드에\n불러올 데이터가 없습니다.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    }
+  ]
+}

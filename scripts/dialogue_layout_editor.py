@@ -48,6 +48,12 @@ DEFAULT_SPECIAL_TRANSLATION = Path(
 DEFAULT_SPECIAL_WORKSET = Path(
     "work/translations/disc1-special-screen-text.json"
 )
+DEFAULT_UNINDEXED_TRANSLATION = Path(
+    "data/translations/disc1-unindexed-font-ko.json"
+)
+DEFAULT_UNINDEXED_WORKSET = Path(
+    "work/translations/disc1-unindexed-font-text.json"
+)
 DEFAULT_UI_TRANSLATION = Path("data/translations/disc1-ui-ko.json")
 DEFAULT_UI_WORKSET = Path("work/translations/disc1-ui.json")
 DEFAULT_CHARACTER_NAMES = Path(
@@ -91,9 +97,12 @@ SAFE_SLOT_BOUNDARY_LABELS = {
 SOURCE_GROUP_LABELS = {
     "story_dialogue": "본편 대사",
     "pointerless_page": "무포인터 선택·대사",
+    "sequential_dialogue": "추가 분기·순차 대사",
+    "race_dialogue": "추가 경기 대사",
     "minigame": "미니게임",
     "course_information": "코스 설명",
     "machine_setting": "머신 설정",
+    "save_system": "저장·불러오기",
     "font_ui": "폰트 UI",
     "character_name": "캐릭터 이름",
 }
@@ -1583,6 +1592,21 @@ def _special_source_group(classification: str) -> str:
     return "minigame"
 
 
+def _unindexed_source_group(classification: str) -> str:
+    groups = {
+        "sequential_event_page": "sequential_dialogue",
+        "indexed_race_page": "race_dialogue",
+        "indexed_minigame_page": "minigame",
+        "save_ui_stream": "save_system",
+    }
+    try:
+        return groups[classification]
+    except KeyError as error:
+        raise DialogueEditorError(
+            f"unsupported unindexed-font classification {classification!r}"
+        ) from error
+
+
 class DialogueDocument:
     """Protected in-memory view of one supported dialogue JSON document."""
 
@@ -2282,6 +2306,8 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
         pointerless_workset_path: Path = DEFAULT_POINTERLESS_WORKSET,
         special_translation_path: Path = DEFAULT_SPECIAL_TRANSLATION,
         special_workset_path: Path = DEFAULT_SPECIAL_WORKSET,
+        unindexed_translation_path: Path = DEFAULT_UNINDEXED_TRANSLATION,
+        unindexed_workset_path: Path = DEFAULT_UNINDEXED_WORKSET,
         ui_translation_path: Path = DEFAULT_UI_TRANSLATION,
         ui_workset_path: Path = DEFAULT_UI_WORKSET,
         character_names_path: Path = DEFAULT_CHARACTER_NAMES,
@@ -2290,6 +2316,7 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
             dialogue_translation_path,
             pointerless_translation_path,
             special_translation_path,
+            unindexed_translation_path,
             ui_translation_path,
             character_names_path,
         )
@@ -2301,12 +2328,16 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
             pointerless_translation_path
         ]
         special_translation = source_documents[special_translation_path]
+        unindexed_translation = source_documents[
+            unindexed_translation_path
+        ]
         ui_translation = source_documents[ui_translation_path]
         character_names = source_documents[character_names_path]
 
         dialogue_workset = _load_json_object(dialogue_workset_path)
         pointerless_workset = _load_json_object(pointerless_workset_path)
         special_workset = _load_json_object(special_workset_path)
+        unindexed_workset = _load_json_object(unindexed_workset_path)
         ui_workset = _load_json_object(ui_workset_path)
 
         entries: list[dict[str, Any]] = []
@@ -2622,6 +2653,94 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
                 ),
                 TranslationBinding(
                     special_translation_path,
+                    ("translations", index, "ko"),
+                    group,
+                    SOURCE_GROUP_LABELS[group],
+                ),
+                context=context,
+                safe_slot=(
+                    _source_size_slot(source, entry_id=entry_id)
+                    if context is not None
+                    else None
+                ),
+            )
+
+        unindexed_items, _unindexed_translation_by_id = _entries_by_id(
+            unindexed_translation,
+            path=unindexed_translation_path,
+            container="translations",
+            id_field="id",
+        )
+        unindexed_sources, unindexed_by_id = _entries_by_id(
+            unindexed_workset,
+            path=unindexed_workset_path,
+            container="entries",
+            id_field="entry_id",
+        )
+        unindexed_ids = [str(entry["id"]) for entry in unindexed_items]
+        unindexed_source_ids = [
+            str(entry["entry_id"]) for entry in unindexed_sources
+        ]
+        if unindexed_ids != unindexed_source_ids:
+            raise DialogueEditorError(
+                "unindexed-font translation/workset stable ID order differs"
+            )
+        for index, translation in enumerate(unindexed_items):
+            entry_id = str(translation["id"])
+            ko = translation.get("ko")
+            if not isinstance(ko, str):
+                raise DialogueEditorError(
+                    f"{entry_id}: unindexed-font ko must be a string"
+                )
+            source = unindexed_by_id[entry_id]
+            classification = str(source.get("classification", ""))
+            group = _unindexed_source_group(classification)
+            raw_layout = source.get("layout")
+            columns = (
+                raw_layout.get("columns", COLUMNS)
+                if isinstance(raw_layout, dict)
+                else COLUMNS
+            )
+            rows = (
+                raw_layout.get("rows", ROWS)
+                if isinstance(raw_layout, dict)
+                else ROWS
+            )
+            if not isinstance(columns, int) or not isinstance(rows, int):
+                raise DialogueEditorError(
+                    f"{entry_id}: invalid unindexed-font layout"
+                )
+            context = _context_from_workset_entry(
+                source,
+                entry_id=entry_id,
+            )
+            add_entry(
+                _normalized_workspace_entry(
+                    entry_id=entry_id,
+                    jp=_source_japanese(source),
+                    ko=ko,
+                    source_group=group,
+                    source_file=unindexed_translation_path,
+                    classification=classification,
+                    status=str(
+                        translation.get(
+                            "review_status",
+                            unindexed_translation.get("status", ""),
+                        )
+                    ),
+                    layout=EditorLayoutProfile(
+                        columns,
+                        rows,
+                        label=SOURCE_GROUP_LABELS[group],
+                    ),
+                    unit_index=_source_unit(source),
+                    notes=(
+                        "정적 소비자 계열은 확인했으나 실제 진입 경로와 "
+                        "재삽입 위치는 별도 런타임 검증 필요"
+                    ),
+                ),
+                TranslationBinding(
+                    unindexed_translation_path,
                     ("translations", index, "ko"),
                     group,
                     SOURCE_GROUP_LABELS[group],
@@ -4952,6 +5071,16 @@ def main() -> None:
         default=DEFAULT_SPECIAL_WORKSET,
     )
     parser.add_argument(
+        "--unindexed-translation",
+        type=Path,
+        default=DEFAULT_UNINDEXED_TRANSLATION,
+    )
+    parser.add_argument(
+        "--unindexed-workset",
+        type=Path,
+        default=DEFAULT_UNINDEXED_WORKSET,
+    )
+    parser.add_argument(
         "--ui-translation",
         type=Path,
         default=DEFAULT_UI_TRANSLATION,
@@ -5001,6 +5130,8 @@ def main() -> None:
                 pointerless_workset_path=args.pointerless_workset,
                 special_translation_path=args.special_translation,
                 special_workset_path=args.special_workset,
+                unindexed_translation_path=args.unindexed_translation,
+                unindexed_workset_path=args.unindexed_workset,
                 ui_translation_path=args.ui_translation,
                 ui_workset_path=args.ui_workset,
                 character_names_path=args.character_names,

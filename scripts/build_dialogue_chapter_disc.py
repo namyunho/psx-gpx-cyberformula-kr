@@ -392,6 +392,10 @@ def build_disc(
             "nonrelease-fixed-original-offset-overflow-diagnostic-"
             "with-character-names-and-ui-and-special-screen"
         ),
+        (
+            "nonrelease-all-reviewed-nongraphic-font-text-"
+            "runtime-validation-required"
+        ),
     }
     if file_manifest.get("status") not in accepted_file_statuses:
         raise ValueError("unexpected partial file-build status")
@@ -631,19 +635,45 @@ def build_disc(
                     if "special_screen" in file_manifest
                     else []
                 ),
+                *(
+                    [
+                        (
+                            "exercise newly translated race branches in "
+                            "u30..u34"
+                        ),
+                        (
+                            "exercise newly translated mini-game branch and "
+                            "result continuations in u38"
+                        ),
+                        (
+                            "exercise save, load, overwrite, missing-data, "
+                            "and error messages in u39"
+                        ),
+                    ]
+                    if "unindexed_font" in file_manifest
+                    else []
+                ),
             ],
         }
     )
     has_names = "SLPS_019.58" in replacements
     has_ui = "ui_translation" in file_manifest
     has_special_screen = "special_screen" in file_manifest
+    has_unindexed_font = "unindexed_font" in file_manifest
     feature_suffix = (
-        "-with-character-names-and-ui-and-special-screen"
-        if has_names and has_ui and has_special_screen
+        (
+            "-with-character-names-and-ui-and-special-screen-and-"
+            "reviewed-unindexed-font"
+        )
+        if has_names and has_ui and has_special_screen and has_unindexed_font
         else (
-            "-with-character-names-and-ui"
-            if has_names and has_ui
-            else ("-with-character-names" if has_names else "")
+            "-with-character-names-and-ui-and-special-screen"
+            if has_names and has_ui and has_special_screen
+            else (
+                "-with-character-names-and-ui"
+                if has_names and has_ui
+                else ("-with-character-names" if has_names else "")
+            )
         )
     )
     runtime_scope = (
@@ -679,14 +709,29 @@ def build_disc(
             (
                 "The global primary font contains all known non-graphical "
                 "font text: story units u00..u34, integrated name/UI text, "
-                "and u38/u43 special-screen text. Runtime validation is still "
-                "required for untested routes."
-                if has_special_screen and selected_units == list(range(35))
+                "u38/u43 special-screen text, reviewed race continuations, "
+                "and u39 save-system text. Runtime validation is still "
+                "required for untested indexed routes."
+                if (
+                    has_special_screen
+                    and has_unindexed_font
+                    and selected_units == list(range(35))
+                )
                 else (
-                    "The global primary font contains the selected dialogue "
-                    f"plus integrated name/UI glyphs, and only units "
-                    f"{selected_units} are re-encoded. Do not enter other "
-                    "dialogue units with this partial build."
+                    "The global primary font contains all known non-graphical "
+                    "font text: story units u00..u34, integrated name/UI text, "
+                    "and u38/u43 special-screen text. Runtime validation is "
+                    "still required for untested routes."
+                    if (
+                        has_special_screen
+                        and selected_units == list(range(35))
+                    )
+                    else (
+                        "The global primary font contains the selected dialogue "
+                        f"plus integrated name/UI glyphs, and only units "
+                        f"{selected_units} are re-encoded. Do not enter other "
+                        "dialogue units with this partial build."
+                    )
                 )
             )
         ),
@@ -698,6 +743,23 @@ def build_disc(
                 "runtime_validation_required": True,
             }
             if has_special_screen
+            else {"included": False}
+        ),
+        "unindexed_font": (
+            {
+                "included": True,
+                "entry_count": file_manifest["unindexed_font"][
+                    "entry_count"
+                ],
+                "u38_entry_count": file_manifest["unindexed_font"][
+                    "u38_entry_count"
+                ],
+                "u39_entry_count": file_manifest["unindexed_font"][
+                    "u39_entry_count"
+                ],
+                "runtime_validation_required": True,
+            }
+            if has_unindexed_font
             else {"included": False}
         ),
         "sources": {

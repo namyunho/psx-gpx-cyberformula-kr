@@ -17,8 +17,10 @@ Disc 1에서 구조적으로 증명된 글꼴 렌더 스트림을 번역 도구,
 뒤에서 기준 포인터를 다시 읽지 않고 다음 u16을 계속 소비할 수 있으므로,
 포인터 대상만 첫 `0x8000`까지 추출하는 기존 방식은 다중 페이지와 분기 선택
 텍스트를 누락한다. 후속 전수 검사로 `u00..u21`에서 무포인터 페이지 83개를
-확인했지만 `u22..u34`에는 같은 검사를 아직 완료하지 않았다. 따라서
-5,783개를 Disc 1 전체 대사 수로 부르지 않는다.
+확인했다. 이어서 기존 네 workset의 물리 범위를 제외한 gap을 별도로 감사해
+`u02..u19`, `u30..u34`, `u38`, `u39`에서 순차·색인·저장 스트림 716개를
+추가했다. 따라서 5,783개를 Disc 1 전체 대사 수로 부르지 않으며, 새 716개도
+모든 색인 런타임 경로를 전수 증명한 최종 모집단으로 부르지 않는다.
 
 ## 생성 명령과 산출물
 
@@ -29,6 +31,8 @@ Disc 1에서 구조적으로 증명된 글꼴 렌더 스트림을 번역 도구,
 .venv/bin/python scripts/extract_disc1_dialogue.py
 .venv/bin/python scripts/extract_pointerless_pages.py
 .venv/bin/python scripts/extract_special_screen_text.py
+.venv/bin/python scripts/extract_unindexed_font_text.py
+.venv/bin/python scripts/build_unindexed_font_translation.py
 ```
 
 | 산출물 | 내용 |
@@ -40,6 +44,8 @@ Disc 1에서 구조적으로 증명된 글꼴 렌더 스트림을 번역 도구,
 | `data/translations/disc1-pointerless-pages-u00-u21-ko.json` | 무포인터 페이지 한국어 정본 83개 |
 | `work/translations/disc1-special-screen-text.json` | `u38/u43` 미니게임·코스·머신 설정 보호 workset 391개 |
 | `data/translations/disc1-special-screen-ko.json` | 특수 화면 한국어 초벌 번역 정본 391개 |
+| `work/translations/disc1-unindexed-font-text.json` | 추가 순차·색인·저장 글꼴 스트림 보호 workset 716개 |
+| `data/translations/disc1-unindexed-font-ko.json` | 추가 스트림 한국어 초벌 번역 정본 716개 |
 | `work/analysis/disc1-dialogue-layout.json` | 대사창 수용량과 저장 공간 진단 |
 | `data/dialogue-extraction-schema.json` | 협업용 JSON Schema |
 
@@ -91,6 +97,12 @@ unit `0`의 최초 5개에는 시스템 성별 선택, 예/아니오 선택과 �
 검사와 다른 소비자를 사용한다. 자세한 모집단, 외부 AI 교정본 병합과 아직
 남은 슬롯 초과는
 [`special-screen-font-text.md`](special-screen-font-text.md)를 따른다.
+
+추가 gap 감사의 716개는 순차 이벤트 291, 경기 색인 325, 미니게임 분기·결과
+73, 저장·불러오기 27개다. 발견 후보 776개 가운데 60개는 실행 코드·표·
+애니메이션 데이터가 우연히 글꼴 문법으로 디코딩된 오탐으로 고정 제외했다.
+추출 근거, 번역 정본과 아직 증명하지 않은 런타임 경계는
+[`unindexed-font-text.md`](unindexed-font-text.md)를 따른다.
 
 `data/glyph-map.json`은 글꼴 표를 렌더러 용도에 맞춰 분리한다. 대사에는
 primary 1,229자, 글꼴 렌더 UI에는 alternate 1,484자를 적용하며 두 표의 모든

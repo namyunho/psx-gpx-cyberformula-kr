@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import argparse
 from collections import defaultdict
+import copy
 import hashlib
 import json
 from pathlib import Path
@@ -29,6 +30,11 @@ try:
         rasterize_ttf_glyph,
     )
     from scripts.psx_font import GLYPH_SIZE, pack_glyph
+    from scripts.unindexed_font_common import (
+        encode_unindexed_entry,
+        unindexed_translation_texts,
+        validate_unindexed_artifacts,
+    )
 except ModuleNotFoundError:
     from build_dialogue_safe_slots import (
         fixed_original_safe_slots,
@@ -36,6 +42,11 @@ except ModuleNotFoundError:
     )
     from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
     from psx_font import GLYPH_SIZE, pack_glyph
+    from unindexed_font_common import (
+        encode_unindexed_entry,
+        unindexed_translation_texts,
+        validate_unindexed_artifacts,
+    )
 
 
 EXPECTED_START_SHA256 = (
@@ -398,6 +409,47 @@ UNIT_SHARED_POOL_REFERENCE_PROFILES = {
             "6b6bb899d84d101924aece491cdfedf4c802a8c0a5fbf26236740cc47a93ade3"
         ),
     },
+}
+
+# Frozen against the same verified ALLBIN revision after promoting the
+# reviewed sequential/race streams that used to sit inside unclassified gaps.
+# Some consumers intentionally target +2, immediately after the preserved
+# leading blank word; those anchors are relocated with their owning entry.
+ADDITIONAL_UNIT_REFERENCE_PROFILES = {
+    2: (0x8800, 590, 590, 0, 0, "53910a9eb313de0cea3cb8c305e92d68015c5ef9e6c01f0718e86909233f6520"),
+    3: (0x3800, 183, 183, 0, 0, "3de6c56afb7ed54923dbbe932d4466a6aad13b24c1d6f945e926f0b6f69271e0"),
+    4: (0x3800, 232, 229, 0, 3, "b668231d315f638241c2b0c6977945de6f96bc1611a40451f68bb7468b746f8f"),
+    5: (0x6800, 438, 438, 0, 0, "5071b27af7de25dcf9f131fbca9324897fe8ea55924d2b57dc2bcd7b35f173c1"),
+    6: (0x5000, 328, 328, 0, 0, "83af234eff96e16cfa7f17b69df96bbfd705a942eab412794cbd92ccf7df78e5"),
+    7: (0x6800, 454, 454, 0, 0, "fb51f8e5cda38b8633fc2281a352381e1fc252f1686322c72b50c1d44439b62c"),
+    8: (0x4800, 307, 307, 0, 0, "0b239a9f2c6e94b8cd7e09cb0a8f77467aa5f703fba155fe7c4aabcedef197dd"),
+    9: (0xC000, 802, 800, 0, 2, "adb56fc5c15a88e0a810b82bc2a536571ef60dd0d78e7602021cc75e8a316130"),
+    10: (0x5800, 311, 311, 0, 0, "d0816ea6e9207d7e5c215f5e7cad961895bf4e5976ada37315e47271dbc5ee65"),
+    11: (0x2800, 141, 141, 0, 0, "1dca7ac50cecaf096f63c087ce8e88321fac9c7c4135df1c85e7903782e49299"),
+    12: (0x9000, 669, 669, 0, 0, "610b7c323b9cd7fc0e550952fde72606b13f2c4e651846d8627fb9aa7a47e9f8"),
+    13: (0x4800, 300, 300, 0, 0, "cc3d0f46c10557638a19fcbca37caa33ef0938a71820fb04cadb0dd6ba127abf"),
+    14: (0xD000, 977, 977, 0, 0, "4c8b2d565e109dda127aba6ac068c9c3babcdaa710055d73034ffdbe7a47efe4"),
+    15: (0x4000, 290, 290, 0, 0, "265144f1311d53968637b1b2c13ed10b3a5e54ee347a5412be2694a8eb058b47"),
+    16: (0x8800, 582, 582, 0, 0, "78bf18f8e558689a214d3fbcfe7c8d93f550f17e9033a4572637a5ac03f99a35"),
+    17: (0x6000, 404, 404, 0, 0, "40136b9cfae670915373eea79fbfea64df30f70684837a76183d00066b20c3d5"),
+    18: (0x7800, 554, 554, 0, 0, "5fc4a8fb11750f67406df2f3e2786033dc2037a060afa0a29213d04a328389bc"),
+    19: (0x2000, 107, 107, 0, 0, "504a934c91f64c96b9f846eb09bfc563d24a2b022eff7a07c92645099b60fe2d"),
+    30: (0xC000, 171, 170, 0, 1, "6abc1ce354d0cb98fc2898e363f95a752aaba9e54572e83c95a2ef4e54d6a084"),
+    31: (0xA000, 169, 168, 0, 1, "72c6ddb3e2aafa985dc8f4a8a7056d154b6de7eede280a1a4aeef9047e85d3eb"),
+    32: (0xC000, 170, 169, 0, 1, "da15fc4b806bd2283e6c86de4c1b3b672ef6bab61b87b12e2eefe50f97b25cf6"),
+    33: (0x9800, 119, 118, 0, 1, "d6eb845537c6df793016a89911bb02958fd223f998a45977e1313209aa63061a"),
+    34: (0xC000, 174, 173, 0, 1, "6b6bb899d84d101924aece491cdfedf4c802a8c0a5fbf26236740cc47a93ade3"),
+}
+ADDITIONAL_UNIT_REFERENCE_PROFILES = {
+    unit: {
+        "scheduled_bytes": values[0],
+        "reference_count": values[1],
+        "entry_start_reference_count": values[2],
+        "gap_reference_count": values[3],
+        "internal_anchor_reference_count": values[4],
+        "catalog_sha256": values[5],
+    }
+    for unit, values in ADDITIONAL_UNIT_REFERENCE_PROFILES.items()
 }
 
 
@@ -1291,9 +1343,9 @@ def scan_unit_dialogue_references(
                 None,
             )
             if gap is None:
-                containing_entry = next(
+                containing_range = next(
                     (
-                        entry
+                        (start, entry)
                         for start, end, entry in physical_entry_ranges(
                             entries_by_start.values()
                         )
@@ -1301,22 +1353,35 @@ def scan_unit_dialogue_references(
                     ),
                     None,
                 )
-                if containing_entry is not None:
+                if containing_range is None:
                     raise ValueError(
-                        f"{containing_entry['entry_id']}: absolute reference "
-                        f"at 0x{storage:04X} enters translated text at "
-                        f"+0x{source_target - int(containing_entry['source']['unit_offset'], 16):X}"
+                        f"absolute reference at 0x{storage:04X} has no "
+                        f"preserved dialogue anchor for target "
+                        f"0x{source_target:04X}"
                     )
-                raise ValueError(
-                    f"absolute reference at 0x{storage:04X} has no preserved "
-                    f"dialogue anchor for target 0x{source_target:04X}"
+                entry_start, containing_entry = containing_range
+                anchor_delta = source_target - entry_start
+                source_raw = bytes.fromhex(
+                    containing_entry["original"]["raw_hex"]
                 )
-            anchor_delta = source_target - int(gap["source_start"])
-            output_target = int(gap["output_start"]) + anchor_delta
-            target_kind = "preserved_gap"
-            target_id = (
-                f"{gap['after_entry_id']}->{gap['before_entry_id']}"
-            )
+                if anchor_delta % 2 or anchor_delta >= len(source_raw):
+                    raise ValueError(
+                        f"{containing_entry['entry_id']}: invalid internal "
+                        f"absolute anchor +0x{anchor_delta:X}"
+                    )
+                output_target = (
+                    int(layout["placements"][containing_entry["entry_id"]])
+                    + anchor_delta
+                )
+                target_kind = "entry_internal_anchor"
+                target_id = containing_entry["entry_id"]
+            else:
+                anchor_delta = source_target - int(gap["source_start"])
+                output_target = int(gap["output_start"]) + anchor_delta
+                target_kind = "preserved_gap"
+                target_id = (
+                    f"{gap['after_entry_id']}->{gap['before_entry_id']}"
+                )
 
         references.append(
             {
@@ -1354,11 +1419,12 @@ def verify_unit_reference_profile(
     for kind, profile_key in (
         ("entry_start", "entry_start_reference_count"),
         ("preserved_gap", "gap_reference_count"),
+        ("entry_internal_anchor", "internal_anchor_reference_count"),
     ):
-        if kind_counts[kind] != int(profile[profile_key]):
+        if kind_counts[kind] != int(profile.get(profile_key, 0)):
             raise ValueError(
                 f"unit {unit_index}: {kind} reference count changed: "
-                f"{kind_counts[kind]} != {profile[profile_key]}"
+                f"{kind_counts[kind]} != {profile.get(profile_key, 0)}"
             )
     digest = reference_catalog_sha256(references)
     if digest != profile["catalog_sha256"]:
@@ -1370,6 +1436,9 @@ def verify_unit_reference_profile(
         "reference_count": len(references),
         "entry_start_reference_count": kind_counts["entry_start"],
         "preserved_gap_reference_count": kind_counts["preserved_gap"],
+        "internal_anchor_reference_count": kind_counts[
+            "entry_internal_anchor"
+        ],
         "catalog_sha256": digest,
         "verified": True,
     }
@@ -1414,6 +1483,8 @@ def relink_unit_shared_pool(
     reference_profile: dict[str, Any] | None = None,
     pointerless_entries: Iterable[dict[str, Any]] = (),
     pointerless_translation_by_id: dict[str, dict[str, Any]] | None = None,
+    additional_entries: Iterable[dict[str, Any]] = (),
+    additional_translation_by_id: dict[str, dict[str, Any]] | None = None,
     allow_unit_capacity_space_compaction: bool = False,
 ) -> dict[str, Any]:
     """Repack a complete unit-local dialogue arena and relink every consumer."""
@@ -1422,19 +1493,30 @@ def relink_unit_shared_pool(
     unit_index = int(entries[0]["source"]["unit_index"])
     if any(int(entry["source"]["unit_index"]) != unit_index for entry in entries):
         raise ValueError("unit shared pool received mixed units")
-    promoted_entries = list(pointerless_entries)
+    pointerless_entries = list(pointerless_entries)
+    additional_entries = list(additional_entries)
+    promoted_entries = [*pointerless_entries, *additional_entries]
     if any(
         int(entry["source"]["unit_index"]) != unit_index
         for entry in promoted_entries
     ):
         raise ValueError("unit shared pool received mixed pointerless units")
     if promoted_entries and pointerless_translation_by_id is None:
-        raise ValueError("pointerless translations are required")
+        if pointerless_entries:
+            raise ValueError("pointerless translations are required")
     if pointerless_translation_by_id is None:
         pointerless_translation_by_id = {}
+    if additional_entries and additional_translation_by_id is None:
+        raise ValueError("additional translations are required")
+    if additional_translation_by_id is None:
+        additional_translation_by_id = {}
     if reference_profile is None:
         try:
-            reference_profile = UNIT_SHARED_POOL_REFERENCE_PROFILES[unit_index]
+            reference_profile = (
+                ADDITIONAL_UNIT_REFERENCE_PROFILES[unit_index]
+                if additional_entries
+                else UNIT_SHARED_POOL_REFERENCE_PROFILES[unit_index]
+            )
         except KeyError as error:
             raise ValueError(
                 f"unit {unit_index}: no frozen shared-pool reference profile"
@@ -1463,18 +1545,21 @@ def relink_unit_shared_pool(
         if source_unit[offset : offset + len(raw)] != raw:
             raise ValueError(f"{entry['entry_id']}: source ALLBIN bytes differ")
 
+    baseline_entries = (
+        [*entries, *promoted_entries] if additional_entries else entries
+    )
     original_direct_streams = {
         entry["entry_id"]: bytes.fromhex(entry["original"]["raw_hex"])
-        for _, _, entry in direct_ranges
+        for entry in baseline_entries
     }
     original_direct_layout = build_source_ordered_stream(
         source_unit,
-        entries,
+        baseline_entries,
         original_direct_streams,
     )
     baseline_references = scan_unit_dialogue_references(
         source_unit,
-        entries,
+        baseline_entries,
         original_direct_layout,
     )
     reference_report = verify_unit_reference_profile(
@@ -1526,7 +1611,7 @@ def relink_unit_shared_pool(
         reflow_texts[entry_id] = text
 
     pointerless_reports: list[dict[str, Any]] = []
-    for _, _, entry in promoted_ranges:
+    for entry in pointerless_entries:
         entry_id = entry["entry_id"]
         try:
             translation = pointerless_translation_by_id[entry_id]
@@ -1542,6 +1627,27 @@ def relink_unit_shared_pool(
         streams[entry_id] = encoded
         shell_token_count += int(report["immutable_control_token_count"])
         pointerless_reports.append(report)
+
+    additional_reports: list[dict[str, Any]] = []
+    for entry in additional_entries:
+        entry_id = entry["entry_id"]
+        try:
+            translation = additional_translation_by_id[entry_id]
+        except KeyError as error:
+            raise ValueError(
+                f"{entry_id}: additional translation is missing"
+            ) from error
+        encoded, report = encode_unindexed_entry(
+            entry,
+            translation,
+            mapping,
+        )
+        streams[entry_id] = encoded
+        shell_token_count += (
+            int(report["prefix_shell_bytes"])
+            + int(report["suffix_shell_bytes"])
+        ) // 2
+        additional_reports.append(report)
 
     combined_entries = [*entries, *promoted_entries]
     ranges = physical_entry_ranges(combined_entries)
@@ -1622,7 +1728,7 @@ def relink_unit_shared_pool(
     promoted_storages = {
         int(offset, 16)
         for entry in promoted_entries
-        for offset in entry["source"]["reference_unit_offsets"]
+        for offset in entry["source"].get("reference_unit_offsets", [])
     }
     known_storages.update(promoted_storages)
     catalog_storages = {
@@ -1666,6 +1772,25 @@ def relink_unit_shared_pool(
     if len(load_addresses) != 1:
         raise ValueError(f"unit {unit_index}: inconsistent runtime load address")
     load_address = load_addresses.pop()
+    streams_by_id = streams
+    entries_by_id = {
+        entry["entry_id"]: entry for entry in combined_entries
+    }
+    for reference in references:
+        if reference["target_kind"] != "entry_internal_anchor":
+            continue
+        entry_id = str(reference["target_id"])
+        anchor_delta = int(reference["anchor_delta"])
+        source_raw = bytes.fromhex(
+            entries_by_id[entry_id]["original"]["raw_hex"]
+        )
+        if (
+            streams_by_id[entry_id][:anchor_delta]
+            != source_raw[:anchor_delta]
+        ):
+            raise ValueError(
+                f"{entry_id}: relocated internal anchor prefix changed"
+            )
     for reference in references:
         storage = unit_file_offset + int(reference["storage_unit_offset"])
         actual = struct.unpack_from("<I", allbin, storage)[0]
@@ -1731,11 +1856,13 @@ def relink_unit_shared_pool(
         "unit_file_offset": f"0x{unit_file_offset:X}",
         "entry_count": len(ranges),
         "direct_entry_count": len(entries),
-        "promoted_pointerless_entry_count": len(promoted_entries),
+        "promoted_pointerless_entry_count": len(pointerless_entries),
+        "promoted_additional_entry_count": len(additional_entries),
         "placement_policy": "unit-shared-pool",
         "translation_input_policy": (
             "preserve ko_candidate when it already fits 17x3; otherwise use "
-            "audited ko_reflowed; pointerless pages use ko/ko_segments"
+            "audited ko_reflowed; pointerless pages use ko/ko_segments; "
+            "reviewed additional streams use ko"
         ),
         "translation_input_counts": dict(
             sorted(translation_input_counts.items())
@@ -1765,9 +1892,16 @@ def relink_unit_shared_pool(
         "inter_entry_gap_count": len(gaps),
         "inter_entry_gap_bytes": sum(int(gap["byte_size"]) for gap in gaps),
         "inter_entry_gaps_byte_exact": True,
-        "pointerless_page_count": len(promoted_entries),
-        "pointerless_pages_promoted_and_translated": bool(promoted_entries),
+        "pointerless_page_count": len(pointerless_entries),
+        "pointerless_pages_promoted_and_translated": bool(
+            pointerless_entries
+        ),
         "pointerless_entries": pointerless_reports,
+        "additional_entry_count": len(additional_entries),
+        "additional_entries_promoted_and_translated": bool(
+            additional_entries
+        ),
+        "additional_entries": additional_reports,
         "reference_catalog": {
             **reference_report,
             "relocated_reference_count": len(references),
@@ -2425,6 +2559,28 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--unindexed-workset",
+        type=Path,
+        default=Path(
+            "work/translations/disc1-unindexed-font-text.json"
+        ),
+    )
+    parser.add_argument(
+        "--unindexed-translation",
+        type=Path,
+        default=Path(
+            "data/translations/disc1-unindexed-font-ko.json"
+        ),
+    )
+    parser.add_argument(
+        "--include-reviewed-unindexed-story",
+        action="store_true",
+        help=(
+            "Promote and translate the reviewed u02..u19/u30..u34 "
+            "sequential and race streams; runtime route QA remains required"
+        ),
+    )
+    parser.add_argument(
         "--unit",
         action="append",
         default=[],
@@ -2500,6 +2656,35 @@ def main() -> None:
             pointerless_translation,
         )
     )
+    additional_entries: list[dict[str, Any]] = []
+    additional_translation_by_id: dict[str, dict[str, Any]] = {}
+    additional_validation: dict[str, Any] | None = None
+    if args.include_reviewed_unindexed_story:
+        unindexed_workset = load_object(args.unindexed_workset)
+        unindexed_translation = load_object(args.unindexed_translation)
+        (
+            all_additional_entries,
+            all_additional_translation_by_id,
+            additional_validation,
+        ) = validate_unindexed_artifacts(
+            unindexed_workset,
+            unindexed_translation,
+            workset_path=args.unindexed_workset,
+            source_allbin=source_allbin,
+            expected_allbin_sha256=EXPECTED_ALLBIN_SHA256,
+        )
+        additional_entries = [
+            entry
+            for entry in all_additional_entries
+            if entry["classification"]
+            in {"sequential_event_page", "indexed_race_page"}
+        ]
+        additional_translation_by_id = {
+            entry["entry_id"]: all_additional_translation_by_id[
+                entry["entry_id"]
+            ]
+            for entry in additional_entries
+        }
     work_entries = workset.get("entries")
     derived_entries = overlay.get("entries")
     if not isinstance(work_entries, list) or not isinstance(derived_entries, list):
@@ -2533,10 +2718,35 @@ def main() -> None:
         unit_index = int(entry["source"]["unit_index"])
         if unit_index in units:
             pointerless_by_unit[unit_index].append(entry)
+    additional_by_unit: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for source_entry in additional_entries:
+        unit_index = int(source_entry["source"]["unit_index"])
+        if unit_index not in units:
+            continue
+        unit_load_addresses = {
+            int(entry["source"]["runtime_pointer"], 16)
+            - int(entry["source"]["unit_offset"], 16)
+            for entry in by_unit[unit_index]
+        }
+        if len(unit_load_addresses) != 1:
+            raise ValueError(
+                f"unit {unit_index}: cannot derive additional runtime base"
+            )
+        entry = copy.deepcopy(source_entry)
+        unit_offset = int(entry["source"]["unit_offset"], 16)
+        runtime_pointer = unit_load_addresses.pop() + unit_offset
+        entry["source"]["runtime_pointer"] = f"0x{runtime_pointer:08X}"
+        entry["source"]["reference_unit_offsets"] = []
+        additional_by_unit[unit_index].append(entry)
     selected_pointerless_translations = [
         pointerless_translation_by_id[entry["entry_id"]]
         for unit_index in units
         for entry in pointerless_by_unit[unit_index]
+    ]
+    selected_additional_translations = [
+        additional_translation_by_id[entry["entry_id"]]
+        for unit_index in units
+        for entry in additional_by_unit[unit_index]
     ]
     gap_glyph_indices = (
         frozenset()
@@ -2555,6 +2765,9 @@ def main() -> None:
             *pointerless_translation_texts(
                 selected_pointerless_translations
             ),
+            *unindexed_translation_texts(
+                selected_additional_translations
+            ),
         ],
     )
     patched_allbin = bytearray(source_allbin)
@@ -2567,6 +2780,10 @@ def main() -> None:
                 mapping,
                 pointerless_entries=pointerless_by_unit[unit_index],
                 pointerless_translation_by_id=pointerless_translation_by_id,
+                additional_entries=additional_by_unit[unit_index],
+                additional_translation_by_id=(
+                    additional_translation_by_id
+                ),
                 allow_unit_capacity_space_compaction=(
                     args.allow_unit_capacity_space_compaction
                 ),
@@ -2625,7 +2842,12 @@ def main() -> None:
         )
         allbin_allowed_ranges.append(
             (
-                unit_file_offset + entry_ranges[0][0],
+                unit_file_offset
+                + (
+                    int(report["physical_region_start"], 16)
+                    if args.placement_policy == "unit-shared-pool"
+                    else entry_ranges[0][0]
+                ),
                 unit_file_offset + region_end,
             )
         )
@@ -2700,6 +2922,11 @@ def main() -> None:
                 if args.placement_policy == "unit-shared-pool"
                 else 0
             )
+            + (
+                len(selected_additional_translations)
+                if args.placement_policy == "unit-shared-pool"
+                else 0
+            )
         ),
         "selected_direct_entry_count": len(selected_ids),
         "selected_pointerless_entry_count": (
@@ -2707,6 +2934,12 @@ def main() -> None:
             if args.placement_policy == "unit-shared-pool"
             else 0
         ),
+        "selected_additional_entry_count": (
+            len(selected_additional_translations)
+            if args.placement_policy == "unit-shared-pool"
+            else 0
+        ),
+        "additional_translation_validation": additional_validation,
         "translation_status": "incomplete-user-editing-in-progress",
         "release_eligible": False,
         "unit_capacity_space_compaction": {
@@ -2734,6 +2967,10 @@ def main() -> None:
             ),
         },
         "font_scope": (
+            "selected-direct-pointerless-and-reviewed-additional-dialogue-"
+            "plus-integrated-names-ui"
+            if args.include_reviewed_unindexed_story
+            else
             "selected-direct-and-pointerless-dialogue-plus-integrated-names-ui"
         ),
         "unselected_dialogue_font_compatible": False,
@@ -2755,8 +2992,9 @@ def main() -> None:
                     else ""
                 )
                 + (
-                    "Pointerless pages are promoted and translated, so this "
-                    "exact combined Track 1 requires a new runtime replay."
+                    "Pointerless pages and any selected reviewed additional "
+                    "streams are promoted and translated, so this exact "
+                    "combined Track 1 requires a new runtime replay."
                 )
                 if args.placement_policy == "unit-shared-pool"
                 else
@@ -2783,6 +3021,18 @@ def main() -> None:
             ),
             "pointerless_translation_sha256": sha256_file(
                 args.pointerless_translation
+            ),
+            **(
+                {
+                    "unindexed_workset_sha256": sha256_file(
+                        args.unindexed_workset
+                    ),
+                    "unindexed_translation_sha256": sha256_file(
+                        args.unindexed_translation
+                    ),
+                }
+                if args.include_reviewed_unindexed_story
+                else {}
             ),
         },
         "font": font_report,

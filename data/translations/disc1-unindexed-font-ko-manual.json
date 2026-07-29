@@ -1,0 +1,1204 @@
+{
+  "schema_version": 1,
+  "status": "codex-draft-needs-independent-language-and-runtime-review",
+  "scope": {
+    "new_unique_text_count": 288,
+    "context_override_count": 10,
+    "note": "Only Korean draft fields are authored here. Original bytes, Japanese text, stable IDs, and control tokens remain protected in the generated workset."
+  },
+  "entries": [
+    {
+      "id": "disc1/allbin/u02/unindexed_font/p02FFE",
+      "ko": "레나! 그 말은 금기야!\n그 사람 귀에 들어가면\n어찌 될지 모른다고!"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p0009A",
+      "ko": "노크한다.\n다른 곳으로 간다."
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p000BC",
+      "ko": "어디로 갈까?"
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p0105E",
+      "ko": "스고 위너스로 돌아간다.\n아직 돌아가지 않는다."
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p01164",
+      "ko": "내일 정보를 본다\n네메시스를 세팅한다\n그냥 잔다"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00BE8",
+      "ko": "좋은 아침, 네메시스.\n상태는 어때?"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00C12",
+      "ko": "좋은 아침입니다.\n시스템은 올 그린.\n이상 없습니다."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00C5E",
+      "ko": "그렇구나.\n오늘부터 우리 레이스가\n시작돼. 함께 힘내자."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00CA2",
+      "ko": "저는 당신을 지원하기 위해\n존재합니다. 그 이상의 일도\n그 이하의 일도 못 합니다."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00D0A",
+      "ko": "알아. 네 지시를 듣고\n마지막 판단을 내리는 건\n결국 나니까."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00D52",
+      "ko": "걱정 마. 네 기대를\n저버리지 않는 주행을 할게."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p0137C",
+      "ko": "저는 클레어 포트란. 이…",
+      "notes": "원문도 「この」에서 끊긴 미완성 문자열이므로 생략하지 않고 단편임을 보존했다."
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p0139E",
+      "ko": "도쿄 게임쇼에 오신 걸\n환영해요♪"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p00BC4",
+      "ko": "어쩔래?\n모터홈으로 돌아갈까?"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p00BEA",
+      "ko": "모터홈으로 돌아가자.\n아직 돌아가지 않는다."
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p0114A",
+      "ko": "그러자. 다른 곳에 가 보자.\n아니, 스고 위너스로 돌아간다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p01172",
+      "ko": "어제는 좋은 주행을 했어.\n그것도 네 덕분이야.\n오늘도 잘 부탁해."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p011C2",
+      "ko": "어제처럼 정확한 판단을\n부탁드립니다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p011F2",
+      "ko": "그러면 저도 최적의\n코스 라인을 당신에게\n제공할 수 있습니다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0123E",
+      "ko": "그래, 힘낼게.\n그러니 너도 내게\n힘을 빌려줘."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p01290",
+      "ko": "이기진 못했지만,\n어제 레이스를 어떻게 봤어?"
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p012CA",
+      "ko": "당신의 주행을 분석한 결과,\n상황 판단이 안일한 점이\n두드러집니다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0130C",
+      "ko": "이는 레이스 전개에\n큰 지장을 주고 있습니다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0133E",
+      "ko": "레이스 경험 부족에서\n비롯된 것입니다. 한층 더\n노력하시길 바랍니다."
+    },
+    {
+      "id": "disc1/allbin/u06/unindexed_font/p0139C",
+      "ko": "알아. 오늘 레이스에선\n반드시 승리를 거머쥘게.\n그러니 힘을 빌려줘."
+    },
+    {
+      "id": "disc1/allbin/u08/unindexed_font/p01750",
+      "ko": "알았어. 널 믿을게.\n이번 레이스는 둘이 함께\n승리를 쟁취하자."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p00FC0",
+      "ko": "밤 산책을 간다\n오늘은 그냥 잔다"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p01440",
+      "ko": "해냈어! 네메시스에게 보고하자."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p0237E",
+      "ko": "앙리 씨는 왜 늘\n저렇게 기분이 나쁠까?"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p023BE",
+      "ko": "…글쎄."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02AF4",
+      "ko": "좋은 이야기 들어서 다행이네."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02C0C",
+      "ko": "어머~ 가 버렸네."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05434",
+      "ko": "음~ 기분 좋다."
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05D92",
+      "ko": "자, 어쩔까.\n그냥 잔다\n레나를 찾으러 간다"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p05DCA",
+      "ko": "하아… 왠지 피곤하네."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p002B0",
+      "ko": "그래, 그러자.\n모터홈으로 돌아가자."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01322",
+      "ko": "이야, 꽤 거칠게\n활약하고 있나 보네.\n이번 대회의 태풍의 눈이야."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01376",
+      "ko": "그렇게 대단하진 않아요."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01392",
+      "ko": "아니긴. 실제로 잘하잖아.\n신인인데 하야토의 기술까지\n쓰고 말이야."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p013EE",
+      "ko": "하아…. 하지만 거의\n우연이었어요."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0141A",
+      "ko": "우연이어도 해냈잖아.\n좀 더 자신감을 가져."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0144C",
+      "ko": "나오키도 그러더라.\n'스고 신인이 신경 쓰인다'고."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0149E",
+      "ko": "진짜야. 널 치켜세워 봐야\n내게 득 될 것도 없잖아."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p014DC",
+      "ko": "대단하잖아, {name:given}.\n신죠 씨에게 그런 말까지\n듣다니."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01522",
+      "ko": "이제 더더욱\n대충 달릴 순 없겠네."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01558",
+      "ko": "잠깐, 난 언제나\n대충 달린 적 없다고."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01598",
+      "ko": "뭐, 그건 알지만.\n지금보다 더 힘내라는 거야."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p015DA",
+      "ko": "앞으로는 더 힘들어질 거지?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01616",
+      "ko": "그 말이야. 널 점점\n경계할 거야. 다음 레이스도\n정신 바짝 차려. …그럼."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01684",
+      "ko": "아, 감사합니다."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01C28",
+      "ko": "게다가 아침부터\n라멘이 잘도 들어가네요."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D10",
+      "ko": "그렇군요. 죄송했습니다.\n실례하겠습니다."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D40",
+      "ko": "앗, 카가 씨가 있어."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D5C",
+      "ko": "정말이네."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D6A",
+      "ko": "잠깐 가 보자."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01D8E",
+      "ko": "여어, 너희냐. 뭐야?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01DB0",
+      "ko": "초밥 드시고 계셨어요?\n맛있겠다~."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01DDE",
+      "ko": "우리 드라이버는 해외 생활이\n길어져서, 아무래도\n일본 음식이 그리워져."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E3C",
+      "ko": "그래서 가끔 쿄코 씨에게\n일본 음식을 부탁하지."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E7C",
+      "ko": "역시 아오이네요."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01E96",
+      "ko": "하지만 이렇게 더우면\n초밥 재료가 금세 말라서\n안 되겠어."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01EE0",
+      "ko": "뭐, 사치 부릴 순 없지만."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F08",
+      "ko": "그럼 레나, 먹어 볼래?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F2E",
+      "ko": "아뇨, 사양할게요."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F52",
+      "ko": "응, 그래."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F66",
+      "ko": "그럼 카가 씨,\n저희는 이만 가 보겠습니다."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01F98",
+      "ko": "그래, 그럼."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01FAE",
+      "ko": "아~ 카가 씨 또\n뭔가 먹고 있어."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02052",
+      "ko": "어떻게 그렇게 많이 드세요?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p020CE",
+      "ko": "상상하니 속이 메스꺼워……."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0210A",
+      "ko": "응, 어떻게든."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0217A",
+      "ko": "그런데 카가 씨,\n너무 많이 먹는 거 아녜요?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p021FA",
+      "ko": "……그러게."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0220E",
+      "ko": "부츠홀츠 씨,\n또 마시고 있나 봐."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0223E",
+      "ko": "말 한번 걸어 볼까?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0226C",
+      "ko": "부츠홀츠 씨,\n잠깐 괜찮으세요?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02298",
+      "ko": "아, 너였나.\n미안하지만 혼자 있게 해 줘.\n오늘은 조용히 마시고 싶군."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p022F8",
+      "ko": "아, 네. 죄송했습니다."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02318",
+      "ko": "무슨 생각이라도 하나?"
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02338",
+      "ko": "음~."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02486",
+      "ko": "너무 딱딱하게 굴지 마.\n이건 약이야. 정신을 위한."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02616",
+      "ko": "어이, 너희 어디 가냐?\n야, 이야기는 안 끝났어."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p005BC",
+      "ko": "드라이버와 관계자 여러분,\n기내에서 잠시나마 휴식을\n즐기고 계십니까?"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00616",
+      "ko": "갑작스럽지만 FICCY 주최\n게임 대회를 개최하겠습니다."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00672",
+      "ko": "우승자에게는 레이스 퀸\n미스 레나의 축하 키스가\n주어집니다."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p006C4",
+      "ko": "여러분, 힘내 주세요."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p006E0",
+      "ko": "우오~! 삐익삐익!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p00A1A",
+      "ko": "그럼 게임 시작입니다.\n여러분, 모니터를 봐 주세요."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01192",
+      "ko": "카자미 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011A4",
+      "ko": "구데리안 씨다."
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011BA",
+      "ko": "하이넬 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011D0",
+      "ko": "신죠 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011E0",
+      "ko": "오사무 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p011EE",
+      "ko": "메구 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01200",
+      "ko": "카가 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u11/unindexed_font/p01210",
+      "ko": "부츠홀츠 씨다!"
+    },
+    {
+      "id": "disc1/allbin/u12/unindexed_font/p035D0",
+      "ko": "일단 모터홈으로\n돌아갈까요?"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p011D4",
+      "ko": "무슨 일입니까?\n목소리가 좋지 않습니다."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p011FE",
+      "ko": "역시 타이어 부담을 생각하면\n끝까지 달릴 수 있을지….\n왠지 우울해져."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p0125E",
+      "ko": "무엇을 망설이십니까?"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01286",
+      "ko": "파트너인 당신은 저를\n믿는다고 하지 않았습니까."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p012D0",
+      "ko": "물론 제 시뮬레이션에서도\n타이어 상황은 상당히\n어렵습니다."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p0131C",
+      "ko": "하지만 처음부터 포기하면\n좋은 결과를 얻을 수 없습니다."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01360",
+      "ko": "달릴 수 있는 한 1센티라도\n앞으로 나아갈 각오로\n레이스에 임합시다."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013A6",
+      "ko": "하아."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013B4",
+      "ko": "무슨 일입니까?"
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013CC",
+      "ko": "네게 설교를 들을 줄은\n몰랐어."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p013FE",
+      "ko": "그래. 처음부터 포기하면\n레이스를 포기하는 것과\n마찬가지니까."
+    },
+    {
+      "id": "disc1/allbin/u13/unindexed_font/p01454",
+      "ko": "좋아, 할 수 있는 데까지\n해 볼게. 네메시스,\n머신 지원을 부탁해."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0042A",
+      "ko": "그럼 난 갈 데가 있어서."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00454",
+      "ko": "어, 어이, 레나.\n가 버렸네….\n어쩌지?"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00488",
+      "ko": "그냥 잔다.\n뒤쫓아 간다."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0054E",
+      "ko": "어라, 레나다!\n…안 들리네."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00574",
+      "ko": "뭐야, 돌아와 있었구나."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00590",
+      "ko": "앗!"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00EB6",
+      "ko": "앗! {name:given}…."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00ECA",
+      "ko": "무슨 일이야?\n얼굴이 빨개.\n열이라도 나?"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F18",
+      "ko": "그렇구나. 건강 조심해.\n하하, 나도 나름\n널 걱정한다고."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F6E",
+      "ko": "왜, 왜 갑자기\n그런 말을 하는 거야."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00F9E",
+      "ko": "왜냐니… 그, 그건….\n그보다 무슨 일이야?\n평소의 너답지 않아."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00FF6",
+      "ko": "알고 있어!\n아무튼 방금 일은\n잊어 줘."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p0103A",
+      "ko": "(뭔지 잘 모르겠지만…)\n응."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01066",
+      "ko": "꼭이야!"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01076",
+      "ko": "그래, 그래."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p010E6",
+      "ko": "그냥 잔다.\n뒤쫓아 간다."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01106",
+      "ko": "남의 사생활에 참견하는 건\n좋지 않아. 내일을 생각하며\n그냥 자자."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01162",
+      "ko": "잘 자."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p011B6",
+      "ko": "어라, 레나다!\n같이 있는 건 아스카 씨네.\n무슨 이야기를 하지?"
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p01204",
+      "ko": "여기선 안 들리네."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p037D8",
+      "ko": "레나는 아직\n안 돌아왔나 보네…."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p00D8A",
+      "ko": "자, 모터홈으로\n돌아갈까요?"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p011D0",
+      "ko": "…다시 한번 축하해.\n나… 기뻤어."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p011FE",
+      "ko": "그래, 어떻게든 란돌 씨를\n이겼고 내기도 해결됐으니까."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0124C",
+      "ko": "바보… 그런 말이 아니야."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01284",
+      "ko": "레이스 중에 한 말….\n진심이야?"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p012B4",
+      "ko": "…진심이야. 내가 아직\n부족할지 몰라도,\n레나를 지키고 싶어!"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01306",
+      "ko": "고마워…♥"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01328",
+      "ko": "오늘 레이스… 아쉬웠지."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0134A",
+      "ko": "미안해. 네 키스를\n지켜 주지 못했어.\n한심하지, 나."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01394",
+      "ko": "아냐. 애초에 내가\n멋대로 내기했을 뿐이야.\n…신경 쓰지 마."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p013F0",
+      "ko": "넌 충분히 힘냈어.\n그래도 졌으니 어쩔 수 없어."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0143C",
+      "ko": "레나… 미안해."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0144E",
+      "ko": "…그럼 약속했으니\n란돌 씨 별장에 다녀올게."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0149A",
+      "ko": "레나…💧\n(젠장, 이렇게 레나를\n보내야만 하는 건가?)"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p014E8",
+      "ko": "방해 중에 죄송합니다만,\n란돌 님의 편지를\n전해 드리러 왔습니다."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01542",
+      "ko": "그레이슨 씨!"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01558",
+      "ko": "란돌 씨의 편지!?"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01584",
+      "ko": "아하, 란돌 씨는 의외로\n좋은 사람이네."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p015BC",
+      "ko": "'키스받은 일이 프로일라인\n아스카 귀에 들어가면 곤란해\n내기를 취소한다'고 하네."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0161C",
+      "ko": "정말이야!?"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01638",
+      "ko": "그럼 저는 이만 실례하겠습니다."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0165E",
+      "ko": "이걸로 란돌 씨에게\n빚 하나를 졌네."
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p01694",
+      "ko": "후후, 그러네♪"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p03F62",
+      "ko": "바쁜 것 같네……."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p0088C",
+      "ko": "(어제 레이스에서 란돌 씨를\n이겼어. 역시 레나가\n있었기 때문일까…?)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p008F0",
+      "ko": "(오늘은 카가 씨와 같은 조야.\n각오하지 않으면 따라잡는\n것조차 어려울 거야.)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p0094E",
+      "ko": "(좋아, 힘내자.\n카가 씨와 승부하는 거야.\n네메시스와 함께.)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p009A0",
+      "ko": "(…하지만 앙리 씨가 한 말이\n정말일까? 네메시스….)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p009F8",
+      "ko": "(어제 난 레나를\n지키지 못했어.)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00A1C",
+      "ko": "(젠장, 정말 한심해.\n결국 란돌 씨에게\n도움받은 꼴이 됐어….)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00A72",
+      "ko": "(하루 지나니 오히려\n레나를 볼 낯이 없어.)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00AAC",
+      "ko": "(…나로선 란돌 씨를\n이기는 게 꿈일 뿐인가….)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00AEA",
+      "ko": "(안 돼. 부정적인 생각은\n그만하자. 어제 결과를 딛고\n오늘 레이스에 힘쓰면 돼.)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00B9C",
+      "ko": "잠깐, 아까부터 불렀는데\n왜 대답 안 하는 거야💢"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00BE2",
+      "ko": "미안, 미안.\n잠깐 생각할 게 있었어."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00C16",
+      "ko": "혹시 어제 일…?"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00C42",
+      "ko": "사실 나도 어젯밤에\n잘 못 잤어. 두근거렸달까.\n…다 네 탓이야."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00CBC",
+      "ko": "오늘은 카가 씨와 레이스지.\n나도 열심히 응원할게.\n너도 최선을 다해 달려."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p00D1E",
+      "ko": "물론이야. 레나, 너와\n나 자신을 위해 전력으로 갈게."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p012FE",
+      "ko": "앙리 씨 말은\n신경 쓰지 마."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01336",
+      "ko": "알아. 알지만…."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B06",
+      "ko": "여어, '카자미의 재림'."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B24",
+      "ko": "신죠 씨, 그렇게\n부르지 마세요."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01B52",
+      "ko": "맞아, 나오키.\n레이스는 아직 안 끝났어.\n놀리는 건 그만둬."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01BA4",
+      "ko": "미안. 하지만 난\n놀리려던 게 아니야."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01BE0",
+      "ko": "하지만 전 아직 카자미 씨의\n주행을 따라잡으려면 멀었어요."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C1C",
+      "ko": "하지만 넌 실제로 나와\n란돌을 따라붙는 주행을\n보여 줬어."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C68",
+      "ko": "카자미를 따라잡는 것도\n불가능하진 않을 거야."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01C9C",
+      "ko": "그럴까요?"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01CB4",
+      "ko": "자신을 좀 더 믿어."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01CD0",
+      "ko": "그래. 드라이버에겐 기술도\n필요하지만… 역시 마음,\n헝그리 정신이 필요해."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01D2E",
+      "ko": "스스로 안 된다고 생각하면\n정말 이룰 수 없어."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01D6C",
+      "ko": "미키 말이 맞아.\n괜찮아, 너라면 할 수 있어."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01DA4",
+      "ko": "오늘은 카가와 같은 조지.\n그 녀석과 달리며\n자기 틀을 깨고 와."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01DEE",
+      "ko": "나오키, 슬슬 레이스 준비를\n시작하자."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01E1C",
+      "ko": "그래, 알았어.\n그럼 이만."
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p01E42",
+      "ko": "네, 감사합니다.\n(내 틀을 깬다….)"
+    },
+    {
+      "id": "disc1/allbin/u17/unindexed_font/p034F4",
+      "ko": "바쁜 것 같네……."
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p00108",
+      "ko": "회의 중인 것 같아.\n나중에 다시 오자."
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C30",
+      "ko": "클레어 씨, 그 네메시스\n말인데요…."
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C64",
+      "ko": "그만해, 레나!"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C76",
+      "ko": "…하지만!"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C88",
+      "ko": "됐으니 그만해!"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01C9A",
+      "ko": "…대체 무슨 일이야?\n무슨 얘긴지 모르겠는데."
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01FFC",
+      "ko": "앙리 씨가 한 말,\n아직도 신경 써?"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p02030",
+      "ko": "그건 전부 헛소리야!\n지금까지 달려 온\n네 실력을 믿으라고!"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p0207E",
+      "ko": "뭐, 뭐랄까, 나는\n널 믿고 있으니까!"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p020B0",
+      "ko": "…고마워, 레나."
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p03A8E",
+      "ko": "바쁜 것 같네……."
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p0034C",
+      "ko": "오늘 난 최고 컨디션이야!\n절대 안 질 테니까!"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p0037C",
+      "ko": "오늘은 지난번처럼\n되진 않을 거다!"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p003A0",
+      "ko": "여어, 카미카제 보이!\n하지만 오늘 승리의 여신은\n분명 미에게 미소 짓는다!"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p003F8",
+      "ko": "신인에게 쉽게 지진 않지.\n나도 말이야. 각오해라."
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p00434",
+      "ko": "드디어 마지막이군.\n좋은 레이스를 하자!"
+    },
+    {
+      "id": "disc1/allbin/u19/unindexed_font/p00464",
+      "ko": "뭐, 힘내라. 하지만\n지난번처럼 되진 않을 거야."
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04DD0",
+      "ko": "부스트 온! 라인에 끼어든다!\n부스트 온! 단숨에 앞선다!\n부스트 온! 반대쪽을 노린다!"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p062E4",
+      "ko": "절대 안 돼!!"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0675A",
+      "ko": "내 진짜 꿈은…."
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p06A4C",
+      "ko": "내가 이길 수 있는\n사람이 아니었던 거야…."
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p06E28",
+      "ko": "지금 할 수 있는 최선은\n이것뿐이야!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p18F2C",
+      "ko": "좀 더 버텨야지….\n포기하면 이길 수 없어."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1936E",
+      "ko": "정말……! 그렇게 약해져선!\n남자라면 근성을 보여!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p197D6",
+      "ko": "또 그런다~.\n처음부터 포기하는 건\n아저씨나 하는 생각이야!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p19D1A",
+      "ko": "……남자답지 못하네.\n그러면 앞으로 레이스도\n걱정되겠어."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p19FF2",
+      "ko": "악마도 눈물을 흘린다잖아.\n……무슨 말을 시키는 거야!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A258",
+      "ko": "아아악. 그러지 말라고!\n더 뜨겁게 가자! 더!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A70E",
+      "ko": "참 아쉽네요.\n……그렇게 꽝이었나요?\n……운도 없으시네요."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1A892",
+      "ko": "어머, 그럼 제가\n레나 씨에게 키스를\n받게 되는 걸까요? 어쩌죠."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1ABBC",
+      "ko": "세상에! 어이없는 녀석이군.\n한심하다!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1AF82",
+      "ko": "그건 무슨 작전입니까?\n당신의 사고 패턴에서\n혼란이 감지됩니다."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1B370",
+      "ko": "어머나…… 포기한다고?!\n그건 너무하잖아!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1B826",
+      "ko": "냉정한 건 인정하지만\n스스로 승부를 버리면 안 돼."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1BD16",
+      "ko": "뭐, 그런 냉정함도\n때로는 필요하지만….\n재미없군."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1BFB2",
+      "ko": "구데리안보다는 좋은\n드라이버가 될지도 모르겠군."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C232",
+      "ko": "너에겐 중요한 게 빠져 있다!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C36C",
+      "ko": "귀여운 얼굴을 하고는….\n나조차 몇 번이나\n호되게 당했는지."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C698",
+      "ko": "흥! 그렇게 약해서 어쩌려고?!\n해 보지 않으면 모르는 법이다.\n승부란 그런 것이야."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1C958",
+      "ko": "선전을 빌겠다."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CB50",
+      "ko": "뭐야~! 남자답지 못하네!"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD7E",
+      "ko": "네"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD8A",
+      "ko": "받으세요"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CD98",
+      "ko": "버스트해 버렸네요"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDB6",
+      "ko": "어머나"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDC4",
+      "ko": "어라라"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDD0",
+      "ko": "해냈다~"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDDE",
+      "ko": "해냈네"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CDEE",
+      "ko": "힘내~"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CE02",
+      "ko": "져 버렸네~"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1CFDC",
+      "ko": "엣…?\n(손밖에 안 보이는데\n누군지 어떻게 알아….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D026",
+      "ko": "아, 고마워.\n참고가 됐어💧"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D04A",
+      "ko": "(카자미 씨, 별로\n기뻐 보이지 않았어….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D082",
+      "ko": "엣…?\n(발밖에 안 보이는데\n누군지 어떻게 알아….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D410",
+      "ko": "(으으, 듣고 보니 맞네💧\n전혀 도움 안 됐잖아, 나!)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D4F4",
+      "ko": "그렇군, 범인은 레온이었어.\n부츠홀츠 씨에게 단단히\n말해 달라고 해야겠어."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D550",
+      "ko": "정말 고마워.\n그럼 이만."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D570",
+      "ko": "해냈다!\n카자미 씨에게 감사받았어♪"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D5A2",
+      "ko": "그렇군, 범인은 앙리였어.\n나중에 따끔히 말해 둬야지💢"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D5EE",
+      "ko": "맞아, 더 세게 혼내세요\n그렇게 화낼 것까지 있나요?\n제 이야기는 비밀로 해 주세요"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D658",
+      "ko": "그래.\n때로는 엄하게 대하는 것도\n선배의 의무니까."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D6E6",
+      "ko": "그래.\n하지만 때로는 엄하게 하는 것도\n선배의 의무니까."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D77A",
+      "ko": "(그래도 앙리 씨에게\n미안한 짓을 한 걸까….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1D7B2",
+      "ko": "하하.\n그렇게 겁먹지 않아도\n{name:surname} 군 얘긴 안 할게."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DA42",
+      "ko": "우물우물…."
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DBE4",
+      "ko": "(이, 이게 회심작이라고!?)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DCCC",
+      "ko": "(맛은 있지만,\n조금 덜 익었네….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DD70",
+      "ko": "(맛을 따질 때가\n아니잖아, 나!)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DE1A",
+      "ko": "(…조금 쓰네💦)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DEBC",
+      "ko": "(이렇게까지 태우는 것도\n생각해 보면 재주야💧)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1DFC0",
+      "ko": "(양초도 탈 수 있구나…\n몰랐어💧)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E018",
+      "ko": "(맛있고 없고 이전에\n이걸 음식이라 할 수 있나….)"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E05C",
+      "ko": "…냠, 우물우물💧"
+    },
+    {
+      "id": "disc1/allbin/u38/unindexed_font/p1E070",
+      "ko": "(내일 사회면에 '사이버 신인,\n레이스 아닌 식사로 쓰러져!'\n라고 실리진 않겠지…💦)"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05F98",
+      "ko": "메모리 카드 확인 중입니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05FBA",
+      "ko": "메모리 카드가\n삽입되지 않았습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p05FE4",
+      "ko": "메모리 카드를 삽입한 뒤\n저장해 주세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06040",
+      "ko": "메모리 카드를 삽입한 뒤\n불러와 주세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06072",
+      "ko": "어느 파일에\n저장하시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06098",
+      "ko": "저장할 파일을\n선택해 주세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p060C0",
+      "ko": "어느 파일을\n불러오시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p060E4",
+      "ko": "불러올 파일을\n선택해 주세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0610C",
+      "ko": "저장 중입니다.\n메모리 카드를\n빼지 마세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06144",
+      "ko": "불러오는 중입니다.\n메모리 카드를\n빼지 마세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0617C",
+      "ko": "저장이 완료되었습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06196",
+      "ko": "불러오기가 완료되었습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p061B2",
+      "ko": "이미 데이터가 있습니다.\n덮어쓰시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p061F4",
+      "ko": "메모리 카드가\n포맷되지 않았습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06226",
+      "ko": "포맷하시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06250",
+      "ko": "포맷 중입니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06268",
+      "ko": "포맷이 완료되었습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06288",
+      "ko": "포맷에 실패했습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p062A8",
+      "ko": "저장에 실패했습니다.\n다시 저장하시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p062DC",
+      "ko": "불러오기에 실패했습니다.\n다시 불러오시겠습니까?"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06310",
+      "ko": "메모리 카드 접근에\n실패했습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p0633E",
+      "ko": "여유 공간이 부족합니다"
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06358",
+      "ko": "메모리 카드가 가득 차\n저장할 수 없습니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p06386",
+      "ko": "이 게임에는 빈 블록\n1개가 필요합니다."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p063C0",
+      "ko": "불필요한 데이터를 지운 뒤\n저장해 주세요."
+    },
+    {
+      "id": "disc1/allbin/u39/unindexed_font/p063F2",
+      "ko": "메모리 카드에\n불러올 데이터가 없습니다."
+    },
+    {
+      "id": "disc1/allbin/u03/unindexed_font/p008AE",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?"
+    },
+    {
+      "id": "disc1/allbin/u05/unindexed_font/p01122",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?"
+    },
+    {
+      "id": "disc1/allbin/u09/unindexed_font/p02B16",
+      "ko": "응."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p01608",
+      "ko": "그렇지."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p0251A",
+      "ko": "그러자."
+    },
+    {
+      "id": "disc1/allbin/u10/unindexed_font/p02D8C",
+      "ko": "아직 여러 이야기를\n더 들어보는 게 좋겠어."
+    },
+    {
+      "id": "disc1/allbin/u14/unindexed_font/p00C78",
+      "ko": "어쩔래?\n아직 얘기 들으러 갈까?"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0162A",
+      "ko": "응."
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p04A0C",
+      "ko": "콤비네이션을 무너뜨린다!\n몸통박치기로 돌진한다!\n조금 더 기회를 보자."
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p056A2",
+      "ko": "후방, 이슈자크입니다.\n드라이버는 칼 리히터 폰\n란돌."
+    }
+  ]
+}

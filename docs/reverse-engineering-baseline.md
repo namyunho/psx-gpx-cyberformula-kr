@@ -132,18 +132,23 @@ SHA-256을 `work/analysis/disc1-layout.json`에 재현한다.
 | `u38` 미니게임 | 322 | 포인터 페이지 260, 직접 대사 39, 요리 런타임 단어 23 |
 | `u43` 코스 설명 | 57 | 코스 상태 switch가 고르는 7개 포인터 표 |
 | `u43` 머신 설정 설명 | 12 | 타이어·전략·윙·부스트 고정 시작점 |
+| 기존 workset 밖 추가 글꼴 스트림 | 716 | 순차 291, 경기 색인 325, 미니게임 73, 저장 27 |
 
 무포인터 83개는 `scripts/extract_pointerless_pages.py`가 직접 대사 사이의
 보호 gap과 참조 카탈로그를 함께 검사해 추출한다. 특수 화면 391개는
 `scripts/extract_special_screen_text.py`가 `u38/u43`의 고정 unit 해시,
-포인터·직접 시작점과 모집단 수를 검증한다.
+포인터·직접 시작점과 모집단 수를 검증한다. 추가 716개는
+`scripts/extract_unindexed_font_text.py`가 기존 범위를 마스킹한 물리 gap에서
+찾은 후보 776개 중 검토한 이진 오탐 60개를 제외해 생성한다.
 
 이 수치는 기존 5,843개에 단순히 더해 “Disc 1 최종 총계”라고 부르지 않는다.
 기존 5,843개에는 번역하지 않는 이름 입력 팔레트·런타임 버퍼까지 포함되고,
-무포인터는 `u22..u34` 전수 조사가 남아 있다. 번역 편집기는 현재 확인된 범위
-중 실제로 편집할 항목만 정규화해 6,298행으로 보여준다. 세부 산출물과
-현재 391개 번역 초안 상태는
-[`special-screen-font-text.md`](special-screen-font-text.md)를 따른다.
+새 716개도 모든 색인 진입 경로를 전수 증명한 최종 모집단은 아니다. 번역
+편집기는 현재 확인된 범위 중 실제로 편집할 항목만 정규화해 7,014행으로
+보여준다. 특수 화면 391개의 상태는
+[`special-screen-font-text.md`](special-screen-font-text.md), 추가 716개의
+근거와 번역 상태는
+[`unindexed-font-text.md`](unindexed-font-text.md)를 따른다.
 
 ## 폰트 공급자와 렌더러
 
