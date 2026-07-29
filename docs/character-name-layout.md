@@ -216,3 +216,55 @@ GUI 자동 조작은 하지 않는다. 사용자가 새 CUE를 콜드 부팅해 
 출력되는 것을 확인했다. 이름 슬롯 재분할로 인한 글리프 잘림이나 다른
 캐릭터 화자명 손상은 보고되지 않았다. 현재 판정은
 `character-name-runtime-pass`다.
+
+## 성 4칸·이름 4칸 구조 PoC
+
+2026-07-29에는 검증된 2+4 패치를 기준으로 성과 이름을 각각 4글리프까지
+수용하는 구조 PoC를 별도 빌드했다. 이 단계는 한글 입력 팔레트를 교체하는
+작업이 아니라, 8글리프가 입력 화면·재표시·저장·불러오기 경로를 안전하게
+통과할 수 있는지 확인하기 위한 비배포 실험이다. 기존 기본값
+`시바 / 세이치로`, 로마자 이름 단계, 출신 선택 단계와 일본어 입력 팔레트는
+그대로 둔다.
+
+| 항목 | 4+4 PoC |
+|---|---:|
+| 글리프 record | 8개 × 74바이트 |
+| 이름 bitmap 총량 | 592바이트, 148 dword |
+| 성 scratch | `0x8002AD8C` |
+| 이름 scratch | `0x8002AEB4` |
+| live scratch 끝 | `0x8002AFDC` |
+| 네 cache 시작 | `0x8002AFDC`, `0x8002B22C`, `0x8002B47C`, `0x8002B6CC` |
+| cache 영역 끝 | `0x8002B91C` |
+| 저장 슬롯 이름 시작 | `0x801F07B0`, `0x801F0EB0`, `0x801F15B0`, `0x801F1CB0` |
+
+저장 슬롯마다 이름 bitmap 시작점을 기존보다 `0x50`바이트 앞당기면
+592바이트 블록이 다음 슬롯 header 직전에 정확히 끝난다. 슬롯 stride
+`0x700`과 header 위치는 바꾸지 않는다. unit 35의 저장 포인터와 복사 길이,
+unit 39의 19개 복사 루프·네 cache·저장 슬롯 소비자, unit 40의 입력 한도와
+scratch 포인터를 함께 수정했다.
+
+메인 실행 파일에서는 화자명 문자열 영역의 검증된 zero tail 16바이트에
+가상 글리프 코드 `0x4CE–0x4D5`를 고정 배열로 두고 성·이름 포인터가 각각
+앞의 4개와 뒤의 4개를 가리키게 했다. 해당 배열을 덮던 초기화 store만
+NOP 처리했으며 로마자 이름 초기화 블록
+`0x80039F24–0x80039F58`은 byte-for-byte로 유지한다.
+
+```bash
+.venv/bin/python scripts/build_name_4x4_poc.py \
+  --file-build-dir work/build/dialogue-all-reviewed-font-text-2026-07-29 \
+  --output-dir work/build/dialogue-all-reviewed-font-text-name-4x4-poc-2026-07-29
+
+.venv/bin/python scripts/build_dialogue_chapter_disc.py \
+  --file-build-dir work/build/dialogue-all-reviewed-font-text-name-4x4-poc-2026-07-29 \
+  --output-dir work/build/disc1-name-4x4-poc-2026-07-29
+```
+
+Expected Writes 검사는 `ALLBIN.BIN` 141바이트와 `SLPS_019.58` 110바이트만
+변경됐음을 확인했다. `START.BIN`은 변경하지 않았다. IDA Pro에서 저장·cache
+복사 루프와 로마자 초기화 블록을, Ghidra에서 unit 35·39·40과 메인 실행
+파일의 주소 참조를 다시 대조했다. 전체 181개 자동 테스트와 완성 트랙의
+세 파일 재추출 비교도 통과했다.
+
+정적 판정은 `static-verification-passed-runtime-validation-required`다.
+실기에서는 성 4글리프·이름 4글리프 입력과 확정 후 재표시, 네 저장 슬롯의
+저장 및 콜드 부팅 후 불러오기, 로마자 이름·출신 단계 보존을 확인해야 한다.
