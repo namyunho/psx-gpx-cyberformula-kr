@@ -14,7 +14,7 @@ from typing import Any
 
 JAPANESE_SCRIPT = re.compile(r"[ぁ-んァ-ヶ一-龯]")
 NAME_WIDTHS = {
-    "{name:surname}": 2,
+    "{name:surname}": 4,
     "{name:given}": 4,
 }
 

@@ -7,7 +7,7 @@ import unittest
 from scripts.build_dialogue_chapter_patch import (
     FONT_GLYPH_COUNT,
     PROTECTED_ORIGINAL_GLYPH_INDICES,
-    expand_fixed_names,
+    text_without_name_tokens,
 )
 from scripts.build_unindexed_font_translation import (
     EXPECTED_AMBIGUOUS_PHYSICAL_ENTRY_COUNT,
@@ -132,7 +132,7 @@ class UnindexedFontTranslationTests(unittest.TestCase):
         }
         required = set(previous)
         for entry in self.canonical["translations"]:
-            text = expand_fixed_names(entry["ko"])
+            text = text_without_name_tokens(entry["ko"])
             required.update(
                 character
                 for character in text

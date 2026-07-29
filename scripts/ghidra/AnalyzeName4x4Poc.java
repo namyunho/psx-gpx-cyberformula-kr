@@ -36,6 +36,16 @@ public class AnalyzeName4x4Poc extends GhidraScript {
         println("HALFWORD " + value + " " + Integer.toHexString(actual));
     }
 
+    private void requireByte(String value, int expected) throws Exception {
+        int actual = Byte.toUnsignedInt(getByte(address(value)));
+        if (actual != expected) {
+            throw new IllegalStateException(
+                value + " byte " + Integer.toHexString(actual) +
+                " != " + Integer.toHexString(expected));
+        }
+        println("BYTE " + value + " " + Integer.toHexString(actual));
+    }
+
     private void printReferences(String value) {
         Address target = address(value);
         println("REFERENCES " + value);
@@ -108,7 +118,37 @@ public class AnalyzeName4x4Poc extends GhidraScript {
         decompileContaining("8009a9a4");
     }
 
-    private void analyzeUnit40() {
+    private void analyzeUnit40() throws Exception {
+        int[] surnameStream = {
+            0xfffd, 0x04ce, 0x04cf, 0x04d0, 0x04d1, 0xffff
+        };
+        int[] givenStream = {
+            0xfffd, 0x04d2, 0x04d3, 0x04d4, 0x04d5, 0xffff
+        };
+        for (int index = 0; index < surnameStream.length; index++) {
+            requireHalfword(
+                Long.toHexString(0x8009f960L + index * 2L),
+                surnameStream[index]);
+            requireHalfword(
+                Long.toHexString(0x8009f96cL + index * 2L),
+                givenStream[index]);
+        }
+        requireByte("8009ea22", 58);
+        requireHalfword("8009ea24", 10);
+        requireByte("8009ea3a", 58);
+        int[] slotPositions = {
+            150, 164, 178, 192, 216, 230, 244, 258
+        };
+        for (int index = 0; index < slotPositions.length; index++) {
+            requireHalfword(
+                Long.toHexString(0x800a0b80L + index * 2L),
+                slotPositions[index]);
+        }
+        requireWord("8009b598", 0x0802826fL);
+        requireWord("8009c13c", 0x08028275L);
+        requireWord("8009b690", 0x0c02827bL);
+        requireWord("8009d1a8", 0x080282a0L);
+        requireWord("8009dcdc", 0x0c02828bL);
         printReferences("8002ad8c");
         printReferences("8002aeb4");
         printReferences("8002aefe");
@@ -116,7 +156,17 @@ public class AnalyzeName4x4Poc extends GhidraScript {
         printInstructions("8009974c", "80099b50");
         printInstructions("8009ab40", "8009ad74");
         printInstructions("8009ae00", "8009af84");
+        printInstructions("8009b570", "8009b5a4");
+        printInstructions("8009b638", "8009b6ac");
+        printInstructions("8009c114", "8009c164");
+        printInstructions("8009d1a8", "8009d1b8");
+        printInstructions("8009dca8", "8009dd14");
+        printInstructions("800a09bc", "800a0b20");
+        printInstructions("8009f960", "8009f978");
+        printReferences("8009f960");
+        printReferences("8009f96c");
         decompileContaining("8009942c");
+        decompileContaining("8009dca8");
     }
 
     private void analyzeSlps() throws Exception {
@@ -130,12 +180,16 @@ public class AnalyzeName4x4Poc extends GhidraScript {
         printReferences("8004f364");
         printReferences("80061580");
         printReferences("800615f8");
+        printInstructions("80032704", "800329b4");
+        printInstructions("800329b8", "80032bbc");
         printInstructions("80039ed0", "80039f58");
         printInstructions("8003a6b0", "8003a6f4");
         printInstructions("8003a8e0", "8003a940");
         printInstructions("8003d5dc", "8003d664");
         printInstructions("8003da2c", "8003dab4");
         printInstructions("8003e96c", "8003e9a8");
+        decompileContaining("80032704");
+        decompileContaining("800329b8");
         decompileContaining("80039ed0");
         decompileContaining("8003a6b0");
         decompileContaining("8003d5dc");

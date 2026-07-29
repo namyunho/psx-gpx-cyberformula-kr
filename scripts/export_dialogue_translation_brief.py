@@ -93,7 +93,7 @@ def build_brief(source: dict[str, Any], source_path: Path) -> dict[str, Any]:
                 "the renderer-specific limit is not yet proven."
             ),
             "name_widths": {
-                "{name:surname}": 2,
+                "{name:surname}": 4,
                 "{name:given}": 4,
             },
         },

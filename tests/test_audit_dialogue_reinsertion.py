@@ -62,7 +62,7 @@ class DialogueWordWrapTests(unittest.TestCase):
         self.assertEqual(lines, ("가" * 15, "{name:given}나"))
 
     def test_name_placeholders_use_fixed_visible_width(self) -> None:
-        self.assertEqual(visible_width("{name:surname}"), 2)
+        self.assertEqual(visible_width("{name:surname}"), 4)
         self.assertEqual(visible_width("{name:given}"), 4)
         result = wrap_words("{name:given}와 함께 출발한다")
         self.assertEqual(result.status, "ready")

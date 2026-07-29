@@ -544,6 +544,12 @@ def build_disc(
         output_track_sha256=output_track_hashes["sha256"],
     )
     runtime_verified = not diagnostic_overflow and recorded_runtime is not None
+    name_4x4 = file_manifest.get("name_4x4_poc")
+    name_4x4_requirements = (
+        name_4x4.get("runtime_validation_required", [])
+        if isinstance(name_4x4, dict)
+        else []
+    )
     runtime_validation = (
         recorded_runtime
         if runtime_verified
@@ -592,9 +598,16 @@ def build_disc(
                 *(
                     [
                         "confirm the default name is 시바 / 세이치로",
-                        (
-                            "confirm the fixed name is preserved when it is "
-                            "displayed again after registration"
+                        *(
+                            name_4x4_requirements
+                            if name_4x4_requirements
+                            else [
+                                (
+                                    "confirm the fixed name is preserved "
+                                    "when it is displayed again after "
+                                    "registration"
+                                )
+                            ]
                         ),
                         "confirm Korean character and system speaker labels",
                     ]
@@ -760,6 +773,11 @@ def build_disc(
                 "runtime_validation_required": True,
             }
             if has_unindexed_font
+            else {"included": False}
+        ),
+        "name_4x4_poc": (
+            name_4x4
+            if isinstance(name_4x4, dict)
             else {"included": False}
         ),
         "sources": {

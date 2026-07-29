@@ -70,11 +70,16 @@ PROTECTED_ORIGINAL_GLYPH_INDICES = frozenset(
     for start, end in PROTECTED_ORIGINAL_GLYPH_RANGES
     for index in range(start, end)
 )
-FIXED_NAMES = {
-    "{name:surname}": "시바",
-    "{name:given}": "세이치로",
+NAME_WIDTHS = {
+    "{name:surname}": 4,
+    "{name:given}": 4,
 }
-NAME_PATTERN = re.compile(r"\{name:(?:surname|given)\}")
+NAME_PATTERN = re.compile(r"\{name:(surname|given)\}")
+NAME_KIND_BY_GROUP = {
+    "surname": "name_surname",
+    "given": "name_given",
+}
+UNKNOWN_MARKUP_PATTERN = re.compile(r"\{[^{}]+\}")
 CONTROL_CONTENT_KINDS = {"glyph", "name_surname", "name_given"}
 REMOVABLE_INTERNAL_KINDS = {"align", "name_surname", "name_given"}
 UNIT_SHARED_POOL_REFERENCE_PROFILES = {
@@ -556,12 +561,25 @@ def verify_expected_writes(
     }
 
 
-def expand_fixed_names(text: str) -> str:
-    for token, replacement in FIXED_NAMES.items():
-        text = text.replace(token, replacement)
-    if NAME_PATTERN.search(text):
-        raise ValueError(f"unknown name placeholder remains: {text!r}")
-    return text
+def visible_width(text: str) -> int:
+    width = 0
+    cursor = 0
+    for match in NAME_PATTERN.finditer(text):
+        width += len(text[cursor : match.start()])
+        width += NAME_WIDTHS[match.group()]
+        cursor = match.end()
+    return width + len(text[cursor:])
+
+
+def text_without_name_tokens(text: str) -> str:
+    unknown = [
+        markup
+        for markup in UNKNOWN_MARKUP_PATTERN.findall(text)
+        if not NAME_PATTERN.fullmatch(markup)
+    ]
+    if unknown:
+        raise ValueError(f"unknown dialogue markup remains: {unknown}")
+    return NAME_PATTERN.sub("", text)
 
 
 def required_characters(
@@ -585,12 +603,12 @@ def required_characters(
         text = next((value for value in texts if isinstance(value, str)), None)
         if text is None:
             raise ValueError(f"{entry.get('id')}: no Korean candidate text")
-        text = expand_fixed_names(text)
+        text = text_without_name_tokens(text)
         characters.update(character for character in text if not character.isspace())
         if any(character.isspace() for character in text):
             characters.add(" ")
     for text in extra_texts:
-        text = expand_fixed_names(text)
+        text = text_without_name_tokens(text)
         characters.update(character for character in text if not character.isspace())
         if any(character.isspace() for character in text):
             characters.add(" ")
@@ -761,7 +779,7 @@ def build_static_font(
         ],
         "passthrough_original_glyphs_byte_exact": True,
         "total_byte_exact_original_glyph_count": len(byte_exact_indices),
-        "fixed_name_expansion": FIXED_NAMES,
+        "dynamic_name_widths": NAME_WIDTHS,
     }
     return bytes(patched), mapping, report
 
@@ -804,23 +822,64 @@ def encode_entry(
     mapping: dict[str, int],
 ) -> bytes:
     leading, trailing = split_control_shell(source_entry)
-    text = expand_fixed_names(reflowed_text)
+    text = reflowed_text
+    unknown = [
+        markup
+        for markup in UNKNOWN_MARKUP_PATTERN.findall(text)
+        if not NAME_PATTERN.fullmatch(markup)
+    ]
+    if unknown:
+        raise ValueError(
+            f"{source_entry['entry_id']}: unknown markup {unknown}"
+        )
+    source_tokens = [
+        int(value, 16) for value in source_entry["original"]["tokens"]
+    ]
+    source_name_controls = [
+        (
+            str(control["kind"]),
+            source_tokens[int(control["token_index"])],
+        )
+        for control in source_entry["original"]["control_tokens"]
+        if control["kind"] in {"name_surname", "name_given"}
+    ]
+    translated_name_kinds = [
+        NAME_KIND_BY_GROUP[match.group(1)]
+        for match in NAME_PATTERN.finditer(text)
+    ]
+    if translated_name_kinds != [
+        kind for kind, _raw in source_name_controls
+    ]:
+        raise ValueError(
+            f"{source_entry['entry_id']}: dynamic-name token order differs"
+        )
+    name_raw = iter(raw for _kind, raw in source_name_controls)
+
     lines = text.split("\n")
     if not 1 <= len(lines) <= 3:
         raise ValueError(f"{source_entry['entry_id']}: invalid reflow row count")
-    if any(len(line) > 17 for line in lines):
+    if any(visible_width(line) > 17 for line in lines):
         raise ValueError(f"{source_entry['entry_id']}: reflow line exceeds 17")
 
     body: list[int] = []
-    for line_index, line in enumerate(lines):
-        if line_index:
+    position = 0
+    while position < len(text):
+        if text[position] == "\n":
             body.append(0xFFFB)
-        for character in line:
-            if character not in mapping:
-                raise ValueError(
-                    f"{source_entry['entry_id']}: unmapped {character!r}"
-                )
-            body.append(mapping[character])
+            position += 1
+            continue
+        name_match = NAME_PATTERN.match(text, position)
+        if name_match:
+            body.append(next(name_raw))
+            position = name_match.end()
+            continue
+        character = text[position]
+        if character not in mapping:
+            raise ValueError(
+                f"{source_entry['entry_id']}: unmapped {character!r}"
+            )
+        body.append(mapping[character])
+        position += 1
     tokens = [*leading, *body, *trailing]
     if any(not 0 <= token <= 0xFFFF for token in tokens):
         raise ValueError(f"{source_entry['entry_id']}: token out of range")
@@ -919,11 +978,11 @@ def compact_unit_translation_spaces(
                 "entry_id": entry_id,
                 "removed_space_count": removed,
                 "before_line_widths": [
-                    len(expand_fixed_names(line))
+                    visible_width(line)
                     for line in before.split("\n")
                 ],
                 "after_line_widths": [
-                    len(expand_fixed_names(line))
+                    visible_width(line)
                     for line in after.split("\n")
                 ],
             }
@@ -1160,30 +1219,71 @@ def fit_fixed_diagnostic_candidate(
     glyph sequence. This is the previously approved word-split fallback, and
     is reported so it cannot be mistaken for reviewed final typography.
     """
-    expanded = expand_fixed_names(candidate_text)
-    lines = expanded.split("\n")
-    if 1 <= len(lines) <= 3 and all(len(line) <= 17 for line in lines):
-        return expanded, None
+    lines = candidate_text.split("\n")
+    if 1 <= len(lines) <= 3 and all(
+        visible_width(line) <= 17 for line in lines
+    ):
+        return candidate_text, None
 
-    visible = expanded.replace("\n", "")
-    if not 1 <= len(visible) <= 51:
+    flattened = candidate_text.replace("\n", "")
+    flattened_width = visible_width(flattened)
+    if not 1 <= flattened_width <= 51:
         raise ValueError(
             f"{source_entry['entry_id']}: diagnostic candidate requires "
-            f"{len(visible)} glyphs; fixed frame capacity is 51"
+            f"{flattened_width} glyphs; fixed frame capacity is 51"
         )
-    adjusted = "\n".join(
-        visible[index : index + 17]
-        for index in range(0, len(visible), 17)
-    )
+
+    units: list[tuple[str, int]] = []
+    cursor = 0
+    for match in NAME_PATTERN.finditer(flattened):
+        units.extend((character, 1) for character in flattened[cursor:match.start()])
+        units.append((match.group(), NAME_WIDTHS[match.group()]))
+        cursor = match.end()
+    units.extend((character, 1) for character in flattened[cursor:])
+
+    def fit(index: int, rows_left: int) -> tuple[str, ...] | None:
+        if index == len(units):
+            return ()
+        if rows_left == 0:
+            return None
+        width = 0
+        candidates: list[tuple[str, ...]] = []
+        for end in range(index, len(units)):
+            width += units[end][1]
+            if width > 17:
+                break
+            tail = fit(end + 1, rows_left - 1)
+            if tail is not None:
+                candidates.append(
+                    ("".join(value for value, _width in units[index : end + 1]), *tail)
+                )
+        if not candidates:
+            return None
+        return max(
+            candidates,
+            key=lambda candidate: (
+                visible_width(candidate[0]),
+                tuple(visible_width(line) for line in candidate),
+            ),
+        )
+
+    fitted = fit(0, 3)
+    if fitted is None:
+        raise ValueError(
+            f"{source_entry['entry_id']}: dynamic-name token cannot fit "
+            "the fixed 17x3 frame"
+        )
+    adjusted = "\n".join(fitted)
     return adjusted, {
         "entry_id": source_entry["entry_id"],
         "reason": "candidate-explicit-line-exceeds-17",
         "policy": "flatten-newlines-and-hard-wrap-unchanged-glyph-sequence",
-        "candidate_line_widths": [len(line) for line in lines],
+        "candidate_line_widths": [visible_width(line) for line in lines],
         "output_line_widths": [
-            len(line) for line in adjusted.split("\n")
+            visible_width(line) for line in adjusted.split("\n")
         ],
         "visible_glyph_sequence_preserved": True,
+        "dynamic_name_tokens_preserved": True,
     }
 
 
@@ -1584,11 +1684,10 @@ def relink_unit_shared_pool(
         reflowed_text = derived.get("ko_reflowed")
         if not isinstance(candidate_text, str):
             raise ValueError(f"{entry_id}: missing reviewed Korean candidate")
-        expanded_candidate = expand_fixed_names(candidate_text)
-        candidate_lines = expanded_candidate.split("\n")
+        candidate_lines = candidate_text.split("\n")
         candidate_fits = (
             1 <= len(candidate_lines) <= 3
-            and all(len(line) <= 17 for line in candidate_lines)
+            and all(visible_width(line) <= 17 for line in candidate_lines)
         )
         if candidate_fits:
             text = candidate_text

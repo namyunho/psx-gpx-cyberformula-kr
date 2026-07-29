@@ -9,6 +9,8 @@ import json
 from pathlib import Path
 import shutil
 import struct
+import subprocess
+import tempfile
 from typing import Any, Iterable
 
 try:
@@ -38,6 +40,10 @@ NAME_BITMAP_BYTES = NAME_GLYPH_COUNT * GLYPH_SIZE
 NAME_BITMAP_DWORDS = NAME_BITMAP_BYTES // 4
 NAME_BITMAP_FORWARD_LIMIT = NAME_BITMAP_DWORDS
 NAME_BITMAP_BACKWARD_INITIAL = NAME_BITMAP_DWORDS - 1
+DYNAMIC_NAME_WIDTHS = {
+    "{name:surname}": 4,
+    "{name:given}": 4,
+}
 
 LIVE_NAME_BUFFER = 0x8002AD8C
 GIVEN_NAME_BUFFER_4X4 = LIVE_NAME_BUFFER + 4 * GLYPH_SIZE
@@ -106,6 +112,90 @@ UNIT40_IMMEDIATE_PATCHES = (
     (0x8009AC14, 0x0002, 0x0004),
     (0x8009AC2C, 0x0002, 0x0004),
     (0x8009AC8C, 0xAE6A, 0xAEFE),
+)
+
+UNIT40_NAME_DISPLAY_STREAM_PATCHES = (
+    (
+        0x8009F960,
+        bytes.fromhex("FD FF CE 04 CF 04 D0 04 FF FF 00 00"),
+        bytes.fromhex("FD FF CE 04 CF 04 D0 04 D1 04 FF FF"),
+    ),
+    (
+        0x8009F96C,
+        bytes.fromhex("FD FF D1 04 D2 04 D3 04 FF FF 00 00"),
+        bytes.fromhex("FD FF D2 04 D3 04 D4 04 D5 04 FF FF"),
+    ),
+)
+
+UNIT40_SIZE = 0x1D000
+UNIT40_INPUT_FORM_ASM = (
+    Path(__file__).resolve().parent / "asm" / "name_input_4x4_form.asm"
+)
+UNIT40_INPUT_FORM_HELPER_START = 0x800A09BC
+UNIT40_INPUT_FORM_HELPER_END = 0x800A0B90
+UNIT40_INPUT_FORM_SOURCE_WORDS = (
+    (
+        0x8009B594,
+        (0x2403008F, 0xA4432080, 0xA4432100),
+    ),
+    (
+        0x8009C138,
+        (0x2403008F, 0xA4432080, 0xA4432100),
+    ),
+    (
+        0x8009B68C,
+        (
+            0x8E041214,
+            0x0C00E2F9,
+            0x24842080,
+            0x8E041214,
+            0x0C00E2F9,
+            0x24842100,
+            0x08026DF7,
+            0x3C028006,
+        ),
+    ),
+    (
+        0x8009D1A8,
+        (0x3C028006, 0x94421024),
+    ),
+    (
+        0x8009DCDC,
+        (
+            0x94421024,
+            0x24630954,
+            0x2442FFD0,
+            0x00021040,
+            0x00431021,
+        ),
+    ),
+)
+UNIT40_INPUT_FORM_FRAME_SOURCES = (
+    (
+        0x8009EA1C,
+        bytes.fromhex(
+            "1C 00 40 7F 00 80 2C 10 18 00 08 00 "
+            "FF FF 00 00 00 00 00 00 00 00 00 00"
+        ),
+    ),
+    (
+        0x8009EA34,
+        bytes.fromhex(
+            "1C 00 40 7F 00 90 2C 10 50 00 08 00 "
+            "FF FF 00 00 00 00 00 00 00 00 00 00"
+        ),
+    ),
+)
+UNIT40_INPUT_FORM_ALLOWED_ADDRESS_RANGES = (
+    (0x8009B594, 0x8009B5A0),
+    (0x8009C138, 0x8009C144),
+    (0x8009B68C, 0x8009B6AC),
+    (0x8009D1A8, 0x8009D1B0),
+    (0x8009DCDC, 0x8009DCF0),
+    (0x8009EA22, 0x8009EA23),
+    (0x8009EA24, 0x8009EA26),
+    (0x8009EA3A, 0x8009EA3B),
+    (UNIT40_INPUT_FORM_HELPER_START, UNIT40_INPUT_FORM_HELPER_END),
 )
 
 UNIT35_FORWARD_LIMIT_ADDRESSES = (0x8006E0D0,)
@@ -418,6 +508,103 @@ def _append_word_range(ranges: list[tuple[int, int]], offset: int) -> None:
     ranges.append((offset, offset + 4))
 
 
+def _patch_unit40_input_form_with_armips(
+    unit40: bytes,
+) -> tuple[bytes, dict[str, Any]]:
+    if len(unit40) != UNIT40_SIZE:
+        raise ValueError(
+            f"unit40 size differs: {len(unit40)} != {UNIT40_SIZE}"
+        )
+
+    for address, expected_words in UNIT40_INPUT_FORM_SOURCE_WORDS:
+        offset = address - ALLBIN_UNIT_LOAD_ADDRESSES[40]
+        actual = struct.unpack_from(
+            f"<{len(expected_words)}I",
+            unit40,
+            offset,
+        )
+        if actual != expected_words:
+            raise ValueError(
+                "unit40 input-form source differs at "
+                f"0x{address:08X}: {actual!r} != {expected_words!r}"
+            )
+
+    for address, expected in UNIT40_INPUT_FORM_FRAME_SOURCES:
+        offset = address - ALLBIN_UNIT_LOAD_ADDRESSES[40]
+        actual = unit40[offset : offset + len(expected)]
+        if actual != expected:
+            raise ValueError(
+                "unit40 input-form frame differs at "
+                f"0x{address:08X}: {actual.hex()} != {expected.hex()}"
+            )
+
+    helper_start = (
+        UNIT40_INPUT_FORM_HELPER_START - ALLBIN_UNIT_LOAD_ADDRESSES[40]
+    )
+    helper_end = (
+        UNIT40_INPUT_FORM_HELPER_END - ALLBIN_UNIT_LOAD_ADDRESSES[40]
+    )
+    helper_source = unit40[helper_start:helper_end]
+    if helper_source != b"\x00" * len(helper_source):
+        raise ValueError("unit40 input-form helper range is not zero")
+
+    armips = shutil.which("armips")
+    if armips is None:
+        raise RuntimeError("armips is required for the 4+4 input form")
+    if not UNIT40_INPUT_FORM_ASM.is_file():
+        raise FileNotFoundError(UNIT40_INPUT_FORM_ASM)
+
+    with tempfile.TemporaryDirectory(prefix="cyberformula-name-4x4-") as temp:
+        temp_dir = Path(temp)
+        overlay_path = temp_dir / "unit40.bin"
+        overlay_path.write_bytes(unit40)
+        completed = subprocess.run(
+            [armips, str(UNIT40_INPUT_FORM_ASM)],
+            cwd=temp_dir,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if completed.returncode != 0:
+            raise RuntimeError(
+                "armips failed for the 4+4 input form:\n"
+                f"{completed.stdout}{completed.stderr}"
+            )
+        patched = overlay_path.read_bytes()
+
+    if len(patched) != len(unit40):
+        raise ValueError(
+            "armips changed unit40 size: "
+            f"{len(patched)} != {len(unit40)}"
+        )
+
+    relative_ranges = [
+        (
+            start - ALLBIN_UNIT_LOAD_ADDRESSES[40],
+            end - ALLBIN_UNIT_LOAD_ADDRESSES[40],
+        )
+        for start, end in UNIT40_INPUT_FORM_ALLOWED_ADDRESS_RANGES
+    ]
+    expected = verify_expected_writes(
+        unit40,
+        patched,
+        allowed_ranges=relative_ranges,
+        owner="unit40 Japanese 4+4 input-form display",
+    )
+    return patched, {
+        "assembler": str(Path(armips).resolve()),
+        "assembly_source": str(UNIT40_INPUT_FORM_ASM),
+        "helper_start": f"0x{UNIT40_INPUT_FORM_HELPER_START:08X}",
+        "helper_end_exclusive": f"0x{UNIT40_INPUT_FORM_HELPER_END:08X}",
+        "helper_source_was_zero": True,
+        "japanese_slot_count": 8,
+        "roman_slot_layout_unchanged": True,
+        "prompt_frame_width_pixels": 58,
+        "glyph_width_pixels": 14,
+        "expected_writes": expected,
+    }
+
+
 def _patch_allbin(input_allbin: bytes) -> tuple[bytes, dict[str, Any]]:
     patched = bytearray(input_allbin)
     allowed_ranges: list[tuple[int, int]] = []
@@ -526,6 +713,37 @@ def _patch_allbin(input_allbin: bytes) -> tuple[bytes, dict[str, Any]]:
         )
         _append_word_range(allowed_ranges, offset)
 
+    for address, expected, replacement in UNIT40_NAME_DISPLAY_STREAM_PATCHES:
+        offset = unit_address_to_allbin_offset(40, address)
+        actual = bytes(patched[offset : offset + len(expected)])
+        if actual != expected:
+            raise ValueError(
+                "unit40 4+4 name display stream differs at "
+                f"0x{address:08X}: {actual.hex()} != {expected.hex()}"
+            )
+        patched[offset : offset + len(replacement)] = replacement
+        allowed_ranges.append((offset, offset + len(replacement)))
+
+    unit40_start = ALLBIN_UNIT_OFFSETS[40]
+    unit40_end = unit40_start + UNIT40_SIZE
+    patched_unit40, input_form_report = (
+        _patch_unit40_input_form_with_armips(
+            bytes(patched[unit40_start:unit40_end])
+        )
+    )
+    patched[unit40_start:unit40_end] = patched_unit40
+    allowed_ranges.extend(
+        (
+            unit40_start
+            + start
+            - ALLBIN_UNIT_LOAD_ADDRESSES[40],
+            unit40_start
+            + end
+            - ALLBIN_UNIT_LOAD_ADDRESSES[40],
+        )
+        for start, end in UNIT40_INPUT_FORM_ALLOWED_ADDRESS_RANGES
+    )
+
     return bytes(patched), {
         "allowed_ranges": allowed_ranges,
         "unit35": {
@@ -554,6 +772,10 @@ def _patch_allbin(input_allbin: bytes) -> tuple[bytes, dict[str, Any]]:
                 UNIT40_GIVEN_POINTER_ORI_ADDRESSES
             ),
             "layout_patch_count": len(UNIT40_IMMEDIATE_PATCHES),
+            "display_stream_patch_count": len(
+                UNIT40_NAME_DISPLAY_STREAM_PATCHES
+            ),
+            "input_form": input_form_report,
         },
     }
 
@@ -697,6 +919,13 @@ def build_name_4x4_poc(
     fixed = names.get("fixed_player_name") if isinstance(names, dict) else None
     if not isinstance(fixed, dict) or "2+4" not in str(fixed.get("layout")):
         raise ValueError("base build is not the verified 2+4 name layout")
+    if (
+        base_manifest.get("font", {}).get("dynamic_name_widths")
+        != DYNAMIC_NAME_WIDTHS
+    ):
+        raise ValueError(
+            "base build does not preserve 4+4 dynamic player-name tokens"
+        )
 
     inputs = {
         name: (file_build_dir / name).read_bytes()
@@ -741,8 +970,9 @@ def build_name_4x4_poc(
         "status": "static-verification-passed-runtime-validation-required",
         "release_eligible": False,
         "scope": (
-            "first-stage surname/given-name bitmap storage only; "
-            "Japanese input palettes are preserved"
+            "surname/given-name 4+4 bitmap storage, prompt/confirmation "
+            "display, and dynamic dialogue substitution; Japanese input "
+            "palettes are preserved"
         ),
         "field_capacity": {
             "surname_glyphs": 4,
@@ -778,16 +1008,28 @@ def build_name_4x4_poc(
             "slot_stride_unchanged": True,
         },
         "protected_paths": {
-            "roman_name_stage": "byte-for-byte unchanged",
+            "roman_name_stage": (
+                "original 10-slot table and updater body retained; "
+                "state >= 10 dispatches back to the original path"
+            ),
             "origin_stage": "outside all Expected Write ranges",
             "japanese_input_palettes": "outside all Expected Write ranges",
             "font_assets": "START.BIN byte-for-byte unchanged",
+            "direct_dialogue_name_tokens": {
+                "surname": "0x4000",
+                "given_name": "0x6000",
+                "visible_widths": DYNAMIC_NAME_WIDTHS,
+                "policy": "preserve source control words",
+            },
         },
         "allbin": allbin_report,
         "slps": slps_report,
         "runtime_validation_required": [
             "enter four surname glyphs and four given-name glyphs",
-            "confirm all eight glyphs render after registration",
+            "confirm all eight glyphs render in the input prompt",
+            "confirm all eight glyphs render in the final confirmation",
+            "confirm the registered name appears in the nameplate",
+            "confirm the registered name replaces dynamic dialogue tokens",
             "save into each of the four slots",
             "cold boot and load each slot",
             "confirm Roman-name and origin stages are unchanged",
@@ -798,8 +1040,8 @@ def build_name_4x4_poc(
         **base_manifest,
         "warning": (
             "Nonrelease 4+4 player-name structural PoC. The Japanese input "
-            "palettes, Roman-name stage, and origin stage are intentionally "
-            "unchanged. Runtime save/load validation is required."
+            "palettes, Roman-name data/layout, and origin stage are "
+            "preserved. Runtime input/save/load validation is required."
         ),
         "sources": {
             **base_manifest["sources"],

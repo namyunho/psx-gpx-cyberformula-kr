@@ -243,28 +243,97 @@ GUI 자동 조작은 하지 않는다. 사용자가 새 CUE를 콜드 부팅해 
 unit 39의 19개 복사 루프·네 cache·저장 슬롯 소비자, unit 40의 입력 한도와
 scratch 포인터를 함께 수정했다.
 
+첫 실기 검증에서는 입력한 4+4 데이터가 본편에서 정확히 재표시됐지만, 입력
+프롬프트와 최종 확인 화면은 각각 마지막 한 글리프를 표시하지 않았다. 두
+화면이 함께 사용하는 unit 40의 고정 스트림
+`0x8009F960`, `0x8009F96C`이 원본의 3글리프 열거를 그대로 유지한 것이
+원인이었다. 각 10바이트 스트림 직후에는 다음 스트림 전까지 2바이트 정렬
+여유가 있으므로 뒤 데이터를 옮기지 않고 다음처럼 12바이트로 확장한다.
+
+| 화면 스트림 | 4+4 토큰 |
+|---|---|
+| 성 | `{pace} 0x4CE 0x4CF 0x4D0 0x4D1 {stream_end}` |
+| 이름 | `{pace} 0x4D2 0x4D3 0x4D4 0x4D5 {stream_end}` |
+
+이 수정은 입력 프롬프트와 최종 확인 화면의 공용 소비자를 함께 고치며,
+그 뒤의 출신 표시용 가변 스트림 `0x8009F978`은 이동하거나 변경하지 않는다.
+
+고정 스트림을 4글리프로 늘린 뒤에도 실기에서 입력 중인 행만 네 번째
+글리프가 보이지 않는 현상이 남았다. 입력 화면의 unit 40 오브젝트 pool을
+GDB로 읽으면 type `0x88` 슬롯 48–53이 `x=164,178,192 /
+216,230,244`, 즉 3+3 선택 칸으로만 생성된다. 실제 입력 글자를 표시하는
+type `0x8F` 슬롯 65·66의 frame 12·13도 각각 폭 `44px`이다. 이는
+`14px × 3글리프 + 2px`와 정확히 일치하므로 네 번째 record가 있어도
+sprite clipping으로 잘린다.
+
+공용 텍스트 엔진의 열 수를 4로 제한하는 실험도 수행했지만 이 가설은
+실기에서 기각됐다. 깨진 화면에서 DuckStation GDB로 읽은 텍스트 상태는
+원래 `17열×1행`이었고, 열 수는 단순 줄바꿈 한도가 아니라 GPU에 업로드할
+bitmap 폭 계산에도 쓰였다. 렌더 호출 동안 이를 4로 바꾼 빌드는 이름
+bitmap의 일부 폭만 갱신하고 160px sprite가 남은 VRAM을 함께 읽게 해
+가로 노이즈와 글자 미표시를 만들었다. 따라서 해당 래퍼와 호출 변경은
+소스에서 제거했다.
+
+수정안은 원래 `17열×1행` 텍스트 상태를 유지하면서 입력 UI만 확장한다.
+frame 12·13의 폭을 `58px = 14px × 4글리프 + 2px`로 늘리고, 성 frame은
+14px 왼쪽으로 옮긴다. 일본어 입력 단계에는 type `0x88` 슬롯 54·55를
+추가해 다음 8개 위치를 사용한다.
+
+```text
+성   150, 164, 178, 192
+이름 216, 230, 244, 258
+```
+
+입력 단계의 state가 10 미만일 때만 새 4+4 좌표와 선택 강조 계산을 쓰며,
+state 10부터 시작하는 로마자 이름 화면은 원래 10개 슬롯 좌표와 강조
+루틴으로 되돌아간다. 화면 전환 때 추가 슬롯도 기존 오브젝트와 함께
+소거한다. 코드는 unit 40의 검증된 zero 구간
+`0x800A09BC–0x800A0B90`에 armips로 조립했고, branch/load delay를 넣은
+결과를 Capstone·IDA Pro·Ghidra에서 각각 다시 디스어셈블했다.
+
 메인 실행 파일에서는 화자명 문자열 영역의 검증된 zero tail 16바이트에
 가상 글리프 코드 `0x4CE–0x4D5`를 고정 배열로 두고 성·이름 포인터가 각각
 앞의 4개와 뒤의 4개를 가리키게 했다. 해당 배열을 덮던 초기화 store만
 NOP 처리했으며 로마자 이름 초기화 블록
 `0x80039F24–0x80039F58`은 byte-for-byte로 유지한다.
 
+첫 실기 검증에서 이름표는 입력값을 표시했지만 대사 본문은 기본값
+`시바 세이치로`로 고정되는 문제도 확인됐다. 런타임 소비자의 문제가 아니라
+직접 대사 재삽입기가 `{name:surname}`, `{name:given}`을 빌드 시점에 기본
+문자열로 펼친 것이 원인이었다. 원문 엔트리에 보존된 이름 제어 토큰
+`0x4000`, `0x6000`을 번역문의 같은 위치에 다시 기록하도록 수정하고,
+레이아웃 계산에서만 각각 최대 4글리프를 예약한다. 번역문에 있는 동적 이름
+토큰의 종류·순서가 원문과 다르면 빌드를 중단한다.
+
+메인 실행 파일의 이름 소비자는 가상 코드 배열을 통해 live scratch를
+읽는다. 첫 성 글리프는 `0x80014A00 + 0x4CE × 74 = 0x8002AD8C`이고,
+이어지는 `0x4CE–0x4D5`가 성 4개와 이름 4개의 bitmap record에 정확히
+대응한다. 따라서 고정 가상 코드 배열은 유지하되 대사 스트림에는 원본의
+동적 제어 토큰을 보존하는 구성이 맞다. 전체 5,783개 직접 대사를 4+4
+최대 폭으로 다시 감사한 결과 레이아웃 차단 항목은 0개였다. 최종
+`ALLBIN.BIN`에서도 동적 이름을 쓰는 103개 엔트리의 제어 토큰 111개가
+원문과 같은 종류·순서로 보존됐음을 다시 확인했다.
+
 ```bash
 .venv/bin/python scripts/build_name_4x4_poc.py \
-  --file-build-dir work/build/dialogue-all-reviewed-font-text-2026-07-29 \
-  --output-dir work/build/dialogue-all-reviewed-font-text-name-4x4-poc-2026-07-29
+  --file-build-dir work/build/dialogue-u00-u34-dynamic-name-4x4-base-names-ui-special \
+  --output-dir work/build/dialogue-all-reviewed-font-text-dynamic-name-4x4-input-form-fixed-2026-07-30
 
 .venv/bin/python scripts/build_dialogue_chapter_disc.py \
-  --file-build-dir work/build/dialogue-all-reviewed-font-text-name-4x4-poc-2026-07-29 \
-  --output-dir work/build/disc1-name-4x4-poc-2026-07-29
+  --file-build-dir work/build/dialogue-all-reviewed-font-text-dynamic-name-4x4-input-form-fixed-2026-07-30 \
+  --output-dir work/build/disc1-name-4x4-input-form-fixed-2026-07-30
 ```
 
-Expected Writes 검사는 `ALLBIN.BIN` 141바이트와 `SLPS_019.58` 110바이트만
-변경됐음을 확인했다. `START.BIN`은 변경하지 않았다. IDA Pro에서 저장·cache
-복사 루프와 로마자 초기화 블록을, Ghidra에서 unit 35·39·40과 메인 실행
-파일의 주소 참조를 다시 대조했다. 전체 181개 자동 테스트와 완성 트랙의
-세 파일 재추출 비교도 통과했다.
+현재 파일 빌드의 Expected Writes 검사는 기준 빌드 대비 `ALLBIN.BIN`
+467바이트와 `SLPS_019.58` 110바이트만 변경됐음을 확인했다. 입력 화면
+수정 자체는 unit 40의 315바이트이며 `START.BIN`은 변경하지 않는다.
+IDA Pro는 추가 슬롯 생성·소거와 state 분기, Ghidra는 `58px` frame,
+8개 좌표, 새 helper의 참조와 디컴파일을 대조했다.
 
-정적 판정은 `static-verification-passed-runtime-validation-required`다.
-실기에서는 성 4글리프·이름 4글리프 입력과 확정 후 재표시, 네 저장 슬롯의
-저장 및 콜드 부팅 후 불러오기, 로마자 이름·출신 단계 보존을 확인해야 한다.
+4+4 저장과 본편 재표시는 실기에서 통과했다. 입력 프롬프트와 최종 확인
+화면의 네 번째 글리프를 고치려던 열 수 4 래퍼 빌드는
+`runtime-failed-reverted`로 기록한다. 위 input-form 수정안은 정적 검증을
+통과했으며 실기 검증 대기 상태다. 수정 빌드에서는 등록한 비기본 이름이
+입력 프롬프트·최종 확인·이름표·동적 대사 본문에 동일하게 나오는지, 네 저장
+슬롯의 저장 및 콜드 부팅 후 불러오기, 로마자 이름·출신 단계 보존을 다시
+확인해야 한다.
