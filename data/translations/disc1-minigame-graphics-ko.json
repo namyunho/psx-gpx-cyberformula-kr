@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "status": "runtime-confirmed-minigame-button-translation",
+  "font": "Galmuri11 Regular 12px",
+  "entries": [
+    {
+      "id": "disc1/mini_g3/unit01/button/meat",
+      "jp": "肉類",
+      "ko": "고기",
+      "texture_rect": [416, 256, 56, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/vegetables",
+      "jp": "野菜類",
+      "ko": "채소",
+      "texture_rect": [416, 272, 56, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/dairy",
+      "jp": "乳製品",
+      "ko": "유제품",
+      "texture_rect": [416, 288, 56, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/nothing",
+      "jp": "何も入れない",
+      "ko": "넣지 않기",
+      "texture_rect": [416, 304, 64, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/chicken_egg",
+      "jp": "ニワトリの卵",
+      "ko": "닭의 알",
+      "texture_rect": [432, 320, 64, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/ostrich_egg",
+      "jp": "ダチョウの卵",
+      "ko": "타조 알",
+      "texture_rect": [432, 336, 64, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/suspicious_ingredient",
+      "jp": "怪しい食材",
+      "ko": "수상한재료",
+      "texture_rect": [432, 352, 64, 16]
+    },
+    {
+      "id": "disc1/mini_g3/unit01/button/love",
+      "jp": "愛情",
+      "ko": "애정",
+      "texture_rect": [432, 368, 64, 16]
+    }
+  ]
+}
