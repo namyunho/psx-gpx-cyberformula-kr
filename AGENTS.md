@@ -26,6 +26,9 @@
    원본에 대한 예상 쓰기 범위로 모두 설명돼야 한다.
 8. 대사 작업본을 외부 도구나 AI와 교환할 때 `entry_id`와 보호 필드는 변경하지
    않는다. 번역 단계 전 기준선의 완역본·축약본 필드는 모두 비어 있어야 한다.
+9. 동적 분석은 PCSX-Redux의 clean boot와 재현 절차를 기준으로 한다. save state
+   하나만 근거로 삼지 않으며 BIOS·emulator 식별값, breakpoint/watchpoint,
+   register와 RAM/VRAM 증거를 함께 기록한다.
 
 ## 원본 매체
 
@@ -44,11 +47,21 @@
 
 - IDA Pro/`idalib-mcp`: 짧은 루틴, 바이트, xref, 함수 경계와 반복 질의의 주력.
 - Ghidra MCP: 긴 제어 흐름이나 포인터 전달을 MIPS 디컴파일로 교차검증할 때 사용.
-- DuckStation GDB `127.0.0.1:3333`: runtime RAM, 실제 overlay 적재, 레지스터와
-  소비 시점을 확인한다.
+- PCSX-Redux GDB `127.0.0.1:3333`: runtime RAM, 실제 overlay 적재, 레지스터와
+  소비 시점을 확인한다. CPU breakpoint/watchpoint 조사 때 debugger를 켜고
+  Dynarec을 끈다.
+- PCSX-Redux Lua API·VRAM Viewer·GPU Logger: 읽기/쓰기/실행 watchpoint와
+  화면→VRAM→DMA/RAM 공급자 연결을 조사한다. 사용자가 목표 장면을 재현하고
+  준비 신호를 보내기 전에는 GUI나 Lua를 실행하지 않는다. 신호 뒤에는 합의한
+  관측 범위에 한해 에이전트가 GUI 조작·Lua 실행과 결과 해석을 담당할 수 있다.
+- Kaitai Struct 0.11: 확인된 바이너리 구조를 `.ksy`로 선언하고 Python
+  read/write 생성물로 무수정 byte-exact round-trip을 검증한다.
 - 저장 파일과 runtime 표현이 다르면 정적 결과를 실행 증거로 승격하지 않는다.
 - PS-X EXE는 직접 `idb_open`하지 말고 `scripts/build_ida_db.py`로 올바른
   `TEXT`/entry가 있는 `.i64`를 만든 뒤 연다.
+
+DuckStation은 현재 작업과 이후 검증에 사용하지 않는다. 기존 문서의 DuckStation
+표기는 과거 실험의 증거 출처일 때만 보존하며 새 조사 절차로 인용하지 않는다.
 
 MCP 설정과 PS1별 import 규칙은 `docs/reverse-engineering-mcp.md`를 따른다.
 GUI MCP는 해당 앱과 프로젝트/프로그램을 먼저 열어야 한다. headless idalib은

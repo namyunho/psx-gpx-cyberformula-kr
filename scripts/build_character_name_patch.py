@@ -14,14 +14,18 @@ from typing import Any
 try:
     from scripts.build_dialogue_chapter_patch import verify_expected_writes
     from scripts.korean_font import (
-        crop_to_psx,
+        crop_profile_glyph,
         load_font_profile,
         rasterize_ttf_glyph,
     )
     from scripts.psx_font import GLYPH_SIZE, pack_glyph
 except ModuleNotFoundError:
     from build_dialogue_chapter_patch import verify_expected_writes
-    from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
+    from korean_font import (
+        crop_profile_glyph,
+        load_font_profile,
+        rasterize_ttf_glyph,
+    )
     from psx_font import GLYPH_SIZE, pack_glyph
 
 
@@ -519,7 +523,7 @@ def _render_name_glyphs(
             x_offset=profile.x_offset_px,
             y_offset=profile.y_offset_px,
         )
-        retained = crop_to_psx(pixels, intensity=profile.intensity)
+        retained = crop_profile_glyph(profile, pixels)
         record = pack_glyph(retained)
         if not any(record):
             raise ValueError(f"alternate name glyph is empty: {character!r}")

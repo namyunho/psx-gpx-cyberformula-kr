@@ -42,6 +42,20 @@ class DumpTests(unittest.TestCase):
         client.write_memory(0x80010000, bytes.fromhex("1234ABCD"))
         self.assertEqual(commands, ["M80010000,4:1234abcd"])
 
+    def test_read_memory_accepts_payload_starting_with_e(self):
+        client = gdb_dump.RemoteGdb("127.0.0.1", 3333)
+        client.command = lambda value: b"E8FFBD27"
+        self.assertEqual(
+            client.read_memory(0x80010000, 4),
+            bytes.fromhex("E8FFBD27"),
+        )
+
+    def test_read_memory_rejects_exact_remote_error_packet(self):
+        client = gdb_dump.RemoteGdb("127.0.0.1", 3333)
+        client.command = lambda value: b"E01"
+        with self.assertRaisesRegex(RuntimeError, "GDB memory error: E01"):
+            client.read_memory(0x80010000, 4)
+
 
 if __name__ == "__main__":
     unittest.main()

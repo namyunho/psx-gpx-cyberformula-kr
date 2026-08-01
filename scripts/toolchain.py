@@ -63,6 +63,52 @@ def module_check(import_name: str, package_name: str) -> dict[str, Any]:
     }
 
 
+def value_check(name: str, actual: Any, expected: Any) -> dict[str, Any]:
+    return {
+        "name": name,
+        "kind": "configuration",
+        "required": True,
+        "ok": actual == expected,
+        "detail": f"actual={actual!r}, expected={expected!r}",
+    }
+
+
+def pcsx_redux_checks() -> list[dict[str, Any]]:
+    config_path = Path.home() / ".config" / "pcsx-redux" / "pcsx.json"
+    checks = [
+        path_check("PCSX-Redux", Path("/Applications/PCSX-Redux.app")),
+        path_check("PCSX-Redux config", config_path),
+    ]
+    if not config_path.is_file():
+        return checks
+    try:
+        config = json.loads(config_path.read_text(encoding="utf-8"))
+        emulator = config["emulator"]
+        debug = emulator["Debug"]
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        checks.append(
+            {
+                "name": "PCSX-Redux config parse",
+                "kind": "configuration",
+                "required": True,
+                "ok": False,
+                "detail": str(error),
+            }
+        )
+        return checks
+    bios = Path(str(emulator.get("Bios", ""))).expanduser()
+    checks.extend(
+        [
+            path_check("PCSX-Redux configured BIOS", bios),
+            value_check("PCSX-Redux debugger", debug.get("Debug"), True),
+            value_check("PCSX-Redux GDB server", debug.get("GdbServer"), True),
+            value_check("PCSX-Redux GDB port", debug.get("GdbServerPort"), 3333),
+            value_check("PCSX-Redux Dynarec", emulator.get("Dynarec"), False),
+        ]
+    )
+    return checks
+
+
 def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
     checks = [
         {
@@ -74,6 +120,7 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
         },
         module_check("capstone", "capstone"),
         module_check("PIL", "Pillow"),
+        module_check("kaitaistruct", "kaitaistruct"),
         module_check("tkinter", "Tkinter"),
         command_check("ida-pro-mcp"),
         command_check("idalib-mcp"),
@@ -86,22 +133,10 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
         command_check("ffmpeg"),
         command_check("ffprobe"),
         command_check("vgmstream-cli"),
+        command_check("kaitai-struct-compiler"),
         path_check(
             "IDA Professional",
             Path("/Applications/IDA Professional 9.4.app"),
-        ),
-        path_check(
-            "DuckStation",
-            Path("/Applications/DuckStation.app"),
-        ),
-        path_check(
-            "Japanese PS1 BIOS",
-            Path.home()
-            / "Library"
-            / "Application Support"
-            / "DuckStation"
-            / "bios"
-            / "SCPH5500.BIN",
         ),
         path_check(
             "Ghidra MCP bridge",
@@ -112,6 +147,7 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
             PROJECT_ROOT / ".mcp.json",
         ),
     ]
+    checks.extend(pcsx_redux_checks())
     media_paths = resolved_paths(load_manifest())
     checks.extend(
         path_check(name, path, required=require_media)

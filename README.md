@@ -190,6 +190,7 @@ tmp/                    비커밋 임시 캡처
 git clone https://github.com/namyunho/psx-gpx-cyberformula-kr.git
 cd psx-gpx-cyberformula-kr
 
+brew install kaitai-struct-compiler
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements-analysis.txt
 
@@ -323,8 +324,12 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
   instruction, 함수 경계, xref와 반복 질의.
 - **Ghidra 12.1.2 / GhidraMCP** — 긴 상태 분기와 포인터 전달 디컴파일
   교차검증.
-- **DuckStation** — 실제 게임 진행, RAM·overlay·화면 소비 검증. GUI 조작과
-  Lua 실행이 필요하면 자동화하지 않고 사용자에게 요청합니다.
+- **PCSX-Redux** — GDB 서버, CPU watchpoint, Lua API, VRAM Viewer와 GPU
+  Logger를 연결한 동적 분석. CPU 디버깅은 debugger on·Dynarec off를 기준으로
+  합니다. 사용자가 목표 장면을 재현하고 준비 신호를 보내면, 합의한 관측 범위
+  안에서 에이전트가 GUI 조작과 Lua 실행을 맡을 수 있습니다.
+- **Kaitai Struct 0.11** — 확인된 바이너리 구조를 `.ksy`로 선언하고 Python
+  read/write 생성물로 byte-exact round-trip 검증.
 - **armips** — 향후 MIPS R3000A 훅 조립. 생성 코드는 독립 디스어셈블로
   delay slot과 분기 대상을 검산합니다.
 - **mkpsxiso / dumpsxiso** — CUE·ISO 구조의 독립 대조와 향후 재구성.
@@ -334,6 +339,8 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
 `mini-yonku-wgp2-kr`에서 사용한 IDA/idalib/Ghidra 상호보완 방식을 PS1의
 PS-X EXE, overlay, MIPS delay/load hazard, Mode 2 raw sector 조건에 맞게
 수정했습니다. SNES용 HiROM·65816·Mesen Lua·asar 코드는 이식하지 않았습니다.
+현재 동적 분석기는 PCSX-Redux로 단일화했으며 DuckStation은 더 이상 사용하지
+않습니다. 구 문서에 남은 DuckStation 표기는 과거 실험의 출처 기록입니다.
 
 ## 기여·에이전트 협업
 

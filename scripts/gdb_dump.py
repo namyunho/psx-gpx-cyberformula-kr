@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dump PS1 RAM from DuckStation's GDB server with reconnect/retry support."""
+"""Dump PS1 RAM from PCSX-Redux's GDB server with reconnect/retry support."""
 
 from __future__ import annotations
 
@@ -113,7 +113,11 @@ class RemoteGdb:
         for attempt in range(retries):
             try:
                 response = self.command(f"m{address:x},{size:x}")
-                if response.startswith(b"E"):
+                # Remote-serial errors are exactly ``E`` plus a two-digit
+                # hexadecimal errno.  A normal memory packet may legitimately
+                # begin with bytes such as E8, whose hex payload also starts
+                # with the ASCII character ``E``.
+                if len(response) == 3 and response.startswith(b"E"):
                     raise RuntimeError(f"GDB memory error: {response.decode()}")
                 result = bytes.fromhex(response.decode("ascii"))
                 if len(result) != size:

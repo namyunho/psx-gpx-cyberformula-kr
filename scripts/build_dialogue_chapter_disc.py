@@ -411,6 +411,8 @@ def build_disc(
     replacement_names = ["START.BIN", "ALLBIN.BIN"]
     if "SLPS_019.58" in file_manifest.get("outputs", {}):
         replacement_names.append("SLPS_019.58")
+    if "OUTSIDE.BIN" in file_manifest.get("outputs", {}):
+        replacement_names.append("OUTSIDE.BIN")
     replacements = {
         name: (file_build_dir / name).read_bytes()
         for name in replacement_names
@@ -666,6 +668,15 @@ def build_disc(
                     if "unindexed_font" in file_manifest
                     else []
                 ),
+                *(
+                    file_manifest["name_origin_graphics"].get(
+                        "runtime_validation_required", []
+                    )
+                    if isinstance(
+                        file_manifest.get("name_origin_graphics"), dict
+                    )
+                    else []
+                ),
             ],
         }
     )
@@ -778,6 +789,11 @@ def build_disc(
         "name_4x4_poc": (
             name_4x4
             if isinstance(name_4x4, dict)
+            else {"included": False}
+        ),
+        "name_origin_graphics": (
+            file_manifest["name_origin_graphics"]
+            if isinstance(file_manifest.get("name_origin_graphics"), dict)
             else {"included": False}
         ),
         "sources": {

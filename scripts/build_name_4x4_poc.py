@@ -127,6 +127,29 @@ UNIT40_NAME_DISPLAY_STREAM_PATCHES = (
     ),
 )
 
+UNIT40_TRANSLATED_ORIGIN_UI_STREAMS = (
+    (
+        "disc1/allbin/u40/font_rendered_ui/e047",
+        0x8009F610,
+        114,
+    ),
+    (
+        "disc1/allbin/u40/font_rendered_ui/e048",
+        0x8009F684,
+        26,
+    ),
+    (
+        "disc1/allbin/u40/font_rendered_ui/e055",
+        0x8009F920,
+        22,
+    ),
+    (
+        "disc1/allbin/u40/font_rendered_ui/e056",
+        0x8009F938,
+        38,
+    ),
+)
+
 UNIT40_SIZE = 0x1D000
 UNIT40_INPUT_FORM_ASM = (
     Path(__file__).resolve().parent / "asm" / "name_input_4x4_form.asm"
@@ -134,6 +157,14 @@ UNIT40_INPUT_FORM_ASM = (
 UNIT40_INPUT_FORM_HELPER_START = 0x800A09BC
 UNIT40_INPUT_FORM_HELPER_END = 0x800A0B90
 UNIT40_INPUT_FORM_SOURCE_WORDS = (
+    (
+        0x80098370,
+        (0x24020003,),
+    ),
+    (
+        0x8009A574,
+        (0x3C028006,),
+    ),
     (
         0x8009B594,
         (0x2403008F, 0xA4432080, 0xA4432100),
@@ -172,6 +203,30 @@ UNIT40_INPUT_FORM_SOURCE_WORDS = (
 )
 UNIT40_INPUT_FORM_FRAME_SOURCES = (
     (
+        0x8009E92C,
+        bytes.fromhex("1C 00 40 7F 00 80 2C 10 14 00 08 00"),
+    ),
+    (
+        0x8009E938,
+        bytes.fromhex("1C 00 40 7F 00 90 2C 10 4C 00 08 00"),
+    ),
+    (
+        0x8009E98C,
+        bytes.fromhex("1C 00 40 7F 00 80 2C 10 14 00 08 00"),
+    ),
+    (
+        0x8009E998,
+        bytes.fromhex("1C 00 40 7F 00 90 2C 10 4C 00 08 00"),
+    ),
+    (
+        0x8009E9EC,
+        bytes.fromhex("1C 00 40 7F 00 80 2C 10 14 00 08 00"),
+    ),
+    (
+        0x8009E9F8,
+        bytes.fromhex("1C 00 40 7F 00 90 2C 10 4C 00 08 00"),
+    ),
+    (
         0x8009EA1C,
         bytes.fromhex(
             "1C 00 40 7F 00 80 2C 10 18 00 08 00 "
@@ -187,14 +242,29 @@ UNIT40_INPUT_FORM_FRAME_SOURCES = (
     ),
 )
 UNIT40_INPUT_FORM_ALLOWED_ADDRESS_RANGES = (
+    (0x80098370, 0x80098374),
+    (0x8009A574, 0x8009A578),
     (0x8009B594, 0x8009B5A0),
     (0x8009C138, 0x8009C144),
     (0x8009B68C, 0x8009B6AC),
     (0x8009D1A8, 0x8009D1B0),
     (0x8009DCDC, 0x8009DCF0),
+    (0x8009E932, 0x8009E933),
+    (0x8009E934, 0x8009E936),
+    (0x8009E93E, 0x8009E93F),
+    (0x8009E940, 0x8009E942),
+    (0x8009E992, 0x8009E993),
+    (0x8009E994, 0x8009E996),
+    (0x8009E99E, 0x8009E99F),
+    (0x8009E9A0, 0x8009E9A2),
+    (0x8009E9F2, 0x8009E9F3),
+    (0x8009E9F4, 0x8009E9F6),
+    (0x8009E9FE, 0x8009E9FF),
+    (0x8009EA00, 0x8009EA02),
     (0x8009EA22, 0x8009EA23),
     (0x8009EA24, 0x8009EA26),
     (0x8009EA3A, 0x8009EA3B),
+    (0x8009EA3C, 0x8009EA3E),
     (UNIT40_INPUT_FORM_HELPER_START, UNIT40_INPUT_FORM_HELPER_END),
 )
 
@@ -599,7 +669,18 @@ def _patch_unit40_input_form_with_armips(
         "helper_source_was_zero": True,
         "japanese_slot_count": 8,
         "roman_slot_layout_unchanged": True,
+        "input_kind_discriminator": {
+            "pointer_address": "0x800611F8",
+            "japanese_value": 2,
+            "transient_state_16_supported": True,
+        },
         "prompt_frame_width_pixels": 58,
+        "confirmation_frame_width_pixels": 58,
+        "prompt_frame_x_pixels": [13, 77],
+        "confirmation_frame_x_pixels": [20, 84],
+        "inter_field_gap_pixels": 6,
+        "completion_state": 3,
+        "reentry_surname_length": 4,
         "glyph_width_pixels": 14,
         "expected_writes": expected,
     }
@@ -744,6 +825,25 @@ def _patch_allbin(input_allbin: bytes) -> tuple[bytes, dict[str, Any]]:
         for start, end in UNIT40_INPUT_FORM_ALLOWED_ADDRESS_RANGES
     )
 
+    protected_origin_ui = []
+    for entry_id, address, size in UNIT40_TRANSLATED_ORIGIN_UI_STREAMS:
+        offset = unit_address_to_allbin_offset(40, address)
+        source = input_allbin[offset : offset + size]
+        output = bytes(patched[offset : offset + size])
+        if output != source:
+            raise ValueError(
+                f"{entry_id}: 4+4 patch changed translated origin UI"
+            )
+        protected_origin_ui.append(
+            {
+                "entry_id": entry_id,
+                "address": f"0x{address:08X}",
+                "byte_size": size,
+                "sha256": sha256_bytes(source),
+                "unchanged": True,
+            }
+        )
+
     return bytes(patched), {
         "allowed_ranges": allowed_ranges,
         "unit35": {
@@ -776,6 +876,7 @@ def _patch_allbin(input_allbin: bytes) -> tuple[bytes, dict[str, Any]]:
                 UNIT40_NAME_DISPLAY_STREAM_PATCHES
             ),
             "input_form": input_form_report,
+            "protected_translated_origin_ui": protected_origin_ui,
         },
     }
 
@@ -926,6 +1027,24 @@ def build_name_4x4_poc(
         raise ValueError(
             "base build does not preserve 4+4 dynamic player-name tokens"
         )
+    ui_translation = base_manifest.get("ui_translation")
+    translated_ui = (
+        ui_translation.get("translated_entries")
+        if isinstance(ui_translation, dict)
+        else None
+    )
+    translated_ui_ids = {
+        item.get("entry_id")
+        for item in translated_ui
+        if isinstance(item, dict)
+    } if isinstance(translated_ui, list) else set()
+    required_origin_ui_ids = {
+        entry_id for entry_id, _, _ in UNIT40_TRANSLATED_ORIGIN_UI_STREAMS
+    }
+    if not required_origin_ui_ids <= translated_ui_ids:
+        raise ValueError(
+            "base build does not contain the translated origin prompt/options"
+        )
 
     inputs = {
         name: (file_build_dir / name).read_bytes()
@@ -1010,9 +1129,14 @@ def build_name_4x4_poc(
         "protected_paths": {
             "roman_name_stage": (
                 "original 10-slot table and updater body retained; "
-                "state >= 10 dispatches back to the original path"
+                "persistent input-kind values other than 2 dispatch "
+                "back to the original path"
             ),
-            "origin_stage": "outside all Expected Write ranges",
+            "origin_stage": (
+                "selection logic, translated prompt/options, and mutable "
+                "origin buffer remain unchanged; only the three final-"
+                "confirmation name-frame widths/positions are expanded"
+            ),
             "japanese_input_palettes": "outside all Expected Write ranges",
             "font_assets": "START.BIN byte-for-byte unchanged",
             "direct_dialogue_name_tokens": {
@@ -1032,7 +1156,8 @@ def build_name_4x4_poc(
             "confirm the registered name replaces dynamic dialogue tokens",
             "save into each of the four slots",
             "cold boot and load each slot",
-            "confirm Roman-name and origin stages are unchanged",
+            "confirm Roman-name behavior and origin selection are unchanged",
+            "confirm the Korean origin prompt and all three options render",
         ],
     }
 
@@ -1040,8 +1165,8 @@ def build_name_4x4_poc(
         **base_manifest,
         "warning": (
             "Nonrelease 4+4 player-name structural PoC. The Japanese input "
-            "palettes, Roman-name data/layout, and origin stage are "
-            "preserved. Runtime input/save/load validation is required."
+            "palettes, Roman-name data/layout, and origin selection logic "
+            "are preserved. Runtime input/save/load validation is required."
         ),
         "sources": {
             **base_manifest["sources"],

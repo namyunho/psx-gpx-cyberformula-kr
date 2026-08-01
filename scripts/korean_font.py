@@ -36,6 +36,9 @@ class FontProfile:
     x_offset_px: int
     y_offset_px: int
     intensity: int
+    shadow_intensity: int | None
+    shadow_x_offset_px: int
+    shadow_y_offset_px: int
     ink_union: tuple[int, int, int, int]
 
 
@@ -93,6 +96,23 @@ def load_font_profile(path: Path) -> FontProfile:
     intensity = int(target["intensity"])
     if not 1 <= intensity <= 7:
         raise ValueError("font profile target intensity must be between 1 and 7")
+    shadow = target.get("shadow")
+    if shadow is None:
+        shadow_intensity = None
+        shadow_x_offset_px = 0
+        shadow_y_offset_px = 0
+    elif isinstance(shadow, dict):
+        shadow_intensity = int(shadow["intensity"])
+        shadow_x_offset_px = int(shadow["x_offset_px"])
+        shadow_y_offset_px = int(shadow["y_offset_px"])
+        if not 1 <= shadow_intensity <= 7:
+            raise ValueError(
+                "font profile shadow intensity must be between 1 and 7"
+            )
+        if shadow_x_offset_px == 0 and shadow_y_offset_px == 0:
+            raise ValueError("font profile shadow offset must not be zero")
+    else:
+        raise ValueError("font profile target.shadow must be an object")
 
     union = target.get("observed_ink_union")
     if not isinstance(union, dict):
@@ -130,6 +150,9 @@ def load_font_profile(path: Path) -> FontProfile:
         x_offset_px=int(source["x_offset_px"]),
         y_offset_px=int(source["y_offset_px"]),
         intensity=intensity,
+        shadow_intensity=shadow_intensity,
+        shadow_x_offset_px=shadow_x_offset_px,
+        shadow_y_offset_px=shadow_y_offset_px,
         ink_union=ink_union,
     )
 
@@ -148,17 +171,52 @@ def unpack_mono_glyph(data: bytes, *, byte_order: str = "big") -> list[int]:
     return pixels
 
 
-def crop_to_psx(pixels: list[int], *, intensity: int = 7) -> list[int]:
-    """Remove the one-pixel border and convert 1bpp pixels to game 3bpp."""
+def crop_to_psx(
+    pixels: list[int],
+    *,
+    intensity: int = 7,
+    shadow_intensity: int | None = None,
+    shadow_x_offset_px: int = 0,
+    shadow_y_offset_px: int = 0,
+) -> list[int]:
+    """Crop to 14x14 and optionally add a lower-priority drop shadow."""
     if len(pixels) != SOURCE_WIDTH * SOURCE_HEIGHT:
         raise ValueError("source glyph must contain exactly 256 pixels")
     if not 1 <= intensity <= 7:
         raise ValueError("intensity must be between 1 and 7")
-    return [
-        pixels[row * SOURCE_WIDTH + column] * intensity
+    retained = [
+        pixels[row * SOURCE_WIDTH + column]
         for row in range(1, HEIGHT + 1)
         for column in range(1, WIDTH + 1)
     ]
+    result = [0] * (WIDTH * HEIGHT)
+    if shadow_intensity is not None:
+        if not 1 <= shadow_intensity <= 7:
+            raise ValueError("shadow intensity must be between 1 and 7")
+        if shadow_x_offset_px == 0 and shadow_y_offset_px == 0:
+            raise ValueError("shadow offset must not be zero")
+        for index, value in enumerate(retained):
+            if not value:
+                continue
+            x = index % WIDTH + shadow_x_offset_px
+            y = index // WIDTH + shadow_y_offset_px
+            if 0 <= x < WIDTH and 0 <= y < HEIGHT:
+                result[y * WIDTH + x] = shadow_intensity
+    for index, value in enumerate(retained):
+        if value:
+            result[index] = intensity
+    return result
+
+
+def crop_profile_glyph(profile: FontProfile, pixels: list[int]) -> list[int]:
+    """Apply the profile's main ink and optional shadow to a source glyph."""
+    return crop_to_psx(
+        pixels,
+        intensity=profile.intensity,
+        shadow_intensity=profile.shadow_intensity,
+        shadow_x_offset_px=profile.shadow_x_offset_px,
+        shadow_y_offset_px=profile.shadow_y_offset_px,
+    )
 
 
 def rasterize_ttf_glyph(
@@ -204,9 +262,11 @@ def pack_profile_glyphs(
             x_offset=profile.x_offset_px,
             y_offset=profile.y_offset_px,
         )
-        packed[character] = pack_glyph(
-            crop_to_psx(pixels, intensity=target_intensity)
-        )
+        if intensity is None:
+            retained = crop_profile_glyph(profile, pixels)
+        else:
+            retained = crop_to_psx(pixels, intensity=target_intensity)
+        packed[character] = pack_glyph(retained)
     return packed
 
 

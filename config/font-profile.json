@@ -23,11 +23,16 @@
     "bits_per_pixel": 3,
     "record_bytes": 74,
     "intensity": 1,
+    "shadow": {
+      "intensity": 6,
+      "x_offset_px": 1,
+      "y_offset_px": 1
+    },
     "observed_ink_union": {
       "x_min": 1,
       "y_min": 1,
-      "x_max": 11,
-      "y_max": 11
+      "x_max": 12,
+      "y_max": 12
     }
   },
   "license": {

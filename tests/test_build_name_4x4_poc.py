@@ -25,6 +25,7 @@ from scripts.build_name_4x4_poc import (
     UNIT40_INPUT_FORM_HELPER_START,
     UNIT40_INPUT_FORM_SOURCE_WORDS,
     UNIT40_NAME_DISPLAY_STREAM_PATCHES,
+    UNIT40_TRANSLATED_ORIGIN_UI_STREAMS,
     UNIT40_SIZE,
     _patch_immediate,
     _patch_unit40_input_form_with_armips,
@@ -117,6 +118,33 @@ class Name4x4PocTests(unittest.TestCase):
             self.assertEqual(tokens[0], 0xFFFD)
             self.assertEqual(tokens[-1], 0xFFFF)
 
+    def test_unit40_origin_prompt_and_options_are_protected(self) -> None:
+        self.assertEqual(
+            UNIT40_TRANSLATED_ORIGIN_UI_STREAMS,
+            (
+                (
+                    "disc1/allbin/u40/font_rendered_ui/e047",
+                    0x8009F610,
+                    114,
+                ),
+                (
+                    "disc1/allbin/u40/font_rendered_ui/e048",
+                    0x8009F684,
+                    26,
+                ),
+                (
+                    "disc1/allbin/u40/font_rendered_ui/e055",
+                    0x8009F920,
+                    22,
+                ),
+                (
+                    "disc1/allbin/u40/font_rendered_ui/e056",
+                    0x8009F938,
+                    38,
+                ),
+            ),
+        )
+
     def test_patch_helpers_require_exact_source(self) -> None:
         immediate = bytearray(struct.pack("<I", 0x28A2006F))
         _patch_immediate(
@@ -186,9 +214,44 @@ class Name4x4PocTests(unittest.TestCase):
         self.assertEqual(patched[surname_frame + 6], 58)
         self.assertEqual(
             struct.unpack_from("<h", patched, surname_frame + 8)[0],
-            10,
+            13,
         )
         self.assertEqual(patched[given_frame + 6], 58)
+        self.assertEqual(
+            struct.unpack_from("<h", patched, given_frame + 8)[0],
+            77,
+        )
+
+        for surname_address, given_address in (
+            (0x8009E92C, 0x8009E938),
+            (0x8009E98C, 0x8009E998),
+            (0x8009E9EC, 0x8009E9F8),
+        ):
+            surname = surname_address - 0x80098000
+            given = given_address - 0x80098000
+            self.assertEqual(patched[surname + 6], 58)
+            self.assertEqual(patched[given + 6], 58)
+            self.assertEqual(
+                struct.unpack_from("<h", patched, surname + 8)[0],
+                20,
+            )
+            self.assertEqual(
+                struct.unpack_from("<h", patched, given + 8)[0],
+                84,
+            )
+
+        completion_state = struct.unpack_from(
+            "<I",
+            patched,
+            0x8009A574 - 0x80098000,
+        )[0]
+        reentry_length = struct.unpack_from(
+            "<I",
+            patched,
+            0x80098370 - 0x80098000,
+        )[0]
+        self.assertEqual(completion_state, 0x24030003)
+        self.assertEqual(reentry_length, 0x24020004)
 
         positions = struct.unpack_from(
             "<8h",
@@ -197,7 +260,35 @@ class Name4x4PocTests(unittest.TestCase):
         )
         self.assertEqual(
             positions,
-            (150, 164, 178, 192, 216, 230, 244, 258),
+            (153, 167, 181, 195, 214, 228, 242, 256),
+        )
+        select_kind_load = struct.unpack_from(
+            "<I",
+            patched,
+            0x800A0A44 - 0x80098000,
+        )[0]
+        update_kind_load = struct.unpack_from(
+            "<I",
+            patched,
+            0x800A0A84 - 0x80098000,
+        )[0]
+        self.assertEqual(select_kind_load, 0x8C6311F8)
+        self.assertEqual(update_kind_load, 0x8D0811F8)
+        self.assertEqual(report["inter_field_gap_pixels"], 6)
+        self.assertEqual(report["prompt_frame_x_pixels"], [13, 77])
+        self.assertEqual(
+            report["confirmation_frame_x_pixels"],
+            [20, 84],
+        )
+        self.assertEqual(report["completion_state"], 3)
+        self.assertEqual(report["reentry_surname_length"], 4)
+        self.assertEqual(
+            report["input_kind_discriminator"],
+            {
+                "pointer_address": "0x800611F8",
+                "japanese_value": 2,
+                "transient_state_16_supported": True,
+            },
         )
         self.assertTrue(report["roman_slot_layout_unchanged"])
 

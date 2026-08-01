@@ -260,7 +260,11 @@ def main() -> None:
                 if "가" <= character <= "힣"
             )
         )
-        glyphs = pack_profile_glyphs(profile, hangul, intensity=intensity)
+        glyphs = pack_profile_glyphs(
+            profile,
+            hangul,
+            intensity=args.intensity,
+        )
         patched_start, patched_allbin, mapping = patch_dialogue_poc_files(
             original_start, original_allbin, glyphs
         )
@@ -271,7 +275,9 @@ def main() -> None:
         )
     else:
         glyph_data = pack_profile_glyphs(
-            profile, [args.character], intensity=intensity
+            profile,
+            [args.character],
+            intensity=args.intensity,
         )[args.character]
         patched_start, patched_allbin = patch_poc_files(
             original_start, original_allbin, glyph_data
@@ -311,6 +317,15 @@ def main() -> None:
             "x_offset_px": profile.x_offset_px,
             "y_offset_px": profile.y_offset_px,
             "intensity": intensity,
+            "profile_style": args.intensity is None,
+            "shadow_intensity": (
+                profile.shadow_intensity if args.intensity is None else None
+            ),
+            "shadow_offset_px": (
+                [profile.shadow_x_offset_px, profile.shadow_y_offset_px]
+                if args.intensity is None and profile.shadow_intensity is not None
+                else None
+            ),
             "ink_union": profile.ink_union,
         },
         "source": {

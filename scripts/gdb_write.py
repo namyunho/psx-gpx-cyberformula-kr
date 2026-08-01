@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Write and verify a binary fragment in PS1 RAM through DuckStation GDB."""
+"""Write and verify a binary fragment in PS1 RAM through PCSX-Redux GDB."""
 
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ def main() -> None:
     parser.add_argument(
         "--interrupt",
         action="store_true",
-        help="send a remote break packet; DuckStation normally must be UI-paused",
+        help="send a remote break packet before writing",
     )
     parser.add_argument("--leave-paused", action="store_true")
     args = parser.parse_args()

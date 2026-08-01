@@ -25,7 +25,7 @@ try:
         physical_entry_ranges,
     )
     from scripts.korean_font import (
-        crop_to_psx,
+        crop_profile_glyph,
         load_font_profile,
         rasterize_ttf_glyph,
     )
@@ -40,7 +40,11 @@ except ModuleNotFoundError:
         fixed_original_safe_slots,
         physical_entry_ranges,
     )
-    from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
+    from korean_font import (
+        crop_profile_glyph,
+        load_font_profile,
+        rasterize_ttf_glyph,
+    )
     from psx_font import GLYPH_SIZE, pack_glyph
     from unindexed_font_common import (
         encode_unindexed_entry,
@@ -725,7 +729,7 @@ def build_static_font(
             x_offset=profile.x_offset_px,
             y_offset=profile.y_offset_px,
         )
-        retained = crop_to_psx(pixels, intensity=profile.intensity)
+        retained = crop_profile_glyph(profile, pixels)
         if not any(retained):
             raise ValueError(
                 f"Galmuri11 produced an empty retained glyph for {character!r}"

@@ -5,6 +5,18 @@
 ; These helpers expand only the Japanese-script player-name form.  The
 ; Roman-name form keeps the original slot positions and update routine.
 
+; The original completion path reuses the completed given-name length (3)
+; as the name-menu state number (3).  Once the field grows to four glyphs,
+; keep the capacity comparison at four but restore state 3 explicitly.
+.org 0x8009A574
+    addiu   $v1, $zero, 3
+
+; Returning from the final confirmation reconstructs the original full
+; surname length as three.  Restore the expanded four-glyph length so the
+; prompt/highlighter resumes on the rightmost given-name slot.
+.org 0x80098370
+    addiu   $v0, $zero, 4
+
 .org 0x8009B594
     addiu   $v1, $zero, 0x0088
     j       create_japanese_slots_b
@@ -36,15 +48,45 @@
     nop
     nop
 
-; The original prompt display frames are 44 pixels wide
-; (3 * 14-pixel glyphs + 2).  Widen both to 58 pixels and move only the
-; surname frame 14 pixels left so the 4+4 fields remain separated.
+; The original prompt and final-confirmation name frames are 44 pixels wide
+; (3 * 14-pixel glyphs + 2).  Widen all eight consumers to 58 pixels.  Move
+; the final-confirmation fields from the same x position as the Roman-name
+; field so they do not cover the label at the left.  Keep a six-pixel gap.
+.org 0x8009E932
+    .db 58
+.org 0x8009E934
+    .dh 20
+.org 0x8009E93E
+    .db 58
+.org 0x8009E940
+    .dh 84
+
+.org 0x8009E992
+    .db 58
+.org 0x8009E994
+    .dh 20
+.org 0x8009E99E
+    .db 58
+.org 0x8009E9A0
+    .dh 84
+
+.org 0x8009E9F2
+    .db 58
+.org 0x8009E9F4
+    .dh 20
+.org 0x8009E9FE
+    .db 58
+.org 0x8009EA00
+    .dh 84
+
 .org 0x8009EA22
     .db 58
 .org 0x8009EA24
-    .dh 10
+    .dh 13
 .org 0x8009EA3A
     .db 58
+.org 0x8009EA3C
+    .dh 77
 
 .org 0x800A09BC
 create_japanese_slots_b:
@@ -93,13 +135,16 @@ select_name_slot_position:
     addiu   $v0, $v0, -0x30
     sll     $v0, $v0, 1
 
+    ; State 16 is the shared confirmation-return animation.  The persistent
+    ; input-kind byte, not the transient state number, tells Japanese 4+4
+    ; input from the untouched Roman-name form while that animation runs.
     lui     $v1, 0x8006
-    lw      $v1, 0x0FD4($v1)
+    lw      $v1, 0x11F8($v1)
     nop
-    lw      $v1, 0($v1)
+    lbu     $v1, 0($v1)
     nop
-    sltiu   $v1, $v1, 10
-    beqz    $v1, select_roman_slot_position
+    addiu   $t0, $zero, 2
+    bne     $v1, $t0, select_roman_slot_position
     nop
 
     lui     $v1, 0x800A
@@ -115,13 +160,16 @@ select_roman_slot_position:
 
 .org 0x800A0A80
 update_name_slot:
+    ; Use the persistent input kind for the same reason as the position
+    ; selector above.  A state<10 test misclassified the state-16 return
+    ; animation as Roman input and left its prompt on the wrong slot.
     lui     $t0, 0x8006
-    lw      $t0, 0x0FD4($t0)
+    lw      $t0, 0x11F8($t0)
     nop
-    lw      $t0, 0($t0)
+    lbu     $t0, 0($t0)
     nop
-    sltiu   $t0, $t0, 10
-    bnez    $t0, update_japanese_name_slot
+    addiu   $t1, $zero, 2
+    beq     $t0, $t1, update_japanese_name_slot
     nop
 
     ; Recreate the overwritten first instruction and resume the original
@@ -171,7 +219,7 @@ store_name_slot_frame:
 
 .org 0x800A0B80
 japanese_name_slot_positions:
-    .dh 150, 164, 178, 192
-    .dh 216, 230, 244, 258
+    .dh 153, 167, 181, 195
+    .dh 214, 228, 242, 256
 
 .close
