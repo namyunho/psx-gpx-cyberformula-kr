@@ -1062,7 +1062,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p05FBA",
-      "ko": "메모리 카드가\n없습니다."
+      "ko": "메모리 카드가\n삽입되지 않았습니다."
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p05FE4",
@@ -1098,11 +1098,11 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0617C",
-      "ko": "저장이 완료됐습니다."
+      "ko": "저장이 완료되었습니다."
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06196",
-      "ko": "불러오기 완료."
+      "ko": "불러오기가 완료되었습니다."
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p061B2",
@@ -1134,7 +1134,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p062DC",
-      "ko": "불러오기에 실패했습니다.\n다시 하시겠습니까?"
+      "ko": "불러오기에 실패했습니다.\n다시 불러오시겠습니까?"
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06310",
@@ -1142,11 +1142,11 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0633E",
-      "ko": "공간이 부족합니다."
+      "ko": "여유 공간이 부족합니다"
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06358",
-      "ko": "카드가 가득 차\n저장할 수 없습니다."
+      "ko": "메모리 카드가 가득 차\n저장할 수 없습니다."
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06386",

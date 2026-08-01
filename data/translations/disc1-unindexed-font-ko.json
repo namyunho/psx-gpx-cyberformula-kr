@@ -5,7 +5,7 @@
   "source_workset": "work/translations/disc1-unindexed-font-text.json",
   "source_workset_sha256": "2df58bf28867c9a547b9eb41c482eeb95367151bda7477dc96e2b16b30604e20",
   "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
-  "manual_translation_source_sha256": "f9ffdbc9639ca55169bbfdf1dfd448c4aeff97cbfc957e68491b95daaed6a6bb",
+  "manual_translation_source_sha256": "aa89a1bcebdd5b1227629e754cd21c73d902c152beab1d66822fcdfbf1a951be",
   "scope": {
     "entry_count": 716,
     "new_unique_text_count": 288,
@@ -4170,7 +4170,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p05FBA",
-      "ko": "메모리 카드가\n없습니다.",
+      "ko": "메모리 카드가\n삽입되지 않았습니다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
@@ -4182,7 +4182,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06016",
-      "ko": "메모리 카드가\n없습니다.",
+      "ko": "메모리 카드가\n삽입되지 않았습니다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-new-japanese"
     },
@@ -4230,13 +4230,13 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0617C",
-      "ko": "저장이 완료됐습니다.",
+      "ko": "저장이 완료되었습니다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06196",
-      "ko": "불러오기 완료.",
+      "ko": "불러오기가 완료되었습니다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
@@ -4284,7 +4284,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p062DC",
-      "ko": "불러오기에 실패했습니다.\n다시 하시겠습니까?",
+      "ko": "불러오기에 실패했습니다.\n다시 불러오시겠습니까?",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
@@ -4296,13 +4296,13 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0633E",
-      "ko": "공간이 부족합니다.",
+      "ko": "여유 공간이 부족합니다",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06358",
-      "ko": "카드가 가득 차\n저장할 수 없습니다.",
+      "ko": "메모리 카드가 가득 차\n저장할 수 없습니다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },

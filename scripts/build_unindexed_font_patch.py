@@ -225,6 +225,7 @@ def _pack_u39_save_stream(
     region_start = _entry_start(entries[0])
     region_end = _entry_start(entries[-1]) + len(_source_raw(entries[-1]))
 
+    streams: list[bytes] = []
     reports: list[dict[str, Any]] = []
     for entry in entries:
         entry_id = str(entry["entry_id"])
@@ -237,35 +238,29 @@ def _pack_u39_save_stream(
             translation_by_id[entry_id],
             mapping,
         )
-        capacity = len(raw)
-        if len(encoded) > capacity:
-            raise ValueError(
-                f"{entry_id}: save-system fixed slot exceeds capacity by "
-                f"{len(encoded) - capacity} bytes"
-            )
-        output = encoded + bytes(capacity - len(encoded))
-        patched_allbin[offset : offset + capacity] = output
-        reports.append(
-            {
-                **report,
-                "slot_capacity_bytes": capacity,
-                "slot_padding_bytes": capacity - len(encoded),
-                "source_start_preserved": True,
-            }
-        )
+        streams.append(encoded)
+        reports.append(report)
 
+    packed = b"".join(streams)
     capacity = region_end - region_start
-    encoded_bytes = sum(int(report["encoded_bytes"]) for report in reports)
-    padding_bytes = sum(int(report["slot_padding_bytes"]) for report in reports)
+    if len(packed) > capacity:
+        raise ValueError(
+            f"u39 save-system stream exceeds capacity by "
+            f"{len(packed) - capacity} bytes"
+        )
+    output = packed + bytes(capacity - len(packed))
+    patched_allbin[region_start:region_end] = output
+    if bytes(patched_allbin[region_start:region_end]) != output:
+        raise AssertionError("u39 save-system write-back differs")
     return {
         "entry_count": len(entries),
         "region_start": f"0x{region_start:X}",
         "region_end_exclusive": f"0x{region_end:X}",
         "region_capacity_bytes": capacity,
-        "encoded_bytes": encoded_bytes,
-        "slot_padding_bytes": padding_bytes,
+        "encoded_bytes": len(packed),
+        "tail_padding_bytes": capacity - len(packed),
         "source_order_preserved": True,
-        "all_stream_starts_preserved": True,
+        "first_stream_start_preserved": True,
         "entries": reports,
     }, (region_start, region_end)
 
