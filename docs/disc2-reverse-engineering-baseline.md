@@ -115,6 +115,40 @@ Disc 2 교체 뒤 한글 글리프 모양은 남지만 문장이 뒤섞이는 �
 6. 완성 Track에서 `START.BIN`, `ALLBIN.BIN`, `SLPS_019.59`을 재추출해 빌드
    입력과 일치시키고, 두 디스크 식별 바이트를 별도 게이트로 확인한다.
 
+## 통합 개발 빌드
+
+2026-08-01의 최신 통합 파일 빌드를 Disc 2 원본에 이식했다. 파일 빌드가
+선언한 Disc 1 원본→패치 변경 바이트만 Disc 2의 같은 역할 파일에 적용하고,
+변경하지 않은 Disc 2 고유 바이트는 그대로 보존한다. 변경 대상에서 Disc 1·2
+원본이 충돌하면 덮어쓰지 않고 빌드를 실패시킨다.
+
+이번 빌드는 `START.BIN`, `ALLBIN.BIN`, `SLPS_019.58`→`SLPS_019.59`와
+`OUTSIDE.BIN`을 모두 포함한다. 과거 디스크 빌더가 파일 빌드에 새로 추가된
+`OUTSIDE.BIN` 출력을 수집하지 않던 문제도 함께 고쳐, 출신 설명·타입 버튼의
+폰트 그래픽 변경 15,201바이트가 56개 sector에 들어갔다.
+
+| 항목 | 검증값 |
+|---|---:|
+| Track 1 크기 | 602,081,424바이트 |
+| Track 1 SHA-256 | `1849918d8719ddc274b71b23b664e90350c7523977bcfef82ea173deb75eabd8` |
+| 변경 raw sector | 548개 |
+| `START.BIN` SHA-256 | `403938e2f77b2b3ffc3cdaf18a97f7a12f721d360081d77e95fe72f4dda474d8` |
+| `ALLBIN.BIN` SHA-256 | `97b742c3ce7e50dea46d961b82bf11ae3552df73ea5d1bbb6ca2c0e154ab418d` |
+| `SLPS_019.59` SHA-256 | `995cdb255b23a84486ac5870e4ec78e8e14364b19d7349bb828ed6e2667f8227` |
+| `OUTSIDE.BIN` SHA-256 | `45d834ea477038d251439654230d097e784b3a09f274dc7f963b2cb5d06c0633` |
+
+독립 검증기는 다음을 다시 확인했다.
+
+- Disc 2 원본 Track 1~4 식별값과 출력 CUE의 Disc 2 트랙 참조
+- 원본과 출력의 ISO root 위치·크기 동일성
+- 548개 Expected Write sector와 실제 변경 sector의 완전 일치
+- 변경 전후 Mode 2 Form 1 EDC/ECC 유효성
+- 네 변경 파일의 최종 이미지 재추출 해시
+- `START.BIN + 0x8ACC == 1`, `+0x3D1000 == 1`
+
+정적 검증은 통과했지만, Disc 1 종료에서 이 CUE로 교체한 뒤 첫 장면과
+Disc 2 전편의 대사·초상·화자·음성·분기 동기는 아직 사용자 실행 검증 전이다.
+
 ## 재현 명령
 
 ```bash
@@ -127,6 +161,14 @@ Disc 2 교체 뒤 한글 글리프 모양은 남지만 문장이 뒤섞이는 �
 .venv/bin/python scripts/psx_layout.py --disc disc2 \
   --output work/analysis/disc2-layout.json
 .venv/bin/python scripts/compare_psx_discs.py
+
+.venv/bin/python scripts/build_dialogue_chapter_disc.py --disc disc2 \
+  --file-build-dir \
+    work/build/dialogue-all-reviewed-font-text-shadow-name-4x4-origin-graphics-2026-08-01 \
+  --output-dir \
+    work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
+.venv/bin/python scripts/verify_dialogue_disc_build.py \
+  --build-dir work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
 ```
 
 비커밋 결과는 다음에 생성된다.
@@ -135,4 +177,5 @@ Disc 2 교체 뒤 한글 글리프 모양은 남지만 문장이 뒤섞이는 �
 work/extracted/disc2/
 work/analysis/disc2-layout.json
 work/analysis/disc1-disc2-comparison.json
+work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01/
 ```

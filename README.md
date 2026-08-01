@@ -72,6 +72,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).
 | 추가 글꼴 스트림 번역 | 🚧 716개 초벌 번역·정적 주입 완료 — 새 원문 288종과 문맥 충돌 14건 분리, 레이아웃 초과·미매핑 0; 독립 언어·런타임 검수 필요 |
 | 이름 등록 폰트 UI | 🚧 고정 리터럴 4개 정적 주입 완료 — 입력 팔레트·런타임 버퍼 56개 원본 보존, 실행 전수 검토 필요 |
 | 전체 대사 재삽입 개발 이미지 | 🚧 `u00..u34` 직접+무포인터·추가 스트림 6,482개, 특수 화면 391개와 `u38/u39` 추가 100개 정적 주입 — 기존판은 제2장 종료까지 사용자 진행 확인, 새 통합판은 실행 검증 필요 |
+| Disc 2 통합 개발 이미지 | 🚧 Disc 1과 같은 번역·폰트·UI를 Disc 2 원본 LBA에 이식, 식별 플래그 2곳 보존, 548개 변경 sector·EDC/ECC·최종 재추출 검증 통과; 디스크 교체 뒤 실행 검증 필요 |
 | 전체 번역·재삽입 | 🚧 초벌 후보 상태 — 의미·용어·자연스러운 줄바꿈과 전편 실행 QA 필요 |
 | 통합 빌드·실행 QA·차분 배포 | ⏳ 예정 |
 
@@ -332,6 +333,27 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
 475개 raw sector Expected Write와 EDC/ECC를 검증했다. 이 해시는 로컬
 회귀 식별값이지 배포 파일이 아니며, 전체 BIN/CUE는 Git에 커밋하지
 않습니다.
+
+같은 파일 빌드를 Disc 2 원본에 이식할 때는 `--disc disc2`를 사용합니다.
+빌더는 `SLPS_019.58` 출력을 Disc 2의 `SLPS_019.59` 역할로 대응시키고,
+파일 빌드가 선언한 모든 ISO 출력(`OUTSIDE.BIN` 포함)을 수집합니다. Disc 2
+원본과 충돌하는 변경은 실패하며 `START.BIN`의 두 Disc 2 식별 바이트와 실제
+LBA를 보존합니다.
+
+```bash
+.venv/bin/python scripts/build_dialogue_chapter_disc.py --disc disc2 \
+  --file-build-dir \
+    work/build/dialogue-all-reviewed-font-text-shadow-name-4x4-origin-graphics-2026-08-01 \
+  --output-dir \
+    work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
+.venv/bin/python scripts/verify_dialogue_disc_build.py \
+  --build-dir work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
+```
+
+현재 Disc 2 개발 Track 1의 SHA-256은
+`1849918d8719ddc274b71b23b664e90350c7523977bcfef82ea173deb75eabd8`이며,
+548개 raw sector의 Expected Write·EDC/ECC·재추출 검증을 통과했습니다. 전체
+이미지는 비커밋 로컬 산출물이고 Disc 1 종료 뒤 교체 실행 검증은 남아 있습니다.
 
 ## 도구체인
 

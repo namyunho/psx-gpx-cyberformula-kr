@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Insert a verified partial chapter build into the original Disc 1 track."""
+"""Insert a verified nonrelease file build into a verified game disc track."""
 
 from __future__ import annotations
 
@@ -63,8 +63,8 @@ except ModuleNotFoundError:
     )
 
 
-OUTPUT_TRACK_NAME = "disc1-chapter01-nonrelease-track1.bin"
-OUTPUT_CUE_NAME = "disc1-chapter01-nonrelease.cue"
+OUTPUT_TRACK_NAME_TEMPLATE = "{disc}-chapter01-nonrelease-track1.bin"
+OUTPUT_CUE_NAME_TEMPLATE = "{disc}-chapter01-nonrelease.cue"
 
 
 @dataclass(frozen=True)
@@ -97,6 +97,100 @@ def write_json(path: Path, value: Any) -> None:
         json.dumps(value, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+
+
+def transfer_reference_changes(
+    *,
+    owner: str,
+    reference_source: bytes,
+    reference_replacement: bytes,
+    target_source: bytes,
+) -> tuple[bytes, dict[str, Any]]:
+    """Apply only reference-source changes to a same-layout target revision.
+
+    Unchanged bytes that differ between discs are preserved.  A target byte
+    that differs at a position changed by the file build is an ambiguous
+    revision conflict and therefore fails instead of being overwritten.
+    """
+
+    if not (
+        len(reference_source)
+        == len(reference_replacement)
+        == len(target_source)
+    ):
+        raise ValueError(f"{owner}: reference and target file sizes differ")
+
+    output = bytearray(target_source)
+    applied = 0
+    preserved_offsets: list[int] = []
+    conflict_offsets: list[int] = []
+    for offset, (reference, replacement, target) in enumerate(
+        zip(
+            reference_source,
+            reference_replacement,
+            target_source,
+            strict=True,
+        )
+    ):
+        if replacement != reference:
+            if target != reference:
+                conflict_offsets.append(offset)
+                continue
+            output[offset] = replacement
+            applied += 1
+        elif target != reference:
+            preserved_offsets.append(offset)
+
+    if conflict_offsets:
+        preview = ", ".join(f"0x{offset:X}" for offset in conflict_offsets[:16])
+        raise ValueError(
+            f"{owner}: target revision conflicts with file-build writes at "
+            f"{preview}"
+        )
+    return bytes(output), {
+        "reference_changed_byte_count": applied,
+        "preserved_target_difference_count": len(preserved_offsets),
+        "preserved_target_difference_offsets": [
+            f"0x{offset:X}" for offset in preserved_offsets
+        ],
+        "revision_conflict_count": 0,
+    }
+
+
+def verify_required_file_bytes(
+    *,
+    filename: str,
+    data: bytes,
+    rules: list[dict[str, Any]],
+    stage: str,
+) -> list[dict[str, Any]]:
+    verified: list[dict[str, Any]] = []
+    for rule in rules:
+        if str(rule.get("file", "")).upper() != filename.upper():
+            continue
+        offset = rule.get("offset")
+        value = rule.get("value")
+        if not isinstance(offset, int) or not isinstance(value, int):
+            raise ValueError(f"{filename}: invalid required_file_bytes rule")
+        if not 0 <= offset < len(data) or not 0 <= value <= 0xFF:
+            raise ValueError(f"{filename}: required byte rule is out of range")
+        if data[offset] != value:
+            raise ValueError(
+                f"{filename}: {stage} byte at 0x{offset:X} is "
+                f"0x{data[offset]:02X}, expected 0x{value:02X}"
+            )
+        verified.append(
+            {
+                "file": filename,
+                "offset": offset,
+                "offset_hex": f"0x{offset:X}",
+                "value": value,
+                "value_hex": f"0x{value:02X}",
+                "meaning": rule.get("meaning"),
+                "stage": stage,
+            }
+        )
+    return verified
 
 
 def recorded_runtime_validation(
@@ -340,21 +434,49 @@ def write_local_cue(
 
 def build_disc(
     *,
+    disc_key: str,
     file_build_dir: Path,
     output_dir: Path,
     original_media_manifest: Path,
 ) -> dict[str, Any]:
     media = load_manifest(original_media_manifest)
     paths = resolved_paths(media)
-    source_track = paths["disc1_track1"]
-    source_cue = paths["disc1_cue"]
+    disc_key = disc_key.lower()
+    reference_disc_key = "disc1"
+    if disc_key not in media:
+        raise ValueError(f"unsupported target disc key: {disc_key}")
+    if reference_disc_key not in media:
+        raise ValueError("original-media manifest has no disc1 reference")
+    target_media = media[disc_key]
+    reference_media = media[reference_disc_key]
+    source_track = paths[f"{disc_key}_track1"]
+    source_cue = paths[f"{disc_key}_cue"]
+    reference_track = paths[f"{reference_disc_key}_track1"]
     track_verification = verify_track(
         source_track,
-        media["disc1"]["data_track"],
+        target_media["data_track"],
+        label=f"{disc_key} data track",
     )
     cue_verification = verify_cue(
         source_cue,
-        media["disc1"]["expected_tracks"],
+        target_media["expected_tracks"],
+    )
+    audio_track_verification = [
+        verify_track(
+            paths[f"{disc_key}_track{int(expected['track'])}"],
+            expected,
+            label=f"{disc_key} audio track {int(expected['track'])}",
+        )
+        for expected in target_media.get("audio_tracks", [])
+    ]
+    reference_track_verification = (
+        track_verification
+        if disc_key == reference_disc_key
+        else verify_track(
+            reference_track,
+            reference_media["data_track"],
+            label=f"{reference_disc_key} reference data track",
+        )
     )
 
     file_manifest_path = file_build_dir / "manifest.json"
@@ -408,52 +530,119 @@ def build_disc(
         for unit in file_manifest.get("units", [])
     )
 
-    replacement_names = ["START.BIN", "ALLBIN.BIN"]
-    if "SLPS_019.58" in file_manifest.get("outputs", {}):
-        replacement_names.append("SLPS_019.58")
-    replacements = {
-        name: (file_build_dir / name).read_bytes()
-        for name in replacement_names
+    file_outputs = file_manifest.get("outputs", {})
+    file_sources = file_manifest.get("sources", {})
+    reference_names = [
+        name for name in file_outputs if name in file_sources
+    ]
+    missing_replacements = [
+        name for name in reference_names if not (file_build_dir / name).is_file()
+    ]
+    if missing_replacements:
+        raise FileNotFoundError(
+            "file build is missing declared outputs: "
+            + ", ".join(missing_replacements)
+        )
+    if not {"START.BIN", "ALLBIN.BIN"}.issubset(reference_names):
+        raise ValueError("file build has no complete START.BIN/ALLBIN.BIN outputs")
+    reference_replacements = {
+        name: (file_build_dir / name).read_bytes() for name in reference_names
     }
-    for name, replacement in replacements.items():
-        expected_hash = file_manifest["outputs"][name]["sha256"]
+    for name, replacement in reference_replacements.items():
+        expected_hash = file_outputs[name]["sha256"]
         if hashlib.sha256(replacement).hexdigest() != expected_hash:
             raise ValueError(f"{name}: file-build output hash differs")
 
-    with PsxDisc(source_track) as disc:
+    reference_boot = str(reference_media["boot_exe"]).upper()
+    target_boot = str(target_media["boot_exe"]).upper()
+    target_rules = target_media.get("required_file_bytes", [])
+    if not isinstance(target_rules, list):
+        raise ValueError(f"{disc_key}: required_file_bytes must be a list")
+    with PsxDisc(reference_track) as reference_disc, PsxDisc(source_track) as disc:
+        reference_entries = {
+            entry.name.upper(): entry
+            for entry in reference_disc.root_entries()
+            if not entry.is_directory
+        }
         entries = {
             entry.name.upper(): entry
             for entry in disc.root_entries()
             if not entry.is_directory
         }
         sources: dict[str, bytes] = {}
+        replacements: dict[str, bytes] = {}
         plans: list[dict[int, list[SectorMutation]]] = []
         file_reports: dict[str, Any] = {}
-        for name, replacement in replacements.items():
-            entry = entries.get(name)
+        required_byte_verification: list[dict[str, Any]] = []
+        for reference_name, reference_replacement in reference_replacements.items():
+            target_name = (
+                target_boot
+                if reference_name.upper() == reference_boot
+                else reference_name
+            )
+            target_name = target_name.upper()
+            if target_name in replacements:
+                raise ValueError(f"duplicate target ISO output: {target_name}")
+            reference_entry = reference_entries.get(reference_name.upper())
+            if reference_entry is None:
+                raise ValueError(f"reference ISO root has no {reference_name}")
+            entry = entries.get(target_name)
             if entry is None:
-                raise ValueError(f"ISO root has no {name}")
+                raise ValueError(f"target ISO root has no {target_name}")
+            reference_source = reference_disc.read_extent(
+                reference_entry.lba,
+                reference_entry.size,
+            )
+            expected_source_hash = file_sources[reference_name]["sha256"]
+            if hashlib.sha256(reference_source).hexdigest() != expected_source_hash:
+                raise ValueError(f"{reference_name}: reference ISO source hash differs")
             source = disc.read_extent(entry.lba, entry.size)
-            if len(source) != len(replacement):
-                raise ValueError(f"{name}: ISO extent size differs")
-            expected_source_hash = file_manifest["sources"][name]["sha256"]
-            if hashlib.sha256(source).hexdigest() != expected_source_hash:
-                raise ValueError(f"{name}: ISO source hash differs")
-            sources[name] = source
+            replacement, transfer_report = transfer_reference_changes(
+                owner=f"{reference_name}->{target_name}",
+                reference_source=reference_source,
+                reference_replacement=reference_replacement,
+                target_source=source,
+            )
+            required_byte_verification.extend(
+                verify_required_file_bytes(
+                    filename=target_name,
+                    data=source,
+                    rules=target_rules,
+                    stage="target-source",
+                )
+            )
+            required_byte_verification.extend(
+                verify_required_file_bytes(
+                    filename=target_name,
+                    data=replacement,
+                    rules=target_rules,
+                    stage="target-replacement",
+                )
+            )
+            sources[target_name] = source
+            replacements[target_name] = replacement
             file_plan = plan_file_mutations(
-                owner=name,
+                owner=target_name,
                 file_lba=entry.lba,
                 source=source,
                 replacement=replacement,
             )
             plans.append(file_plan)
-            file_reports[name] = {
+            file_reports[target_name] = {
+                "reference_name": reference_name,
                 "lba": entry.lba,
                 "size": entry.size,
+                "reference_source_sha256": hashlib.sha256(
+                    reference_source
+                ).hexdigest(),
+                "reference_replacement_sha256": hashlib.sha256(
+                    reference_replacement
+                ).hexdigest(),
                 "source_sha256": hashlib.sha256(source).hexdigest(),
                 "replacement_sha256": hashlib.sha256(
                     replacement
                 ).hexdigest(),
+                "reference_change_transfer": transfer_report,
                 "changed_file_byte_count": sum(
                     end - start
                     for start, end in changed_ranges(source, replacement)
@@ -487,12 +676,14 @@ def build_disc(
             }
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    output_track = output_dir / OUTPUT_TRACK_NAME
-    output_cue = output_dir / OUTPUT_CUE_NAME
+    output_track_name = OUTPUT_TRACK_NAME_TEMPLATE.format(disc=disc_key)
+    output_cue_name = OUTPUT_CUE_NAME_TEMPLATE.format(disc=disc_key)
+    output_track = output_dir / output_track_name
+    output_cue = output_dir / output_cue_name
     temporary_path: Path | None = None
     try:
         with tempfile.NamedTemporaryFile(
-            prefix=f".{OUTPUT_TRACK_NAME}.",
+            prefix=f".{output_track_name}.",
             suffix=".tmp",
             dir=output_dir,
             delete=False,
@@ -524,8 +715,17 @@ def build_disc(
         }
         for name, replacement in replacements.items():
             entry = output_entries[name]
-            if disc.read_extent(entry.lba, entry.size) != replacement:
+            extracted = disc.read_extent(entry.lba, entry.size)
+            if extracted != replacement:
                 raise ValueError(f"{name}: output ISO extraction differs")
+            required_byte_verification.extend(
+                verify_required_file_bytes(
+                    filename=name,
+                    data=extracted,
+                    rules=target_rules,
+                    stage="output-reextraction",
+                )
+            )
         for lba, expected_sector in rebuilt_sectors.items():
             if disc.read_raw_sector(lba) != expected_sector:
                 raise ValueError(f"LBA {lba}: output raw sector differs")
@@ -550,8 +750,16 @@ def build_disc(
         else {
             "status": "not-run-user-gui-required",
             "required": [
-                "boot the generated CUE",
-                "enter chapter 1",
+                (
+                    "reach the Disc 1 ending and swap to the generated Disc 2 CUE"
+                    if disc_key == "disc2"
+                    else "boot the generated CUE"
+                ),
+                (
+                    "confirm the first post-swap story scene renders in Korean"
+                    if disc_key == "disc2"
+                    else "enter chapter 1"
+                ),
                 "confirm Korean glyph palette/outline/shadow",
                 (
                     "observe fixed-address overlap boundaries; this diagnostic "
@@ -562,31 +770,44 @@ def build_disc(
                 *(
                     [
                         (
-                            "continue through test-drive unit 21 and confirm "
-                            "its dialogue control flow"
+                            "continue the Disc 2 story through the shared "
+                            "u10..u20 unit range"
                         ),
                         (
-                            "enter the chapter 1 first race in unit 22 and "
-                            "confirm Korean race dialogue and control flow"
+                            "confirm portraits, speaker names, voices, choices, "
+                            "and disc-state transitions remain synchronized"
                         ),
                     ]
-                    if 22 in selected_units
+                    if disc_key == "disc2"
                     else (
                         [
                             (
-                                "continue to test-drive unit 21 and inspect "
-                                "its first overlap boundary"
-                                if diagnostic_overflow
-                                else (
-                                    "continue through test-drive unit 21 and "
-                                    "confirm its dialogue control flow"
+                                "continue through test-drive unit 21 and "
+                                "confirm its dialogue control flow"
+                            ),
+                            (
+                                "enter the chapter 1 first race in unit 22 and "
+                                "confirm Korean race dialogue and control flow"
+                            ),
+                        ]
+                        if 22 in selected_units
+                        else (
+                            [
+                                (
+                                    "continue to test-drive unit 21 and inspect "
+                                    "its first overlap boundary"
+                                    if diagnostic_overflow
+                                    else (
+                                        "continue through test-drive unit 21 and "
+                                        "confirm its dialogue control flow"
+                                    )
                                 )
-                            )
-                        ]
-                        if 21 in selected_units
-                        else [
-                            "do not continue into an unselected dialogue unit"
-                        ]
+                            ]
+                            if 21 in selected_units
+                            else [
+                                "do not continue into an unselected dialogue unit"
+                            ]
+                        )
                     )
                 ),
                 *(
@@ -598,13 +819,16 @@ def build_disc(
                         ),
                         "confirm Korean character and system speaker labels",
                     ]
-                    if "SLPS_019.58" in replacements
+                    if target_boot in replacements
                     else []
                 ),
                 *(
                     [
                         "confirm name-editor prompts and labels render in Korean",
-                        "confirm all three translated origin choices render and remain selectable",
+                        (
+                            "confirm all three translated origin choices render "
+                            "and remain selectable"
+                        ),
                         (
                             "confirm the preserved kanji, kana, Latin, digit, "
                             "and symbol input palettes still work"
@@ -656,7 +880,7 @@ def build_disc(
             ],
         }
     )
-    has_names = "SLPS_019.58" in replacements
+    has_names = target_boot in replacements
     has_ui = "ui_translation" in file_manifest
     has_special_screen = "special_screen" in file_manifest
     has_unindexed_font = "unindexed_font" in file_manifest
@@ -681,8 +905,23 @@ def build_disc(
         if is_contiguous_runtime_prefix
         else "legacy-u00-u21-replay"
     )
+    expected_required_verifications = len(target_rules) * 3
+    if len(required_byte_verification) != expected_required_verifications:
+        raise ValueError(
+            f"{disc_key}: required byte verification coverage differs: "
+            f"{len(required_byte_verification)} != "
+            f"{expected_required_verifications}"
+        )
     manifest = {
         "schema_version": 1,
+        "target_disc": disc_key,
+        "reference_file_build_disc": reference_disc_key,
+        "disc_profile": {
+            "boot_exe": target_boot,
+            "reference_boot_exe": reference_boot,
+            "required_file_bytes": required_byte_verification,
+            "reference_changes_transferred_without_revision_conflicts": True,
+        },
         "status": (
             "nonrelease-fixed-original-offset-overflow-runtime-diagnostic"
             if diagnostic_overflow
@@ -768,6 +1007,8 @@ def build_disc(
             ),
             "track1": track_verification,
             "cue": cue_verification,
+            "audio_tracks": audio_track_verification,
+            "reference_track1": reference_track_verification,
             "file_build_manifest": {
                 "path": str(file_manifest_path.resolve()),
                 "sha256": sha256_file(file_manifest_path),
@@ -830,6 +1071,11 @@ def build_disc(
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--disc",
+        default="disc1",
+        help="target original-media manifest disc key (default: disc1)",
+    )
     parser.add_argument("--file-build-dir", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument(
@@ -839,6 +1085,7 @@ def main() -> None:
     )
     args = parser.parse_args()
     manifest = build_disc(
+        disc_key=args.disc,
         file_build_dir=args.file_build_dir,
         output_dir=args.output_dir,
         original_media_manifest=args.original_media_manifest,

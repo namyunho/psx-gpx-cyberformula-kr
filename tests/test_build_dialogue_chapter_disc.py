@@ -9,6 +9,8 @@ from scripts.build_dialogue_chapter_disc import (
     compact_integer_ranges,
     plan_file_mutations,
     recorded_runtime_validation,
+    transfer_reference_changes,
+    verify_required_file_bytes,
     write_local_cue,
 )
 from scripts.psx_sector import (
@@ -28,6 +30,50 @@ def valid_sector() -> bytes:
 
 
 class DialogueChapterDiscTests(unittest.TestCase):
+    def test_transfers_changes_and_preserves_target_only_bytes(self) -> None:
+        replacement, report = transfer_reference_changes(
+            owner="START.BIN",
+            reference_source=b"abcdef",
+            reference_replacement=b"abXdef",
+            target_source=b"abcdYf",
+        )
+        self.assertEqual(replacement, b"abXdYf")
+        self.assertEqual(report["reference_changed_byte_count"], 1)
+        self.assertEqual(report["preserved_target_difference_offsets"], ["0x4"])
+
+    def test_rejects_revision_conflict_at_changed_byte(self) -> None:
+        with self.assertRaisesRegex(ValueError, "target revision conflicts"):
+            transfer_reference_changes(
+                owner="START.BIN",
+                reference_source=b"abc",
+                reference_replacement=b"aXc",
+                target_source=b"aYc",
+            )
+
+    def test_verifies_required_disc_identity_byte(self) -> None:
+        rules = [
+            {
+                "file": "START.BIN",
+                "offset": 1,
+                "value": 1,
+                "meaning": "disc identity",
+            }
+        ]
+        report = verify_required_file_bytes(
+            filename="START.BIN",
+            data=b"\x00\x01",
+            rules=rules,
+            stage="output-reextraction",
+        )
+        self.assertEqual(report[0]["offset_hex"], "0x1")
+        with self.assertRaisesRegex(ValueError, "expected 0x01"):
+            verify_required_file_bytes(
+                filename="START.BIN",
+                data=b"\x00\x00",
+                rules=rules,
+                stage="target-replacement",
+            )
+
     def test_plans_and_rebuilds_changed_form1_sector(self) -> None:
         source = bytes(4096)
         replacement = bytearray(source)

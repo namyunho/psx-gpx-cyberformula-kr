@@ -3,6 +3,20 @@
   "disc1": {
     "cue": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1).cue",
     "boot_exe": "SLPS_019.58",
+    "required_file_bytes": [
+      {
+        "file": "START.BIN",
+        "offset": 35532,
+        "value": 0,
+        "meaning": "disc identity mirror at file offset 0x8ACC"
+      },
+      {
+        "file": "START.BIN",
+        "offset": 4001792,
+        "value": 0,
+        "meaning": "runtime disc identity flag at file offset 0x3D1000"
+      }
+    ],
     "data_track": {
       "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).bin",
       "size": 602020272,
@@ -46,6 +60,20 @@
   "disc2": {
     "cue": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2).cue",
     "boot_exe": "SLPS_019.59",
+    "required_file_bytes": [
+      {
+        "file": "START.BIN",
+        "offset": 35532,
+        "value": 1,
+        "meaning": "disc identity mirror at file offset 0x8ACC"
+      },
+      {
+        "file": "START.BIN",
+        "offset": 4001792,
+        "value": 1,
+        "meaning": "runtime disc identity flag at file offset 0x3D1000"
+      }
+    ],
     "data_track": {
       "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).bin",
       "size": 602081424,
