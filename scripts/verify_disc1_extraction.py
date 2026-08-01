@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify the complete Disc 1 extraction and decompression corpus."""
+"""Verify a complete disc extraction and decompression corpus."""
 
 from __future__ import annotations
 
@@ -82,18 +82,31 @@ def write_report(path: Path, report: dict[str, Any]) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--disc",
+        default="disc1",
+        help="original-media manifest disc key (default: disc1)",
+    )
+    parser.add_argument(
         "--root",
         type=Path,
-        default=Path("work/extracted/disc1"),
+        help="extraction root (default: work/extracted/<disc>)",
     )
     parser.add_argument(
         "--disc-root",
         type=Path,
-        default=Path("work/disc1/full"),
+        help="Form 1 ISO root (default: work/<disc>/full)",
     )
     args = parser.parse_args()
-    root = args.root
+    disc_key = args.disc.lower()
+    root = args.root or Path("work/extracted") / disc_key
+    disc_root = args.disc_root or Path("work") / disc_key / "full"
     extraction = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    manifest_disc = extraction.get("disc")
+    if manifest_disc is not None and manifest_disc != disc_key:
+        parser.error(
+            f"extraction manifest is for {manifest_disc}, not requested {disc_key}: "
+            f"{root / 'manifest.json'}"
+        )
     schedules = json.loads(
         (root / extraction["manifests"]["schedules"]).read_text(encoding="utf-8")
     )
@@ -108,9 +121,12 @@ def main() -> None:
 
     media_manifest = load_manifest()
     media_paths = resolved_paths(media_manifest)
+    if disc_key not in media_manifest:
+        parser.error(f"unsupported disc key: {disc_key}")
     original = verify_track(
-        media_paths["disc1_track1"],
-        media_manifest["disc1"]["data_track"],
+        media_paths[f"{disc_key}_track1"],
+        media_manifest[disc_key]["data_track"],
+        label=f"{disc_key} data track",
     )
 
     normal_iso = []
@@ -120,7 +136,7 @@ def main() -> None:
         for item in extraction["iso_files"]
         if item["status"] == "extracted"
     }
-    with PsxDisc(media_paths["disc1_track1"]) as disc:
+    with PsxDisc(media_paths[f"{disc_key}_track1"]) as disc:
         for name, item in entry_by_name.items():
             iso_path = root / item["iso_path"]
             if (
@@ -129,7 +145,7 @@ def main() -> None:
             ):
                 raise ValueError(f"ISO extraction hash mismatch: {name}")
             if name not in STREAM_FILES:
-                source = args.disc_root / name
+                source = disc_root / name
                 if (
                     source.stat().st_size != iso_path.stat().st_size
                     or sha256_file(source) != sha256_file(iso_path)
@@ -178,7 +194,7 @@ def main() -> None:
                         f"{state['state_index']}:{child['child_index']}"
                     )
             expected_index += 1
-        source = args.disc_root / filename
+        source = disc_root / filename
         if total != source.stat().st_size or digest.hexdigest() != sha256_file(source):
             raise ValueError(f"scheduled state recombination mismatch: {filename}")
         schedule_reports.append(
@@ -271,6 +287,7 @@ def main() -> None:
     report = {
         "schema_version": 1,
         "status": "passed",
+        "disc": disc_key,
         "source": original,
         "checks": {
             "normal_form1_iso_file_count": len(normal_iso),

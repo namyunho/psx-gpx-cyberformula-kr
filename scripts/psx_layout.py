@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build a read-only structural inventory of the Cyber Formula Disc 1 data.
+"""Build a read-only structural inventory of Cyber Formula disc data.
 
 The inventory ties the boot EXE's file records, sector schedules, and load
 descriptors to byte ranges in the extracted ISO files.  It also marks
@@ -20,6 +20,11 @@ import json
 from pathlib import Path
 import struct
 from typing import Any
+
+try:
+    from scripts.original_media import load_manifest
+except ModuleNotFoundError:  # Direct execution from the repository root.
+    from original_media import load_manifest
 
 
 SECTOR_SIZE = 0x800
@@ -442,15 +447,26 @@ def summary(report: dict[str, Any]) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--disc-root", type=Path, default=Path("work/disc1/full")
+        "--disc",
+        default="disc1",
+        help="disc key used only for default paths (default: disc1)",
+    )
+    parser.add_argument(
+        "--disc-root", type=Path
     )
     parser.add_argument("--exe", type=Path)
     parser.add_argument("--output", type=Path)
     parser.add_argument("--summary", action="store_true")
     args = parser.parse_args()
 
-    exe_path = args.exe or args.disc_root / "SLPS_019.58"
-    report = build_inventory(exe_path, args.disc_root)
+    disc_key = args.disc.lower()
+    media_manifest = load_manifest()
+    if disc_key not in media_manifest:
+        parser.error(f"unsupported disc key: {disc_key}")
+    boot_exe = media_manifest[disc_key]["boot_exe"]
+    disc_root = args.disc_root or Path("work") / disc_key / "full"
+    exe_path = args.exe or disc_root / boot_exe
+    report = build_inventory(exe_path, disc_root)
     selected = summary(report) if args.summary else report
     rendered = json.dumps(selected, ensure_ascii=False, indent=2) + "\n"
     if args.output:

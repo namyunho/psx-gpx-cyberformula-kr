@@ -78,6 +78,7 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
         command_check("ida-pro-mcp"),
         command_check("idalib-mcp"),
         command_check("ghidraRun"),
+        command_check("kaitai-struct-compiler"),
         command_check("armips"),
         command_check("mkpsxiso"),
         command_check("dumpsxiso"),
@@ -91,11 +92,11 @@ def collect_checks(require_media: bool = False) -> list[dict[str, Any]]:
             Path("/Applications/IDA Professional 9.4.app"),
         ),
         path_check(
-            "DuckStation",
-            Path("/Applications/DuckStation.app"),
+            "PCSX-Redux",
+            Path("/Applications/PCSX-Redux.app"),
         ),
         path_check(
-            "Japanese PS1 BIOS",
+            "Japanese PS1 BIOS (local file)",
             Path.home()
             / "Library"
             / "Application Support"

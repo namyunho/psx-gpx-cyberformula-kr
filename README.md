@@ -1,6 +1,6 @@
 # 신세기 GPX 사이버 포뮬러 새로운 도전자 — 한국어 패치 프로젝트
 
-PlayStation용 일본 게임 **《신세기 GPX 사이버 포뮬러 새로운 도전자》** Disc 1의
+PlayStation용 일본 게임 **《신세기 GPX 사이버 포뮬러 새로운 도전자》** Disc 1·2의
 한국어 팬 번역 패치 프로젝트입니다. 원본 디스크 조사부터 역공학, 폰트,
 텍스트·그래픽 추출, 번역, 재삽입, 패치 빌드와 실행 검증까지 재현 가능한
 파이프라인으로 연결하는 것을 목표로 합니다.
@@ -14,24 +14,27 @@ PlayStation용 일본 게임 **《신세기 GPX 사이버 포뮬러 새로운 �
 
 | 항목 | 값 |
 |---|---|
-| 플랫폼·범위 | PlayStation, 일본판 Disc 1 |
-| 부트 실행 파일 | `SLPS_019.58` |
-| Track 1 | `MODE2/2352` 데이터, 602,020,272바이트, 255,961 sector |
+| 플랫폼·범위 | PlayStation, 일본판 Disc 1·2 |
+| Disc 1 부트 | `SLPS_019.58` |
+| Disc 1 Track 1 | `MODE2/2352`, 602,020,272바이트, 255,961 sector |
+| Disc 2 부트 | `SLPS_019.59` |
+| Disc 2 Track 1 | `MODE2/2352`, 602,081,424바이트, 255,987 sector |
 | Track 2~4 | CDDA 오디오 |
-| Track 1 CRC32 | `725BA190` |
-| Track 1 MD5 | `a33012953c1cc37ee472450377fb8ec8` |
-| Track 1 SHA-256 | `35e43fba9c5ffc39ab805adbc42f13ec3198c888c1c1e9e651408409e041b2a9` |
+| Disc 1 Track 1 SHA-256 | `35e43fba9c5ffc39ab805adbc42f13ec3198c888c1c1e9e651408409e041b2a9` |
+| Disc 2 Track 1 SHA-256 | `a80c5efdff17d9363ee3990fba0e02a7e872a296f6882b2a7743de90cb52d691` |
 
 기본 원본 위치:
 
 ```text
 roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1).cue
 roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).bin
+roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2).cue
+roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).bin
 ```
 
 멀티 BIN/CUE의 오디오 트랙도 같은 디렉터리에 두고 CUE의 참조 관계를 유지합니다.
-다른 위치는 `PSX_DISC1_CUE`, `PSX_DISC1_TRACK1` 환경 변수로 재정의할 수
-있습니다. 지원 원본의 경로와 식별값은
+다른 위치는 `PSX_DISC1_*`, `PSX_DISC2_*` 환경 변수로 재정의할 수 있습니다.
+지원 원본의 네 트랙 경로와 식별값은
 [`config/original-media.json`](config/original-media.json)이 관리합니다.
 
 ## 배포 상태
@@ -49,9 +52,10 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 
 | 단계 | 상태 |
 |---|---|
-| 원본 매체 식별·무결성 | ✅ 완료 — 멀티트랙 CUE와 Track 1 크기·CRC32·MD5·SHA-256 고정 |
+| 원본 매체 식별·무결성 | ✅ 완료 — Disc 1·2 멀티트랙 CUE와 Track 1~4 크기·CRC32·MD5·SHA-256 고정 |
+| Disc 2 구조·Disc 1 비교 | ✅ 완료 — 모든 콘텐츠·대사·폰트 공용, `START.BIN` 디스크 플래그 2바이트와 26-sector 배치 차이 확정 |
 | PS-X EXE·파일 로더·schedule 역공학 | ✅ 완료 — 19개 파일 record, 164개 descriptor, 11개 scheduled 파일 분할 |
-| Disc 1 전량 추출·압축해제 | ✅ 완료 — 1,935 state 재결합, XA·VAB·CDDA·MDEC 검증 |
+| Disc 1·2 전량 추출·압축해제 | ✅ 완료 — 각 1,935 state 재결합, XA·VAB·CDDA·MDEC 검증 |
 | 글꼴 렌더 스트림 모집단 | 🚧 확대 조사 — 직접 포인터/UI 5,843개, 무포인터 83개, 특수 화면 391개와 추가 순차·색인·저장 스트림 716개 확인; 색인 런타임 경로 전수 QA 필요 |
 | 일본어 글리프 대응표 | ✅ 완료 — primary 1,229자와 alternate 1,484자 전 슬롯, JIS 순서·수정 아틀라스 교차 검증 |
 | 본문·UI 폰트 구조 | ✅ 완료 — primary/alternate 14×14, 3bpp, 74바이트 record |
@@ -88,6 +92,12 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).
 > 통과를 뜻하지 않습니다. 특수 화면 통합판은 아직 사용자 실행 검증 전이고,
 > 번역은 기계 후보와 수작업 교정이 섞여 있으므로 한글 패치
 > 완성으로 판정하지 않습니다.
+
+Disc 2 원본은 Disc 1과 같은 `ALLBIN.BIN`, 부트 EXE payload, 폰트와 모든
+게임 콘텐츠를 사용합니다. Disc 2 교체 뒤 한글 모양의 글리프가 뒤섞여 보인 것은
+메모리에 남은 한글 폰트로 원본 일본어 글리프 index를 해석한 현상입니다.
+Disc 2 빌드는 동일 번역 데이터를 재사용하되 `START.BIN + 0x8ACC`와
+`+0x3D1000`의 Disc 2 값 `1` 및 Disc 2 고유 LBA를 보존해야 합니다.
 
 ## 확정된 작업 블록
 
@@ -156,6 +166,7 @@ tmp/                    비커밋 임시 캡처
 |---|---|
 | [수정 전 역공학 기준선](docs/reverse-engineering-baseline.md) | 대상 리비전, 로더·schedule·텍스트·폰트·초상·그래픽 분모의 현재 결론 |
 | [Disc 1 전량 추출·압축해제](docs/disc1-extraction.md) | 추출 경계, 출력 구조, 압축해제 수량과 전량 검증 |
+| [Disc 2 역공학·Disc 1 비교 기준선](docs/disc2-reverse-engineering-baseline.md) | 동일 콘텐츠, 디스크 플래그, LBA 차이와 안전한 Disc 2 빌드 불변식 |
 | [Disc 1 대사 추출 작업본](docs/dialogue-extraction.md) | 번역 없는 가역 JSON, 협업 필드 정책, 17×3 대사창과 저장 공간 판정 |
 | [추가 순차·색인·저장 글꼴 문자열](docs/unindexed-font-text.md) | 포인터 중심 추출 밖 716개, 오탐 카탈로그, 초벌 번역과 검증 경계 |
 | [미니게임·코스·머신 설정 폰트 문자열](docs/special-screen-font-text.md) | `u38/u43` 391개 소비자·추출·외부 AI 병합과 고정 슬롯 정적 주입 |
@@ -196,6 +207,7 @@ python3 -m venv .venv
 .venv/bin/python scripts/original_media.py prepare
 .venv/bin/python scripts/original_media.py paths
 .venv/bin/python scripts/original_media.py verify --cue
+.venv/bin/python scripts/original_media.py verify --disc disc2 --cue
 ```
 
 `prepare`는 원본을 내려받지 않습니다. 기본 경로를 만들고 사용자가 보유한 원본의
@@ -208,6 +220,12 @@ python3 -m venv .venv
 .venv/bin/python scripts/extract_disc1_assets.py
 .venv/bin/python scripts/decode_disc1_streams.py
 .venv/bin/python scripts/verify_disc1_extraction.py
+
+# Disc 2도 같은 파이프라인으로 별도 추출·압축해제·검증
+.venv/bin/python scripts/extract_disc1_assets.py --disc disc2
+.venv/bin/python scripts/decode_disc1_streams.py --root work/extracted/disc2
+.venv/bin/python scripts/verify_disc1_extraction.py --disc disc2
+.venv/bin/python scripts/compare_psx_discs.py
 
 # 구조 보고서 재생성
 .venv/bin/python scripts/psx_layout.py \
@@ -323,8 +341,9 @@ unit은 자체 참조 카탈로그와 실행 검증을 완료하기 전까지 �
   instruction, 함수 경계, xref와 반복 질의.
 - **Ghidra 12.1.2 / GhidraMCP** — 긴 상태 분기와 포인터 전달 디컴파일
   교차검증.
-- **DuckStation** — 실제 게임 진행, RAM·overlay·화면 소비 검증. GUI 조작과
-  Lua 실행이 필요하면 자동화하지 않고 사용자에게 요청합니다.
+- **PCSX-Redux** — 실제 게임 진행, GDB 서버, Lua API, VRAM 뷰어와 워치포인트.
+  GUI 이동과 Lua 실행은 사용자가 재현 위치에 놓고 신호를 준 뒤 수행합니다.
+- **Kaitai Struct Compiler** — 바이너리 형식 선언과 parse/build 왕복 검증.
 - **armips** — 향후 MIPS R3000A 훅 조립. 생성 코드는 독립 디스어셈블로
   delay slot과 분기 대상을 검산합니다.
 - **mkpsxiso / dumpsxiso** — CUE·ISO 구조의 독립 대조와 향후 재구성.

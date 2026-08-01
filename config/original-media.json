@@ -2,6 +2,7 @@
   "schema_version": 1,
   "disc1": {
     "cue": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1).cue",
+    "boot_exe": "SLPS_019.58",
     "data_track": {
       "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).bin",
       "size": 602020272,
@@ -9,6 +10,75 @@
       "md5": "a33012953c1cc37ee472450377fb8ec8",
       "sha256": "35e43fba9c5ffc39ab805adbc42f13ec3198c888c1c1e9e651408409e041b2a9"
     },
+    "audio_tracks": [
+      {
+        "track": 2,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 2).bin",
+        "size": 2695392,
+        "crc32": "78EDC867",
+        "md5": "e47b08b7bb6cb060d6c894261737a91b",
+        "sha256": "944241fa29ea50db5fe3c9a841404cf32ab8e7e5c25170c81fc933f4eb1c1284"
+      },
+      {
+        "track": 3,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 3).bin",
+        "size": 11524800,
+        "crc32": "A9EA79D3",
+        "md5": "44359a376d7a47ca1d58140a2797778d",
+        "sha256": "7e8c85749aac8bce0959f13aa6725363313e6f7fdf841f6248d6b5c9be6fbadc"
+      },
+      {
+        "track": 4,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 4).bin",
+        "size": 32777472,
+        "crc32": "FFFB995A",
+        "md5": "0cfcdc0dedb3fddb1560bafe5d1865fd",
+        "sha256": "d4576834a85550a9309629d24bd412acca04d0055343f838e14c05347e2beb8e"
+      }
+    ],
+    "expected_tracks": [
+      "MODE2/2352",
+      "AUDIO",
+      "AUDIO",
+      "AUDIO"
+    ]
+  },
+  "disc2": {
+    "cue": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2).cue",
+    "boot_exe": "SLPS_019.59",
+    "data_track": {
+      "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).bin",
+      "size": 602081424,
+      "crc32": "2FFDABE1",
+      "md5": "0a66622840f575a1237d7b7f9b98176a",
+      "sha256": "a80c5efdff17d9363ee3990fba0e02a7e872a296f6882b2a7743de90cb52d691"
+    },
+    "audio_tracks": [
+      {
+        "track": 2,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 2).bin",
+        "size": 2695392,
+        "crc32": "78EDC867",
+        "md5": "e47b08b7bb6cb060d6c894261737a91b",
+        "sha256": "944241fa29ea50db5fe3c9a841404cf32ab8e7e5c25170c81fc933f4eb1c1284"
+      },
+      {
+        "track": 3,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 3).bin",
+        "size": 11524800,
+        "crc32": "A9EA79D3",
+        "md5": "44359a376d7a47ca1d58140a2797778d",
+        "sha256": "7e8c85749aac8bce0959f13aa6725363313e6f7fdf841f6248d6b5c9be6fbadc"
+      },
+      {
+        "track": 4,
+        "path": "roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 4).bin",
+        "size": 32777472,
+        "crc32": "FFFB995A",
+        "md5": "0cfcdc0dedb3fddb1560bafe5d1865fd",
+        "sha256": "d4576834a85550a9309629d24bd412acca04d0055343f838e14c05347e2beb8e"
+      }
+    ],
     "expected_tracks": [
       "MODE2/2352",
       "AUDIO",

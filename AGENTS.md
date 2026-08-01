@@ -1,8 +1,9 @@
 # AGENTS.md — 신세기 GPX 사이버 포뮬러 PS1 한국어화
 
-이 저장소는 PlayStation용 《신세기 GPX 사이버 포뮬러 새로운 도전자》 Disc 1의
-한국어 패치를 만든다. 현재 상태는 `README.md`, 매체·실행 파일 식별값은
-`docs/reverse-engineering-baseline.md`, 대사 협업 형식과 레이아웃 한계는
+이 저장소는 PlayStation용 《신세기 GPX 사이버 포뮬러 새로운 도전자》 Disc 1·2의
+한국어 패치를 만든다. 현재 상태는 `README.md`, Disc 1 매체·실행 파일 식별값은
+`docs/reverse-engineering-baseline.md`, Disc 2 비교 기준선은
+`docs/disc2-reverse-engineering-baseline.md`, 대사 협업 형식과 레이아웃 한계는
 `docs/dialogue-extraction.md`, 통합 편집기는
 `docs/dialogue-layout-editor.md`, 미니게임·코스·머신 설정 폰트 문자열은
 `docs/special-screen-font-text.md`를 정본으로 삼는다. 리맵 관련 문서는
@@ -31,21 +32,26 @@
 
 - 기본 CUE: `roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1).cue`
 - 기본 데이터 Track 1: `roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 1) (Track 1).bin`
-- 경로 재정의: `PSX_DISC1_CUE`, `PSX_DISC1_TRACK1`
+- Disc 2 CUE: `roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2).cue`
+- Disc 2 데이터 Track 1: `roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).bin`
+- 경로 재정의: `PSX_DISC{1,2}_CUE`, `PSX_DISC{1,2}_TRACK{1..4}`
 - 준비/검증:
 
 ```bash
 .venv/bin/python scripts/original_media.py prepare
 .venv/bin/python scripts/original_media.py paths
 .venv/bin/python scripts/original_media.py verify --cue
+.venv/bin/python scripts/original_media.py verify --disc disc2 --cue
 ```
 
 ## 역공학 도구 선택
 
 - IDA Pro/`idalib-mcp`: 짧은 루틴, 바이트, xref, 함수 경계와 반복 질의의 주력.
 - Ghidra MCP: 긴 제어 흐름이나 포인터 전달을 MIPS 디컴파일로 교차검증할 때 사용.
-- DuckStation GDB `127.0.0.1:3333`: runtime RAM, 실제 overlay 적재, 레지스터와
-  소비 시점을 확인한다.
+- PCSX-Redux의 GDB 서버·Lua API·VRAM 뷰어·워치포인트: runtime RAM, 실제
+  overlay 적재, 레지스터와 소비 시점을 확인한다. DuckStation은 사용하지 않는다.
+- GUI 이동과 Lua 실행은 사용자가 재현 위치에 놓고 신호를 준 뒤에만 수행한다.
+  정적 분석과 읽기 전용 GDB 준비는 대상에 맞게 자율적으로 선택한다.
 - 저장 파일과 runtime 표현이 다르면 정적 결과를 실행 증거로 승격하지 않는다.
 - PS-X EXE는 직접 `idb_open`하지 말고 `scripts/build_ida_db.py`로 올바른
   `TEXT`/entry가 있는 `.i64`를 만든 뒤 연다.

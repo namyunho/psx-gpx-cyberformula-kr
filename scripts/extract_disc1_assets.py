@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Extract every proven Disc 1 container and decode established asset formats.
+"""Extract every proven disc container and decode established asset formats.
 
 Outputs are original-derived and intentionally live below ``work/``.  The
 pipeline preserves exact ISO/state/child bytes, raw 2352-byte XA/STR extents,
@@ -504,9 +504,10 @@ def extract_schedules(
 def extract_text(
     disc_root: Path,
     output_root: Path,
+    boot_exe: str = "SLPS_019.58",
 ) -> dict[str, Any]:
     report = build_text_inventory(
-        disc_root / "SLPS_019.58",
+        disc_root / boot_exe,
         disc_root / "ALLBIN.BIN",
     )
     allbin = (disc_root / "ALLBIN.BIN").read_bytes()
@@ -578,9 +579,10 @@ def extract_fonts(
     disc_root: Path,
     layout: dict[str, Any],
     output_root: Path,
+    boot_exe: str = "SLPS_019.58",
 ) -> dict[str, Any]:
     report = build_font_inventory(
-        disc_root / "SLPS_019.58",
+        disc_root / boot_exe,
         disc_root / "START.BIN",
     )
     start_data = (disc_root / "START.BIN").read_bytes()
@@ -624,9 +626,10 @@ def extract_portraits(
     disc_root: Path,
     layout: dict[str, Any],
     output_root: Path,
+    boot_exe: str = "SLPS_019.58",
 ) -> dict[str, Any]:
     report = build_portrait_inventory(
-        disc_root / "SLPS_019.58",
+        disc_root / boot_exe,
         disc_root / "START.BIN",
     )
     start_data = (disc_root / "START.BIN").read_bytes()
@@ -859,50 +862,72 @@ def extract_sound(
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
+        "--disc",
+        default="disc1",
+        help="original-media manifest disc key (default: disc1)",
+    )
+    parser.add_argument(
         "--disc-root",
         type=Path,
-        default=Path("work/disc1/full"),
-        help="verified Form 1 ISO files used by the structural inventory",
+        help="verified Form 1 ISO files (default: work/<disc>/full)",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("work/extracted/disc1"),
+        help="derived extraction root (default: work/extracted/<disc>)",
     )
     args = parser.parse_args()
 
     media_manifest = load_manifest()
     media_paths = resolved_paths(media_manifest)
+    disc_key = args.disc.lower()
+    if disc_key not in media_manifest:
+        parser.error(f"unsupported disc key: {disc_key}")
+    disc_manifest = media_manifest[disc_key]
+    boot_exe = disc_manifest["boot_exe"]
+    disc_root = args.disc_root or Path("work") / disc_key / "full"
+    output_root = args.output or Path("work/extracted") / disc_key
     track_verification = verify_track(
-        media_paths["disc1_track1"],
-        media_manifest["disc1"]["data_track"],
+        media_paths[f"{disc_key}_track1"],
+        disc_manifest["data_track"],
+        label=f"{disc_key} data track",
     )
     cue_verification = verify_cue(
-        media_paths["disc1_cue"],
-        media_manifest["disc1"]["expected_tracks"],
+        media_paths[f"{disc_key}_cue"],
+        disc_manifest["expected_tracks"],
     )
-    output_root = args.output
+    audio_track_verifications = [
+        verify_track(
+            media_paths[f"{disc_key}_track{int(expected['track'])}"],
+            expected,
+            label=f"{disc_key} audio track {int(expected['track'])}",
+        )
+        for expected in disc_manifest.get("audio_tracks", [])
+    ]
     output_root.mkdir(parents=True, exist_ok=True)
 
-    layout = build_inventory(args.disc_root / "SLPS_019.58", args.disc_root)
+    layout = build_inventory(disc_root / boot_exe, disc_root)
     write_json(output_root / "manifests" / "layout.json", layout)
-    with PsxDisc(media_paths["disc1_track1"]) as disc:
+    with PsxDisc(media_paths[f"{disc_key}_track1"]) as disc:
         iso_files, stream_sources = extract_iso_files(disc, output_root)
         xa_channels = split_xa_audio(disc, stream_sources, output_root)
-    cdda_tracks = copy_cdda_tracks(media_paths["disc1_cue"], output_root)
-    schedules = extract_schedules(layout, args.disc_root, output_root)
+    cdda_tracks = copy_cdda_tracks(media_paths[f"{disc_key}_cue"], output_root)
+    schedules = extract_schedules(layout, disc_root, output_root)
     write_json(output_root / "manifests" / "schedules.json", schedules)
-    text = extract_text(args.disc_root, output_root)
-    fonts = extract_fonts(args.disc_root, layout, output_root)
-    portraits = extract_portraits(args.disc_root, layout, output_root)
-    vram = extract_vram_previews(args.disc_root, layout, output_root)
-    sound = extract_sound(args.disc_root, layout, output_root)
+    text = extract_text(disc_root, output_root, boot_exe)
+    fonts = extract_fonts(disc_root, layout, output_root, boot_exe)
+    portraits = extract_portraits(disc_root, layout, output_root, boot_exe)
+    vram = extract_vram_previews(disc_root, layout, output_root)
+    sound = extract_sound(disc_root, layout, output_root)
 
     root_report = {
         "schema_version": 1,
+        "disc": disc_key,
+        "boot_exe": boot_exe,
         "source": {
             "track1": track_verification,
             "cue": cue_verification,
+            "audio_tracks": audio_track_verifications,
         },
         "policy": {
             "original_mutated": False,

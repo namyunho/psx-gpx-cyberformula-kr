@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Decode all proven Disc 1 compressed audio/video streams losslessly.
+"""Decode all proven disc audio/video streams losslessly.
 
-Inputs come from :mod:`scripts.extract_disc1_assets`:
+Inputs come from :mod:`scripts.extract_disc1_assets`.  The historical script
+name is retained for compatibility; ``--root`` may point at either disc:
 
 * 33 CD-XA ADPCM streams -> PCM16 WAV
 * 81 Sony VAB banks -> one PCM16 WAV per VAG subsong

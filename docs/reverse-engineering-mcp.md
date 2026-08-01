@@ -1,7 +1,7 @@
 # PS1 역공학 도구와 MCP 환경
 
 이 문서는 `mini-yonku-wgp2-kr`에서 검증한 IDA/idalib/Ghidra 상보 운용을 이
-프로젝트의 PlayStation·MIPS R3000A·DuckStation 흐름에 맞게 옮긴 기록이다.
+프로젝트의 PlayStation·MIPS R3000A·PCSX-Redux 흐름에 맞게 옮긴 기록이다.
 SNES 65816, HiROM 주소 변환, Mesen2 Lua, asar 설정은 가져오지 않는다.
 
 ## 설치 기준선
@@ -13,14 +13,14 @@ SNES 65816, HiROM 주소 변환, Mesen2 Lua, asar 설정은 가져오지 않는�
 | IDA Professional 9.4 | 설치됨 | GUI 분석, 함수·xref·타입·바이트 확인 |
 | ida-pro-mcp 2.0.0 | 설치됨 | IDA GUI 브리지와 headless idalib MCP |
 | Ghidra 12.1.2 / OpenJDK 21 | 설치됨 | MIPS 디컴파일 교차검증 |
-| DuckStation 0.1-11580 | 설치됨 | 실행 검증, GDB 서버 |
+| PCSX-Redux | 설치됨 | 실행 검증, GDB 서버, Lua API, VRAM 뷰어·워치포인트 |
+| Kaitai Struct Compiler 0.11 | 설치됨 | 바이너리 형식 선언과 parse/build 왕복 검증 |
 | armips 0.11.0 (`2d7f351`) | 소스 빌드 | MIPS R3000 코드 조립과 심볼 출력 |
 | mkpsxiso/dumpsxiso 2.30 | 공식 macOS 배포본 | 디스크 구조 덤프·재구성 교차검증 |
 | xdelta3 3.2.0 / Flips | 설치됨 | 배포용 차분 패치 생성·역적용 |
 
-일본판 실행용 `SCPH5500.BIN`은 DuckStation의 macOS 표준 사용자 경로
-`~/Library/Application Support/DuckStation/bios/`에서 확인했다. BIOS 파일은
-저장소로 복사하지 않는다.
+일본판 실행용 `SCPH5500.BIN`은 로컬에만 두고 PCSX-Redux에서 선택한다. BIOS
+파일과 에뮬레이터 설정은 저장소로 복사하지 않는다.
 
 armips는 2026-07-07의 공식 `master` 커밋
 `2d7f351e640ec260b43943f07a00c57211940378`을
@@ -110,7 +110,7 @@ segment 목록에서 `TEXT` 실행 payload가 `0x80030000..0x80061000`에 있고
 ### `ALLBIN.BIN`과 runtime module
 
 `ALLBIN.BIN`은 코드와 u16 텍스트·기타 데이터가 섞여 있다. 파일 전체를 하나의
-연속 MIPS segment로 가져오지 않는다. 먼저 DuckStation RAM 덤프와
+연속 MIPS segment로 가져오지 않는다. 먼저 PCSX-Redux GDB의 RAM 덤프와
 `scripts/ram_map.py`로 적재 delta·범위를 확인하고, 현재 module의 실제 runtime
 주소와 파일 범위를 분리한 뒤 해당 조각만 분석한다.
 
@@ -127,7 +127,7 @@ IDA/idalib과 Ghidra는 대체 관계가 아니다.
 - 짧은 루틴, 직접 xref, 바이트와 반복 질의는 IDA/idalib을 먼저 쓴다.
 - 포인터 전달, 상태 구조와 긴 분기 흐름이 읽기 어려우면 Ghidra 디컴파일로
   해당 함수만 대조한다.
-- 정적 도구의 결과는 DuckStation에서 실제 적재 module·레지스터·RAM 소비
+- 정적 도구의 결과는 PCSX-Redux에서 실제 적재 module·레지스터·RAM 소비
   시점과 연결돼야 runtime 사실로 승격한다.
 - 두 정적 도구가 같은 결과를 내더라도 잘못된 base, overlay 또는 코드/데이터
   경계를 공유했다면 독립 증거가 아니다.
@@ -150,9 +150,9 @@ runtime 관측으로 확정한다.
   --address 0x800327A8 --count 0x120
 ```
 
-## DuckStation GDB
+## PCSX-Redux 동적 분석
 
-기본 GDB endpoint는 `127.0.0.1:3333`이다. DuckStation에서 디스크를 부팅하고
+기본 GDB endpoint는 `127.0.0.1:3333`이다. PCSX-Redux에서 디스크를 부팅하고
 GDB 서버를 켠 뒤 다음 도구를 사용한다.
 
 ```bash
@@ -167,13 +167,16 @@ RAM 쓰기는 원본 이미지 변경이 아니지만, 확인된 구조와 주�
 쓰기 전후 바이트를 검증하고 조사용 상태 개입을 패치 빌드와 분리한다. 현재 다음
 계측 지점은 `docs/remap-path-poc.md`의 `0x800327A8..0x800327D8`이다.
 
+GUI 이동과 Lua 실행은 사용자가 필요한 화면·재현 지점에 게임을 놓고 신호를 준
+뒤에만 수행한다. 정적 분석, 읽기 전용 GDB 메모리 확인과 워치포인트 설계는 대상에
+따라 먼저 준비할 수 있다. DuckStation은 현재 작업과 검증에 사용하지 않는다.
+
 ## PCSX-Redux GPU/Lua 추적
 
 화면에 보이는 폰트·이미지의 저장 위치를 모를 때는 PCSX-Redux GPU Logger에서
 primitive의 Texpage·UV를 고른 뒤, Lua breakpoint로
 `GP0(A0) → DMA2 MADR/BCR/CHCR → RAM writer`를 역추적할 수 있다. 현재 기본
-실행 검증기는 DuckStation이며 PCSX-Redux는 이 GPU 관측이 실제로 필요할 때
-추가하는 조사 도구로 둔다.
+PCSX-Redux를 기본 실행·동적 분석기로 사용한다.
 
 대사 폰트 자체는 이미 `START.BIN + 0x1A000`과 RAM `0x80014A00`의
 14×14·3bpp 테이블로 확정됐다. 이 방법을 기존 결론의 재탐색에 쓰지 않고,

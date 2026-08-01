@@ -2,8 +2,8 @@
 """Resolve and verify the project's untracked original PS1 media.
 
 Tracked defaults live in ``config/original-media.json``. A machine may override
-them with ``config/original-media.local.json`` or the ``PSX_DISC1_CUE`` and
-``PSX_DISC1_TRACK1`` environment variables.
+them with ``config/original-media.local.json`` or per-disc environment variables
+such as ``PSX_DISC1_CUE`` / ``PSX_DISC1_TRACK1`` and their Disc 2 equivalents.
 """
 
 from __future__ import annotations
@@ -59,15 +59,34 @@ def resolved_paths(
     root: Path = PROJECT_ROOT,
     environ: Mapping[str, str] = os.environ,
 ) -> dict[str, Path]:
-    disc1 = manifest["disc1"]
-    track = disc1["data_track"]
-    return {
-        "disc1_cue": resolve_path(environ.get("PSX_DISC1_CUE", disc1["cue"]), root),
-        "disc1_track1": resolve_path(
-            environ.get("PSX_DISC1_TRACK1", track["path"]),
+    result: dict[str, Path] = {}
+    disc_keys = sorted(
+        key for key in manifest if re.fullmatch(r"disc\d+", str(key))
+    )
+    if not disc_keys:
+        raise ValueError("original-media manifest contains no disc entries")
+    for disc_key in disc_keys:
+        disc = manifest[disc_key]
+        track = disc["data_track"]
+        env_prefix = f"PSX_{disc_key.upper()}"
+        result[f"{disc_key}_cue"] = resolve_path(
+            environ.get(f"{env_prefix}_CUE", disc["cue"]),
             root,
-        ),
-    }
+        )
+        result[f"{disc_key}_track1"] = resolve_path(
+            environ.get(f"{env_prefix}_TRACK1", track["path"]),
+            root,
+        )
+        for audio_track in disc.get("audio_tracks", []):
+            track_number = int(audio_track["track"])
+            result[f"{disc_key}_track{track_number}"] = resolve_path(
+                environ.get(
+                    f"{env_prefix}_TRACK{track_number}",
+                    audio_track["path"],
+                ),
+                root,
+            )
+    return result
 
 
 def file_hashes(path: Path) -> dict[str, str | int]:
@@ -87,9 +106,14 @@ def file_hashes(path: Path) -> dict[str, str | int]:
     }
 
 
-def verify_track(path: Path, expected: Mapping[str, Any]) -> dict[str, Any]:
+def verify_track(
+    path: Path,
+    expected: Mapping[str, Any],
+    *,
+    label: str = "data track",
+) -> dict[str, Any]:
     if not path.is_file():
-        raise FileNotFoundError(f"Disc 1 data track not found: {path}")
+        raise FileNotFoundError(f"{label} not found: {path}")
     actual = file_hashes(path)
     mismatches = {
         key: {"expected": expected[key], "actual": actual[key]}
@@ -98,7 +122,7 @@ def verify_track(path: Path, expected: Mapping[str, Any]) -> dict[str, Any]:
     }
     if mismatches:
         raise ValueError(
-            "Disc 1 data track does not match the supported revision:\n"
+            f"{label} does not match the supported revision:\n"
             + json.dumps(mismatches, ensure_ascii=False, indent=2)
         )
     return {"path": str(path), **actual, "verified": True}
@@ -114,7 +138,7 @@ def read_cue_tracks(path: Path) -> list[str]:
 
 def read_cue_text(path: Path) -> str:
     if not path.is_file():
-        raise FileNotFoundError(f"Disc 1 CUE not found: {path}")
+        raise FileNotFoundError(f"CUE not found: {path}")
     raw = path.read_bytes()
     for encoding in ("utf-8-sig", "shift_jis", "latin-1"):
         try:
@@ -190,17 +214,28 @@ def cmd_paths(args: argparse.Namespace) -> None:
 def cmd_verify(args: argparse.Namespace) -> None:
     manifest = load_manifest(args.manifest)
     paths = resolved_paths(manifest)
+    disc_key = args.disc.lower()
+    if disc_key not in manifest:
+        raise ValueError(f"unsupported disc key: {disc_key}")
     result = {
-        "disc1_track1": verify_track(
-            paths["disc1_track1"],
-            manifest["disc1"]["data_track"],
+        f"{disc_key}_track1": verify_track(
+            paths[f"{disc_key}_track1"],
+            manifest[disc_key]["data_track"],
+            label=f"{disc_key} data track",
         )
     }
     if args.cue:
-        result["disc1_cue"] = verify_cue(
-            paths["disc1_cue"],
-            manifest["disc1"]["expected_tracks"],
+        result[f"{disc_key}_cue"] = verify_cue(
+            paths[f"{disc_key}_cue"],
+            manifest[disc_key]["expected_tracks"],
         )
+        for expected in manifest[disc_key].get("audio_tracks", []):
+            track_number = int(expected["track"])
+            result[f"{disc_key}_track{track_number}"] = verify_track(
+                paths[f"{disc_key}_track{track_number}"],
+                expected,
+                label=f"{disc_key} audio track {track_number}",
+            )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 
 
@@ -216,6 +251,11 @@ def build_parser() -> argparse.ArgumentParser:
     paths.set_defaults(func=cmd_paths)
 
     verify = subparsers.add_parser("verify", help="verify the supported data track")
+    verify.add_argument(
+        "--disc",
+        default="disc1",
+        help="manifest disc key to verify (default: disc1)",
+    )
     verify.add_argument("--cue", action="store_true", help="also require the 4-track CUE")
     verify.set_defaults(func=cmd_verify)
     return parser

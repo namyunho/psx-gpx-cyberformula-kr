@@ -29,18 +29,33 @@ class OriginalMediaTests(unittest.TestCase):
             "disc1": {
                 "cue": "roms/default.cue",
                 "data_track": {"path": "roms/default.bin"},
-            }
+            },
+            "disc2": {
+                "cue": "roms/default2.cue",
+                "data_track": {"path": "roms/default2.bin"},
+                "audio_tracks": [
+                    {"track": 2, "path": "roms/default2-track2.bin"}
+                ],
+            },
         }
         with mock.patch.dict(
             os.environ,
             {
                 "PSX_DISC1_CUE": "/tmp/custom.cue",
                 "PSX_DISC1_TRACK1": "/tmp/custom.bin",
+                "PSX_DISC2_CUE": "/tmp/custom2.cue",
+                "PSX_DISC2_TRACK1": "/tmp/custom2.bin",
+                "PSX_DISC2_TRACK2": "/tmp/custom2-track2.bin",
             },
         ):
             paths = resolved_paths(manifest)
         self.assertEqual(paths["disc1_cue"], Path("/tmp/custom.cue"))
         self.assertEqual(paths["disc1_track1"], Path("/tmp/custom.bin"))
+        self.assertEqual(paths["disc2_cue"], Path("/tmp/custom2.cue"))
+        self.assertEqual(paths["disc2_track1"], Path("/tmp/custom2.bin"))
+        self.assertEqual(
+            paths["disc2_track2"], Path("/tmp/custom2-track2.bin")
+        )
 
     def test_track_hash_verification(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
