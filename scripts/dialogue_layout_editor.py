@@ -102,6 +102,7 @@ SOURCE_GROUP_LABELS = {
     "minigame": "미니게임",
     "course_information": "코스 설명",
     "machine_setting": "머신 설정",
+    "garage_menu": "차고 선택 메뉴",
     "save_system": "저장·불러오기",
     "font_ui": "폰트 UI",
     "character_name": "캐릭터 이름",
@@ -1589,6 +1590,8 @@ def _special_source_group(classification: str) -> str:
         return "course_information"
     if classification == "machine_setting_dialogue":
         return "machine_setting"
+    if classification == "garage_action_menu":
+        return "garage_menu"
     return "minigame"
 
 

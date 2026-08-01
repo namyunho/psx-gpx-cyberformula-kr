@@ -68,10 +68,11 @@ def editable_position_capacity(entry: dict[str, Any]) -> int:
 def draft_issues(entry: dict[str, Any], text: str) -> list[str]:
     lines = text.split("\n")
     max_positions = editable_position_capacity(entry)
+    max_columns = int(entry["layout"]["columns"])
     issues: list[str] = []
     if len(lines) > int(entry["layout"]["rows"]):
         issues.append("row_limit")
-    if any(visible_length(line) > 17 for line in lines):
+    if any(visible_length(line) > max_columns for line in lines):
         issues.append("column_limit")
     positions = stored_position_count(text)
     if positions > max_positions:
@@ -122,7 +123,7 @@ def build_brief(
                 "id": entry_id,
                 "category": entry["classification"],
                 "max_rows": int(entry["layout"]["rows"]),
-                "max_columns": 17,
+                "max_columns": int(entry["layout"]["columns"]),
                 "max_encoded_positions": max_positions,
                 "jp": entry["original"]["display_text"],
                 "ko": ko,
@@ -136,7 +137,7 @@ def build_brief(
         "instructions": [
             "각 entries 항목의 id, category, max_* 필드는 절대 변경하지 않는다.",
             "jp를 기준으로 ko의 오역·누락·미완성 문장·일본어 잔존을 교정한다.",
-            "ko의 줄 수는 max_rows 이하, 각 줄은 max_columns(17)자 이하로 쓴다.",
+            "ko의 줄 수는 max_rows 이하, 각 줄은 항목별 max_columns 이하로 쓴다.",
             "ko의 표시 글리프 수와 줄바꿈 수의 합은 max_encoded_positions 이하로 쓴다.",
             "줄바꿈은 단어를 쪼개지 말고 어절 경계에서 한다.",
             "{name:surname}, {name:given} 플레이스홀더는 원문에 있으면 그대로 보존한다.",

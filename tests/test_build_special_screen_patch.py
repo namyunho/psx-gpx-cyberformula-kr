@@ -63,7 +63,7 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
             )[1]
             for entry in self.entries
         ]
-        self.assertEqual(len(reports), 391)
+        self.assertEqual(len(reports), 398)
         self.assertEqual(
             self.validation["layout_or_storage_issue_count"],
             0,

@@ -108,6 +108,7 @@ def merge_translation_batches(
 
     translated_entries: list[dict[str, Any]] = []
     expected_start = 0
+    batch_total: int | None = None
     batch_sources: list[dict[str, Any]] = []
     for source, translated, source_path, translated_path in zip(
         source_batches,
@@ -132,13 +133,17 @@ def merge_translation_batches(
         end = batch.get("end_entry_index_exclusive")
         count = batch.get("entry_count")
         total = batch.get("total_entry_count")
+        if batch_total is None:
+            batch_total = total if isinstance(total, int) else None
         if (
             start != expected_start
             or not isinstance(end, int)
             or end < start
             or count != len(entries)
             or end - start != len(entries)
-            or total != len(work_ids)
+            or not isinstance(batch_total, int)
+            or total != batch_total
+            or batch_total > len(work_ids)
         ):
             raise ValueError(
                 f"{translated_path}: batch range/count differs"
@@ -154,14 +159,28 @@ def merge_translation_batches(
                 "entry_count": len(entries),
             }
         )
-    if expected_start != len(work_ids):
+    if expected_start != batch_total:
         raise ValueError("translated batches do not cover the full workset")
 
     translated_ids = [entry.get("id") for entry in translated_entries]
-    if translated_ids != work_ids or len(set(translated_ids)) != len(
+    if translated_ids != work_ids[:batch_total] or len(set(translated_ids)) != len(
         translated_ids
     ):
         raise ValueError("translated batch stable ID order differs")
+
+    # A reviewed historical batch set may remain a valid prefix after a
+    # runtime-discovered workset extension.  Preserve the already-reviewed
+    # canonical values for that explicit tail instead of silently dropping it
+    # or pretending it was part of the older external batch.
+    canonical_by_id = {str(item["id"]): item for item in canonical_items}
+    for entry_id in work_ids[batch_total:]:
+        translated_entries.append(
+            {
+                "id": entry_id,
+                "jp": work_by_id[entry_id]["original"]["display_text"],
+                "ko": canonical_by_id[entry_id]["ko"],
+            }
+        )
 
     issue_counts: Counter[str] = Counter()
     issue_entries: list[dict[str, Any]] = []
@@ -223,6 +242,8 @@ def merge_translation_batches(
             else "merged-static-layout-clean-runtime-review-required"
         ),
         "entry_count": len(translated_entries),
+        "historical_batch_entry_count": batch_total,
+        "canonical_tail_entry_count": len(translated_entries) - batch_total,
         "stable_id_order_exact": True,
         "protected_batch_fields_unchanged": True,
         "workset": str(workset_path),
@@ -242,6 +263,8 @@ def merge_translation_batches(
         "status": output["batch_import"]["status"],
         "output_status": output["status"],
         "entry_count": len(translated_entries),
+        "historical_batch_entry_count": batch_total,
+        "canonical_tail_entry_count": len(translated_entries) - batch_total,
         "stable_id_order_exact": True,
         "protected_batch_fields_unchanged": True,
         "source": {

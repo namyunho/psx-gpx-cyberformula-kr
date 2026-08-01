@@ -2,18 +2,20 @@
   "schema_version": 1,
   "status": "external-ai-revised-draft-static-and-runtime-review-required",
   "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
-  "source_workset_sha256": "2a45ba93fd37bbe7f105796efd0e4d23227464fb98b8d85651978fc793abcabd",
+  "source_workset_sha256": "84f43b08d9d91dad73839fd38ee908ab6fdf892e043b4d19fc8b13286e747dba",
   "translation_scope": {
     "included": [
       "u38 font-rendered mini-game dialogue and runtime words",
+      "u38 font-rendered mini-game rule heading and titles",
       "u43 font-rendered Course Information dialogue",
-      "u43 font-rendered Machine Setting dialogue"
+      "u43 font-rendered Machine Setting dialogue",
+      "u43 font-rendered garage action menus"
     ],
     "excluded": [
       "baked graphical buttons",
       "baked graphical labels and title assets"
     ],
-    "entry_count": 391,
+    "entry_count": 398,
     "model_role": "external-ai-revised-draft",
     "human_runtime_review_required": true
   },
@@ -28,23 +30,23 @@
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0002",
-      "ko": "카자미 씨의 방에 카메라를\n설치해 음료 도둑을\n찍는 게임이야."
+      "ko": "카자미 씨 방에 카메라를\n설치해 음료 도둑을\n찍는 게임이야."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0003",
-      "ko": "범인이 나타나면 대화창의\n이름 칸에 「저스트」 표시가\n나와. 그때 ◯ 버튼을 눌러."
+      "ko": "범인이 나타나면\n대화창 이름 칸에\n「저스트」 표시가 나와.\n그때 ◯ 버튼을 눌러."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0004",
-      "ko": "버튼을 너무 빨리 누르거나\n너무 늦게 누르면 범인이\n안 찍힐 수도 있으니\n주의해야 해."
+      "ko": "버튼을 너무 일찍\n또는 늦게 누르면\n범인이 안 찍힐 수\n있으니 주의해야 해."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0005",
-      "ko": "사진 두 장을 찍어 잘 나온\n사진을 카자미 씨에게\n보여줄 거야. 힘내♥"
+      "ko": "사진 두 장을 찍어\n잘 나온 사진을 카자미\n씨에게 보여줄게. 힘내♥"
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0006",
-      "ko": "내가 너에게 요리를\n만들어 주는 게임이야.\n하지만 잘 만들 수 있을지는\n네 조작에 달렸어."
+      "ko": "내가 너에게 요리를\n만들어 주는 게임이야.\n잘 만들 수 있을지는\n네 조작에 달렸어."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0007",
@@ -52,7 +54,7 @@
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0008",
-      "ko": "다음은 고른 재료를\n◯ 버튼을 연타해 저어.\n충분히 젓지 않으면 원하는\n요리가 안 될 수도 있어."
+      "ko": "다음은 고른 재료를\n◯ 버튼을 연타해 저어.\n충분히 젓지 않으면\n원하는 요리가 안 돼."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0009",
@@ -60,23 +62,23 @@
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0010",
-      "ko": "불 세기 게이지가 약불에서\n강불로, 다시 약불로 변해.\n알맞은 지점에서\n◯ 버튼을 눌러."
+      "ko": "불 세기 게이지는\n약불과 강불을 오가.\n알맞은 지점에서\n◯ 버튼을 눌러."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0011",
-      "ko": "받은 카드에 적힌 숫자를\n더해, 누가 21에 더\n가까운지 겨루는 게임이야."
+      "ko": "받은 카드 숫자를 더해\n누가 21에 더 가까운지\n겨루는 게임이야."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0012",
-      "ko": "먼저 너와 상대에게 카드를\n두 장씩 나눠 줘.\n카드의 합계를 보고 다음\n카드를 받을지 정해."
+      "ko": "너와 상대에게 카드를\n두 장씩 나눠 줘.\n합계를 보고 다음 카드를\n받을지 정해."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0013",
-      "ko": "합계가 11 이하면\n받는 게 좋아. 더 받으려면\n「카드 받기」, 아니면\n「그만 받기」를 골라."
+      "ko": "합계 11 이하면 받아.\n더 받으려면\n「카드 받기」, 아니면\n「그만 받기」를 골라."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0014",
-      "ko": "한번 「그만 받기」를 고르면\n그 뒤엔 카드를 못 받으니\n신중히 골라."
+      "ko": "「그만 받기」를 고르면\n더는 카드를 못 받으니\n신중히 골라."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0015",
@@ -84,15 +86,15 @@
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0016",
-      "ko": "합계가 21에 가까운 쪽이\n이겨♥ 단, 22 이상이면\n「버스트」로 패배하니\n정말 조심해야 해."
+      "ko": "합계가 21에 가까우면\n이겨♥ 22 이상이면\n「버스트」로 패배하니\n정말 조심해야 해."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0017",
-      "ko": "하지만 기회가 있어♪\n카드를 열기 전에 한 장만\n바꿀 수 있어. 버스트했다면\n반드시 바꿔야 해!"
+      "ko": "하지만 기회가 있어♪\n카드를 열기 전에\n한 장만 바꿀 수 있어.\n버스트면 꼭 바꿔!"
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0018",
-      "ko": "둘의 숫자가 같으면\n「무승부」야.\n둘 다 「버스트」했을 때도\n무승부야."
+      "ko": "둘의 숫자가 같으면\n「무승부」야.\n둘 다 「버스트」여도\n무승부야."
     },
     {
       "id": "disc1/allbin/u38/minigame_page/ref0019",
@@ -1064,7 +1066,7 @@
     },
     {
       "id": "disc1/allbin/u38/direct/rules_camera_end",
-      "ko": "(…별 상관없는 얘기지만\n방에 전혀 관계없는 사람도\n가끔 오니 조심해)"
+      "ko": "(…상관없는 얘기지만\n방에 관계없는 사람도\n가끔 오니 조심해)"
     },
     {
       "id": "disc1/allbin/u38/direct/rules_cooking_end",
@@ -1072,7 +1074,7 @@
     },
     {
       "id": "disc1/allbin/u38/direct/rules_blackjack_end",
-      "ko": "J, Q, K 같은 그림은\n「10」, A는 「1」이나\n「11」, 조커는 「0」이야.\n계산 틀리지 마. 힘내!"
+      "ko": "J·Q·K는 10.\nA는 1이나 11.\n조커는 0이야.\n계산 조심해. 힘내!"
     },
     {
       "id": "disc1/allbin/u38/direct/blackjack_limit_warning",
@@ -1581,6 +1583,34 @@
     {
       "id": "disc1/allbin/u43/machine_setting/boost_normal",
       "ko": "노멀 부스트의 작동 시간과\n사용 횟수는 쇼트와 하이퍼의\n중간이야. 표준 장비지."
+    },
+    {
+      "id": "disc1/allbin/u43/garage_action_menu/race_available",
+      "ko": "머신 세팅\n코스 설명 듣기\n레이스 출전"
+    },
+    {
+      "id": "disc1/allbin/u43/garage_action_menu/rest_available",
+      "ko": "머신 세팅\n코스 설명 듣기\n오늘은 잔다"
+    },
+    {
+      "id": "disc1/allbin/u38/rule_label/heading",
+      "ko": "규칙설명"
+    },
+    {
+      "id": "disc1/allbin/u38/rule_label/catch",
+      "ko": "앙리를 붙잡아라"
+    },
+    {
+      "id": "disc1/allbin/u38/rule_label/camera",
+      "ko": "음료 도둑 찍기"
+    },
+    {
+      "id": "disc1/allbin/u38/rule_label/cooking",
+      "ko": "레나의 3분 요리"
+    },
+    {
+      "id": "disc1/allbin/u38/rule_label/blackjack",
+      "ko": "블랙잭"
     }
   ],
   "batch_import": {
@@ -1589,20 +1619,20 @@
     "stable_id_order_exact": true,
     "protected_batch_fields_unchanged": true,
     "workset": "work/translations/disc1-special-screen-text.json",
-    "workset_sha256": "2a45ba93fd37bbe7f105796efd0e4d23227464fb98b8d85651978fc793abcabd",
+    "workset_sha256": "84f43b08d9d91dad73839fd38ee908ab6fdf892e043b4d19fc8b13286e747dba",
     "batches": [
       {
         "source_batch": "work/translations/disc1-special-screen-translation-batches/disc1-special-screen-batch-001.json",
         "source_batch_sha256": "004684e01b0020ba7f94ba7d1550a02999cbc61dc6e7c8cc587d6980c6253f39",
         "translated_batch": "work/translations/disc1-special-screen-translation-batches/disc1-special-screen-batch-001-ko.json",
-        "translated_batch_sha256": "aec041fb30462f779667b567dcc67080f2c2c9afe1730324de3b5abdc277d4ca",
+        "translated_batch_sha256": "c5e9c0894002c6b28b8ea659645657cc7dfeaac3692a19ea9794b61e504d4ba1",
         "entry_count": 200
       },
       {
         "source_batch": "work/translations/disc1-special-screen-translation-batches/disc1-special-screen-batch-002.json",
         "source_batch_sha256": "e230c8ed7cb3d05aa1edb6a45a1136d54ffac007f930f27a903de2d7e86a033a",
         "translated_batch": "work/translations/disc1-special-screen-translation-batches/disc1-special-screen-batch-002-ko.json",
-        "translated_batch_sha256": "7e59afd8ca3650df4ebf6b6461d339fba4a2d363a74ab13dd86455804284a3f2",
+        "translated_batch_sha256": "680176c1a78f01e4ae67ab8c1f4f3a42734248f8ccd99b8f132b6e87308c9bd0",
         "entry_count": 191
       }
     ],

@@ -175,6 +175,7 @@ tmp/                    비커밋 임시 캡처
 | [추가 순차·색인·저장 글꼴 문자열](docs/unindexed-font-text.md) | 포인터 중심 추출 밖 716개, 오탐 카탈로그, 초벌 번역과 검증 경계 |
 | [미니게임·코스·머신 설정 폰트 문자열](docs/special-screen-font-text.md) | `u38/u43` 391개 소비자·추출·외부 AI 병합과 고정 슬롯 정적 주입 |
 | [그래픽 문자 인벤토리](docs/graphics-text-inventory.md) | 베이크드 문자 검토 state와 편집 승격 조건 |
+| [타이틀·챕터 카드 그래픽 추출](docs/title-chapter-graphics.md) | Disc 1·2 공용 타이틀 1장·챕터 카드 11장의 인덱스/CLUT와 보라색 작업 캔버스 |
 | [폰트 포맷](docs/font-format.md) | primary/alternate 14×14 3bpp 공급자와 렌더러 |
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
 | [Galmuri11 본문 PoC](docs/galmuri11-font-poc.md) | 첫 대사 정적 삽입·raw Track 검증과 남은 화면 확인 |

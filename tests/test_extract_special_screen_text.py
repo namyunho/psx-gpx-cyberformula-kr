@@ -3,10 +3,12 @@ import unittest
 
 from scripts.extract_special_screen_text import (
     EXPECTED_COURSE_PAGE_COUNT,
+    EXPECTED_GARAGE_ACTION_MENU_COUNT,
     EXPECTED_MACHINE_SETTING_COUNT,
     EXPECTED_U38_COOKING_WORD_COUNT,
     EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
     EXPECTED_U38_POINTER_PAGE_COUNT,
+    EXPECTED_U38_RULE_LABEL_COUNT,
     extract_special_screen_text,
 )
 
@@ -32,6 +34,10 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
             EXPECTED_U38_POINTER_PAGE_COUNT,
         )
         self.assertEqual(
+            summary["u38_rule_label_count"],
+            EXPECTED_U38_RULE_LABEL_COUNT,
+        )
+        self.assertEqual(
             summary["u38_direct_dialogue_count"],
             EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
         )
@@ -47,6 +53,37 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
             summary["u43_machine_setting_count"],
             EXPECTED_MACHINE_SETTING_COUNT,
         )
+        self.assertEqual(
+            summary["u43_garage_action_menu_count"],
+            EXPECTED_GARAGE_ACTION_MENU_COUNT,
+        )
+
+    def test_garage_action_menus_preserve_d003_terminal(self) -> None:
+        entries = [
+            entry
+            for entry in self.document["entries"]
+            if entry["classification"] == "garage_action_menu"
+        ]
+        self.assertEqual(len(entries), 2)
+        self.assertTrue(
+            all(entry["source"]["terminal"] == "D003" for entry in entries)
+        )
+        self.assertEqual(
+            entries[0]["original"]["display_text"],
+            "セッティングをする\nコースの説明を聞く\nレースにのぞむ",
+        )
+
+    def test_rule_heading_and_titles_are_font_strings(self) -> None:
+        entries = [
+            entry
+            for entry in self.document["entries"]
+            if entry["classification"]
+            in {"minigame_rule_heading", "minigame_rule_title"}
+        ]
+        self.assertEqual(len(entries), EXPECTED_U38_RULE_LABEL_COUNT)
+        self.assertEqual(entries[0]["original"]["display_text"], "ルール説明")
+        self.assertEqual(entries[3]["original"]["display_text"], "レナの3分クッキング")
+        self.assertTrue(all(entry["layout"]["columns"] == 13 for entry in entries))
 
     def test_scope_excludes_graphical_assets(self) -> None:
         excluded = self.document["scope"]["excluded"]

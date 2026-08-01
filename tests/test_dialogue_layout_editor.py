@@ -164,15 +164,16 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
 
         summary = document.validation_summary()
-        self.assertEqual(len(document), 7014)
+        self.assertEqual(len(document), 7021)
         self.assertEqual(
             summary["source_group_counts"],
             {
                 "character_name": 36,
                 "course_information": 57,
                 "font_ui": 4,
+                "garage_menu": 2,
                 "machine_setting": 12,
-                "minigame": 395,
+                "minigame": 400,
                 "pointerless_page": 84,
                 "race_dialogue": 325,
                 "save_system": 27,

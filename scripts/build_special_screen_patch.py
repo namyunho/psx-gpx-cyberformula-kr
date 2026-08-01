@@ -59,7 +59,7 @@ except ModuleNotFoundError:  # Support direct execution from repository root.
 
 
 EXPECTED_BASELINE_ID = f"disc1-allbin-{EXPECTED_ALLBIN_SHA256[:16]}"
-EXPECTED_ENTRY_COUNT = 391
+EXPECTED_ENTRY_COUNT = 398
 NAME_TOKEN_PATTERN = re.compile(r"\{name:(surname|given)\}")
 UNKNOWN_MARKUP_PATTERN = re.compile(r"\{[^{}]+\}")
 NAME_KIND_TO_MARKUP = {

@@ -76,6 +76,26 @@ MACHINE_SETTING_STARTS = (
     (0x43E4, "boost_normal"),
 )
 
+# Runtime-observed garage action menus.  Unlike the adjacent course and
+# machine-setting pages, these fixed three-choice streams terminate with the
+# event transition token D003.  PCSX-Redux RAM/VRAM capture connected the two
+# source ranges to the on-screen garage menu on 2026-08-01.
+GARAGE_ACTION_MENU_STARTS = (
+    (0x3E34, "race_available"),
+    (0x3E70, "rest_available"),
+)
+
+# The rule-page heading and the four mini-game titles are stored immediately
+# before the pointer-backed rule body.  PCSX-Redux VRAM inspection on
+# 2026-08-01 confirmed that these are font-rendered strings, not baked pixels.
+U38_RULE_LABELS = (
+    (0x18214, "heading", "minigame_rule_heading"),
+    (0x18224, "catch", "minigame_rule_title"),
+    (0x1823C, "camera", "minigame_rule_title"),
+    (0x18254, "cooking", "minigame_rule_title"),
+    (0x1826C, "blackjack", "minigame_rule_title"),
+)
+
 # Direct renderer/string consumer addresses proved independently by IDA and
 # Ghidra.  Three entries are physical prefixes of another callable entry; the
 # explicit end keeps those shared suffixes non-overlapping in the workset.
@@ -156,6 +176,8 @@ EXPECTED_U38_DIRECT_DIALOGUE_COUNT = len(U38_DIRECT_DIALOGUE)
 EXPECTED_U38_COOKING_WORD_COUNT = len(U38_COOKING_WORDS)
 EXPECTED_COURSE_PAGE_COUNT = 57
 EXPECTED_MACHINE_SETTING_COUNT = len(MACHINE_SETTING_STARTS)
+EXPECTED_GARAGE_ACTION_MENU_COUNT = len(GARAGE_ACTION_MENU_STARTS)
+EXPECTED_U38_RULE_LABEL_COUNT = len(U38_RULE_LABELS)
 
 TERMINALS = frozenset({0x8000, 0xFFFF})
 
@@ -310,6 +332,7 @@ def make_entry(
     classification: str,
     consumer: dict[str, Any],
     layout_rows: int,
+    layout_columns: int = 17,
 ) -> dict[str, Any]:
     profile = UNIT_PROFILES[unit_index]
     raw = unit_data[start:end]
@@ -328,7 +351,9 @@ def make_entry(
             "byte_size": len(raw),
             "sha256": sha256_bytes(raw),
             "terminal": (
-                f"{tokens[-1]:04X}" if tokens[-1] in TERMINALS else None
+                f"{tokens[-1]:04X}"
+                if tokens[-1] in TERMINALS or tokens[-1] == 0xD003
+                else None
             ),
         },
         "consumer": consumer,
@@ -339,11 +364,48 @@ def make_entry(
             "display_text": decode_visible_text(tokens, glyphs),
         },
         "layout": {
-            "columns": 17,
+            "columns": layout_columns,
             "rows": layout_rows,
-            "capacity_positions": 17 * layout_rows,
+            "capacity_positions": layout_columns * layout_rows,
         },
     }
+
+
+def extract_u38_rule_labels(
+    unit_data: bytes,
+    glyphs: dict[int, str],
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for start, name, classification in U38_RULE_LABELS:
+        tokens, end = parse_tokens(
+            unit_data,
+            start,
+            glyphs=glyphs,
+            terminal=0xFFFF,
+        )
+        entries.append(
+            make_entry(
+                unit_index=38,
+                unit_data=unit_data,
+                start=start,
+                end=end,
+                tokens=tokens,
+                glyphs=glyphs,
+                entry_id=f"disc1/allbin/u38/rule_label/{name}",
+                classification=classification,
+                consumer={
+                    "kind": "fixed_rule_page_label",
+                    "consumer_validation": (
+                        "pcsx-redux-runtime-vram-and-static-range-cross-check"
+                    ),
+                },
+                layout_rows=1,
+                layout_columns=13,
+            )
+        )
+    if len(entries) != EXPECTED_U38_RULE_LABEL_COUNT:
+        raise AssertionError("u38 rule-label population changed")
+    return entries
 
 
 def scan_u38_pointer_pages(
@@ -415,6 +477,7 @@ def scan_u38_pointer_pages(
                     "consumer_validation": "ida-ghidra-static-cross-check",
                 },
                 layout_rows=rows,
+                layout_columns=(13 if classification == "minigame_rule_page" else 17),
             )
         )
     return pages
@@ -475,6 +538,7 @@ def extract_u38_direct_entries(
                     ),
                 },
                 layout_rows=rows,
+                layout_columns=(13 if classification == "minigame_rule_page" else 17),
             )
         )
 
@@ -610,6 +674,42 @@ def extract_u43_machine(
     return entries
 
 
+def extract_u43_garage_action_menus(
+    unit_data: bytes,
+    glyphs: dict[int, str],
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for start, name in GARAGE_ACTION_MENU_STARTS:
+        tokens, end = parse_tokens(
+            unit_data,
+            start,
+            glyphs=glyphs,
+            terminal=0xD003,
+        )
+        entries.append(
+            make_entry(
+                unit_index=43,
+                unit_data=unit_data,
+                start=start,
+                end=end,
+                tokens=tokens,
+                glyphs=glyphs,
+                entry_id=f"disc1/allbin/u43/garage_action_menu/{name}",
+                classification="garage_action_menu",
+                consumer={
+                    "kind": "runtime_selected_fixed_action_menu",
+                    "consumer_validation": (
+                        "pcsx-redux-runtime-address-and-screen-cross-check"
+                    ),
+                },
+                layout_rows=3,
+            )
+        )
+    if len(entries) != EXPECTED_GARAGE_ACTION_MENU_COUNT:
+        raise AssertionError("u43 garage-action-menu population changed")
+    return entries
+
+
 def extract_special_screen_text(
     *,
     allbin_path: Path,
@@ -633,6 +733,10 @@ def extract_special_screen_text(
         *extract_u38_direct_entries(u38, glyphs),
         *extract_u43_course(u43, glyphs),
         *extract_u43_machine(u43, glyphs),
+        *extract_u43_garage_action_menus(u43, glyphs),
+        # Append newly discovered entries so historical translation batches
+        # keep their stable order and remain mergeable.
+        *extract_u38_rule_labels(u38, glyphs),
     ]
     ids = [entry["entry_id"] for entry in entries]
     if len(ids) != len(set(ids)):
@@ -660,8 +764,10 @@ def extract_special_screen_text(
         "scope": {
             "included": [
                 "u38 font-rendered mini-game dialogue and runtime words",
+                "u38 font-rendered mini-game rule heading and titles",
                 "u43 font-rendered Course Information dialogue",
                 "u43 font-rendered Machine Setting dialogue",
+                "u43 font-rendered garage action menus",
             ],
             "excluded": [
                 "baked graphical buttons",
@@ -685,10 +791,14 @@ def extract_special_screen_text(
         "summary": {
             "entry_count": len(entries),
             "u38_pointer_page_count": EXPECTED_U38_POINTER_PAGE_COUNT,
+            "u38_rule_label_count": EXPECTED_U38_RULE_LABEL_COUNT,
             "u38_direct_dialogue_count": EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
             "u38_cooking_runtime_word_count": EXPECTED_U38_COOKING_WORD_COUNT,
             "u43_course_page_count": EXPECTED_COURSE_PAGE_COUNT,
             "u43_machine_setting_count": EXPECTED_MACHINE_SETTING_COUNT,
+            "u43_garage_action_menu_count": (
+                EXPECTED_GARAGE_ACTION_MENU_COUNT
+            ),
             "classification_counts": dict(sorted(counts.items())),
         },
         "entries": entries,

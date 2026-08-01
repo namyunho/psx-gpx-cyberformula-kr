@@ -113,7 +113,14 @@ class RemoteGdb:
         for attempt in range(retries):
             try:
                 response = self.command(f"m{address:x},{size:x}")
-                if response.startswith(b"E"):
+                # GDB errors are three-byte packets such as ``E01``.  A valid
+                # hexadecimal memory reply may also begin with an E nibble
+                # (for example, RAM whose first byte is 0xE8).
+                if (
+                    len(response) == 3
+                    and response[:1] == b"E"
+                    and all(byte in b"0123456789abcdefABCDEF" for byte in response[1:])
+                ):
                     raise RuntimeError(f"GDB memory error: {response.decode()}")
                 result = bytes.fromhex(response.decode("ascii"))
                 if len(result) != size:

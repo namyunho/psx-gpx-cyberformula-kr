@@ -42,6 +42,11 @@ class DumpTests(unittest.TestCase):
         client.write_memory(0x80010000, bytes.fromhex("1234ABCD"))
         self.assertEqual(commands, ["M80010000,4:1234abcd"])
 
+    def test_memory_reply_may_begin_with_e_nibble(self):
+        client = gdb_dump.RemoteGdb("127.0.0.1", 3333)
+        client.command = lambda _value: b"e8ff"
+        self.assertEqual(client.read_memory(0x80000000, 2), bytes.fromhex("e8ff"))
+
 
 if __name__ == "__main__":
     unittest.main()
