@@ -62,6 +62,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).
 | Galmuri11 사용 프로필 | ✅ 완료 — TTF 12px, 실제 최대 11×11 잉크, 14×14 셀 배치 |
 | 최초 한글 가시성 PoC | ✅ 통과 — 역사적 Galmuri14 시험으로 DuckStation 본문 렌더 경로 확인 |
 | Galmuri11 본문 출력 | ✅ 실행 확인 — 첫 대사 PoC 이후 전체 대사 개발 빌드에서도 14×14 셀 렌더 경로 확인 |
+| 반각 공백·문장부호 | 🚧 정적 검증 완료 — 공백·`() , . ! ?`의 화면 진행 폭만 14px→8px, 기존 대사·줄바꿈·17칸 논리 배치 불변; Disc 1·2 실행 검증 필요 |
 | 한글 저장·인코딩 | ✅ 정적 경로 확정 — 현재 그래픽 제외 전체 폰트 빌드의 1,041자를 primary 1,229슬롯에 배치하고 대사 토큰 직접 재인코딩, 훅 불필요 |
 | 고정 주인공명·화자명 | ✅ 실행 확인 — `시바` 2칸+`세이치로` 4칸과 화자명·용어집 표기가 실제 화면에서 정상 표시 |
 | 그래픽 현지화 분모 | ✅ 구조 완료 — 1,739개 그래픽 관련 state 역할 분류 |
@@ -179,6 +180,7 @@ tmp/                    비커밋 임시 캡처
 | [그래픽 문자 인벤토리](docs/graphics-text-inventory.md) | 베이크드 문자 검토 state와 편집 승격 조건 |
 | [타이틀·챕터 카드 그래픽 추출](docs/title-chapter-graphics.md) | Disc 1·2 공용 타이틀 1장·챕터 카드 11장의 인덱스/CLUT와 보라색 작업 캔버스 |
 | [폰트 포맷](docs/font-format.md) | primary/alternate 14×14 3bpp 공급자와 렌더러 |
+| [반각 공백·문장부호 렌더러](docs/halfwidth-text-renderer.md) | 대사 재배치 없이 선택 글리프의 화면 진행 폭만 8px로 줄이는 MIPS 패치와 Disc 1·2 정적 검증 |
 | [Galmuri11 사용 글꼴](docs/korean-font.md) | 12px 입력, 11×11 잉크, 14×14 셀 프로필과 라이선스 |
 | [Galmuri11 본문 PoC](docs/galmuri11-font-poc.md) | 첫 대사 정적 삽입·raw Track 검증과 남은 화면 확인 |
 | [한글 저장·인코딩](docs/hangul-storage-encoding.md) | primary 1,229슬롯 정적 맵과 직접 대사 인코딩 |
