@@ -2,7 +2,7 @@
   "schema_version": 1,
   "status": "codex-draft-needs-independent-language-and-runtime-review",
   "scope": {
-    "new_unique_text_count": 288,
+    "new_unique_text_count": 296,
     "context_override_count": 10,
     "note": "Only Korean draft fields are authored here. Original bytes, Japanese text, stable IDs, and control tokens remain protected in the generated workset."
   },
@@ -1090,7 +1090,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0610C",
-      "ko": "저장 중입니다.\n메모리 카드를\n빼지 마세요."
+      "ko": "저장 중입니다.\n메모리 카드를 빼지 마세요"
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p06144",
@@ -1199,6 +1199,38 @@
     {
       "id": "disc1/allbin/u31/unindexed_font/p056A2",
       "ko": "후방, 이슈자크입니다.\n드라이버는 칼 리히터 폰\n란돌."
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00F72",
+      "ko": "오늘 저 사람,\n기합이 대단하네."
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FA4",
+      "ko": "…그래?"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FB2",
+      "ko": "응.\n곁에 가면 감전될 것 같아."
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FE4",
+      "ko": "그렇다니까.\n…그렇지, 레나?"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01012",
+      "ko": "…뭐? 무슨 일 있었어?"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01032",
+      "ko": "그건 비·밀.\n여자들만의 비밀이지~♪"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01062",
+      "ko": "…무조건 이겨 주겠어…!\n어떻게 해서든…!\n오늘만큼은…!"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p0109A",
+      "ko": "…힘내! {name:given}!\n…부탁이야!!"
     }
   ]
 }

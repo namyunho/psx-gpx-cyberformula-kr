@@ -9,6 +9,7 @@ from scripts.extract_special_screen_text import (
     EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
     EXPECTED_U38_POINTER_PAGE_COUNT,
     EXPECTED_U38_RULE_LABEL_COUNT,
+    EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT,
     extract_special_screen_text,
 )
 
@@ -57,6 +58,10 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
             summary["u43_garage_action_menu_count"],
             EXPECTED_GARAGE_ACTION_MENU_COUNT,
         )
+        self.assertEqual(
+            summary["u43_machine_sequential_count"],
+            EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT,
+        )
 
     def test_garage_action_menus_preserve_d003_terminal(self) -> None:
         entries = [
@@ -84,6 +89,26 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
         self.assertEqual(entries[0]["original"]["display_text"], "ルール説明")
         self.assertEqual(entries[3]["original"]["display_text"], "レナの3分クッキング")
         self.assertTrue(all(entry["layout"]["columns"] == 13 for entry in entries))
+
+    def test_machine_confirmation_controls_keep_fixed_offsets(self) -> None:
+        entries = [
+            entry
+            for entry in self.document["entries"]
+            if entry["classification"]
+            in {
+                "machine_setting_sequential_dialogue",
+                "machine_setting_confirmation_choice",
+            }
+        ]
+        self.assertEqual(len(entries), EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT)
+        self.assertTrue(
+            all(entry["layout"]["fixed_control_offsets"] for entry in entries)
+        )
+        choice = next(
+            entry for entry in entries if entry["entry_id"].endswith("confirm_choice")
+        )
+        self.assertEqual(choice["source"]["terminal"], "D002")
+        self.assertEqual(choice["original"]["display_text"], "うん。やり直す。")
 
     def test_scope_excludes_graphical_assets(self) -> None:
         excluded = self.document["scope"]["excluded"]

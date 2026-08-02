@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "status": "runtime-confirmed-fixed-slot-translation",
+  "translations": [
+    {
+      "id": "disc1/allbin/u09/inline_menu/cancel",
+      "jp": "キャンセル",
+      "ko": "취소",
+      "visible_glyph_capacity": 5,
+      "runtime_evidence": "PCSX-Redux screen and RAM/VRAM capture"
+    }
+  ]
+}

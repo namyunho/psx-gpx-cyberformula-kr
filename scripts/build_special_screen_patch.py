@@ -59,7 +59,7 @@ except ModuleNotFoundError:  # Support direct execution from repository root.
 
 
 EXPECTED_BASELINE_ID = f"disc1-allbin-{EXPECTED_ALLBIN_SHA256[:16]}"
-EXPECTED_ENTRY_COUNT = 398
+EXPECTED_ENTRY_COUNT = 418
 NAME_TOKEN_PATTERN = re.compile(r"\{name:(surname|given)\}")
 UNKNOWN_MARKUP_PATTERN = re.compile(r"\{[^{}]+\}")
 NAME_KIND_TO_MARKUP = {
@@ -543,6 +543,77 @@ def encode_special_entry(
     return replacement, report
 
 
+def encode_fixed_control_entry(
+    entry: dict[str, Any],
+    text: str,
+    mapping: dict[str, int],
+) -> tuple[bytes, dict[str, Any]]:
+    """Replace only glyph words while preserving every control-word address."""
+    if "\n" in text:
+        raise ValueError(
+            f"{entry['entry_id']}: fixed-control stream uses runtime wrapping"
+        )
+    tokens = [int(value, 16) for value in entry["original"]["tokens"]]
+    control_indices = {
+        int(control["token_index"])
+        for control in entry["original"]["control_tokens"]
+    }
+    editable_indices = [
+        index for index in range(len(tokens)) if index not in control_indices
+    ]
+    body: list[int] = []
+    for character in text:
+        try:
+            body.append(mapping[character])
+        except KeyError as error:
+            raise ValueError(
+                f"{entry['entry_id']}: unmapped character {character!r}"
+            ) from error
+    if len(body) > len(editable_indices):
+        raise ValueError(
+            f"{entry['entry_id']}: fixed-control slot exceeded"
+        )
+    try:
+        blank = mapping[" "]
+    except KeyError as error:
+        raise ValueError("fixed-control streams require the blank glyph") from error
+    replacement_tokens = list(tokens)
+    for index, value in zip(
+        editable_indices,
+        [*body, *([blank] * (len(editable_indices) - len(body))),],
+    ):
+        replacement_tokens[index] = value
+    for index in control_indices:
+        if replacement_tokens[index] != tokens[index]:
+            raise AssertionError(
+                f"{entry['entry_id']}: fixed control word moved"
+            )
+    encoded = struct.pack(
+        f"<{len(replacement_tokens)}H", *replacement_tokens
+    )
+    columns = int(entry["layout"]["columns"])
+    wrapped_widths = [
+        min(columns, len(text) - offset)
+        for offset in range(0, max(1, len(text)), columns)
+    ]
+    report = {
+        "id": entry["entry_id"],
+        "classification": entry["classification"],
+        "source_file_offset": entry["source"]["file_offset"],
+        "source_bytes": len(encoded),
+        "encoded_stream_bytes": len(encoded),
+        "unused_tail_bytes": 2 * (len(editable_indices) - len(body)),
+        "line_widths": wrapped_widths,
+        "stored_positions": len(body),
+        "stored_capacity_positions": len(editable_indices),
+        "dynamic_name_token_count": 0,
+        "fixed_slot_preserved": True,
+        "fixed_control_offsets_preserved": True,
+        "runtime_auto_wrap": True,
+    }
+    return encoded, report
+
+
 def build_special_screen_patch(
     *,
     file_build_dir: Path,
@@ -623,11 +694,18 @@ def build_special_screen_patch(
             raise ValueError(
                 f"{entry_id}: base build already changed the special slot"
             )
-        replacement, report = encode_special_entry(
-            entry,
-            translations_by_id[entry_id],
-            mapping,
-        )
+        if entry["layout"].get("fixed_control_offsets", False):
+            replacement, report = encode_fixed_control_entry(
+                entry,
+                translations_by_id[entry_id],
+                mapping,
+            )
+        else:
+            replacement, report = encode_special_entry(
+                entry,
+                translations_by_id[entry_id],
+                mapping,
+            )
         patched_allbin[
             source_offset : source_offset + len(replacement)
         ] = replacement

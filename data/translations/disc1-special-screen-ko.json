@@ -2,20 +2,21 @@
   "schema_version": 1,
   "status": "external-ai-revised-draft-static-and-runtime-review-required",
   "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
-  "source_workset_sha256": "84f43b08d9d91dad73839fd38ee908ab6fdf892e043b4d19fc8b13286e747dba",
+  "source_workset_sha256": "40703314baefae9e37871f34a7c43f718e2401649a1f49917d15e08a2c5108fd",
   "translation_scope": {
     "included": [
       "u38 font-rendered mini-game dialogue and runtime words",
       "u38 font-rendered mini-game rule heading and titles",
       "u43 font-rendered Course Information dialogue",
       "u43 font-rendered Machine Setting dialogue",
-      "u43 font-rendered garage action menus"
+      "u43 font-rendered garage action menus",
+      "u43 pointerless machine-setting dialogue and choices"
     ],
     "excluded": [
       "baked graphical buttons",
       "baked graphical labels and title assets"
     ],
-    "entry_count": 398,
+    "entry_count": 418,
     "model_role": "external-ai-revised-draft",
     "human_runtime_review_required": true
   },
@@ -1611,6 +1612,86 @@
     {
       "id": "disc1/allbin/u38/rule_label/blackjack",
       "ko": "블랙잭"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/tutorial_ready",
+      "ko": "자, 레이스 전 중요한 세팅이니까. 정신 차리고 해야지."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/tutorial_doubt",
+      "ko": "잠깐, 네가 세팅 같은 걸 할 수 있어?"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/tutorial_request",
+      "ko": "일단 정비사들에게 이쪽 요구를 전해 두는 거야."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/tutorial_categories",
+      "ko": "헤에~ 타이어, 윙, 부스트를 정하는구나. 타이어는 A·B·레인, 윙은 노멀·예각·광각, 부스트는 노멀·쇼트·하이퍼야."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/knowledge_question",
+      "ko": "그런데 네가 어떻게 이런 전문적인 걸 알아?"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/rena_boast",
+      "ko": "레나 님을 얕보지 마! 이 정도는 간단하잖아. 기본이야, 기본!"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/stare",
+      "ko": "빤히……."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/rulebook_confession",
+      "ko": "아하, 역시 들켰네? 알았어, 말할게. 사실 FICCY 규정집을 읽었어."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/surprise",
+      "ko": "뭐지?"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/rulebook_detail",
+      "ko": "헤헤, 네가 고민하는 동안 대충 훑어봤지."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/basics_tease",
+      "ko": "그렇구나, 깜짝 놀랐어. 레나가 세팅 기초를 알 리가 없지."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/rena_reaction",
+      "ko": "뭐라고……?"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/save_reminder",
+      "ko": "얕보는 건 됐고 하나 더 말해 둘게. 세팅이 끝나면 네메시스에게 말 걸어 저장해! 알겠어? 넌 잘 잊으니까."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/acknowledge",
+      "ko": "네네. 알겠습니다!"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/begin_setting",
+      "ko": "좋아, 레이스에 대비해 타이어와 윙, 부스트를 세팅하자."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/choose_setting",
+      "ko": "이걸로 하자."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/confirm_prompt",
+      "ko": "세팅 끝났네. 정말 이대로 괜찮아?"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/confirm_choice",
+      "ko": "응.　다시 선택"
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/setting_complete",
+      "ko": "수고했어. 네메시스에게 말 거는 걸 잊지 마."
+    },
+    {
+      "id": "disc1/allbin/u43/machine_setting_sequence/setting_retry",
+      "ko": "그래. 잘 생각해서 세팅하자."
     }
   ],
   "batch_import": {

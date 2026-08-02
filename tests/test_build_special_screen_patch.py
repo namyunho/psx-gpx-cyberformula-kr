@@ -6,6 +6,7 @@ import unittest
 
 from scripts.build_special_screen_patch import (
     _base_status_with_special_screen,
+    encode_fixed_control_entry,
     encode_special_entry,
     special_required_characters,
     validate_special_screen_artifacts,
@@ -55,15 +56,21 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
         mapping = {
             character: index for index, character in enumerate(required)
         }
-        reports = [
-            encode_special_entry(
-                entry,
-                self.translations[entry["entry_id"]],
-                mapping,
-            )[1]
-            for entry in self.entries
-        ]
-        self.assertEqual(len(reports), 398)
+        reports = []
+        for entry in self.entries:
+            encoder = (
+                encode_fixed_control_entry
+                if entry["layout"].get("fixed_control_offsets", False)
+                else encode_special_entry
+            )
+            reports.append(
+                encoder(
+                    entry,
+                    self.translations[entry["entry_id"]],
+                    mapping,
+                )[1]
+            )
+        self.assertEqual(len(reports), 418)
         self.assertEqual(
             self.validation["layout_or_storage_issue_count"],
             0,
@@ -75,6 +82,31 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
                 for report in reports
             )
         )
+
+    def test_machine_confirmation_keeps_fffd_and_d002_offsets(self) -> None:
+        required = special_required_characters(self.translations.values())
+        mapping = {
+            character: index for index, character in enumerate(required)
+        }
+        for suffix in ("confirm_prompt", "confirm_choice"):
+            entry = next(
+                entry
+                for entry in self.entries
+                if entry["entry_id"].endswith(suffix)
+            )
+            replacement, report = encode_fixed_control_entry(
+                entry,
+                self.translations[entry["entry_id"]],
+                mapping,
+            )
+            source = bytes.fromhex(entry["original"]["raw_hex"])
+            for control in entry["original"]["control_tokens"]:
+                offset = int(control["token_index"]) * 2
+                self.assertEqual(
+                    replacement[offset : offset + 2],
+                    source[offset : offset + 2],
+                )
+            self.assertTrue(report["fixed_control_offsets_preserved"])
 
     def test_dynamic_name_entries_store_name_as_one_control_word(self) -> None:
         required = special_required_characters(self.translations.values())

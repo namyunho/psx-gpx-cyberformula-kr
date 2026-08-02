@@ -179,6 +179,35 @@ EXPECTED_MACHINE_SETTING_COUNT = len(MACHINE_SETTING_STARTS)
 EXPECTED_GARAGE_ACTION_MENU_COUNT = len(GARAGE_ACTION_MENU_STARTS)
 EXPECTED_U38_RULE_LABEL_COUNT = len(U38_RULE_LABELS)
 
+# The u43 machine-setting consumer also advances through two pointerless
+# dialogue spans around the twelve directly addressed explanation strings.
+# Speaker-style words delimit the individual slots.  The confirmation choice
+# keeps FFFD and D002 at fixed offsets, so it is split into prompt and choice
+# records instead of being treated as one relocatable string.
+U43_MACHINE_SEQUENTIAL_SLOTS = (
+    (0x03EA8, 0x03EF0, "tutorial_ready", 3),
+    (0x03EF0, 0x03F20, "tutorial_doubt", 3),
+    (0x03F20, 0x03F64, "tutorial_request", 3),
+    (0x03F64, 0x04068, "tutorial_categories", 4),
+    (0x04444, 0x0447C, "knowledge_question", 3),
+    (0x0447C, 0x044C8, "rena_boast", 3),
+    (0x044C8, 0x044D4, "stare", 1),
+    (0x044D4, 0x0453C, "rulebook_confession", 4),
+    (0x0453C, 0x04544, "surprise", 1),
+    (0x04544, 0x04574, "rulebook_detail", 3),
+    (0x04574, 0x045C4, "basics_tease", 3),
+    (0x045C4, 0x045D4, "rena_reaction", 1),
+    (0x045D4, 0x04670, "save_reminder", 4),
+    (0x04670, 0x0468C, "acknowledge", 1),
+    (0x0468C, 0x046D4, "begin_setting", 3),
+    (0x046D4, 0x046E4, "choose_setting", 1),
+    (0x046E4, 0x04712, "confirm_prompt", 3),
+    (0x04712, 0x04724, "confirm_choice", 2),
+    (0x04724, 0x04758, "setting_complete", 3),
+    (0x04758, 0x04784, "setting_retry", 3),
+)
+EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT = len(U43_MACHINE_SEQUENTIAL_SLOTS)
+
 TERMINALS = frozenset({0x8000, 0xFFFF})
 
 
@@ -333,6 +362,8 @@ def make_entry(
     consumer: dict[str, Any],
     layout_rows: int,
     layout_columns: int = 17,
+    fixed_control_offsets: bool = False,
+    runtime_auto_wrap: bool = False,
 ) -> dict[str, Any]:
     profile = UNIT_PROFILES[unit_index]
     raw = unit_data[start:end]
@@ -352,7 +383,8 @@ def make_entry(
             "sha256": sha256_bytes(raw),
             "terminal": (
                 f"{tokens[-1]:04X}"
-                if tokens[-1] in TERMINALS or tokens[-1] == 0xD003
+                if tokens[-1] in TERMINALS
+                or 0xD000 <= tokens[-1] <= 0xDFFF
                 else None
             ),
         },
@@ -367,6 +399,8 @@ def make_entry(
             "columns": layout_columns,
             "rows": layout_rows,
             "capacity_positions": layout_columns * layout_rows,
+            "fixed_control_offsets": fixed_control_offsets,
+            "runtime_auto_wrap": runtime_auto_wrap,
         },
     }
 
@@ -710,6 +744,55 @@ def extract_u43_garage_action_menus(
     return entries
 
 
+def extract_u43_machine_sequential(
+    unit_data: bytes,
+    glyphs: dict[int, str],
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for start, end, name, rows in U43_MACHINE_SEQUENTIAL_SLOTS:
+        tokens, parsed_end = parse_tokens(
+            unit_data,
+            start,
+            glyphs=glyphs,
+            end_exclusive=end,
+        )
+        if parsed_end != end:
+            raise AssertionError("u43 sequential slot boundary changed")
+        classification = (
+            "machine_setting_confirmation_choice"
+            if name == "confirm_choice"
+            else "machine_setting_sequential_dialogue"
+        )
+        entries.append(
+            make_entry(
+                unit_index=43,
+                unit_data=unit_data,
+                start=start,
+                end=end,
+                tokens=tokens,
+                glyphs=glyphs,
+                entry_id=(
+                    f"disc1/allbin/u43/machine_setting_sequence/{name}"
+                ),
+                classification=classification,
+                consumer={
+                    "kind": "pointerless-sequential-machine-setting-slot",
+                    "consumer_validation": (
+                        "adjacent-control-stream-static-cross-check; "
+                        "runtime-path-review-required"
+                    ),
+                    "fixed_control_offsets": True,
+                },
+                layout_rows=rows,
+                fixed_control_offsets=True,
+                runtime_auto_wrap=True,
+            )
+        )
+    if len(entries) != EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT:
+        raise AssertionError("u43 sequential machine population changed")
+    return entries
+
+
 def extract_special_screen_text(
     *,
     allbin_path: Path,
@@ -737,6 +820,7 @@ def extract_special_screen_text(
         # Append newly discovered entries so historical translation batches
         # keep their stable order and remain mergeable.
         *extract_u38_rule_labels(u38, glyphs),
+        *extract_u43_machine_sequential(u43, glyphs),
     ]
     ids = [entry["entry_id"] for entry in entries]
     if len(ids) != len(set(ids)):
@@ -768,6 +852,7 @@ def extract_special_screen_text(
                 "u43 font-rendered Course Information dialogue",
                 "u43 font-rendered Machine Setting dialogue",
                 "u43 font-rendered garage action menus",
+                "u43 pointerless machine-setting dialogue and choices",
             ],
             "excluded": [
                 "baked graphical buttons",
@@ -798,6 +883,9 @@ def extract_special_screen_text(
             "u43_machine_setting_count": EXPECTED_MACHINE_SETTING_COUNT,
             "u43_garage_action_menu_count": (
                 EXPECTED_GARAGE_ACTION_MENU_COUNT
+            ),
+            "u43_machine_sequential_count": (
+                EXPECTED_U43_MACHINE_SEQUENTIAL_COUNT
             ),
             "classification_counts": dict(sorted(counts.items())),
         },

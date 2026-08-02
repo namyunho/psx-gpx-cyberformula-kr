@@ -483,7 +483,7 @@ def build_unindexed_font_patch(
             },
             "u39": u39_report,
             "runtime_review": [
-                "exercise every newly translated race branch in u30..u34",
+                "exercise every newly translated race branch in u28/u30..u34",
                 "exercise every newly translated mini-game branch in u38",
                 "exercise save, load, overwrite, missing-data, and error paths",
             ],

@@ -434,6 +434,7 @@ ADDITIONAL_UNIT_REFERENCE_PROFILES = {
     17: (0x6000, 404, 404, 0, 0, "40136b9cfae670915373eea79fbfea64df30f70684837a76183d00066b20c3d5"),
     18: (0x7800, 554, 554, 0, 0, "5fc4a8fb11750f67406df2f3e2786033dc2037a060afa0a29213d04a328389bc"),
     19: (0x2000, 107, 107, 0, 0, "504a934c91f64c96b9f846eb09bfc563d24a2b022eff7a07c92645099b60fe2d"),
+    28: (0x4800, 166, 159, 1, 6, "c77b6f0c96fba98f7b66c2ccd59bceaf19e21ca99d703ba330341ec4ba7c70f2"),
     30: (0xC000, 171, 170, 0, 1, "6abc1ce354d0cb98fc2898e363f95a752aaba9e54572e83c95a2ef4e54d6a084"),
     31: (0xA000, 169, 168, 0, 1, "72c6ddb3e2aafa985dc8f4a8a7056d154b6de7eede280a1a4aeef9047e85d3eb"),
     32: (0xC000, 170, 169, 0, 1, "da15fc4b806bd2283e6c86de4c1b3b672ef6bab61b87b12e2eefe50f97b25cf6"),
@@ -2576,7 +2577,7 @@ def main() -> None:
         "--include-reviewed-unindexed-story",
         action="store_true",
         help=(
-            "Promote and translate the reviewed u02..u19/u30..u34 "
+            "Promote and translate the reviewed u02..u19/u28/u30..u34 "
             "sequential and race streams; runtime route QA remains required"
         ),
     )

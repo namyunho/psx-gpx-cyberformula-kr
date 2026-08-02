@@ -96,6 +96,13 @@ public class AnalyzeSpecialScreenText extends GhidraScript {
     }
 
     private void analyzeCourseAndMachineOverlay() {
+        // These two ranges are consumed as sequential control streams around
+        // the directly addressed setting descriptions.  An empty direct-xref
+        // result is expected and is useful evidence against inventing a
+        // pointer table; control adjacency and runtime routing remain the
+        // adoption boundary.
+        printCodeReferencesInto("800abea8", "800ac066", "800abea8");
+        printCodeReferencesInto("800ac444", "800ac782", "800ac444");
         printReferences("800ad46c");
         printReferences("800aad40");
         printReferences("800ac068");

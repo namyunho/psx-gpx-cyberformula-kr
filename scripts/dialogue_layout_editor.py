@@ -158,7 +158,7 @@ class EditorLayoutProfile:
     def __post_init__(self) -> None:
         if self.columns <= 0 or self.rows <= 0:
             raise DialogueEditorError("layout columns/rows must be positive")
-        if self.row_policy not in {"maximum", "exact"}:
+        if self.row_policy not in {"maximum", "exact", "automatic"}:
             raise DialogueEditorError(
                 f"unsupported row policy: {self.row_policy}"
             )
@@ -551,6 +551,38 @@ def measure_layout(
         line_widths=widths,
         visible_glyph_count=sum(widths),
         occupied_positions=occupied,
+        columns=columns,
+        rows=rows,
+    )
+
+
+def measure_runtime_auto_layout(
+    text: str,
+    *,
+    columns: int,
+    rows: int,
+) -> LayoutMeasurement:
+    """Measure a stream whose renderer wraps without stored align tokens."""
+    if not isinstance(text, str):
+        raise DialogueEditorError("dialogue text must be a string")
+    display = expand_display_tokens(text.replace("\r\n", "\n").replace("\r", "\n"))
+    if "\n" in display:
+        # Explicit line breaks would add control words and violate the fixed
+        # offsets in these sequential branch streams.
+        lines = tuple(display.split("\n"))
+    else:
+        lines = tuple(
+            display[offset : offset + columns]
+            for offset in range(0, len(display), columns)
+        ) or ("",)
+    widths = tuple(len(line) for line in lines)
+    return LayoutMeasurement(
+        source_text=text,
+        display_text=display,
+        lines=lines,
+        line_widths=widths,
+        visible_glyph_count=sum(widths),
+        occupied_positions=sum(widths),
         columns=columns,
         rows=rows,
     )
@@ -1588,7 +1620,11 @@ def _pointerless_segment_contexts(
 def _special_source_group(classification: str) -> str:
     if classification == "course_information_dialogue":
         return "course_information"
-    if classification == "machine_setting_dialogue":
+    if classification in {
+        "machine_setting_dialogue",
+        "machine_setting_sequential_dialogue",
+        "machine_setting_confirmation_choice",
+    }:
         return "machine_setting"
     if classification == "garage_action_menu":
         return "garage_menu"
@@ -1866,11 +1902,14 @@ class DialogueDocument:
         text: str | None = None,
     ) -> LayoutMeasurement:
         profile = self.layout_profile(index)
-        return measure_layout(
-            self.value(index) if text is None else text,
-            columns=profile.columns,
-            rows=profile.rows,
-        )
+        value = self.value(index) if text is None else text
+        if profile.row_policy == "automatic":
+            return measure_runtime_auto_layout(
+                value,
+                columns=profile.columns,
+                rows=profile.rows,
+            )
+        return measure_layout(value, columns=profile.columns, rows=profile.rows)
 
     def layout_policy_violated(self, index: int) -> bool:
         profile = self.layout_profile(index)
@@ -1894,6 +1933,16 @@ class DialogueDocument:
                 raise DialogueEditorError(
                     f"{profile.rows}줄을 넘는 수정 대사는 저장할 수 "
                     f"없습니다: {self.ids[index]} ({line_count}줄)"
+                )
+            if profile.row_policy == "automatic" and "\n" in self.value(index):
+                raise DialogueEditorError(
+                    f"{self.ids[index]}: 자동 줄바꿈 슬롯에는 수동 줄바꿈을 "
+                    "저장할 수 없습니다."
+                )
+            if profile.row_policy == "automatic" and measurement.row_overflow:
+                raise DialogueEditorError(
+                    f"{self.ids[index]}: 런타임 자동 줄바꿈 결과가 "
+                    f"{profile.rows}줄을 넘습니다(현재 {line_count}줄)."
                 )
 
     def control_context(
@@ -2650,6 +2699,12 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
                     layout=EditorLayoutProfile(
                         columns,
                         rows,
+                        row_policy=(
+                            "automatic"
+                            if isinstance(raw_layout, dict)
+                            and raw_layout.get("runtime_auto_wrap", False)
+                            else "maximum"
+                        ),
                         label=SOURCE_GROUP_LABELS[group],
                     ),
                     unit_index=_source_unit(source),
@@ -3331,6 +3386,11 @@ def format_entry_metadata(
 
     source_file = metadata["source_file"]
     source_name = Path(source_file).name if source_file else "?"
+    row_policy_label = {
+        "exact": "행고정",
+        "automatic": "자동줄바꿈",
+        "maximum": "최대",
+    }[layout_profile.row_policy]
     return (
         f"{index + 1}/{len(document)}  "
         f"분류={metadata['source_group']}  "
@@ -3340,7 +3400,7 @@ def format_entry_metadata(
         f"status={metadata['status'] or '?'}  "
         f"max_glyphs={limit if limit is not None else '미확정'}  "
         f"profile={layout_profile.columns}×{layout_profile.rows}/"
-        f"{'행고정' if layout_profile.row_policy == 'exact' else '최대'}  "
+        f"{row_policy_label}  "
         f"layout={limit_state}  "
         f"slot={storage_state}  "
         f"unit_pool={unit_storage_state}"
@@ -4743,7 +4803,11 @@ def run_gui(
                     + (
                         "행 수 고정 · "
                         if profile.row_policy == "exact"
-                        else ""
+                        else (
+                            "런타임 자동 줄바꿈 · "
+                            if profile.row_policy == "automatic"
+                            else ""
+                        )
                     )
                     + "자형은 참고용"
                 )
@@ -4839,6 +4903,13 @@ def run_gui(
                     "자동 배치 제외",
                     f"이 항목은 {profile.rows}행 위치를 정확히 보존해야 "
                     "하므로 자동 배치를 적용하지 않습니다.",
+                )
+                return
+            if profile.row_policy == "automatic":
+                messagebox.showwarning(
+                    "수동 줄바꿈 제외",
+                    "이 항목은 게임이 자동으로 줄을 바꾸며, 저장된 수동 "
+                    "줄바꿈은 제어코드 위치를 바꾸므로 적용하지 않습니다.",
                 )
                 return
             before = self.current_text()

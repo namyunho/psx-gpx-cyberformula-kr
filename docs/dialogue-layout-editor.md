@@ -11,11 +11,11 @@ GUI다. 기본 통합 작업공간은 다음 항목을 불러온다.
 | 본편 직접 포인터 대사 | 5,783 | `work/translations/disc1-dialogue-ko-candidate.json` |
 | 무포인터 선택·대사 | 84 | `data/translations/disc1-pointerless-pages-u00-u21-ko.json` |
 | 추가 분기·순차 대사 | 291 | `data/translations/disc1-unindexed-font-ko.json` |
-| 추가 경기 대사 | 325 | `data/translations/disc1-unindexed-font-ko.json` |
-| 미니게임 대사·요리 런타임 단어 | 322 | `data/translations/disc1-special-screen-ko.json` |
+| 추가 경기 대사 | 333 | `data/translations/disc1-unindexed-font-ko.json` |
+| 미니게임 대사·요리 런타임 단어 | 327 | `data/translations/disc1-special-screen-ko.json` |
 | 추가 미니게임 분기·결과 | 73 | `data/translations/disc1-unindexed-font-ko.json` |
 | 코스 설명 | 57 | `data/translations/disc1-special-screen-ko.json` |
-| 머신 설정 설명 | 12 | `data/translations/disc1-special-screen-ko.json` |
+| 머신 설정 설명·순차 분기 | 32 | `data/translations/disc1-special-screen-ko.json` |
 | 저장·불러오기 메시지 | 27 | `data/translations/disc1-unindexed-font-ko.json` |
 | 폰트 렌더링 UI 리터럴 | 4 | `data/translations/disc1-ui-ko.json` |
 | 고정 주인공명·화자명 | 36 | `data/translations/disc1-character-names.json` |
@@ -24,7 +24,7 @@ GUI다. 기본 통합 작업공간은 다음 항목을 불러온다.
 편집 행이 2개 많다. 표시 글리프가 하나도 없는 제어 전용 센티널 1개는
 목록에서 제외한다. 이름 입력용 한자·가나·영문 팔레트와 가변 런타임 버퍼는
 번역 문장이 아니므로 보호하고, 그래픽 버튼·라벨·타이틀은 그래픽 작업
-범위로 남긴다. 현재 통합 목록은 총 7,014행이다. 추가 716개는 정적 소비자
+범위로 남긴다. 현재 통합 목록은 총 7,049행이다. 추가 724개는 정적 소비자
 계열과 원본 바이트를 확인했지만 실제 색인 진입 경로와 재삽입 정책은 아직
 실행 검증 전이므로 편집기 상태에도 이를 명시한다.
 
@@ -117,11 +117,11 @@ GUI를 열지 않고 입력 구조와 항목별 레이아웃 초과 수를 확�
 
 | 항목 | 값 | 판정 |
 |---|---:|---|
-| 통합 편집 행 | 7,014 | 빈 번역 0 |
-| 원문 줄바꿈 그대로의 화면 초과 | 110 | 추가 716개 초과 0, 기존 후보 수동 줄바꿈 검토 목록 |
+| 통합 편집 행 | 7,049 | 빈 번역 0 |
+| 원문 줄바꿈 그대로의 화면 초과 | 110 | 추가 724개 초과 0, 기존 후보 수동 줄바꿈 검토 목록 |
 | 재삽입 감사의 파생 17×3 배치 | 5,783/5,783 | 기계 배치 차단 0, 사람 검토 필요 |
 | 개별 고정 슬롯 초과 | 1,724 | 공용 재배치 또는 축약 검토 |
-| unit 공용 총량 초과 | 0 unit | 본편 35 unit 현재 후보 기준 |
+| unit 공용 총량 초과 | 1 unit (`u24`, 2바이트) | 현재 저장 정본 기준, 다음 통합 빌드 전 축약 또는 검증된 공백 압축 필요 |
 | 짧은 행 검토 후보 | 1,105 | 오류가 아닌 수동 검토 후보 |
 
 편집기는 정본의 수동 줄바꿈을 그대로 보여 주고,
@@ -135,6 +135,7 @@ GUI를 열지 않고 입력 구조와 항목별 레이아웃 초과 수를 확�
 - 분류 선택: 본편, 무포인터, 추가 순차, 추가 경기, 미니게임, 코스, 머신
   설정, 저장·불러오기, UI, 캐릭터 이름
 - 항목별 실제 셀 프로필 미리보기
+- 고정 제어코드 스트림의 런타임 17열 자동 줄바꿈 미리보기와 수동 개행 차단
 - 행별 사용량, 표시 글리프 합계와 초과 경고
 - `한도 초과만` 필터와 초과 목록 안의 검색·이전·다음 이동
 - `안전 슬롯 초과만` 필터와 개별 원본 슬롯 바이트 막대

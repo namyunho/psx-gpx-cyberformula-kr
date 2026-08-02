@@ -75,7 +75,7 @@ class ImportSpecialScreenTranslationBatchesTests(unittest.TestCase):
         ]
         merged_ids = [entry["id"] for entry in merged["translations"]]
         self.assertEqual(merged_ids, work_ids)
-        self.assertEqual(len(merged_ids), 398)
+        self.assertEqual(len(merged_ids), 418)
         self.assertEqual(
             merged["translations"][0]["ko"],
             self.translated_batches[0]["entries"][0]["ko"],
@@ -84,7 +84,7 @@ class ImportSpecialScreenTranslationBatchesTests(unittest.TestCase):
         self.assertEqual(report["validation"]["issue_counts"], {})
         self.assertTrue(report["protected_batch_fields_unchanged"])
         self.assertEqual(report["historical_batch_entry_count"], 391)
-        self.assertEqual(report["canonical_tail_entry_count"], 7)
+        self.assertEqual(report["canonical_tail_entry_count"], 27)
 
     def test_rejects_changes_outside_the_ko_field(self) -> None:
         translated = copy.deepcopy(self.translated_batches)

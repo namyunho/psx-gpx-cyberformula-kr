@@ -104,7 +104,7 @@ REVIEWED_START_TRIMS = {
     (34, 0x04204): 0x04230,
 }
 
-EXPECTED_DISCOVERY_CANDIDATE_COUNT = 776
+EXPECTED_DISCOVERY_CANDIDATE_COUNT = 784
 EXPECTED_FALSE_POSITIVE_COUNT = 60
 EXPECTED_ENTRY_COUNTS_BY_UNIT = {
     2: 1,
@@ -125,6 +125,7 @@ EXPECTED_ENTRY_COUNTS_BY_UNIT = {
     17: 41,
     18: 11,
     19: 7,
+    28: 8,
     30: 55,
     31: 57,
     32: 56,
@@ -203,6 +204,10 @@ def decode_visible_text(tokens: Iterable[int], glyphs: dict[int, str]) -> str:
 def terminal_tokens_for_unit(unit_index: int) -> frozenset[int]:
     if 0 <= unit_index <= 20 or unit_index == 38:
         return frozenset({0x8000})
+    if unit_index == 28:
+        # A pointer-backed FFFF page at 0x0F34 falls through to eight 8000
+        # event pages.  Treating all u21..u34 as FFFF-only hid this branch.
+        return frozenset({0x8000, 0xFFFF, 0xD003})
     if 21 <= unit_index <= 34:
         return frozenset({0xFFFF, 0xD003})
     return frozenset({0x8000, 0xFFFF})
@@ -312,7 +317,7 @@ def known_intervals_by_unit(
 def classification_for_unit(unit_index: int) -> str:
     if 0 <= unit_index <= 20:
         return "sequential_event_page"
-    if 30 <= unit_index <= 34:
+    if unit_index == 28 or 30 <= unit_index <= 34:
         return "indexed_race_page"
     if unit_index == 38:
         return "indexed_minigame_page"
@@ -326,6 +331,12 @@ def consumer_evidence_for_unit(unit_index: int) -> str:
         return (
             "IDA/Ghidra: main renderer reads *(u16 *)(base + cursor * 2); "
             "0x8000 pauses without resetting the advanced cursor"
+        )
+    if unit_index == 28:
+        return (
+            "u28 0x0F34 directly referenced FFFF page is immediately "
+            "followed by eight speaker/audio-valid 8000 pages; mixed-terminal "
+            "fall-through branch, runtime path QA still required"
         )
     if 30 <= unit_index <= 34:
         return (
@@ -521,6 +532,7 @@ def build_workset(
             "included": [
                 "sequential event pages in u02..u19",
                 "indexed or branch-selected race pages in u30..u34",
+                "mixed-terminal fall-through branch pages in u28",
                 "additional mini-game branch/result pages in u38",
                 "save-system messages in u39",
             ],

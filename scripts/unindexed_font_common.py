@@ -12,10 +12,10 @@ import struct
 from typing import Any
 
 
-EXPECTED_ENTRY_COUNT = 716
+EXPECTED_ENTRY_COUNT = 724
 EXPECTED_CLASSIFICATION_COUNTS = {
     "indexed_minigame_page": 73,
-    "indexed_race_page": 325,
+    "indexed_race_page": 333,
     "save_ui_stream": 27,
     "sequential_event_page": 291,
 }

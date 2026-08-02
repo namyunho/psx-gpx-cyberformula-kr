@@ -3,12 +3,12 @@
   "status": "complete-draft-translation-needs-independent-language-and-runtime-review",
   "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
   "source_workset": "work/translations/disc1-unindexed-font-text.json",
-  "source_workset_sha256": "2df58bf28867c9a547b9eb41c482eeb95367151bda7477dc96e2b16b30604e20",
+  "source_workset_sha256": "6fafa734fc6f8d9760c5286577f8e875ba7fea4a8ba0e02894a265fc5aa5b707",
   "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
-  "manual_translation_source_sha256": "f9ffdbc9639ca55169bbfdf1dfd448c4aeff97cbfc957e68491b95daaed6a6bb",
+  "manual_translation_source_sha256": "c4a9546b5bb593e57b983c20f65147caf2c0ae2227e809ed43c6e8e5abfeab2c",
   "scope": {
-    "entry_count": 716,
-    "new_unique_text_count": 288,
+    "entry_count": 724,
+    "new_unique_text_count": 296,
     "ambiguous_context_override_count": 14,
     "graphics_text_excluded": true
   },
@@ -18,10 +18,10 @@
     "review": "Codex draft; independent language review and user runtime review are required before release eligibility"
   },
   "summary": {
-    "translation_count": 716,
+    "translation_count": 724,
     "empty_translation_count": 0,
     "provenance_counts": {
-      "manual-context-or-new-translation": 298,
+      "manual-context-or-new-translation": 306,
       "manual-existing-ambiguity-resolution": 5,
       "reused-identical-existing-japanese": 378,
       "reused-identical-new-japanese": 35
@@ -1773,6 +1773,54 @@
       "ko": "레이스 준비를\n한다.\n아직 안 한다.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00F72",
+      "ko": "오늘 저 사람,\n기합이 대단하네.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FA4",
+      "ko": "…그래?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FB2",
+      "ko": "응.\n곁에 가면 감전될 것 같아.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p00FE4",
+      "ko": "그렇다니까.\n…그렇지, 레나?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01012",
+      "ko": "…뭐? 무슨 일 있었어?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01032",
+      "ko": "그건 비·밀.\n여자들만의 비밀이지~♪",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01062",
+      "ko": "…무조건 이겨 주겠어…!\n어떻게 해서든…!\n오늘만큼은…!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p0109A",
+      "ko": "…힘내! {name:given}!\n…부탁이야!!",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p04692",
@@ -4218,7 +4266,7 @@
     },
     {
       "id": "disc1/allbin/u39/unindexed_font/p0610C",
-      "ko": "저장 중입니다.\n메모리 카드를\n빼지 마세요.",
+      "ko": "저장 중입니다.\n메모리 카드를 빼지 마세요",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },

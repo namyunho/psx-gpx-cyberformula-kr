@@ -164,7 +164,7 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
 
         summary = document.validation_summary()
-        self.assertEqual(len(document), 7021)
+        self.assertEqual(len(document), 7049)
         self.assertEqual(
             summary["source_group_counts"],
             {
@@ -172,10 +172,10 @@ class DialogueLayoutEditorTests(unittest.TestCase):
                 "course_information": 57,
                 "font_ui": 4,
                 "garage_menu": 2,
-                "machine_setting": 12,
+                "machine_setting": 32,
                 "minigame": 400,
                 "pointerless_page": 84,
-                "race_dialogue": 325,
+                "race_dialogue": 333,
                 "save_system": 27,
                 "sequential_dialogue": 291,
                 "story_dialogue": 5783,
@@ -192,6 +192,28 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         self.assertEqual(
             document.layout_profile(minigame_index).rows,
             3,
+        )
+        sequential_setting_index = document.ids.index(
+            "disc1/allbin/u43/machine_setting_sequence/confirm_prompt"
+        )
+        sequential_setting_profile = document.layout_profile(
+            sequential_setting_index
+        )
+        self.assertEqual(
+            document.source_group(sequential_setting_index),
+            "machine_setting",
+        )
+        self.assertEqual(
+            sequential_setting_profile.row_policy,
+            "automatic",
+        )
+        self.assertLessEqual(
+            len(document.layout_measurement(sequential_setting_index).lines),
+            sequential_setting_profile.rows,
+        )
+        self.assertIn(
+            "자동줄바꿈",
+            format_entry_metadata(document, sequential_setting_index),
         )
         save_index = document.ids.index(
             "disc1/allbin/u39/unindexed_font/p05F98"

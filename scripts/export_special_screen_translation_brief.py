@@ -69,11 +69,25 @@ def draft_issues(entry: dict[str, Any], text: str) -> list[str]:
     lines = text.split("\n")
     max_positions = editable_position_capacity(entry)
     max_columns = int(entry["layout"]["columns"])
+    max_rows = int(entry["layout"]["rows"])
+    runtime_auto_wrap = bool(
+        entry["layout"].get("runtime_auto_wrap", False)
+    )
     issues: list[str] = []
-    if len(lines) > int(entry["layout"]["rows"]):
-        issues.append("row_limit")
-    if any(visible_length(line) > max_columns for line in lines):
-        issues.append("column_limit")
+    if runtime_auto_wrap:
+        if len(lines) != 1:
+            issues.append("explicit_wrap_not_supported")
+        wrapped_rows = max(
+            1,
+            (visible_length(text) + max_columns - 1) // max_columns,
+        )
+        if wrapped_rows > max_rows:
+            issues.append("row_limit")
+    else:
+        if len(lines) > max_rows:
+            issues.append("row_limit")
+        if any(visible_length(line) > max_columns for line in lines):
+            issues.append("column_limit")
     positions = stored_position_count(text)
     if positions > max_positions:
         issues.append("slot_limit")
@@ -260,7 +274,15 @@ def main() -> None:
             args.batch_output_dir
             / f"disc1-special-screen-batch-{batch_index:03d}.json"
         )
-        write_json(batch_path, batch)
+        reviewed_path = batch_path.with_name(
+            f"{batch_path.stem}-ko{batch_path.suffix}"
+        )
+        # A paired -ko file is an externally reviewed historical handoff.
+        # Never rewrite its protected source partner when the workset later
+        # grows; the importer deliberately treats the reviewed batches as a
+        # stable prefix and uses the canonical translation for the new tail.
+        if not reviewed_path.exists():
+            write_json(batch_path, batch)
         batch_paths.append(str(batch_path))
     manifest = {
         "schema_version": 1,
