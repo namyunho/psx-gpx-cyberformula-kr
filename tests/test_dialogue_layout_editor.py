@@ -18,6 +18,8 @@ from scripts.dialogue_layout_editor import (
     expand_display_tokens,
     filter_entry_indices,
     format_entry_metadata,
+    glyph_advance_px,
+    line_pixel_width,
     literal_match_count,
     load_control_contexts,
     load_safe_slot_records,
@@ -344,6 +346,8 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
         self.assertTrue(measurement.fits)
         self.assertEqual(measurement.line_widths, (17, 17, 17))
+        self.assertEqual(measurement.line_pixel_widths, (238, 238, 238))
+        self.assertEqual(measurement.pixel_capacity_per_line, 238)
         self.assertEqual(measurement.visible_glyph_count, 51)
         self.assertEqual(measurement.occupied_positions, 51)
 
@@ -360,6 +364,30 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         self.assertTrue(total_overflow.row_overflow)
         self.assertEqual(total_overflow.limit_reasons, ("total", "rows"))
 
+    def test_measures_halfwidth_visual_advance_without_relaxing_slots(
+        self,
+    ) -> None:
+        measurement = measure_layout("가 나!?")
+        self.assertEqual(measurement.line_widths, (5,))
+        self.assertEqual(measurement.line_pixel_widths, (52,))
+        self.assertEqual(measurement.visual_pixel_overflow_rows, ())
+        self.assertEqual(glyph_advance_px("가"), 14)
+        self.assertEqual(glyph_advance_px(" "), 8)
+        self.assertEqual(line_pixel_width("!(),.?"), 48)
+
+        visually_narrow_overflow = measure_layout(" " * 18)
+        self.assertEqual(visually_narrow_overflow.line_widths, (18,))
+        self.assertEqual(visually_narrow_overflow.line_pixel_widths, (144,))
+        self.assertFalse(visually_narrow_overflow.fits)
+        self.assertEqual(
+            visually_narrow_overflow.column_overflow_rows,
+            (1,),
+        )
+        self.assertEqual(
+            visually_narrow_overflow.visual_pixel_overflow_rows,
+            (),
+        )
+
     def test_expands_only_fixed_name_placeholders(self) -> None:
         self.assertEqual(
             expand_display_tokens(
@@ -369,6 +397,7 @@ class DialogueLayoutEditorTests(unittest.TestCase):
         )
         measurement = measure_layout("{name:surname}\n{name:given}")
         self.assertEqual(measurement.line_widths, (2, 4))
+        self.assertEqual(measurement.line_pixel_widths, (28, 56))
 
     def test_conservative_wrap_balances_first_dialogue(self) -> None:
         source = (

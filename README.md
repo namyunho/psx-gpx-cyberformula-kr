@@ -46,7 +46,11 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).
 스트림 감사에서 확인한 순차·경기·미니게임·저장 문자열 724개까지 현재 식별한
 그래픽 제외 폰트 문자열을 담은 비배포 개발 이미지를 생성했습니다. 정적
 검증은 통과했지만 새 색인·분기와 저장 경로의 사용자 실행 검증은 남아
-있습니다.
+있습니다. 2026-08-03에는 기존 대사와 줄바꿈을 바꾸지 않고 공백과
+`! ( ) , . ?`의 화면 진행 폭만 8px로 줄인 Disc 1·2 시험 이미지를 만들었으며,
+이름 치환이 앞선 반각 좌표를 이어받지 못하던 회귀도 수정했습니다. 두 이미지
+모두 556개 변경 sector의 정적 검증을 통과했습니다. 반각판의 화면 실행 검증과
+목적별 기능 브랜치의 main 통합은 아직 남아 있습니다.
 
 ## 진행 상태
 
@@ -62,7 +66,7 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).
 | Galmuri11 사용 프로필 | ✅ 완료 — TTF 12px, 실제 최대 11×11 잉크, 14×14 셀 배치 |
 | 최초 한글 가시성 PoC | ✅ 통과 — 역사적 Galmuri14 시험으로 DuckStation 본문 렌더 경로 확인 |
 | Galmuri11 본문 출력 | ✅ 실행 확인 — 첫 대사 PoC 이후 전체 대사 개발 빌드에서도 14×14 셀 렌더 경로 확인 |
-| 반각 공백·문장부호 | 🚧 정적 검증 완료 — 공백·`() , . ! ?`의 화면 진행 폭만 14px→8px, 기존 대사·줄바꿈·17칸 논리 배치 불변; Disc 1·2 실행 검증 필요 |
+| 반각 공백·문장부호 | 🚧 정적 검증 완료 — 공백·`() , . ! ?`의 화면 진행 폭만 14px→8px, 이름 치환은 누적 좌표를 이어받되 14px 유지, 기존 대사·줄바꿈·17칸 논리 배치 불변; Disc 1·2 실행 검증 필요 |
 | 한글 저장·인코딩 | ✅ 정적 경로 확정 — 현재 그래픽 제외 전체 폰트 빌드의 1,041자를 primary 1,229슬롯에 배치하고 대사 토큰 직접 재인코딩, 훅 불필요 |
 | 고정 주인공명·화자명 | ✅ 실행 확인 — `시바` 2칸+`세이치로` 4칸과 화자명·용어집 표기가 실제 화면에서 정상 표시 |
 | 그래픽 현지화 분모 | ✅ 구조 완료 — 1,739개 그래픽 관련 state 역할 분류 |
@@ -194,7 +198,7 @@ tmp/                    비커밋 임시 캡처
 | [`u00..u34` 전체 대사 비배포 빌드](docs/full-dialogue-nonrelease-build.md) | 직접+무포인터 5,866개, 이름·UI, 453 sector 검증과 제2장 종료 관측 |
 | [그래픽 제외 전체 폰트 문자열 비배포 빌드](docs/all-font-text-nonrelease-build.md) | 전체 대사·이름·UI·특수 화면 391개, 글꼴 완전성과 469 sector 검증 |
 | [프로젝트 진행 요약](docs/project-progress-summary.md) | 원본 조사부터 현재 통합 비배포 빌드와 남은 작업까지의 전체 작업 요약 |
-| [통합 폰트 번역 편집기](docs/dialogue-layout-editor.md) | 본편·무포인터·미니게임·코스·머신 설정·UI·이름을 원본별로 안전 저장하는 검수 GUI |
+| [통합 폰트 번역 편집기](docs/dialogue-layout-editor.md) | 본편·무포인터·미니게임·코스·머신 설정·UI·이름을 원본별로 안전 저장하며 17열 논리 한도와 반각 적용 픽셀 폭을 함께 보여 주는 검수 GUI |
 | [Git 작업 흐름](docs/git-workflow.md) | `main`과 목적별 단기 브랜치, 검증·병합·태그 정책 |
 | [역공학 MCP 운용](docs/reverse-engineering-mcp.md) | IDA Pro·idalib·Ghidra의 상호보완적 사용과 PS1 import 규칙 |
 | [GPU 업로드 원본 추적](docs/gpu-upload-source-tracing.md) | 화면→VRAM→DMA2/RAM→저장 자산을 연결하는 미실행 조사 절차 |
@@ -358,10 +362,13 @@ LBA를 보존합니다.
   --build-dir work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
 ```
 
-현재 Disc 2 개발 Track 1의 SHA-256은
-`1849918d8719ddc274b71b23b664e90350c7523977bcfef82ea173deb75eabd8`이며,
-548개 raw sector의 Expected Write·EDC/ECC·재추출 검증을 통과했습니다. 전체
-이미지는 비커밋 로컬 산출물이고 Disc 1 종료 뒤 교체 실행 검증은 남아 있습니다.
+현재 수동 검수 대사와 이름 좌표 수정을 반영한 반각 시험 Track 1의 SHA-256은
+Disc 1 `159b40630204c53f3adcd8029db024c251a22d2c1dc140a4fb8f4d4d01450e49`,
+Disc 2 `f767043a3d9c54b7c8e1f7e9422f505771691ec6d70ea464f6ed4f3e5c7215af`이며,
+각각 556개 raw sector의 Expected Write·EDC/ECC·재추출 검증을 통과했습니다.
+전체 이미지는 비커밋 로컬 산출물이고 이 반각판의 화면 실행 검증은 남아
+있습니다. 기능 브랜치와 실행 증거의 정확한 귀속은
+[`docs/project-progress-summary.md`](docs/project-progress-summary.md)를 따릅니다.
 
 ## 도구체인
 

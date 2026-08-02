@@ -238,14 +238,40 @@ def build_translation(
             )
         if not ko:
             raise ValueError(f"{entry_id}: Korean translation is empty")
-        output_entries.append(
-            {
-                "id": entry_id,
-                "ko": ko,
-                "review_status": "needs-independent-and-runtime-review",
-                "provenance": provenance,
-            }
-        )
+        output_entry = {
+            "id": entry_id,
+            "ko": ko,
+            "review_status": "needs-independent-and-runtime-review",
+            "provenance": provenance,
+        }
+        if entry_id in manual_by_id:
+            visual_width_reviewed = manual_by_id[entry_id].get(
+                "layout_visual_width_reviewed",
+                False,
+            )
+            if not isinstance(visual_width_reviewed, bool):
+                raise ValueError(
+                    f"{entry_id}: visual-width review flag must be boolean"
+                )
+            if visual_width_reviewed:
+                output_entry["layout_visual_width_reviewed"] = True
+            allowance = manual_by_id[entry_id].get(
+                "layout_overflow_allowance_px",
+                0,
+            )
+            if not isinstance(allowance, int) or allowance < 0:
+                raise ValueError(
+                    f"{entry_id}: layout overflow allowance must be a "
+                    "non-negative integer"
+                )
+            if allowance:
+                if not visual_width_reviewed:
+                    raise ValueError(
+                        f"{entry_id}: pixel allowance requires reviewed "
+                        "visual width"
+                    )
+                output_entry["layout_overflow_allowance_px"] = allowance
+        output_entries.append(output_entry)
         provenance_counts[provenance] += 1
 
     # Count the exact-ID overrides that resolve pre-existing ambiguity.

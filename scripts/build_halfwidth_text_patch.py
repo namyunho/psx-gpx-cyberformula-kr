@@ -121,6 +121,8 @@ def main() -> None:
             "logical_layout_unchanged": True,
             "dialogue_source_bytes_unchanged": True,
             "explicit_line_breaks_unchanged": True,
+            "name_substitution_inherits_reduction": True,
+            "name_substitution_advance_px": FULL_ADVANCE_PX,
             "full_advance_px": FULL_ADVANCE_PX,
             "half_advance_px": HALF_ADVANCE_PX,
             "halfwidth_characters": list(HALFWIDTH_CHARACTERS),

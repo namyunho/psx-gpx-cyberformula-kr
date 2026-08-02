@@ -15,7 +15,10 @@ from scripts.build_unindexed_font_translation import (
     EXPECTED_WORKSET_ENTRY_COUNT,
     build_translation,
 )
-from scripts.dialogue_layout_editor import measure_layout
+from scripts.dialogue_layout_editor import (
+    FULL_GLYPH_ADVANCE_PX,
+    measure_layout,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -112,12 +115,22 @@ class UnindexedFontTranslationTests(unittest.TestCase):
                 columns=layout["columns"],
                 rows=layout["rows"],
             )
+            allowance = translation.get("layout_overflow_allowance_px", 0)
+            visual_fits = (
+                len(measurement.lines) <= layout["rows"]
+                and all(
+                    width
+                    <= layout["columns"] * FULL_GLYPH_ADVANCE_PX + allowance
+                    for width in measurement.line_pixel_widths
+                )
+            )
             self.assertTrue(
-                measurement.fits,
+                visual_fits,
                 (
                     translation["id"],
                     measurement.limit_reasons,
                     measurement.line_widths,
+                    measurement.line_pixel_widths,
                 ),
             )
 

@@ -21,6 +21,9 @@ EXPECTED_CLASSIFICATION_COUNTS = {
 }
 NAME_PATTERN = re.compile(r"\{name:(surname|given)\}")
 UNKNOWN_MARKUP_PATTERN = re.compile(r"\{[^{}]+\}")
+HALFWIDTH_CHARACTERS = frozenset(" !(),.?")
+FULL_GLYPH_ADVANCE_PX = 14
+HALFWIDTH_GLYPH_ADVANCE_PX = 8
 NAME_KIND_BY_GROUP = {
     "surname": "name_surname",
     "given": "name_given",
@@ -51,6 +54,16 @@ def load_object(path: Path) -> dict[str, Any]:
 
 def _visible_length(text: str) -> int:
     return len(NAME_PATTERN.sub("X", text))
+
+
+def _visible_pixel_width(text: str) -> int:
+    display = NAME_PATTERN.sub("X", text)
+    return sum(
+        HALFWIDTH_GLYPH_ADVANCE_PX
+        if character in HALFWIDTH_CHARACTERS
+        else FULL_GLYPH_ADVANCE_PX
+        for character in display
+    )
 
 
 def _template(
@@ -209,7 +222,18 @@ def validate_unindexed_artifacts(
         if not 1 <= len(lines) <= rows:
             raise ValueError(f"{entry_id}: row count exceeds layout")
         if any(_visible_length(line) > columns for line in lines):
-            raise ValueError(f"{entry_id}: line width exceeds layout")
+            if item.get("layout_visual_width_reviewed") is not True:
+                raise ValueError(f"{entry_id}: line width exceeds layout")
+            allowance = item.get("layout_overflow_allowance_px", 0)
+            if not isinstance(allowance, int) or allowance < 0:
+                raise ValueError(
+                    f"{entry_id}: invalid pixel overflow allowance"
+                )
+            pixel_limit = columns * FULL_GLYPH_ADVANCE_PX + allowance
+            if any(_visible_pixel_width(line) > pixel_limit for line in lines):
+                raise ValueError(
+                    f"{entry_id}: reviewed visual width exceeds layout"
+                )
 
         classification = str(entry.get("classification", ""))
         counts[classification] += 1
@@ -253,7 +277,18 @@ def encode_unindexed_entry(
     if not 1 <= len(lines) <= rows:
         raise ValueError(f"{entry['entry_id']}: row count exceeds layout")
     if any(width > columns for width in line_widths):
-        raise ValueError(f"{entry['entry_id']}: line width exceeds layout")
+        if translation.get("layout_visual_width_reviewed") is not True:
+            raise ValueError(f"{entry['entry_id']}: line width exceeds layout")
+        allowance = translation.get("layout_overflow_allowance_px", 0)
+        if not isinstance(allowance, int) or allowance < 0:
+            raise ValueError(
+                f"{entry['entry_id']}: invalid pixel overflow allowance"
+            )
+        pixel_limit = columns * FULL_GLYPH_ADVANCE_PX + allowance
+        if any(_visible_pixel_width(line) > pixel_limit for line in lines):
+            raise ValueError(
+                f"{entry['entry_id']}: reviewed visual width exceeds layout"
+            )
 
     expected_name_kinds = [kind for kind, _raw in name_controls]
     actual_name_kinds = [

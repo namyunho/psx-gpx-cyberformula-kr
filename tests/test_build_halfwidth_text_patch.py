@@ -9,6 +9,7 @@ from scripts.build_halfwidth_text_patch import (
     RENDERER_START,
     patch_renderer,
 )
+from scripts.mips_disasm import disassemble_binary
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -47,6 +48,25 @@ class HalfwidthTextPatchTests(unittest.TestCase):
             end = RENDERER_END - EXE_FILE_BASE
             self.assertEqual(before[:start], after[:start])
             self.assertEqual(before[end:], after[end:])
+
+            instructions = {
+                row["address"]: row
+                for row in disassemble_binary(
+                    output,
+                    start_address=RENDERER_START,
+                    count=RENDERER_END - RENDERER_START,
+                )["instructions"]
+            }
+            self.assertEqual(
+                instructions["0x8003285C"]["mnemonic"],
+                "nop",
+            )
+            name_state_branch = instructions["0x80032918"]
+            self.assertEqual(name_state_branch["mnemonic"], "beqz")
+            self.assertEqual(
+                name_state_branch["operands"],
+                "$s3, 0x80032950",
+            )
 
     def test_complete_build_keeps_dialogue_outputs_byte_exact(self) -> None:
         base = ROOT / "work/build" / (

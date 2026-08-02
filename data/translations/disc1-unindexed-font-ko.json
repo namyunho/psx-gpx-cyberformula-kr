@@ -5,7 +5,7 @@
   "source_workset": "work/translations/disc1-unindexed-font-text.json",
   "source_workset_sha256": "6fafa734fc6f8d9760c5286577f8e875ba7fea4a8ba0e02894a265fc5aa5b707",
   "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
-  "manual_translation_source_sha256": "c4a9546b5bb593e57b983c20f65147caf2c0ae2227e809ed43c6e8e5abfeab2c",
+  "manual_translation_source_sha256": "27ec5b41e06fae6f5aa770eb0451492a446117cd741a8a2fee26d70003f6f49c",
   "scope": {
     "entry_count": 724,
     "new_unique_text_count": 296,
@@ -21,9 +21,9 @@
     "translation_count": 724,
     "empty_translation_count": 0,
     "provenance_counts": {
-      "manual-context-or-new-translation": 306,
+      "manual-context-or-new-translation": 325,
       "manual-existing-ambiguity-resolution": 5,
-      "reused-identical-existing-japanese": 378,
+      "reused-identical-existing-japanese": 359,
       "reused-identical-new-japanese": 35
     }
   },
@@ -1632,7 +1632,7 @@
     },
     {
       "id": "disc1/allbin/u17/unindexed_font/p01DA4",
-      "ko": "오늘은 카가와 같은 조지.\n그 녀석과 달리며\n자기 틀을 깨고 와.",
+      "ko": "오늘은 카가와 같은 그룹이지.\n그 녀석과 달리며\n자기 틀을 깨고 와.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },
@@ -1878,9 +1878,10 @@
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p048D4",
-      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p04924",
@@ -2010,9 +2011,10 @@
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p0539A",
-      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p05400",
@@ -2070,9 +2072,11 @@
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p05638",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p0590C",
@@ -2220,9 +2224,10 @@
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p048D4",
-      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p04924",
@@ -2352,9 +2357,10 @@
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p0539A",
-      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p05400",
@@ -2412,9 +2418,11 @@
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p05638",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p056A2",
@@ -2442,9 +2450,10 @@
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p057C2",
-      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 급정지해 볼까. 부딪칠\n생각으로 블록이다!",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에 간다!\n급정지해 볼까. \n부딪칠 생각으로 블록이다!",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p05820",
@@ -2550,9 +2559,10 @@
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p048D4",
-      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p04924",
@@ -2682,9 +2692,9 @@
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p04F4E",
-      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다!\n분명 제멋대로 실수할 거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p04FAE",
@@ -2748,9 +2758,11 @@
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p05244",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p056A2",
@@ -2994,9 +3006,10 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p048D4",
-      "ko": "두 사람의 콤비를 무너뜨린다!\n근성의 몸통박치기, 할 생각으로\n돌진이다! 일단 물러난다.",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진! \n일단 물러난다.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04924",
@@ -3168,9 +3181,9 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04F4E",
-      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! \n분명 제멋대로 실수할 거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04FAE",
@@ -3234,9 +3247,11 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05244",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p052AE",
@@ -3264,9 +3279,10 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p0539A",
-      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이\n다! 분명 제멋대로 실수할거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05400",
@@ -3324,9 +3340,11 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05638",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p056A2",
@@ -3354,9 +3372,10 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p057C2",
-      "ko": "좌우로 흔든 뒤 가속, 단숨에\n간다! 급정지해 볼까. 부딪칠\n생각으로 블록이다!",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에 간다!\n급정지해 볼까. \n부딪칠 생각으로 블록이다!",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05820",
@@ -3372,9 +3391,10 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05878",
-      "ko": "(이런 때에 뭐 하는 거야,\n나!)",
+      "ko": "(이런 때에 뭐 하는 거야, 나!)",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p0589E",
@@ -3624,9 +3644,9 @@
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p04F4E",
-      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! 분명\n제멋대로 실수할 거야.",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다!\n분명 제멋대로 실수할 거야.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p04FAE",
@@ -3690,9 +3710,11 @@
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p05244",
-      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할수있어야지…",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p056A2",

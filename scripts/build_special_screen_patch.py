@@ -331,7 +331,7 @@ def extend_primary_font(
                     "byte_exact_original": True,
                 }
             )
-        elif character == " ":
+        elif character in {" ", "　"}:
             patched[start:end] = bytes(GLYPH_SIZE)
             generated.append(
                 {
@@ -368,7 +368,7 @@ def extend_primary_font(
     if unmapped:
         raise ValueError(f"unmapped special-screen characters: {unmapped}")
     for character in required_characters:
-        if character == " ":
+        if character in {" ", "　"}:
             continue
         index = mapping[character]
         start = FONT_OFFSET + index * GLYPH_SIZE

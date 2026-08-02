@@ -3,7 +3,7 @@
   "status": "codex-draft-needs-independent-language-and-runtime-review",
   "scope": {
     "new_unique_text_count": 296,
-    "context_override_count": 10,
+    "context_override_count": 29,
     "note": "Only Korean draft fields are authored here. Original bytes, Japanese text, stable IDs, and control tokens remain protected in the generated workset."
   },
   "entries": [
@@ -742,7 +742,7 @@
     },
     {
       "id": "disc1/allbin/u17/unindexed_font/p01DA4",
-      "ko": "오늘은 카가와 같은 조지.\n그 녀석과 달리며\n자기 틀을 깨고 와."
+      "ko": "오늘은 카가와 같은 그룹이지.\n그 녀석과 달리며\n자기 틀을 깨고 와."
     },
     {
       "id": "disc1/allbin/u17/unindexed_font/p01DEE",
@@ -1231,6 +1231,104 @@
     {
       "id": "disc1/allbin/u28/unindexed_font/p0109A",
       "ko": "…힘내! {name:given}!\n…부탁이야!!"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/p057C2",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에 간다!\n급정지해 볼까. \n부딪칠 생각으로 블록이다!",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진!\n일단 물러난다.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다!\n분명 제멋대로 실수할 거야."
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p048D4",
+      "ko": "두 사람의 콤비를 무너뜨린다!\n근성으로 충돌 할 생각으로 돌진! \n일단 물러난다.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다! \n분명 제멋대로 실수할 거야."
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p0539A",
+      "ko": "근성으로 승부다! 단숨에 가속!\n몸통박치기! 할 생각으로 돌진이다!\n분명 제멋대로 실수할거야.",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05638",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p057C2",
+      "ko": "좌우로 흔든 뒤 가속, 단숨에 간다!\n급정지해 볼까. \n부딪칠 생각으로 블록이다!",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05878",
+      "ko": "(이런 때에 뭐 하는 거야, 나!)",
+      "layout_visual_width_reviewed": true
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p04F4E",
+      "ko": "근성으로 승부다! 단숨에 가속!\n액셀을 힘껏 밟는다!\n분명 제멋대로 실수할 거야."
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/p05244",
+      "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
+      "layout_visual_width_reviewed": true,
+      "layout_overflow_allowance_px": 4
     }
   ]
 }

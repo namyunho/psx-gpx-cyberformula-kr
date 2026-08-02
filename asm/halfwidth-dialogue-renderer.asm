@@ -118,7 +118,11 @@
     ori s1, s1, 0xD000
     addu s1, s1, t4
 
-    beqz s3, @@draw
+    ; Name-substitution glyphs keep their 14px advance, but they must inherit
+    ; the reduction accumulated by half-width direct glyphs earlier on the
+    ; same row.  Skipping this state load made the following direct glyphs
+    ; overlap the unshifted surname/given-name records.
+    nop
     move s2, zero
 
     ; The final word of the 0x8002D000..0x80030000 transient render buffer is
@@ -186,7 +190,9 @@
     addiu a2, a2, 0x70
 
 @@update_state:
-    beqz s3, @@return
+    ; Names are never classified as half-width.  They still update the
+    ; previous logical position while preserving the current reduction.
+    beqz s3, @@store_state
     nop
 
     ; 0x046(space), 0x047(!), 0x04B..0x04D(() ,), 0x04F..0x050(. ?)

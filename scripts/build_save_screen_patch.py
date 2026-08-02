@@ -60,10 +60,10 @@ SAVE_RENDER_POINTER_PATCHES = (
     (0x8003DAC0, 0x24841070, 0x2484F320),
 )
 STATIC_CODE_POINTER_PATCHES = (
-    (0x80039ED4, 0x3C028004, 0x3C028005),
-    (0x80039ED8, 0x3442F35C, 0x34421070),
-    (0x80039F04, 0x3C028004, 0x3C028005),
-    (0x80039F08, 0x3442F364, 0x34421078),
+    (0x80039ED4, (0x3C028004, 0x00641021), 0x3C028005),
+    (0x80039ED8, (0x3442F35C, 0xACC20000), 0x34421070),
+    (0x80039F04, (0x3C028004, 0x24030036), 0x3C028005),
+    (0x80039F08, (0x3442F364, 0x00C31021), 0x34421078),
 )
 
 
@@ -82,15 +82,17 @@ def _patch_word(
     data: bytearray,
     *,
     address: int,
-    expected: int,
+    expected: int | tuple[int, ...],
     replacement: int,
 ) -> tuple[int, int]:
     offset = slps_address_to_file_offset(address)
     actual = struct.unpack_from("<I", data, offset)[0]
-    if actual != expected:
+    expected_values = expected if isinstance(expected, tuple) else (expected,)
+    if actual not in expected_values:
         raise ValueError(
             f"SLPS instruction differs at 0x{address:08X}: "
-            f"0x{actual:08X} != 0x{expected:08X}"
+            f"0x{actual:08X} not in "
+            f"{[f'0x{value:08X}' for value in expected_values]}"
         )
     struct.pack_into("<I", data, offset, replacement)
     return offset, offset + 4
@@ -247,7 +249,11 @@ def patch_save_metadata(
     ):
         raise ValueError("original 3+3 save-name stream differs")
     tail = bytes(patched[SPEAKER_FREE_TAIL_START:SPEAKER_FREE_TAIL_END])
-    if tail[:60] != bytes(60) or struct.unpack_from("<8H", tail, 60) != STATIC_NAME_CODES:
+    prepared_codes = struct.unpack_from("<8H", tail, 60)
+    if tail[:60] != bytes(60) or prepared_codes not in (
+        (0,) * len(STATIC_NAME_CODES),
+        STATIC_NAME_CODES,
+    ):
         raise ValueError("verified speaker free tail / static name codes differ")
 
     metadata = struct.pack(f"<{len(_metadata_words(mapping))}H", *_metadata_words(mapping))

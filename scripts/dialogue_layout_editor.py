@@ -29,6 +29,9 @@ COLUMNS = 17
 ROWS = 3
 CAPACITY = COLUMNS * ROWS
 SHORT_LINE_GLYPH_LIMIT = 6
+FULL_GLYPH_ADVANCE_PX = 14
+HALFWIDTH_GLYPH_ADVANCE_PX = 8
+HALFWIDTH_CHARACTERS = frozenset({" ", "!", "(", ")", ",", ".", "?"})
 DEFAULT_INPUT = Path(
     "work/translations/disc1-dialogue-ko-candidate.json"
 )
@@ -468,6 +471,7 @@ class LayoutMeasurement:
     display_text: str
     lines: tuple[str, ...]
     line_widths: tuple[int, ...]
+    line_pixel_widths: tuple[int, ...]
     visible_glyph_count: int
     occupied_positions: int
     columns: int = COLUMNS
@@ -488,6 +492,23 @@ class LayoutMeasurement:
     @property
     def glyph_capacity_overflow(self) -> bool:
         return self.visible_glyph_count > self.columns * self.rows
+
+    @property
+    def pixel_capacity_per_line(self) -> int:
+        return self.columns * FULL_GLYPH_ADVANCE_PX
+
+    @property
+    def visual_pixel_overflow_rows(self) -> tuple[int, ...]:
+        """Rows wider than the original 14px-per-cell visual envelope.
+
+        This is informational. The game still wraps at the logical column
+        count, so a visually narrow 18-character row remains invalid.
+        """
+        return tuple(
+            index + 1
+            for index, width in enumerate(self.line_pixel_widths)
+            if width > self.pixel_capacity_per_line
+        )
 
     @property
     def limit_reasons(self) -> tuple[str, ...]:
@@ -527,6 +548,22 @@ def expand_display_tokens(text: str) -> str:
     return expanded
 
 
+def glyph_advance_px(character: str) -> int:
+    """Return the patched renderer's horizontal advance for one glyph."""
+    if not isinstance(character, str) or len(character) != 1:
+        raise DialogueEditorError("glyph measurement requires one character")
+    if character in HALFWIDTH_CHARACTERS:
+        return HALFWIDTH_GLYPH_ADVANCE_PX
+    return FULL_GLYPH_ADVANCE_PX
+
+
+def line_pixel_width(text: str) -> int:
+    """Measure one displayed row without changing its logical glyph count."""
+    if not isinstance(text, str):
+        raise DialogueEditorError("line measurement requires a string")
+    return sum(glyph_advance_px(character) for character in text)
+
+
 def measure_layout(
     text: str,
     *,
@@ -539,6 +576,7 @@ def measure_layout(
     display = expand_display_tokens(text.replace("\r\n", "\n").replace("\r", "\n"))
     lines = tuple(display.split("\n"))
     widths = tuple(len(line) for line in lines)
+    pixel_widths = tuple(line_pixel_width(line) for line in lines)
     occupied = (
         (len(lines) - 1) * columns + widths[-1]
         if lines
@@ -549,6 +587,7 @@ def measure_layout(
         display_text=display,
         lines=lines,
         line_widths=widths,
+        line_pixel_widths=pixel_widths,
         visible_glyph_count=sum(widths),
         occupied_positions=occupied,
         columns=columns,
@@ -576,11 +615,13 @@ def measure_runtime_auto_layout(
             for offset in range(0, len(display), columns)
         ) or ("",)
     widths = tuple(len(line) for line in lines)
+    pixel_widths = tuple(line_pixel_width(line) for line in lines)
     return LayoutMeasurement(
         source_text=text,
         display_text=display,
         lines=lines,
         line_widths=widths,
+        line_pixel_widths=pixel_widths,
         visible_glyph_count=sum(widths),
         occupied_positions=sum(widths),
         columns=columns,
@@ -2169,6 +2210,8 @@ class DialogueDocument:
         line_width_overflow = 0
         row_count_overflow = 0
         exact_row_mismatch = 0
+        visual_pixel_overflow = 0
+        maximum_line_pixel_width = 0
         storage_slot_measurable = 0
         storage_slot_exact = 0
         storage_slot_under_capacity = 0
@@ -2193,6 +2236,12 @@ class DialogueDocument:
                 row_count_overflow += 1
             if exact_mismatch:
                 exact_row_mismatch += 1
+            if measurement.visual_pixel_overflow_rows:
+                visual_pixel_overflow += 1
+            maximum_line_pixel_width = max(
+                maximum_line_pixel_width,
+                *measurement.line_pixel_widths,
+            )
             if measurement.short_line_rows:
                 short_line_candidates += 1
             if measurement.fits and not exact_mismatch:
@@ -2253,6 +2302,12 @@ class DialogueDocument:
             "line_width_overflow": line_width_overflow,
             "row_count_overflow": row_count_overflow,
             "exact_row_mismatch": exact_row_mismatch,
+            "halfwidth_renderer_enabled": True,
+            "full_glyph_advance_px": FULL_GLYPH_ADVANCE_PX,
+            "halfwidth_glyph_advance_px": HALFWIDTH_GLYPH_ADVANCE_PX,
+            "halfwidth_characters": sorted(HALFWIDTH_CHARACTERS),
+            "visual_pixel_overflow": visual_pixel_overflow,
+            "maximum_line_pixel_width": maximum_line_pixel_width,
             "short_line_candidates": short_line_candidates,
             "control_context_entries": len(self._control_contexts),
             "safe_slot_entries": len(self._safe_slots),
@@ -3391,6 +3446,9 @@ def format_entry_metadata(
         "automatic": "자동줄바꿈",
         "maximum": "최대",
     }[layout_profile.row_policy]
+    pixel_widths = ",".join(
+        str(width) for width in measurement.line_pixel_widths
+    )
     return (
         f"{index + 1}/{len(document)}  "
         f"분류={metadata['source_group']}  "
@@ -3401,6 +3459,8 @@ def format_entry_metadata(
         f"max_glyphs={limit if limit is not None else '미확정'}  "
         f"profile={layout_profile.columns}×{layout_profile.rows}/"
         f"{row_policy_label}  "
+        f"visual_px=[{pixel_widths}]/"
+        f"{measurement.pixel_capacity_per_line}  "
         f"layout={limit_state}  "
         f"slot={storage_state}  "
         f"unit_pool={unit_storage_state}"
@@ -3783,7 +3843,7 @@ def run_gui(
 
             self.preview_frame = ttk.LabelFrame(
                 right,
-                text="17×3 고정 셀 미리보기 — 자형은 참고용",
+                text="17×3 논리 셀 + 반각 폭 미리보기 — 자형은 참고용",
                 padding=8,
             )
             self.preview_frame.pack(fill=tk.X)
@@ -3796,13 +3856,16 @@ def run_gui(
                 textvariable=self.counter_var,
             ).pack(anchor=tk.W, pady=(0, 5))
             self.cell_size = 30
+            self.preview_pixel_scale = 2
             self.canvas_margin = 28
-            self.canvas_marker_width = 64
+            self.canvas_marker_width = 82
             self.preview_canvas = tk.Canvas(
                 self.preview_frame,
                 width=(
                     self.canvas_margin
-                    + COLUMNS * self.cell_size
+                    + COLUMNS
+                    * FULL_GLYPH_ADVANCE_PX
+                    * self.preview_pixel_scale
                     + self.canvas_marker_width
                     + 2
                 ),
@@ -3814,8 +3877,8 @@ def run_gui(
             ttk.Label(
                 self.preview_frame,
                 text=(
-                    "주황 셀은 FFFB 줄바꿈이 건너뛴 위치이며, "
-                    "제어토큰 자체는 글리프 셀을 차지하지 않습니다."
+                    "공백·! ( ) , . ?는 8px, 그 외는 14px입니다. "
+                    "17 논리 글리프 자동 행 전환과 제어토큰은 그대로입니다."
                 ),
             ).pack(anchor=tk.W, pady=(4, 0))
             available_fonts = set(tkfont.families())
@@ -4745,7 +4808,11 @@ def run_gui(
                 else "보호 제어코드 정보 없음"
             )
             width_parts = [
-                f"{index + 1}행 {width}/{profile.columns}"
+                (
+                    f"{index + 1}행 {width}/{profile.columns}글리프 "
+                    f"· {measurement.line_pixel_widths[index]}/"
+                    f"{measurement.pixel_capacity_per_line}px"
+                )
                 for index, width in enumerate(measurement.line_widths)
             ]
             reason_parts: list[str] = []
@@ -4787,7 +4854,9 @@ def run_gui(
             canvas = self.preview_canvas
             canvas_width = (
                 self.canvas_margin
-                + profile.columns * self.cell_size
+                + profile.columns
+                * FULL_GLYPH_ADVANCE_PX
+                * self.preview_pixel_scale
                 + self.canvas_marker_width
                 + 2
             )
@@ -4809,7 +4878,7 @@ def run_gui(
                             else ""
                         )
                     )
-                    + "자형은 참고용"
+                    + "반각 8px/기본 14px · 자형은 참고용"
                 )
             )
             canvas.delete("all")
@@ -4817,10 +4886,19 @@ def run_gui(
             overflow_grid = "#f05b63"
             align_grid = "#a85d00"
             align_fill = "#4c3b22"
+            automatic_grid = "#55708c"
+            automatic_fill = "#263f59"
             normal_fill = "#163b71"
+            glyph_fill = "#214c82"
+            pixel_scale = self.preview_pixel_scale
+            full_advance = FULL_GLYPH_ADVANCE_PX * pixel_scale
             grid_end = (
-                self.canvas_margin + profile.columns * self.cell_size
+                self.canvas_margin + profile.columns * full_advance
             )
+            normalized_text = self.current_text().replace(
+                "\r\n", "\n"
+            ).replace("\r", "\n")
+            stored_newlines = "\n" in normalized_text
             for row in range(profile.rows):
                 canvas.create_text(
                     self.canvas_margin // 2,
@@ -4835,18 +4913,25 @@ def run_gui(
                     else ""
                 )
                 row_overflow = len(line) > profile.columns
-                explicit_align = row < len(measurement.lines) - 1
+                has_next_line = row < len(measurement.lines) - 1
+                automatic_wrap = (
+                    has_next_line
+                    and profile.row_policy == "automatic"
+                    and not stored_newlines
+                )
+                invalid_manual_wrap = (
+                    has_next_line
+                    and profile.row_policy == "automatic"
+                    and stored_newlines
+                )
+                explicit_align = (
+                    has_next_line and profile.row_policy != "automatic"
+                )
                 for column in range(profile.columns):
-                    left = self.canvas_margin + column * self.cell_size
+                    left = self.canvas_margin + column * full_advance
                     top = row * self.cell_size
-                    skipped_by_align = (
-                        explicit_align and column >= len(line)
-                    )
                     if row_overflow:
                         cell_outline = overflow_grid
-                        cell_width = 2
-                    elif skipped_by_align:
-                        cell_outline = align_grid
                         cell_width = 2
                     else:
                         cell_outline = normal_grid
@@ -4854,41 +4939,89 @@ def run_gui(
                     canvas.create_rectangle(
                         left,
                         top,
-                        left + self.cell_size,
+                        left + full_advance,
                         top + self.cell_size,
                         outline=cell_outline,
-                        fill=(
-                            align_fill
-                            if skipped_by_align
-                            else normal_fill
-                        ),
+                        fill=normal_fill,
                         width=cell_width,
                     )
-                    if column < len(line):
+
+                cursor = self.canvas_margin
+                for character_index, character in enumerate(line):
+                    advance = glyph_advance_px(character) * pixel_scale
+                    outline = (
+                        overflow_grid
+                        if character_index >= profile.columns
+                        else normal_grid
+                    )
+                    canvas.create_rectangle(
+                        cursor,
+                        row * self.cell_size,
+                        cursor + advance,
+                        (row + 1) * self.cell_size,
+                        outline=outline,
+                        fill=glyph_fill,
+                        width=2 if row_overflow else 1,
+                    )
+                    if character != " ":
                         canvas.create_text(
-                            left + self.cell_size // 2,
-                            top + self.cell_size // 2,
-                            text=line[column],
+                            cursor + advance // 2,
+                            row * self.cell_size + self.cell_size // 2,
+                            text=character,
                             fill="#ffffff",
                             font=(self.preview_font, 15),
                         )
-                if explicit_align:
+                    cursor += advance
+
+                if has_next_line and cursor < grid_end:
+                    tail_outline = (
+                        align_grid
+                        if explicit_align
+                        else automatic_grid
+                    )
+                    tail_fill = (
+                        align_fill
+                        if explicit_align
+                        else automatic_fill
+                    )
+                    canvas.create_rectangle(
+                        cursor,
+                        row * self.cell_size,
+                        grid_end,
+                        (row + 1) * self.cell_size,
+                        outline=tail_outline,
+                        fill=tail_fill,
+                        width=2,
+                    )
+                if has_next_line:
+                    if explicit_align:
+                        marker_text = "↵ FFFB"
+                        marker_color = "#ffb34d"
+                    elif automatic_wrap:
+                        marker_text = "↵ AUTO 17"
+                        marker_color = "#a9c4e8"
+                    elif invalid_manual_wrap:
+                        marker_text = "⚠ 수동 LF"
+                        marker_color = overflow_grid
+                    else:
+                        marker_text = "↵"
+                        marker_color = "#a9c4e8"
                     canvas.create_text(
                         grid_end + 7,
                         row * self.cell_size + self.cell_size // 2,
-                        text="↵ FFFB",
+                        text=marker_text,
                         anchor=tk.W,
-                        fill="#ffb34d",
+                        fill=marker_color,
                         font=("Menlo", 9, "bold"),
                     )
             if measurement.row_overflow:
                 canvas.create_rectangle(
                     self.canvas_margin,
                     0,
-                    (
-                        self.canvas_margin
-                        + profile.columns * self.cell_size
-                    ),
+                        (
+                            self.canvas_margin
+                            + profile.columns * full_advance
+                        ),
                     profile.rows * self.cell_size,
                     outline=overflow_grid,
                     width=3,
