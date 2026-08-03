@@ -365,13 +365,15 @@ LBA를 보존합니다.
 ```
 
 현재 수동 검수 대사, 4+4 이름 입력·저장·대사 치환, 반각 렌더러, 저장 화면,
-요리 미니게임 선택 버튼 8개 및 편집한 타이틀을 한 파일 빌드에 통합했습니다.
-시험 Track 1의 SHA-256은 Disc 1
-`74117ee7b8eb8f5d01fb46297c4fd12ce2bf50e711c6053b62ca69746afa7e00`, Disc 2
-`2e5c702b4b0e7de33c71a9ef128e01c50089b41a4e61113fe23926bafed86f40`이며, 각각
-622개 raw sector의 Expected Write·EDC/ECC·재추출과 독립 CUE 재추출 검증을
-통과했습니다. 전체 이미지는 비커밋 로컬 산출물이고 새 타이틀을 포함한 화면
-실행 검증은 남아 있습니다.
+요리 미니게임 선택 버튼 8개 및 실제 리테일 타이틀(unit 21)을 한 파일 빌드에
+통합했습니다. 시험 Track 1의 SHA-256은 Disc 1
+`d060ff748a4faea5601ac765fa24701bd7161666ab2b5fc481fb38976f40d88c`, Disc 2
+`7dabd18e0233eb0b1becf68f94ceb8bde604d2a810989e719589a126629089bb`이며, 각각
+596개 raw sector의 Expected Write·EDC/ECC·재추출과 독립 CUE 재추출 검증을
+통과했습니다. Disc 1 빌드는 PCSX-Redux clean boot에서 편집한 한국어 타이틀이
+정상 출력되는 것까지 사용자 검수를 통과했습니다. 전체 이미지는 비커밋 로컬
+산출물입니다. 이전에 타이틀로 판단했던 unit 8은 TGS '98 미사용 잔재였으며
+현재 빌드에서는 변경하지 않습니다.
 기능 브랜치와 실행 증거의 정확한 귀속은
 [`docs/project-progress-summary.md`](docs/project-progress-summary.md)를 따릅니다.
 
