@@ -84,7 +84,7 @@ CONTROL_VISUAL_LABELS = {
     "stream_end": "스트림 끝",
 }
 NAME_EXPANSIONS = {
-    "{name:surname}": "시바",
+    "{name:surname}": "시바□□",
     "{name:given}": "세이치로",
 }
 PUNCTUATION_ENDINGS = frozenset("…‥.!?。！？,，:：;；)]}）］】」』’”'")
@@ -541,7 +541,7 @@ class LayoutMeasurement:
 
 
 def expand_display_tokens(text: str) -> str:
-    """Expand only confirmed fixed-name placeholders for screen measurement."""
+    """Expand dynamic-name placeholders to their maximum screen widths."""
     expanded = text
     for token, replacement in NAME_EXPANSIONS.items():
         expanded = expanded.replace(token, replacement)

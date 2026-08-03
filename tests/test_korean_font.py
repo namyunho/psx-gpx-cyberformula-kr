@@ -29,6 +29,22 @@ class KoreanFontTests(unittest.TestCase):
         self.assertEqual(sum(cropped), 7)
         self.assertEqual(cropped[0], 7)
 
+    def test_profile_style_draws_main_over_lower_right_shadow(self) -> None:
+        source = [0] * 256
+        source[1 * 16 + 1] = 1
+        source[2 * 16 + 2] = 1
+        cropped = crop_to_psx(
+            source,
+            intensity=1,
+            shadow_intensity=6,
+            shadow_x_offset_px=1,
+            shadow_y_offset_px=1,
+        )
+
+        self.assertEqual(cropped[0 * WIDTH + 0], 1)
+        self.assertEqual(cropped[1 * WIDTH + 1], 1)
+        self.assertEqual(cropped[2 * WIDTH + 2], 6)
+
     def test_ttf_rasterizer_rejects_multiple_characters(self) -> None:
         with self.assertRaises(ValueError):
             rasterize_ttf_glyph(object(), "가나")
@@ -42,6 +58,12 @@ class KoreanFontTests(unittest.TestCase):
 
         self.assertEqual(profile.family, "Galmuri11")
         self.assertEqual(profile.ttf_size_px, 12)
+        self.assertEqual(profile.intensity, 1)
+        self.assertEqual(profile.shadow_intensity, 6)
+        self.assertEqual(
+            (profile.shadow_x_offset_px, profile.shadow_y_offset_px),
+            (1, 1),
+        )
         self.assertEqual(len(packed), 2350)
         self.assertEqual(len(set(packed.values())), 2350)
 

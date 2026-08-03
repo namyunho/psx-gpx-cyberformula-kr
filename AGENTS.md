@@ -39,6 +39,9 @@
     생성 산출물에만 적용하며 `roms/`의 원본 매체, 파일 단위 중간 빌드, 분석 자료와
     소스에는 절대 적용하지 않는다. 삭제 전 경로가 `work/build/` 아래의 명시적인
     디스크 빌드 디렉터리인지 확인하며 광범위한 glob이나 미확정 변수를 쓰지 않는다.
+11. 동적 분석은 PCSX-Redux의 clean boot와 재현 절차를 기준으로 한다. save state
+    하나만 근거로 삼지 않으며 BIOS·emulator 식별값, breakpoint/watchpoint,
+    register와 RAM/VRAM 증거를 함께 기록한다.
 
 ## 원본 매체
 

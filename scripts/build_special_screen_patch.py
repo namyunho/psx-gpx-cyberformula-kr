@@ -32,7 +32,7 @@ try:
         visible_length,
     )
     from scripts.korean_font import (
-        crop_to_psx,
+        crop_profile_glyph,
         load_font_profile,
         rasterize_ttf_glyph,
     )
@@ -54,7 +54,11 @@ except ModuleNotFoundError:  # Support direct execution from repository root.
         stored_position_count,
         visible_length,
     )
-    from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
+    from korean_font import (
+        crop_profile_glyph,
+        load_font_profile,
+        rasterize_ttf_glyph,
+    )
     from psx_font import GLYPH_SIZE, pack_glyph
 
 
@@ -347,7 +351,7 @@ def extend_primary_font(
                 x_offset=profile.x_offset_px,
                 y_offset=profile.y_offset_px,
             )
-            retained = crop_to_psx(pixels, intensity=profile.intensity)
+            retained = crop_profile_glyph(profile, pixels)
             if not any(retained):
                 raise ValueError(
                     f"Galmuri11 produced an empty glyph for {character!r}"

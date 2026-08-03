@@ -1,3 +1,4 @@
-# Optional dependency for scripts/mips_survey.py; not part of the patch build.
+# Local analysis dependencies; generated data and runtimes are not patch artifacts.
 capstone==5.0.9
 Pillow==12.3.0
+kaitaistruct==0.11

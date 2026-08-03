@@ -388,16 +388,16 @@ class DialogueLayoutEditorTests(unittest.TestCase):
             (),
         )
 
-    def test_expands_only_fixed_name_placeholders(self) -> None:
+    def test_expands_dynamic_name_placeholders_to_maximum_width(self) -> None:
         self.assertEqual(
             expand_display_tokens(
                 "{name:surname} {name:given} {unknown}"
             ),
-            "시바 세이치로 {unknown}",
+            "시바□□ 세이치로 {unknown}",
         )
         measurement = measure_layout("{name:surname}\n{name:given}")
-        self.assertEqual(measurement.line_widths, (2, 4))
-        self.assertEqual(measurement.line_pixel_widths, (28, 56))
+        self.assertEqual(measurement.line_widths, (4, 4))
+        self.assertEqual(measurement.line_pixel_widths, (56, 56))
 
     def test_conservative_wrap_balances_first_dialogue(self) -> None:
         source = (

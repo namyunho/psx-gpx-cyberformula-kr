@@ -23,7 +23,7 @@ try:
     )
     from scripts.build_dialogue_chapter_patch import verify_expected_writes
     from scripts.korean_font import (
-        crop_to_psx,
+        crop_profile_glyph,
         load_font_profile,
         rasterize_ttf_glyph,
     )
@@ -39,7 +39,11 @@ except ModuleNotFoundError:
         load_built_primary_mapping,
     )
     from build_dialogue_chapter_patch import verify_expected_writes
-    from korean_font import crop_to_psx, load_font_profile, rasterize_ttf_glyph
+    from korean_font import (
+        crop_profile_glyph,
+        load_font_profile,
+        rasterize_ttf_glyph,
+    )
     from psx_font import GLYPH_SIZE, pack_glyph
 
 
@@ -272,7 +276,7 @@ def render_alternate_ui_glyphs(
             x_offset=profile.x_offset_px,
             y_offset=profile.y_offset_px,
         )
-        retained = crop_to_psx(pixels, intensity=profile.intensity)
+        retained = crop_profile_glyph(profile, pixels)
         if not any(retained):
             raise ValueError(
                 f"Galmuri11 produced an empty UI glyph for {character!r}"

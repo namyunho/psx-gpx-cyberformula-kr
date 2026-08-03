@@ -1,0 +1,209 @@
+{
+  "schema_version": 1,
+  "status": "translated-runtime-review-required",
+  "scope": {
+    "iso_file": "OUTSIDE.BIN",
+    "state_index": 0,
+    "atlas_child_index": 5,
+    "texture_depth": "4bpp",
+    "runtime_vram_rectangle": {
+      "x_halfwords": 512,
+      "y": 0,
+      "width_halfwords": 256,
+      "height": 256
+    }
+  },
+  "policy": {
+    "font": "Galmuri11 12px raster, 11px-derived ink",
+    "description_cell": "14x14 pixels at 14-pixel advance and 16-pixel line pitch",
+    "type_label": "11-pixel advance inside the original narrow label width",
+    "palette_indices": {
+      "shadow": 6,
+      "ink": 1
+    },
+    "shadow_offset_px": [
+      1,
+      1
+    ],
+    "protected": "English headings, origin-selection logic, palettes, metadata, and every pixel outside the declared rectangles"
+  },
+  "translations": [
+    {
+      "id": "name-ui/default-button",
+      "jp": "デフォルト",
+      "ko": "기본",
+      "lines": [
+        "기본"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/free-origin-button",
+      "jp": "フリー 出身",
+      "ko": "직접 출신",
+      "lines": [
+        "직접 출신"
+      ],
+      "max_columns": 5,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/confirm-button",
+      "jp": "決定",
+      "ko": "결정",
+      "lines": [
+        "결정"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/retry-button",
+      "jp": "やりなおし",
+      "ko": "다시하기",
+      "lines": [
+        "다시하기"
+      ],
+      "max_columns": 4,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/hiragana-button",
+      "jp": "ひらがな",
+      "ko": "히라가나",
+      "lines": [
+        "히라가나"
+      ],
+      "max_columns": 4,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/katakana-button",
+      "jp": "カタカナ",
+      "ko": "가타카나",
+      "lines": [
+        "가타카나"
+      ],
+      "max_columns": 4,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/kanji-button",
+      "jp": "漢字",
+      "ko": "한자",
+      "lines": [
+        "한자"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/back-button",
+      "jp": "戻る",
+      "ko": "뒤로",
+      "lines": [
+        "뒤로"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-ui/finish-button",
+      "jp": "終了",
+      "ko": "종료",
+      "lines": [
+        "종료"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-origin/flexible-type-name",
+      "jp": "Flexible Racer",
+      "ko": "균형형",
+      "lines": [
+        "균형형"
+      ],
+      "max_columns": 3,
+      "max_rows": 1
+    },
+    {
+      "id": "name-origin/technical-type-name",
+      "jp": "Technical Racer",
+      "ko": "기술형",
+      "lines": [
+        "기술형"
+      ],
+      "max_columns": 3,
+      "max_rows": 1
+    },
+    {
+      "id": "name-origin/strength-type-name",
+      "jp": "Strength Racer",
+      "ko": "체력형",
+      "lines": [
+        "체력형"
+      ],
+      "max_columns": 3,
+      "max_rows": 1
+    },
+    {
+      "id": "name-origin/type-label",
+      "jp": "タイプ",
+      "ko": "타입",
+      "lines": [
+        "타입"
+      ],
+      "max_columns": 2,
+      "max_rows": 1
+    },
+    {
+      "id": "name-origin/flexible-racer",
+      "jp": "テクニックや体力増強などに偏らない、総合力を高める意味で一般レースに参加していた。長所も欠点もなく、特徴もない代わりにどんなコースもソツなくこなす。",
+      "ko": "기술이나 체력 어느 쪽에도 치우치지 않고 종합력을 키우려고 일반 레이스에 참가했다. 뚜렷한 장단점은 없지만 어떤 코스든 무난히 달린다.",
+      "lines": [
+        "기술과 체력에",
+        "치우치지 않고",
+        "종합력을 키우려고",
+        "일반 레이스에 참가했다.",
+        "뚜렷한 장단점은 없지만",
+        "어떤 코스든",
+        "무난히 달린다."
+      ],
+      "max_columns": 13,
+      "max_rows": 7
+    },
+    {
+      "id": "name-origin/technical-racer",
+      "jp": "テクニック中心の成長を考えて、テストドライバーをしていた。テクニカルなドライビングには自信がありインアウトの攻防で力を発揮する。体力がないのが欠点。",
+      "ko": "기술을 익히려고 테스트 드라이버로 활동했다. 섬세한 주행과 인·아웃 공방에 강하지만 체력이 약점이다.",
+      "lines": [
+        "기술을 익히려고",
+        "테스트 드라이버로",
+        "활동했었다.",
+        "섬세한 주행과",
+        "인·아웃 공방에 강하나",
+        "체력이 약점이다."
+      ],
+      "max_columns": 13,
+      "max_rows": 6
+    },
+    {
+      "id": "name-origin/strength-racer",
+      "jp": "総合力を評価されるラリーだが、ここでは主に少年期の体力増強を目的として活動していた。パワー重視の体力勝負なので、テクニカルな攻防にはあまり向いていない。",
+      "ko": "종합력을 겨루는 랠리에 참가했지만, 주로 어린 시절부터 체력을 길러 왔다. 힘 대결에는 강하지만 기술적인 공방에는 잘 맞지 않는다.",
+      "lines": [
+        "종합력을 겨루는",
+        "랠리에 참가했지만",
+        "주로 어린 시절부터",
+        "체력을 길러 왔다.",
+        "힘 대결에는 강하지만",
+        "기술적인 공방에는",
+        "잘 맞지 않는다."
+      ],
+      "max_columns": 13,
+      "max_rows": 7
+    }
+  ]
+}

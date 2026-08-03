@@ -39,6 +39,18 @@ class DialogueChapterBuildTests(unittest.TestCase):
             )
         )
         cls.first = workset["entries"][0]
+        cls.first_dynamic_name = next(
+            entry
+            for entry in workset["entries"]
+            if any(
+                control.get("kind") == "name_surname"
+                for control in entry["original"]["control_tokens"]
+            )
+            and any(
+                control.get("kind") == "name_given"
+                for control in entry["original"]["control_tokens"]
+            )
+        )
         cls.mapping = {
             character: index
             for index, character in enumerate(
@@ -64,6 +76,28 @@ class DialogueChapterBuildTests(unittest.TestCase):
                 self.first,
                 "가\n나\n다\n라",
                 mapping,
+            )
+
+    def test_preserves_dynamic_name_control_words(self) -> None:
+        encoded = encode_entry(
+            self.first_dynamic_name,
+            "{name:surname}{name:given}",
+            {},
+        )
+        tokens = struct.unpack(f"<{len(encoded) // 2}H", encoded)
+        self.assertEqual(tokens.count(0x4000), 1)
+        self.assertEqual(tokens.count(0x6000), 1)
+        self.assertLess(tokens.index(0x4000), tokens.index(0x6000))
+
+    def test_rejects_changed_dynamic_name_token_order(self) -> None:
+        with self.assertRaisesRegex(
+            ValueError,
+            "dynamic-name token order differs",
+        ):
+            encode_entry(
+                self.first_dynamic_name,
+                "{name:given}{name:surname}",
+                {},
             )
 
     def test_fixed_diagnostic_hard_wrap_preserves_visible_sequence(self) -> None:

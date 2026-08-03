@@ -63,7 +63,7 @@ scheduled state
 
 - `MINI_G1..4.BIN`: HUD/menu texture state 10개
 - `START.BIN`: title/menu, selection, race result/ranking, chapter card 후보 39개
-- `OUTSIDE.BIN`: cockpit/external UI state 11개
+- `OUTSIDE.BIN`: 이름·출신 등록과 cockpit/external UI state 11개
 - `COURSE.BIN`: course/environment/HUD visual state 27개
 - `AVM_MAP.BIN`: 장면 속 UI·간판·포스터를 포함할 수 있는 state 1,334개
 
@@ -119,8 +119,19 @@ scheduled state
 
 ### OUTSIDE
 
-11개 전부 cockpit/외부 UI 상태다. unit 0, 1, 2, 9, 10에서 status/options와
-베이크드 label을 접촉표로 확인했다.
+11개는 이름·출신 등록 및 cockpit/외부 UI 상태다. unit 0, 1, 2, 9, 10에서
+status/options와 베이크드 label을 접촉표로 확인했다.
+
+unit 0 child 5는 이름 등록 버튼·최종 확인·출신 설명 화면에 쓰이는 4bpp 공유
+atlas다. PCSX-Redux에서 최종 확인 화면을 띄운 채 덤프한 VRAM
+`(512,0,256 halfwords,256)`과 저장 payload `OUTSIDE.BIN + 0x30A4`의
+131,072바이트가 완전히 일치했다. 이 동적 증거에 따라 일본어 버튼 10개,
+`タイプ`, 세 타입명과 출신 설명을
+`scripts/build_name_origin_graphics_patch.py`의 명시적 대상에 올렸고, 영문
+화면 표제와 atlas의 나머지 영역은 보존한다. `직접 출신`은 하나의 버튼
+사각형으로 합쳐 총 16개 쓰기 영역이며, 모든 버튼·타입명은 실제 잉크 경계를
+사각형 중앙에 배치한다. 세부 위치와 빌드는
+[`character-name-layout.md`](character-name-layout.md)를 따른다.
 
 ### MINI_G1..4
 

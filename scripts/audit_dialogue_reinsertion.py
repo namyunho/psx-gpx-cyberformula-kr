@@ -25,7 +25,7 @@ COLUMNS = 17
 ROWS = 3
 MAX_GLYPHS = COLUMNS * ROWS
 NAME_WIDTHS = {
-    "{name:surname}": 2,
+    "{name:surname}": 4,
     "{name:given}": 4,
 }
 NAME_PATTERN = re.compile(r"\{name:(?:surname|given)\}")
@@ -654,6 +654,7 @@ def build_outputs(
         "renderer": {
             "columns": COLUMNS,
             "rows": ROWS,
+            "name_widths": NAME_WIDTHS,
             "wrap_policy": (
                 "word-boundary, then word-split, then minimum-space-drop "
                 "fallback while preserving every non-space glyph"

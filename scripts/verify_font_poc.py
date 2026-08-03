@@ -125,10 +125,15 @@ def main() -> None:
         for character in manifest["mapping"]
         if "가" <= character <= "힣"
     ]
+    profile_style = bool(manifest["font_profile"].get("profile_style", False))
     glyphs = pack_profile_glyphs(
         profile,
         hangul,
-        intensity=int(manifest["font_profile"]["intensity"]),
+        intensity=(
+            None
+            if profile_style
+            else int(manifest["font_profile"]["intensity"])
+        ),
     )
     allowed_start_changes: set[int] = set()
     for character, glyph in glyphs.items():

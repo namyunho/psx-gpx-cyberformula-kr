@@ -203,7 +203,7 @@ writer를 잡는다. 압축 또는 조립이 확인되면 입력 pointer를 거�
 
 - IDA/idalib: 정확한 instruction bytes, 함수 경계, 직접 xref와 호출자를 확인
 - Ghidra: 버퍼 pointer 전달, loop, 상태 분기와 긴 제어 흐름을 디컴파일로 대조
-- DuckStation 또는 PCSX-Redux: 실제 module, register와 자산 수명을 재확인
+- PCSX-Redux: 실제 module, register와 자산 수명을 재확인
 
 PC가 `SLPS_019.58` 범위가 아니라 runtime overlay에 있으면 먼저 적재 범위와
 파일 대응을 찾는다. PS-X EXE 환산식을 다른 module에 그대로 적용하지 않는다.
