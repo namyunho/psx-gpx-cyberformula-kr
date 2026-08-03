@@ -5,11 +5,11 @@
   "source_workset": "work/translations/disc1-unindexed-font-text.json",
   "source_workset_sha256": "6fafa734fc6f8d9760c5286577f8e875ba7fea4a8ba0e02894a265fc5aa5b707",
   "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
-  "manual_translation_source_sha256": "27ec5b41e06fae6f5aa770eb0451492a446117cd741a8a2fee26d70003f6f49c",
+  "manual_translation_source_sha256": "97e2314e9ed95975def15113196f5de19f9eefa39e5d2240b74d6d98f379cbd4",
   "scope": {
     "entry_count": 724,
     "new_unique_text_count": 296,
-    "ambiguous_context_override_count": 14,
+    "ambiguous_context_override_count": 23,
     "graphics_text_excluded": true
   },
   "policy": {
@@ -21,9 +21,9 @@
     "translation_count": 724,
     "empty_translation_count": 0,
     "provenance_counts": {
-      "manual-context-or-new-translation": 325,
-      "manual-existing-ambiguity-resolution": 5,
-      "reused-identical-existing-japanese": 359,
+      "manual-context-or-new-translation": 326,
+      "manual-existing-ambiguity-resolution": 10,
+      "reused-identical-existing-japanese": 353,
       "reused-identical-new-japanese": 35
     }
   },
@@ -1868,7 +1868,7 @@
       "id": "disc1/allbin/u30/unindexed_font/p04830",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-context-or-new-translation"
     },
     {
       "id": "disc1/allbin/u30/unindexed_font/p04878",
@@ -2214,7 +2214,7 @@
       "id": "disc1/allbin/u31/unindexed_font/p04830",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-existing-ambiguity-resolution"
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p04878",
@@ -2549,7 +2549,7 @@
       "id": "disc1/allbin/u32/unindexed_font/p04830",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-existing-ambiguity-resolution"
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p04878",
@@ -2752,7 +2752,7 @@
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p051CA",
-      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "ko": "말도 안 돼…! 이렇게짧은기간에\n저런 기술을…? 대체 어떤 내비\n게이션 시스템을 싣고있는거야!?",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-existing-japanese"
     },
@@ -2864,7 +2864,7 @@
       "id": "disc1/allbin/u33/unindexed_font/p042E8",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-existing-ambiguity-resolution"
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04330",
@@ -2996,7 +2996,7 @@
       "id": "disc1/allbin/u33/unindexed_font/p04830",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-existing-ambiguity-resolution"
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04878",
@@ -3241,7 +3241,7 @@
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p051CA",
-      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "ko": "말도 안 돼…! 이렇게짧은기간에\n저런 기술을…? 대체 어떤 내비\n게이션 시스템을 싣고있는거야!?",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-existing-japanese"
     },
@@ -3502,7 +3502,7 @@
       "id": "disc1/allbin/u34/unindexed_font/p042E8",
       "ko": "\"이번엔 지지 않는다\"는 기백이\n팍팍 느껴져! 카미카제 보이.",
       "review_status": "needs-independent-and-runtime-review",
-      "provenance": "reused-identical-existing-japanese"
+      "provenance": "manual-existing-ambiguity-resolution"
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p04330",
@@ -3704,7 +3704,7 @@
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p051CA",
-      "ko": "말도 안 돼…! 이렇게 짧은 기\n간에 저런 기술을…? 대체 어떤\n내비게이션시스템을싣고있는거야!?",
+      "ko": "말도 안 돼…! 이렇게짧은기간에\n저런 기술을…? 대체 어떤 내비\n게이션 시스템을 싣고있는거야!?",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-existing-japanese"
     },

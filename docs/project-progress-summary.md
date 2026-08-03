@@ -265,8 +265,8 @@ Capstone 독립 디스어셈블로 MIPS load/branch delay와 변경 범위를 �
 | 항목 | Disc 1 | Disc 2 |
 |---|---:|---:|
 | Track 1 크기 | 602,020,272 | 602,081,424 |
-| 변경 raw sector | 607 | 607 |
-| SHA-256 | `77e2f595a491af2bfa0aeebeabc12d02b7476a33c981d7cf629bf6a4e7f04095` | `812d6dc93bcda941339de62c3480397d03fd491326af768539985fb67f68e4e5` |
+| 변경 raw sector | 622 | 622 |
+| SHA-256 | `74117ee7b8eb8f5d01fb46297c4fd12ce2bf50e711c6053b62ca69746afa7e00` | `2e5c702b4b0e7de33c71a9ef128e01c50089b41a4e61113fe23926bafed86f40` |
 
 두 이미지가 통과한 정적 검증:
 
@@ -280,7 +280,9 @@ Capstone 독립 디스어셈블로 MIPS load/branch delay와 변경 범위를 �
 - 완성 Track에서 패치 파일 재추출과 입력 해시 일치
 - 요리 미니게임 버튼 8개가 확인된 4bpp 사각형만 변경하고 CLUT를 보존
 - 타이틀 384×256 index 평면만 변경하고 원본 256색 CLUT를 바이트 단위로 보존
-- 전체 210개 검사와 두 디스크 독립 재검증 통과
+- 4+4 이름의 정적 코드 표를 저장 화면 패치가 옮기는 구성을 manifest에 명시하고,
+  나머지 4+4 코드·데이터 변경을 보존
+- 전체 230개 검사와 두 디스크 독립 재검증 통과
 
 상태는 `static-verification-passed-runtime-validation-required`다. 현재 반각
 빌드 자체의 화면 검증은 아직 하지 않았다. PCSX-Redux에서 새 타이틀과 요리
@@ -299,20 +301,20 @@ Capstone 독립 디스어셈블로 MIPS load/branch delay와 변경 범위를 �
 
 ## 14. Git 브랜치 상태
 
-현재 기능은 짧은 목적별 브랜치로 분리돼 있다.
+기능별 작업 기록은 아래 브랜치에 남아 있고, 2026-08-04 통합 빌드에서는 모두
+한 계보로 병합했다.
 
 | 브랜치 | 현재 역할 | 최신 커밋 |
 |---|---|---|
-| `main` | 저장 화면 작업 분리 전 공통 기준선 | `44c937f` |
+| `main` | 검증된 통합 기준선 | 이 문서 갱신 커밋 |
 | `feature/player-name-4x4` | 4+4 이름 입력·확인·출신 UI | `28c60c6` |
 | `feature/minigame-localization` | 요리 미니게임 그래픽 버튼 | `f9ee620` |
 | `feature/save-screen-localization` | 저장 화면과 분기 커맨드 | `03ba89e` |
-| `feature/halfwidth-dialogue-renderer` | 저장 브랜치 기반 반각 렌더러 | `b7ed38f` |
+| `feature/halfwidth-dialogue-renderer` | 네 기능을 합친 통합 계보 | `8a17a2d` 이후 |
 
-최신 로컬 반각 ROM은 과거 기능 브랜치에서 만든 비커밋 파일 빌드를 입력으로
-사용했으므로, **깨끗한 checkout에서 모든 기능을 한 번에 재현하는 main 통합
-빌드로 아직 승격하지 않는다.** 각 기능 브랜치의 검토·병합 순서를 정한 뒤
-검증된 원본에서 파일 빌드와 Disc 1·2 이미지를 다시 생성해야 한다.
+최신 로컬 ROM은 검증된 원본에서 대사·UI·4+4 이름·저장·반각·미니게임·타이틀
+단계를 순서대로 재생성했다. 최종 manifest에는 각 기능의 상태와 Expected
+Write가 함께 남으며 Disc 1·2 독립 검증을 통과했다.
 
 ## 15. 실행 확인과 미확인 범위
 

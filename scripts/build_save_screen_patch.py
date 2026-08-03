@@ -141,6 +141,39 @@ def _save_name_words() -> list[int]:
     return words
 
 
+def compose_name_4x4_manifest_with_save(
+    base_name_layout: dict[str, Any] | None,
+) -> dict[str, Any] | None:
+    """Record the intentional save-patch relocation of the 4+4 code table."""
+    if not isinstance(base_name_layout, dict):
+        return None
+    composed = copy.deepcopy(base_name_layout)
+    slps = composed.get("slps")
+    if not isinstance(slps, dict):
+        raise ValueError("4+4 manifest has no SLPS section")
+    static = slps.get("static_code_table")
+    if not isinstance(static, dict):
+        raise ValueError("4+4 manifest has no static code table")
+    static.update(
+        {
+            "file_offset": f"0x{OLD_SAVE_NAME_STREAM_START:X}",
+            "end_exclusive": f"0x{OLD_SAVE_NAME_STREAM_START + 16:X}",
+            "surname_address": "0x80051070",
+            "given_name_address": "0x80051078",
+            "relocated_by": "save_screen",
+        }
+    )
+    composed["save_screen_composition"] = {
+        "status": "verified-static-code-table-relocation",
+        "reason": (
+            "the old save-name stream stores the eight static 4+4 codes; "
+            "the former speaker tail stores four given-name-only save rows"
+        ),
+        "name_4x4_nonoverlapping_changes_preserved": True,
+    }
+    return composed
+
+
 def _outside_4bpp_offset(x: int, y: int) -> tuple[int, bool]:
     if x < 0 or y < 0 or x >= OUTSIDE_SAVE_TEXTURE_WIDTH:
         raise ValueError(f"OUTSIDE 4bpp coordinate is outside the surface: {x},{y}")
@@ -390,8 +423,16 @@ def build_save_screen_patch(
     output_map = output_dir / mapping_path.name
     shutil.copyfile(mapping_path, output_map)
 
+    composed_name_layout = compose_name_4x4_manifest_with_save(
+        base_manifest.get("name_4x4_poc")
+    )
     manifest = {
         **base_manifest,
+        **(
+            {"name_4x4_poc": composed_name_layout}
+            if composed_name_layout is not None
+            else {}
+        ),
         "sources": {
             **base_manifest["sources"],
             "save_screen_base_file_build_manifest": {

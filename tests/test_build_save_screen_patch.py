@@ -15,6 +15,7 @@ from scripts.build_save_screen_patch import (
     _metadata_words,
     _outside_4bpp_offset,
     _save_name_words,
+    compose_name_4x4_manifest_with_save,
     patch_save_button_labels,
 )
 
@@ -86,6 +87,27 @@ class SaveScreenPatchTests(unittest.TestCase):
         row_zero, _ = _outside_4bpp_offset(0, 0)
         row_one, _ = _outside_4bpp_offset(0, 1)
         self.assertEqual(row_one - row_zero, 512)
+
+    def test_save_patch_records_intentional_name_4x4_table_relocation(self) -> None:
+        source = {
+            "slps": {
+                "static_code_table": {
+                    "file_offset": "0x1FB5C",
+                    "end_exclusive": "0x1FB6C",
+                    "surname_address": "0x8004F35C",
+                    "given_name_address": "0x8004F364",
+                    "codes": [f"0x{value:X}" for value in range(0x4CE, 0x4D6)],
+                }
+            }
+        }
+        composed = compose_name_4x4_manifest_with_save(source)
+        self.assertIsNotNone(composed)
+        static = composed["slps"]["static_code_table"]
+        self.assertEqual(static["file_offset"], "0x21870")
+        self.assertEqual(static["end_exclusive"], "0x21880")
+        self.assertEqual(static["surname_address"], "0x80051070")
+        self.assertEqual(static["given_name_address"], "0x80051078")
+        self.assertNotIn("save_screen_composition", source)
 
 
 if __name__ == "__main__":
