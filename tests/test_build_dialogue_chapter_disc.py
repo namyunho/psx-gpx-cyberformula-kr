@@ -142,7 +142,7 @@ class DialogueChapterDiscTests(unittest.TestCase):
             )
         )
 
-    def test_writes_cue_with_original_audio_references(self) -> None:
+    def test_writes_cue_with_self_contained_audio_references(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             source = root / "source"
@@ -161,15 +161,37 @@ class DialogueChapterDiscTests(unittest.TestCase):
             )
             output_track = output / "patched.bin"
             output_track.touch()
+            output_audio = output / "patched-track2.bin"
+            output_audio.touch()
             output_cue = output / "patched.cue"
             write_local_cue(
                 source_cue,
                 output_track=output_track,
                 output_cue=output_cue,
+                output_audio_tracks=[output_audio],
             )
             text = output_cue.read_text(encoding="utf-8")
             self.assertIn('FILE "patched.bin" BINARY', text)
-            self.assertIn('FILE "../source/track2.bin" BINARY', text)
+            self.assertIn('FILE "patched-track2.bin" BINARY', text)
+
+    def test_rejects_incomplete_self_contained_audio_set(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source_cue = root / "disc.cue"
+            source_cue.write_text(
+                'FILE "track1.bin" BINARY\n'
+                "  TRACK 01 MODE2/2352\n"
+                'FILE "track2.bin" BINARY\n'
+                "  TRACK 02 AUDIO\n",
+                encoding="ascii",
+            )
+            with self.assertRaisesRegex(ValueError, "more audio tracks"):
+                write_local_cue(
+                    source_cue,
+                    output_track=root / "patched.bin",
+                    output_cue=root / "patched.cue",
+                    output_audio_tracks=[],
+                )
 
 
 if __name__ == "__main__":

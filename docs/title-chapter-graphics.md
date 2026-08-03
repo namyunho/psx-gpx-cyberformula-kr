@@ -43,3 +43,23 @@
 그대로 유지해야 한다. `320×240` 파일은 확인용 crop이므로 원자료를 대체하지
 않는다. 상세 source unit, child, VRAM 좌표와 파일 경로는 출력의
 `manifest.json`이 정본이다.
+
+## 편집한 타이틀 재삽입
+
+384×256 전체 캔버스를 편집한 뒤 다음처럼 기존 파일 빌드 위에 적용한다.
+
+```bash
+.venv/bin/python scripts/build_title_graphics_patch.py \
+  --file-build-dir work/build/<입력-파일-빌드> \
+  --image work/graphics/title-chapter/title/title-screen/edit-template-purple-import.png \
+  --output-dir work/build/<출력-파일-빌드>
+```
+
+편집 프로그램이 PNG 팔레트 순서를 다시 매기므로 PNG의 index 바이트를 그대로
+복사하면 안 된다. 삽입기는 각 픽셀의 RGB를 원본 PS1 BGR555 CLUT 색과 정확히
+대조해 원래 index로 되돌린다. 시각적으로 바뀌지 않은 좌표는 중복색이 있어도
+원래 index 바이트를 보존하고, `#FF00FF` 또는 알파 0인 픽셀만 투명 index 0으로
+복원한다. 256색 CLUT와 컨테이너 크기·헤더·패딩은 변경하지 않는다.
+
+현재 타이틀은 Disc 1·2 공용 `START.BIN` unit 8이므로, 이 변경을 포함한 전체
+이미지는 두 디스크를 같은 파일 빌드에서 각각 다시 만들어 검증해야 한다.

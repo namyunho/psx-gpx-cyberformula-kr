@@ -113,6 +113,43 @@ def verify_build(
     if sha256_file(output_cue) != build["outputs"]["cue"]["sha256"]:
         raise ValueError("output CUE hash differs from build manifest")
     verify_cue(output_cue, disc_media["expected_tracks"])
+
+    output_audio_records = build["outputs"].get("audio_tracks")
+    if output_audio_records is not None:
+        if not isinstance(output_audio_records, list):
+            raise ValueError("output audio-track records are not a list")
+        output_audio_paths = []
+        for record, expected in zip(
+            output_audio_records,
+            disc_media.get("audio_tracks", []),
+        ):
+            track_number = int(expected["track"])
+            if int(record.get("track", -1)) != track_number:
+                raise ValueError("output audio-track order differs")
+            path = recorded_path(
+                record.get("path"),
+                build_dir=build_dir,
+                label=f"output audio Track {track_number}",
+            )
+            actual = file_hashes(path)
+            recorded = {
+                key: record[key] for key in ("size", "crc32", "md5", "sha256")
+            }
+            if actual != recorded:
+                raise ValueError(f"output audio Track {track_number} hashes differ")
+            original = paths[f"{disc_key}_track{track_number}"]
+            if sha256_file(path) != sha256_file(original):
+                raise ValueError(
+                    f"output audio Track {track_number} differs from original"
+                )
+            output_audio_paths.append(path.resolve())
+        if len(output_audio_records) != len(disc_media.get("audio_tracks", [])):
+            raise ValueError("output audio-track count differs")
+    else:
+        output_audio_paths = [
+            paths[f"{disc_key}_track{int(expected['track'])}"].resolve()
+            for expected in disc_media.get("audio_tracks", [])
+        ]
     file_build_record = build["sources"]["file_build_manifest"]
     file_build_manifest = recorded_path(
         file_build_record.get("path"),
@@ -127,10 +164,7 @@ def verify_build(
     ]
     expected_cue_files = [
         output_track.resolve(),
-        *[
-            paths[f"{disc_key}_track{int(expected['track'])}"].resolve()
-            for expected in disc_media.get("audio_tracks", [])
-        ],
+        *output_audio_paths,
     ]
     if cue_files != expected_cue_files:
         raise ValueError("output CUE does not reference the target disc track set")
@@ -209,6 +243,7 @@ def verify_build(
                 "path": str(output_cue.resolve()),
                 "sha256": sha256_file(output_cue),
             },
+            "audio_tracks": [str(path) for path in output_audio_paths],
         },
         "iso_root_layout_equal": True,
         "files": file_verification,

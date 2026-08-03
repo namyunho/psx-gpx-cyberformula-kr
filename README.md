@@ -33,6 +33,8 @@ roms/Future GPX Cyber Formula - Aratanaru Chousensha (Japan) (Disc 2) (Track 1).
 ```
 
 멀티 BIN/CUE의 오디오 트랙도 같은 디렉터리에 두고 CUE의 참조 관계를 유지합니다.
+개발 이미지 역시 Track 1~4를 출력 폴더 하나에 모은 자체완결형 세트로 만들며,
+CUE에서 `roms/`나 상위 폴더를 참조하지 않습니다.
 다른 위치는 `PSX_DISC1_*`, `PSX_DISC2_*` 환경 변수로 재정의할 수 있습니다.
 지원 원본의 네 트랙 경로와 식별값은
 [`config/original-media.json`](config/original-media.json)이 관리합니다.
@@ -362,12 +364,13 @@ LBA를 보존합니다.
   --build-dir work/build/disc2-name-4x4-shadow-origin-graphics-2026-08-01
 ```
 
-현재 수동 검수 대사와 이름 좌표 수정을 반영한 반각 시험 Track 1의 SHA-256은
-Disc 1 `159b40630204c53f3adcd8029db024c251a22d2c1dc140a4fb8f4d4d01450e49`,
-Disc 2 `f767043a3d9c54b7c8e1f7e9422f505771691ec6d70ea464f6ed4f3e5c7215af`이며,
-각각 556개 raw sector의 Expected Write·EDC/ECC·재추출 검증을 통과했습니다.
-전체 이미지는 비커밋 로컬 산출물이고 이 반각판의 화면 실행 검증은 남아
-있습니다. 기능 브랜치와 실행 증거의 정확한 귀속은
+현재 수동 검수 대사와 이름 좌표 수정, 요리 미니게임 선택 버튼 8개 및 편집한
+타이틀을 반영한 시험 Track 1의 SHA-256은 Disc 1
+`77e2f595a491af2bfa0aeebeabc12d02b7476a33c981d7cf629bf6a4e7f04095`, Disc 2
+`812d6dc93bcda941339de62c3480397d03fd491326af768539985fb67f68e4e5`이며, 각각
+607개 raw sector의 Expected Write·EDC/ECC·재추출 검증을 통과했습니다. 전체
+이미지는 비커밋 로컬 산출물이고 새 그래픽의 화면 실행 검증은 남아 있습니다.
+기능 브랜치와 실행 증거의 정확한 귀속은
 [`docs/project-progress-summary.md`](docs/project-progress-summary.md)를 따릅니다.
 
 ## 도구체인

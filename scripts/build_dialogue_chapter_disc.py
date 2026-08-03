@@ -64,6 +64,7 @@ except ModuleNotFoundError:
 
 
 OUTPUT_TRACK_NAME_TEMPLATE = "{disc}-chapter01-nonrelease-track1.bin"
+OUTPUT_AUDIO_TRACK_NAME_TEMPLATE = "{disc}-chapter01-nonrelease-track{track}.bin"
 OUTPUT_CUE_NAME_TEMPLATE = "{disc}-chapter01-nonrelease.cue"
 
 
@@ -403,6 +404,7 @@ def write_local_cue(
     *,
     output_track: Path,
     output_cue: Path,
+    output_audio_tracks: list[Path] | None = None,
 ) -> None:
     pattern = re.compile(
         r'^(\s*FILE\s+)(?:"([^"]+)"|(\S+))(\s+\S+.*)$',
@@ -418,6 +420,11 @@ def write_local_cue(
         file_index += 1
         if file_index == 1:
             target = output_track
+        elif output_audio_tracks is not None:
+            audio_index = file_index - 2
+            if audio_index >= len(output_audio_tracks):
+                raise ValueError("source CUE has more audio tracks than outputs")
+            target = output_audio_tracks[audio_index]
         else:
             source_name = match.group(2) or match.group(3)
             target = (source_cue.parent / source_name).resolve()
@@ -429,6 +436,11 @@ def write_local_cue(
         )
     if file_index == 0:
         raise ValueError("source CUE contains no FILE records")
+    if (
+        output_audio_tracks is not None
+        and file_index - 1 != len(output_audio_tracks)
+    ):
+        raise ValueError("source CUE audio-track count differs from outputs")
     output_cue.write_text("\n".join(rewritten) + "\n", encoding="utf-8")
 
 
@@ -461,13 +473,18 @@ def build_disc(
         source_cue,
         target_media["expected_tracks"],
     )
+    audio_track_specs = list(target_media.get("audio_tracks", []))
+    audio_track_sources = [
+        paths[f"{disc_key}_track{int(expected['track'])}"]
+        for expected in audio_track_specs
+    ]
     audio_track_verification = [
         verify_track(
-            paths[f"{disc_key}_track{int(expected['track'])}"],
+            source,
             expected,
             label=f"{disc_key} audio track {int(expected['track'])}",
         )
-        for expected in target_media.get("audio_tracks", [])
+        for source, expected in zip(audio_track_sources, audio_track_specs)
     ]
     reference_track_verification = (
         track_verification
@@ -695,6 +712,7 @@ def build_disc(
                 output.seek(lba * RAW_SECTOR_SIZE)
                 output.write(sector)
         temporary_path.replace(output_track)
+        output_track.chmod(source_track.stat().st_mode & 0o777)
         temporary_path = None
     finally:
         if temporary_path is not None:
@@ -732,10 +750,40 @@ def build_disc(
             if not inspect_mode2_form1(expected_sector).valid:
                 raise ValueError(f"LBA {lba}: output EDC/ECC is invalid")
 
+    output_audio_tracks: list[Path] = []
+    output_audio_reports: list[dict[str, Any]] = []
+    for source, spec, verified in zip(
+        audio_track_sources,
+        audio_track_specs,
+        audio_track_verification,
+    ):
+        track_number = int(spec["track"])
+        destination = output_dir / OUTPUT_AUDIO_TRACK_NAME_TEMPLATE.format(
+            disc=disc_key,
+            track=track_number,
+        )
+        shutil.copyfile(source, destination)
+        hashes = file_hashes(destination)
+        expected_hashes = {
+            key: verified[key] for key in ("size", "crc32", "md5", "sha256")
+        }
+        if hashes != expected_hashes:
+            raise ValueError(f"copied audio Track {track_number} hash differs")
+        output_audio_tracks.append(destination)
+        output_audio_reports.append(
+            {
+                "track": track_number,
+                "path": str(destination.resolve()),
+                **hashes,
+                "byte_exact_copy_of_original": True,
+            }
+        )
+
     write_local_cue(
         source_cue,
         output_track=output_track,
         output_cue=output_cue,
+        output_audio_tracks=output_audio_tracks,
     )
     output_track_hashes = file_hashes(output_track)
     recorded_runtime = recorded_runtime_validation(
@@ -1055,6 +1103,7 @@ def build_disc(
                 "path": str(output_cue.resolve()),
                 "sha256": sha256_file(output_cue),
             },
+            "audio_tracks": output_audio_reports,
             **{
                 name: {
                     "sha256": hashlib.sha256(replacement).hexdigest(),

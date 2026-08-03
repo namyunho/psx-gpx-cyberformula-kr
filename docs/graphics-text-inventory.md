@@ -127,6 +127,34 @@ scheduled state
 10개 전부 HUD/menu texture 상태다. palette와 atlas가 한 state를 이루므로
 rectangle 수가 아니라 state 단위로 유지한다.
 
+2026-08-02 런타임 확인 화면에서 요리 미니게임의 선택 버튼 8개를
+`MINI_G3.BIN` unit 1의 4bpp 완성형 문구 스프라이트로 확정했다. GPU 패킷은
+문구에 `tpage=0x0039`, `CLUT=0x7D4D`, UV `(160, 0/16/32/48)`을 사용하고,
+버튼 바탕은 별도 72x24 스프라이트를 사용한다. 따라서 바탕과 선택 상태를
+보존한 채 다음 문구만 Galmuri11 12px로 중앙 정렬해 교체한다.
+
+| 원문 | 번역 | 텍스처 사각형 |
+|---|---|---|
+| `肉類` | `고기` | `(416,256) 56x16` |
+| `野菜類` | `채소` | `(416,272) 56x16` |
+| `乳製品` | `유제품` | `(416,288) 56x16` |
+| `何も入れない` | `넣지 않기` | `(416,304) 64x16` |
+| `ニワトリの卵` | `닭의 알` | `(432,320) 64x16` |
+| `ダチョウの卵` | `타조 알` | `(432,336) 64x16` |
+| `怪しい食材` | `수상한재료` | `(432,352) 64x16` |
+| `愛情` | `애정` | `(432,368) 64x16` |
+
+`MINI_G1`은 숫자형 타이밍 HUD, `MINI_G2`의 셔터 조작물은 무문자,
+`MINI_G4`는 숫자 카드/칩 조작물이라 일본어 문구가 든 추가 버튼은 없다.
+`現像中`, `GAME START`, `SUCCESSFUL`, `FAILED` 등은 조작 버튼이 아니라
+진행·결과 그래픽이므로 이번 버튼 교체 범위와 분리한다. 패치 빌드는 다음과 같다.
+
+```bash
+.venv/bin/python scripts/build_minigame_graphics_patch.py \
+  --file-build-dir <current-file-build> \
+  --output-dir <output-file-build>
+```
+
 ### MACHINE
 
 42개 전부 vehicle texture atlas다. 차체 logo, 번호, sponsor lettering은
