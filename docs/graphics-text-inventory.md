@@ -155,6 +155,38 @@ rectangle 수가 아니라 state 단위로 유지한다.
 | `怪しい食材` | `수상한재료` | `(432,352) 64x16` |
 | `愛情` | `애정` | `(432,368) 64x16` |
 
+같은 atlas의 요리 진행 말풍선은 완성형 단일 이미지가 아니다. 빈 말풍선 바탕
+2개 `(256,256) 80x64`, `(336,256) 80x64`와 일본어 문구 `やきあがれ`
+`(0,472) 56x24`, `連打!!` `(136,472) 48x24`가 각각 저장되어 런타임에
+합성된다. 좌표와 크기는 `ALLBIN.BIN + 0x1419A0..0x141A17`의 SPRT
+descriptor로 확인했다. `やきあがれ`는 CLUT `0x7D49`/source child 2 bank 9,
+두 말풍선과 `連打!!`는 CLUT `0x7D4D`/source child 2 bank 13을 사용한다.
+과거 PCSX-Redux VRAM 덤프의 `(144,501)`, `(208,501)` 팔레트가 각각 source
+bank와 16색 모두 일치해 저장 팔레트와 실제 소비자를 교차검증했다. Disc 1·2의
+`MINI_G3.BIN`은 동일하며, 인덱스·원래 CLUT·보라색 확인용 이미지는 다음 명령으로
+추출한다.
+
+```bash
+.venv/bin/python scripts/extract_cooking_speech_bubbles.py
+```
+
+기본 출력은 `work/graphics/minigame/cooking/speech-bubbles/`이고, 재삽입 원본은
+`*-indexed.png`와 `*-indices.bin`, 원래 게임 색은 `*-original-clut.png`,
+투명 영역 확인용은 `*-preview-purple.png`다.
+말풍선과 문구를 임의로 합친 이미지는 원본 저장 구조가 아니므로 만들지 않는다.
+
+승인 편집본 `callout-yakiagare-indexed-export.png`(`구워져라`)와
+`callout-rendaa-indexed-export.png`(`연타!`)는 각각 56×24, 48×24 indexed mode
+P 및 원본 16색 CLUT를 유지한다. 삽입기는 label 사각형의 4bpp index만 바꾸고,
+말풍선 바탕·CLUT·다른 unit 1 atlas 픽셀을 보존한다. 두 label은 같은 색으로
+합치지 않으며 실제 consumer가 지정한 CLUT bank 9와 13을 각각 그대로 쓴다.
+
+```bash
+.venv/bin/python scripts/build_cooking_callout_graphics_patch.py \
+  --file-build-dir <current-file-build> \
+  --output-dir <output-file-build>
+```
+
 `MINI_G1`은 숫자형 타이밍 HUD, `MINI_G2`의 셔터 조작물은 무문자,
 `MINI_G4`는 숫자 카드/칩 조작물이라 일본어 문구가 든 추가 버튼은 없다.
 `現像中`, `GAME START`, `SUCCESSFUL`, `FAILED` 등은 조작 버튼이 아니라

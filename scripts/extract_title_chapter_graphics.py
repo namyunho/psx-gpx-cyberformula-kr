@@ -44,6 +44,7 @@ except ModuleNotFoundError:  # Direct execution from the repository root.
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 PURPLE = (255, 0, 255)
 SCREEN_CROP = (0, 0, 320, 240)
+CHAPTER_SCREEN_SEGMENTS = ((0, 240), (256, 336))
 
 # Hashes are for complete scheduled units from the supported original revision.
 EXPECTED_UNIT_SHA256 = {
@@ -205,6 +206,25 @@ def purple_composite(image: Image.Image) -> Image.Image:
     return background.convert("RGB")
 
 
+def assemble_chapter_screen(image: Image.Image) -> Image.Image:
+    """Remove the stored 16-pixel wrap gap from a chapter-card texture.
+
+    The GPU-visible 320-pixel row is stored as x=0..239 followed by x=256..335.
+    The intervening x=240..255 columns are transparent VRAM-page padding.
+    """
+    if image.width < 336 or image.height < 240:
+        raise ValueError("chapter texture is smaller than the wrapped 320x240 screen")
+    screen = Image.new(image.mode, (320, 240), 0)
+    destination_x = 0
+    for source_left, source_right in CHAPTER_SCREEN_SEGMENTS:
+        segment = image.crop((source_left, 0, source_right, 240))
+        screen.paste(segment, (destination_x, 0))
+        destination_x += source_right - source_left
+    if destination_x != 320:
+        raise AssertionError("chapter screen segment widths do not total 320 pixels")
+    return screen
+
+
 def palette_sheet(words: list[int]) -> Image.Image:
     sheet = Image.new("RGB", (256, 256), PURPLE)
     pixels = sheet.load()
@@ -247,7 +267,11 @@ def export_asset(
 
     image.save(texture_path)
     purple_composite(image).save(purple_texture_path)
-    screen = image.crop(SCREEN_CROP)
+    screen = (
+        assemble_chapter_screen(image)
+        if asset["category"] == "chapter"
+        else image.crop(SCREEN_CROP)
+    )
     screen.save(screen_path)
     purple_composite(screen).save(purple_screen_path)
     image.getchannel("A").point(lambda value: 255 if value == 0 else 0).save(
@@ -257,6 +281,33 @@ def export_asset(
     palette_sheet(words).save(palette_path)
     palette_bin_path.write_bytes(palette_record.payload)
     indices_bin_path.write_bytes(image_record.payload)
+
+    assembled_files: dict[str, Path] = {}
+    if asset["category"] == "chapter":
+        assembled_original_path = destination / "assembled-original-320x240.png"
+        assembled_purple_path = destination / "assembled-preview-purple-320x240.png"
+        assembled_indexed_path = destination / "assembled-indexed-320x240.png"
+        screen.save(assembled_original_path)
+        purple_composite(screen).save(assembled_purple_path)
+
+        stored_indices = Image.frombytes("P", image.size, image_record.payload)
+        assembled_indices = assemble_chapter_screen(stored_indices)
+        png_palette: list[int] = []
+        png_alpha: list[int] = []
+        for word in words:
+            red, green, blue, alpha = bgr555_color(word)
+            png_palette.extend((red, green, blue))
+            png_alpha.append(alpha)
+        assembled_indices.putpalette(png_palette)
+        assembled_indices.save(
+            assembled_indexed_path,
+            transparency=bytes(png_alpha),
+        )
+        assembled_files = {
+            "assembled_original": assembled_original_path,
+            "assembled_preview_purple": assembled_purple_path,
+            "assembled_indexed": assembled_indexed_path,
+        }
 
     opaque_bbox = image.getchannel("A").getbbox()
     relative = lambda path: str(path.relative_to(output_root))
@@ -285,6 +336,19 @@ def export_asset(
             "stored_width": image.width,
             "stored_height": image.height,
             "screen_crop": list(SCREEN_CROP),
+            **(
+                {
+                    "screen_assembly": {
+                        "output_size": [320, 240],
+                        "source_x_segments": [
+                            list(segment) for segment in CHAPTER_SCREEN_SEGMENTS
+                        ],
+                        "excluded_transparent_gap": [240, 256],
+                    }
+                }
+                if asset["category"] == "chapter"
+                else {}
+            ),
             "opaque_bbox": list(opaque_bbox) if opaque_bbox else None,
             "transparent_preview_color": "#FF00FF",
         },
@@ -303,12 +367,19 @@ def export_asset(
             "palette_preview": relative(palette_path),
             "palette_bgr555": relative(palette_bin_path),
             "indices": relative(indices_bin_path),
+            **{
+                key: relative(path) for key, path in assembled_files.items()
+            },
         },
     }
 
 
 def write_overview(
-    exported: list[dict[str, Any]], output_root: Path, *, purple: bool
+    exported: list[dict[str, Any]],
+    output_root: Path,
+    *,
+    purple: bool,
+    prefix: str = "overview",
 ) -> Path:
     columns = 3
     cell_width = 320
@@ -333,7 +404,7 @@ def write_overview(
             fill=(240, 240, 240),
         )
     suffix = "purple" if purple else "original"
-    path = output_root / f"overview-{suffix}.png"
+    path = output_root / f"{prefix}-{suffix}.png"
     sheet.save(path)
     return path
 
@@ -384,6 +455,19 @@ def main() -> None:
     ]
     overview_original = write_overview(exported, args.output, purple=False)
     overview_purple = write_overview(exported, args.output, purple=True)
+    chapter_assets = [item for item in exported if item["category"] == "chapter"]
+    chapter_overview_original = write_overview(
+        chapter_assets,
+        args.output,
+        purple=False,
+        prefix="chapters-assembled-overview",
+    )
+    chapter_overview_purple = write_overview(
+        chapter_assets,
+        args.output,
+        purple=True,
+        prefix="chapters-assembled-overview",
+    )
     manifest = {
         "schema_version": 1,
         "scope": "shared-disc1-disc2-title-and-chapter-card-graphics",
@@ -400,6 +484,10 @@ def main() -> None:
         "overview_files": {
             "original": str(overview_original.relative_to(args.output)),
             "purple": str(overview_purple.relative_to(args.output)),
+        },
+        "chapter_assembled_overview_files": {
+            "original": str(chapter_overview_original.relative_to(args.output)),
+            "purple": str(chapter_overview_purple.relative_to(args.output)),
         },
         "assets": exported,
     }
