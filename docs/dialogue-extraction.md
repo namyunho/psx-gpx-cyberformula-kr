@@ -19,8 +19,8 @@ Disc 1에서 구조적으로 증명된 글꼴 렌더 스트림을 번역 도구,
 텍스트를 누락한다. 후속 전수 검사로 `u00..u21`에서 무포인터 페이지 83개를
 확인했다. 이어서 기존 네 workset의 물리 범위를 제외한 gap을 별도로 감사해
 `u02..u19`, `u28`, `u30..u34`, `u38`, `u39`에서 순차·색인·저장 스트림
-724개를 추가했다. 따라서 5,783개를 Disc 1 전체 대사 수로 부르지 않으며,
-새 724개도
+806개를 추가했다. 따라서 5,783개를 Disc 1 전체 대사 수로 부르지 않으며,
+새 806개도
 모든 색인 런타임 경로를 전수 증명한 최종 모집단으로 부르지 않는다.
 
 ## 생성 명령과 산출물
@@ -45,8 +45,8 @@ Disc 1에서 구조적으로 증명된 글꼴 렌더 스트림을 번역 도구,
 | `data/translations/disc1-pointerless-pages-u00-u21-ko.json` | 무포인터 페이지 한국어 정본 83개 |
 | `work/translations/disc1-special-screen-text.json` | `u38/u43` 미니게임·코스·머신 설정·순차 분기 보호 workset 418개 |
 | `data/translations/disc1-special-screen-ko.json` | 특수 화면 한국어 초벌 번역 정본 418개 |
-| `work/translations/disc1-unindexed-font-text.json` | 추가 순차·색인·저장 글꼴 스트림 보호 workset 724개 |
-| `data/translations/disc1-unindexed-font-ko.json` | 추가 스트림 한국어 초벌 번역 정본 724개 |
+| `work/translations/disc1-unindexed-font-text.json` | 추가 순차·색인·저장 글꼴 스트림 보호 workset 806개 |
+| `data/translations/disc1-unindexed-font-ko.json` | 추가 스트림 한국어 초벌 번역 정본 806개 |
 | `work/analysis/disc1-dialogue-layout.json` | 대사창 수용량과 저장 공간 진단 |
 | `data/dialogue-extraction-schema.json` | 협업용 JSON Schema |
 
@@ -99,9 +99,11 @@ unit `0`의 최초 5개에는 시스템 성별 선택, 예/아니오 선택과 �
 남은 슬롯 초과는
 [`special-screen-font-text.md`](special-screen-font-text.md)를 따른다.
 
-추가 gap 감사의 724개는 순차 이벤트 291, 경기 색인 333, 미니게임 분기·결과
-73, 저장·불러오기 27개다. 발견 후보 776개 가운데 60개는 실행 코드·표·
+추가 gap 감사의 806개는 순차 이벤트 295, 경기 색인 410, 미니게임 분기·결과
+74, 저장·불러오기 27개다. 일반 탐색 후보 795개 가운데 59개는 실행 코드·표·
 애니메이션 데이터가 우연히 글꼴 문법으로 디코딩된 오탐으로 고정 제외했다.
+경기 항목에는 정확한 범위와 해시로 별도 채택한 최종전 미러 70개와 짧은
+경기 반응 미러 6개가 포함된다.
 추출 근거, 번역 정본과 아직 증명하지 않은 런타임 경계는
 [`unindexed-font-text.md`](unindexed-font-text.md)를 따른다.
 

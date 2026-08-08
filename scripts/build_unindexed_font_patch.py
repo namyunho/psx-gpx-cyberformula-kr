@@ -54,7 +54,12 @@ except ModuleNotFoundError:
     )
 
 
-EXPECTED_SELECTED_COUNTS = {38: 73, 39: 27}
+EXPECTED_SELECTED_COUNTS = {38: 74, 39: 27}
+
+COOKING_PAGED_ENTRY_PREFIXES = (
+    "disc1/allbin/u38/direct/cooking_taste_start",
+    "disc1/allbin/u38/direct/cooking_reaction_",
+)
 
 
 def _entry_start(entry: dict[str, Any]) -> int:
@@ -76,6 +81,56 @@ def _special_translation_map(document: dict[str, Any]) -> dict[str, str]:
     if len(result) != len(translations):
         raise ValueError("special-screen translation IDs are duplicated")
     return result
+
+
+def _pack_paged_stream_segment(
+    *,
+    entry_id: str,
+    source_segment: bytes,
+    encoded_pages: list[bytes],
+) -> tuple[bytes, dict[str, int]]:
+    """Rebuild one fall-through stream and retain its final 0xFFFF.
+
+    Every encoded page includes its own 0x8000 page boundary.  Bytes after the
+    first source 0xFFFF are alignment padding, not another dialogue page.
+    """
+    if len(source_segment) % 2:
+        raise ValueError(f"{entry_id}: paged stream capacity is not word-aligned")
+    words = list(struct.unpack(f"<{len(source_segment) // 2}H", source_segment))
+    try:
+        stream_end_word = words.index(0xFFFF)
+    except ValueError as exc:
+        raise ValueError(f"{entry_id}: source stream has no final 0xFFFF") from exc
+    if any(words[stream_end_word + 1 :]):
+        raise ValueError(f"{entry_id}: nonzero data follows source 0xFFFF")
+
+    source_page_count = words[:stream_end_word].count(0x8000)
+    if source_page_count != len(encoded_pages):
+        raise ValueError(
+            f"{entry_id}: translated page count {len(encoded_pages)} differs "
+            f"from source page count {source_page_count}"
+        )
+    page_end = struct.pack("<H", 0x8000)
+    for page_index, encoded in enumerate(encoded_pages):
+        if not encoded.endswith(page_end):
+            raise ValueError(
+                f"{entry_id}: encoded page {page_index} has no 0x8000 boundary"
+            )
+
+    packed = b"".join(encoded_pages) + struct.pack("<H", 0xFFFF)
+    if len(packed) > len(source_segment):
+        raise ValueError(
+            f"{entry_id}: paged stream exceeds capacity by "
+            f"{len(packed) - len(source_segment)} bytes"
+        )
+    output = packed + bytes(len(source_segment) - len(packed))
+    return output, {
+        "source_page_count": source_page_count,
+        "encoded_page_count": len(encoded_pages),
+        "encoded_bytes_including_stream_end": len(packed),
+        "tail_padding_bytes": len(source_segment) - len(packed),
+        "stream_end_count": 1,
+    }
 
 
 def _pack_u38_continuations(
@@ -108,9 +163,12 @@ def _pack_u38_continuations(
             for entry in additional_entries
             if special_source_end <= _entry_start(entry) < segment_end
         ]
-        if not continuations:
+        is_cooking_paged_stream = str(special["entry_id"]).startswith(
+            COOKING_PAGED_ENTRY_PREFIXES
+        )
+        if not continuations and not is_cooking_paged_stream:
             continue
-        if _entry_start(continuations[0]) != special_source_end:
+        if continuations and _entry_start(continuations[0]) != special_source_end:
             raise ValueError(
                 f"{special['entry_id']}: continuation does not start "
                 "immediately after its indexed page"
@@ -171,14 +229,28 @@ def _pack_u38_continuations(
             continuation_reports.append(report)
             covered.add(entry_id)
 
-        packed = b"".join(streams)
         capacity = segment_end - segment_start
-        if len(packed) > capacity:
-            raise ValueError(
-                f"{special['entry_id']}: continuation segment exceeds "
-                f"capacity by {len(packed) - capacity} bytes"
+        if is_cooking_paged_stream:
+            output, stream_report = _pack_paged_stream_segment(
+                entry_id=str(special["entry_id"]),
+                source_segment=source_allbin[segment_start:segment_end],
+                encoded_pages=streams,
             )
-        output = packed + bytes(capacity - len(packed))
+        else:
+            packed = b"".join(streams)
+            if len(packed) > capacity:
+                raise ValueError(
+                    f"{special['entry_id']}: continuation segment exceeds "
+                    f"capacity by {len(packed) - capacity} bytes"
+                )
+            output = packed + bytes(capacity - len(packed))
+            stream_report = {
+                "source_page_count": len(streams),
+                "encoded_page_count": len(streams),
+                "encoded_bytes_including_stream_end": len(packed),
+                "tail_padding_bytes": capacity - len(packed),
+                "stream_end_count": 0,
+            }
         patched_allbin[segment_start:segment_end] = output
         if bytes(patched_allbin[segment_start:segment_end]) != output:
             raise AssertionError(
@@ -191,8 +263,13 @@ def _pack_u38_continuations(
                 "segment_start": f"0x{segment_start:X}",
                 "segment_end_exclusive": f"0x{segment_end:X}",
                 "segment_capacity_bytes": capacity,
-                "encoded_bytes": len(packed),
-                "tail_padding_bytes": capacity - len(packed),
+                "encoded_bytes": stream_report[
+                    "encoded_bytes_including_stream_end"
+                ],
+                "tail_padding_bytes": stream_report["tail_padding_bytes"],
+                "source_page_count": stream_report["source_page_count"],
+                "encoded_page_count": stream_report["encoded_page_count"],
+                "stream_end_count": stream_report["stream_end_count"],
                 "special_start_preserved": True,
                 "continuation_entry_count": len(continuations),
                 "continuations": continuation_reports,

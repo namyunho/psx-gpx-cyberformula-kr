@@ -134,6 +134,32 @@ class UnindexedFontTranslationTests(unittest.TestCase):
                 ),
             )
 
+    def test_finale_mirrors_share_the_exact_reviewed_dialogue_aliases(self) -> None:
+        sources = {
+            entry["entry_id"]: entry for entry in self.workset["entries"]
+        }
+        translated = {
+            entry["id"]: entry for entry in self.canonical["translations"]
+        }
+        mirrors = [
+            source
+            for source in sources.values()
+            if "translation_alias_id" in source
+        ]
+        self.assertEqual(len(mirrors), 76)
+        by_alias: dict[str, set[str]] = {}
+        for source in mirrors:
+            alias_id = source["translation_alias_id"]
+            by_alias.setdefault(alias_id, set()).add(
+                translated[source["entry_id"]]["ko"]
+            )
+            self.assertEqual(
+                translated[source["entry_id"]]["translation_alias_id"],
+                alias_id,
+            )
+        self.assertEqual(len(by_alias), 15)
+        self.assertTrue(all(len(values) == 1 for values in by_alias.values()))
+
     def test_font_corpus_keeps_headroom_without_replacing_old_map(self) -> None:
         if not self.previous_map_path.is_file():
             self.skipTest("previous verified integrated font map unavailable")

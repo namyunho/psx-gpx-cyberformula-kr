@@ -44,6 +44,32 @@ FOREGROUND_INDEX = 10
 SHADOW_INDEX = 13
 
 
+def _visible_bounds(
+    values: bytes | list[int], width: int, height: int
+) -> tuple[int, int, int, int]:
+    if len(values) != width * height:
+        raise ValueError("button surface size differs")
+    points = [
+        (index % width, index // width)
+        for index, value in enumerate(values)
+        if value != TRANSPARENT_INDEX
+    ]
+    if not points:
+        raise ValueError("button label has no visible pixels")
+    xs, ys = zip(*points)
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def _center_delta(
+    reference: tuple[int, int, int, int],
+    replacement: tuple[int, int, int, int],
+) -> tuple[int, int]:
+    return (
+        (reference[0] + reference[2] - replacement[0] - replacement[2]) // 2,
+        (reference[1] + reference[3] - replacement[1] - replacement[3]) // 2,
+    )
+
+
 def _pixel_offset(x: int, y: int) -> tuple[int, int]:
     if not (0 <= x < TEXTURE_WIDTH and 0 <= y < TEXTURE_HEIGHT):
         raise ValueError(f"MINI_G3 texture coordinate is out of range: {x},{y}")
@@ -77,7 +103,12 @@ def _rect_indices(
 
 
 def _render_label_indices(
-    text: str, width: int, height: int, font: ImageFont.FreeTypeFont
+    text: str,
+    width: int,
+    height: int,
+    font: ImageFont.FreeTypeFont,
+    *,
+    reference_bounds: tuple[int, int, int, int],
 ) -> Image.Image:
     mask = Image.new("1", (width, height), 0)
     probe = ImageDraw.Draw(mask)
@@ -99,7 +130,24 @@ def _render_label_indices(
     shadow.paste(mask, (1, 1))
     indices.paste(SHADOW_INDEX, mask=shadow)
     indices.paste(FOREGROUND_INDEX, mask=mask)
-    return indices
+    replacement_bounds = _visible_bounds(
+        list(indices.get_flattened_data()), width, height
+    )
+    dx, dy = _center_delta(reference_bounds, replacement_bounds)
+    shifted = Image.new("L", (width, height), TRANSPARENT_INDEX)
+    shifted.paste(indices, (dx, dy))
+    shifted_bounds = _visible_bounds(
+        list(shifted.get_flattened_data()), width, height
+    )
+    if abs(
+        (reference_bounds[0] + reference_bounds[2])
+        - (shifted_bounds[0] + shifted_bounds[2])
+    ) > 1 or abs(
+        (reference_bounds[1] + reference_bounds[3])
+        - (shifted_bounds[1] + shifted_bounds[3])
+    ) > 1:
+        raise ValueError(f"button label {text!r} cannot match the source center")
+    return shifted
 
 
 def patch_minigame_buttons(
@@ -133,11 +181,21 @@ def patch_minigame_buttons(
         original_indices = _rect_indices(source, rect)
         if not any(original_indices):
             raise ValueError(f"{entry_id}: original label sprite is empty")
-        rendered = _render_label_indices(str(entry["ko"]), width, height, font)
+        source_visible_bounds = _visible_bounds(original_indices, width, height)
+        rendered = _render_label_indices(
+            str(entry["ko"]),
+            width,
+            height,
+            font,
+            reference_bounds=source_visible_bounds,
+        )
         for py in range(height):
             for px in range(width):
                 _set_index(patched, x + px, y + py, rendered.getpixel((px, py)))
         replacement_indices = _rect_indices(patched, rect)
+        replacement_visible_bounds = _visible_bounds(
+            replacement_indices, width, height
+        )
         if replacement_indices == original_indices:
             raise ValueError(f"{entry_id}: replacement did not change the sprite")
         row_ranges = []
@@ -165,6 +223,8 @@ def patch_minigame_buttons(
                 },
                 "source_indices_sha256": hashlib.sha256(original_indices).hexdigest(),
                 "replacement_indices_sha256": hashlib.sha256(replacement_indices).hexdigest(),
+                "source_visible_bounds": list(source_visible_bounds),
+                "replacement_visible_bounds": list(replacement_visible_bounds),
                 "packed_row_ranges": row_ranges,
             }
         )

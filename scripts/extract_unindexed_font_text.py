@@ -94,7 +94,7 @@ FALSE_POSITIVE_STARTS_BY_UNIT: dict[int, frozenset[int]] = {
             0x1F068,
         }
     ),
-    38: frozenset({0x15004, 0x16D28, 0x17D08, 0x1DA02}),
+    38: frozenset({0x15004, 0x16D28, 0x17D08}),
 }
 
 # The first valid run in these two race overlays begins with table data.  The
@@ -102,14 +102,89 @@ FALSE_POSITIVE_STARTS_BY_UNIT: dict[int, frozenset[int]] = {
 REVIEWED_START_TRIMS = {
     (33, 0x04204): 0x04230,
     (34, 0x04204): 0x04230,
+    # These three race overlays preserve one zero padding word before the
+    # same directly addressed 0x918B "…。" stream used by u30/u31.  The
+    # renderer entry starts at the speaker token, not at the padding word.
+    (32, 0x0523A): 0x0523C,
+    (33, 0x0523A): 0x0523C,
+    (34, 0x0523A): 0x0523C,
 }
 
-EXPECTED_DISCOVERY_CANDIDATE_COUNT = 784
-EXPECTED_FALSE_POSITIVE_COUNT = 60
+# Very short reaction and punctuation pages are valid renderer streams, but
+# cannot satisfy the two-Japanese-letter threshold used to reject binary false
+# positives.  The story entries bridge two already proved pages without a
+# physical hole, u28 +0x1008 has a direct absolute reference, and the six race
+# copies match directly referenced streams in sibling overlays byte-for-byte.
+# Admit them only at these reviewed physical starts.  The u32/u33/u34 +0x523A
+# discovery starts are normalized to +0x523C by REVIEWED_START_TRIMS above.
+REVIEWED_SHORT_STREAM_STARTS = frozenset(
+    {
+        (4, 0x00D86),
+        (16, 0x0127A),
+        (16, 0x015B2),
+        (18, 0x01F72),
+        (28, 0x01008),
+        (30, 0x05630),
+        (31, 0x05630),
+        (32, 0x0523A),
+        (33, 0x0523A),
+        (33, 0x05630),
+        (34, 0x0523A),
+        (38, 0x1DA50),
+    }
+)
+
+# Six physical race copies share the exact Korean decision of the directly
+# referenced u30 stream.  Keeping an explicit alias prevents identical scene
+# copies from drifting while avoiding duplicate editor rows.
+REVIEWED_SHORT_RACE_ALIASES = {
+    (30, 0x05630): "disc1/allbin/u30/embedded_race/e0040",
+    (31, 0x05630): "disc1/allbin/u30/embedded_race/e0040",
+    (32, 0x0523C): "disc1/allbin/u30/embedded_race/e0040",
+    (33, 0x0523C): "disc1/allbin/u30/embedded_race/e0040",
+    (33, 0x05630): "disc1/allbin/u30/embedded_race/e0040",
+    (34, 0x0523C): "disc1/allbin/u30/embedded_race/e0040",
+}
+
+# Every final-race overlay contains the same 0x300-byte fall-through scene.
+# The generic u21..u34 grammar intentionally does not accept arbitrary 0x8000
+# runs because executable and animation tables produce convincing false
+# positives.  Admit this pool only through its verified byte range, digest,
+# page boundaries, and one-to-one aliases to the canonical u19 scene.
+MIRRORED_FINALE_UNITS = tuple(range(30, 35))
+MIRRORED_FINALE_START = 0x07190
+MIRRORED_FINALE_END = 0x07490
+MIRRORED_FINALE_POOL_SHA256 = (
+    "6944059dfe2cc9f27c1fe10d41edfd713d37a660c0fc8f79795127a6d6f1007a"
+)
+MIRRORED_FINALE_PAGE_OFFSETS = (
+    0x07190,
+    0x071E0,
+    0x0722A,
+    0x07276,
+    0x072C4,
+    0x072CE,
+    0x072FC,
+    0x07334,
+    0x0737C,
+    0x073AC,
+    0x073EE,
+    0x07446,
+    0x07460,
+    0x07484,
+    0x07490,
+)
+MIRRORED_FINALE_ALIAS_IDS = tuple(
+    f"disc1/allbin/u19/event_page/ref{index:04d}"
+    for index in range(4, 18)
+)
+
+EXPECTED_DISCOVERY_CANDIDATE_COUNT = 795
+EXPECTED_FALSE_POSITIVE_COUNT = 59
 EXPECTED_ENTRY_COUNTS_BY_UNIT = {
     2: 1,
     3: 6,
-    4: 9,
+    4: 10,
     5: 5,
     6: 11,
     7: 4,
@@ -121,17 +196,17 @@ EXPECTED_ENTRY_COUNTS_BY_UNIT = {
     13: 15,
     14: 29,
     15: 1,
-    16: 32,
+    16: 34,
     17: 41,
-    18: 11,
+    18: 12,
     19: 7,
-    28: 8,
-    30: 55,
-    31: 57,
-    32: 56,
-    33: 105,
-    34: 52,
-    38: 73,
+    28: 9,
+    30: 70,
+    31: 72,
+    32: 71,
+    33: 121,
+    34: 67,
+    38: 74,
     39: 27,
 }
 EXPECTED_ENTRY_COUNT = sum(EXPECTED_ENTRY_COUNTS_BY_UNIT.values())
@@ -275,9 +350,10 @@ def discover_gap_candidates(
                 position += 2
                 if token in terminals:
                     visible = decode_visible_text(tokens, glyphs)
-                    if (
+                    if len(tokens) >= 3 and (
                         len(JAPANESE_TEXT_RE.findall(visible)) >= 2
-                        and len(tokens) >= 3
+                        or (unit_index, stream_start)
+                        in REVIEWED_SHORT_STREAM_STARTS
                     ):
                         candidates.append(
                             {
@@ -347,7 +423,8 @@ def consumer_evidence_for_unit(unit_index: int) -> str:
     if unit_index == 38:
         return (
             "reviewed mini-game branch/result pool adjacent to the proved u38 "
-            "font consumers; indexed runtime route still needs path QA"
+            "font consumers; cooking result pages preserve the statically "
+            "verified 0x8000 fall-through order through the final 0xFFFF"
         )
     return (
         "contiguous FFFD..FFFF save-system message table containing the "
@@ -367,6 +444,106 @@ def layout_for_entry(unit_index: int, display_text: str) -> dict[str, int]:
         "rows": rows,
         "capacity_positions": 17 * rows,
     }
+
+
+def mirrored_finale_entries(
+    *,
+    unit: bytes,
+    unit_index: int,
+    unit_file_offset: int,
+    glyphs: dict[int, str],
+) -> list[dict[str, Any]]:
+    """Build the exact 14-page final-race mirror from reviewed boundaries."""
+    if unit_index not in MIRRORED_FINALE_UNITS:
+        return []
+    pool = unit[MIRRORED_FINALE_START:MIRRORED_FINALE_END]
+    if len(pool) != MIRRORED_FINALE_END - MIRRORED_FINALE_START:
+        raise ValueError(f"u{unit_index:02d}: mirrored finale pool is truncated")
+    if sha256_bytes(pool) != MIRRORED_FINALE_POOL_SHA256:
+        raise ValueError(f"u{unit_index:02d}: mirrored finale pool hash differs")
+
+    entries: list[dict[str, Any]] = []
+    for page_index, (start, end, alias_id) in enumerate(
+        zip(
+            MIRRORED_FINALE_PAGE_OFFSETS,
+            MIRRORED_FINALE_PAGE_OFFSETS[1:],
+            MIRRORED_FINALE_ALIAS_IDS,
+        )
+    ):
+        raw = unit[start:end]
+        if len(raw) % 2:
+            raise ValueError(
+                f"u{unit_index:02d} finale page {page_index}: odd byte size"
+            )
+        tokens = list(struct.unpack(f"<{len(raw) // 2}H", raw))
+        if not tokens or tokens[-1] != 0x8000:
+            raise ValueError(
+                f"u{unit_index:02d} finale page {page_index}: "
+                "missing 0x8000 boundary"
+            )
+        if any(not token_is_supported(token, glyphs) for token in tokens):
+            raise ValueError(
+                f"u{unit_index:02d} finale page {page_index}: "
+                "unsupported token"
+            )
+        controls = [
+            {
+                "token_index": token_index,
+                "raw": f"{token:04X}",
+                "kind": kind,
+            }
+            for token_index, token in enumerate(tokens)
+            if (kind := control_kind(token)) is not None
+        ]
+        entry_id = (
+            f"disc1/allbin/u{unit_index:02d}/"
+            f"unindexed_font/finale_ref{page_index + 4:04d}"
+        )
+        display_text = decode_visible_text(tokens, glyphs)
+        entries.append(
+            {
+                "entry_id": entry_id,
+                "classification": "indexed_race_page",
+                "reachability": "runtime-confirmed-mirrored-finale-scene",
+                "translation_alias_id": alias_id,
+                "translation_alias_match_policy": (
+                    "reviewed-punctuation-variant"
+                    if alias_id.endswith("ref0014")
+                    else "normalized-japanese-exact"
+                ),
+                "source": {
+                    "container": "ALLBIN.BIN",
+                    "unit_index": unit_index,
+                    "file_offset": f"0x{unit_file_offset + start:06X}",
+                    "unit_offset": f"0x{start:05X}",
+                    "byte_size": len(raw),
+                    "sha256": sha256_bytes(raw),
+                    "terminal": "8000",
+                    "mirror_pool_start": f"0x{MIRRORED_FINALE_START:05X}",
+                    "mirror_pool_end_exclusive": (
+                        f"0x{MIRRORED_FINALE_END:05X}"
+                    ),
+                },
+                "consumer": {
+                    "evidence": (
+                        "runtime screenshots confirm the final-race path; "
+                        "five byte-identical overlay pools fall through the "
+                        "same 14 pages"
+                    ),
+                    "runtime_path_review_required": False,
+                },
+                "original": {
+                    "raw_hex": raw.hex().upper(),
+                    "tokens": [f"{token:04X}" for token in tokens],
+                    "control_tokens": controls,
+                    "display_text": display_text,
+                },
+                "layout": layout_for_entry(unit_index, display_text),
+            }
+        )
+    if len(entries) != len(MIRRORED_FINALE_ALIAS_IDS):
+        raise AssertionError("mirrored finale page population differs")
+    return entries
 
 
 def build_workset(
@@ -462,8 +639,7 @@ def build_workset(
                 f"disc1/allbin/u{unit_index:02d}/"
                 f"unindexed_font/p{start:05X}"
             )
-            entries.append(
-                {
+            entry = {
                     "entry_id": entry_id,
                     "classification": classification_for_unit(unit_index),
                     "reachability": "static-consumer-class-runtime-path-review",
@@ -492,7 +668,51 @@ def build_workset(
                         candidate["display_text"],
                     ),
                 }
+            alias_id = REVIEWED_SHORT_RACE_ALIASES.get(
+                (unit_index, start)
             )
+            if alias_id is not None:
+                entry["translation_alias_id"] = alias_id
+                entry["translation_alias_match_policy"] = (
+                    "normalized-japanese-exact"
+                )
+                entry["reachability"] = (
+                    "reviewed-sibling-overlay-direct-reference-mirror"
+                )
+                entry["consumer"]["runtime_path_review_required"] = False
+                entry["consumer"]["evidence"] = (
+                    "byte-identical short race reaction is directly "
+                    "referenced in sibling u30/u31/u32/u34 overlays"
+                )
+            entries.append(entry)
+
+        exact_finale = mirrored_finale_entries(
+            unit=unit,
+            unit_index=unit_index,
+            unit_file_offset=unit_file_offset,
+            glyphs=glyphs,
+        )
+        existing_ranges = {
+            (
+                int(entry["source"]["unit_offset"], 16),
+                int(entry["source"]["unit_offset"], 16)
+                + int(entry["source"]["byte_size"]),
+            )
+            for entry in entries
+            if int(entry["source"]["unit_index"]) == unit_index
+        }
+        for exact in exact_finale:
+            exact_start = int(exact["source"]["unit_offset"], 16)
+            exact_end = exact_start + int(exact["source"]["byte_size"])
+            if any(
+                exact_start < existing_end and existing_start < exact_end
+                for existing_start, existing_end in existing_ranges
+            ):
+                raise ValueError(
+                    f"{exact['entry_id']}: overlaps a heuristic entry"
+                )
+            existing_ranges.add((exact_start, exact_end))
+            entries.append(exact)
 
     if discovery_count != EXPECTED_DISCOVERY_CANDIDATE_COUNT:
         raise ValueError(
@@ -532,13 +752,15 @@ def build_workset(
             "included": [
                 "sequential event pages in u02..u19",
                 "indexed or branch-selected race pages in u30..u34",
+                "exact 14-page final-race mirror in each u30..u34 overlay",
+                "11 reviewed short reaction pages missed by the Japanese-letter threshold",
                 "mixed-terminal fall-through branch pages in u28",
                 "additional mini-game branch/result pages in u38",
                 "save-system messages in u39",
             ],
             "excluded": [
                 "streams already present in the four known worksets",
-                "60 reviewed binary-data false positives",
+                "59 reviewed binary-data false positives",
                 "baked graphical text",
             ],
         },
@@ -549,7 +771,8 @@ def build_workset(
             ),
             "adoption": (
                 "fixed reviewed false-positive catalogue, two reviewed start "
-                "trims, exact total and per-unit population assertions"
+                "trims, exact mirrored-finale range/hash/boundaries, exact "
+                "total and per-unit population assertions"
             ),
             "completion_boundary": (
                 "translation coverage for this reviewed workset does not by "
@@ -559,6 +782,13 @@ def build_workset(
         "summary": {
             "discovery_candidate_count": discovery_count,
             "reviewed_false_positive_count": false_positive_count,
+            "mirrored_finale_physical_entry_count": (
+                len(MIRRORED_FINALE_UNITS)
+                * len(MIRRORED_FINALE_ALIAS_IDS)
+            ),
+            "mirrored_finale_logical_page_count": len(
+                MIRRORED_FINALE_ALIAS_IDS
+            ),
             "entry_count": len(entries),
             "entry_counts_by_unit": {
                 f"u{unit_index:02d}": count

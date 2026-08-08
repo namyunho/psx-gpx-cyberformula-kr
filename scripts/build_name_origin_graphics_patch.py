@@ -415,6 +415,45 @@ def centered_origin(
     )
 
 
+def visible_bounds(
+    values: list[int] | bytes,
+    *,
+    width: int,
+    height: int,
+    transparent_index: int = 0,
+) -> tuple[int, int, int, int]:
+    """Return inclusive nontransparent bounds in a tightly packed surface."""
+    if len(values) != width * height:
+        raise ValueError("surface size differs from its declared dimensions")
+    points = [
+        (index % width, index // width)
+        for index, value in enumerate(values)
+        if value != transparent_index
+    ]
+    if not points:
+        raise ValueError("surface contains no visible pixels")
+    xs, ys = zip(*points)
+    return min(xs), min(ys), max(xs), max(ys)
+
+
+def reference_centered_origin(
+    reference_bounds: tuple[int, int, int, int],
+    ink_bounds: tuple[int, int, int, int],
+) -> tuple[int, int]:
+    """Place replacement ink on the original label's visual center.
+
+    The label sprites are composited over separate button backgrounds.  Their
+    visible center is therefore the stable screen-space anchor; the enclosing
+    storage rectangle is only a packing boundary.
+    """
+    ref_x0, ref_y0, ref_x1, ref_y1 = reference_bounds
+    ink_x0, ink_y0, ink_x1, ink_y1 = ink_bounds
+    return (
+        (ref_x0 + ref_x1 - ink_x0 - ink_x1) // 2,
+        (ref_y0 + ref_y1 - ink_y0 - ink_y1) // 2,
+    )
+
+
 def patch_origin_atlas(
     source: bytes,
     *,
@@ -469,6 +508,19 @@ def patch_origin_atlas(
     for entry_id, target in TARGETS.items():
         entry = entries[entry_id]
         box = target["box"]
+        box_x0, box_y0, box_x1, box_y1 = box
+        box_width = box_x1 - box_x0
+        box_height = box_y1 - box_y0
+        source_box = [
+            indices[y_pos * width + x_pos]
+            for y_pos in range(box_y0, box_y1)
+            for x_pos in range(box_x0, box_x1)
+        ]
+        source_visible_bounds = visible_bounds(
+            source_box,
+            width=box_width,
+            height=box_height,
+        )
         clear_box(indices, width=width, box=box)
         for line in entry["lines"]:
             for character in line:
@@ -495,9 +547,28 @@ def patch_origin_atlas(
                 shadow_x_offset=shadow_x_offset,
                 shadow_y_offset=shadow_y_offset,
             )
-            origin_x, origin_y = centered_origin(box, bounds)
+            relative_x, relative_y = reference_centered_origin(
+                source_visible_bounds,
+                bounds,
+            )
+            placed_bounds = (
+                relative_x + bounds[0],
+                relative_y + bounds[1],
+                relative_x + bounds[2],
+                relative_y + bounds[3],
+            )
+            if not (
+                0 <= placed_bounds[0] <= placed_bounds[2] < box_width
+                and 0 <= placed_bounds[1] <= placed_bounds[3] < box_height
+            ):
+                raise ValueError(
+                    f"{entry_id}: source-centered replacement exceeds its box"
+                )
+            origin_x = box_x0 + relative_x
+            origin_y = box_y0 + relative_y
         else:
             origin_x, origin_y = target["origin"]
+            placed_bounds = None
         for row, line in enumerate(entry["lines"]):
             for column, character in enumerate(line):
                 if character == " ":
@@ -525,6 +596,12 @@ def patch_origin_atlas(
                 "max_rows": entry["max_rows"],
                 "alignment": target.get("alignment", "explicit-origin"),
                 "resolved_origin": [origin_x, origin_y],
+                "source_visible_bounds_relative": list(source_visible_bounds),
+                **(
+                    {"replacement_visible_bounds_relative": list(placed_bounds)}
+                    if placed_bounds is not None
+                    else {}
+                ),
             }
         )
 

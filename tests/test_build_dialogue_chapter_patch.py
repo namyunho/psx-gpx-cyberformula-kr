@@ -20,6 +20,7 @@ from scripts.build_dialogue_chapter_patch import (
     relink_unit_shared_pool,
     repack_unit,
     scan_unit_dialogue_references,
+    scan_unit_split_immediate_dialogue_references,
     validate_stable_id_join,
     verify_unit_reference_profile,
     verify_expected_writes,
@@ -452,6 +453,85 @@ class DialogueChapterBuildTests(unittest.TestCase):
         self.assertEqual(parse_units([], True), list(range(35)))
         with self.assertRaisesRegex(ValueError, "units 21..34"):
             parse_units(["35"], False)
+
+    def test_u11_blackjack_random_opponent_split_references_are_frozen(
+        self,
+    ) -> None:
+        dialogue = json.loads(
+            (ROOT / "work/translations/disc1-dialogue.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        unindexed = json.loads(
+            (
+                ROOT
+                / "work/translations/disc1-unindexed-font-text.json"
+            ).read_text(encoding="utf-8")
+        )
+        direct_entries = [
+            entry
+            for entry in dialogue["entries"]
+            if int(entry["source"]["unit_index"]) == 11
+        ]
+        additional_entries = [
+            entry
+            for entry in unindexed["entries"]
+            if int(entry["source"]["unit_index"]) == 11
+        ]
+        entries = [*direct_entries, *additional_entries]
+        unit_file_offset = {
+            int(entry["source"]["file_offset"], 16)
+            - int(entry["source"]["unit_offset"], 16)
+            for entry in entries
+        }.pop()
+        profile = UNIT_SHARED_POOL_REFERENCE_PROFILES[11]
+        source_allbin = (
+            ROOT / "work/extracted/disc1/iso/ALLBIN.BIN"
+        ).read_bytes()
+        source_unit = source_allbin[
+            unit_file_offset :
+            unit_file_offset + int(profile["scheduled_bytes"])
+        ]
+        layout = build_source_ordered_stream(
+            source_unit,
+            entries,
+            {
+                entry["entry_id"]: bytes.fromhex(
+                    entry["original"]["raw_hex"]
+                )
+                for entry in entries
+            },
+        )
+        references = scan_unit_split_immediate_dialogue_references(
+            11,
+            source_unit,
+            entries,
+            layout,
+        )
+        self.assertEqual(len(references), 7)
+        self.assertEqual(
+            [reference["target_id"] for reference in references],
+            [
+                "disc1/allbin/u11/unindexed_font/p01192",
+                "disc1/allbin/u11/unindexed_font/p011A4",
+                "disc1/allbin/u11/unindexed_font/p011BA",
+                "disc1/allbin/u11/unindexed_font/p01200",
+                "disc1/allbin/u11/unindexed_font/p011D0",
+                "disc1/allbin/u11/unindexed_font/p01210",
+                "disc1/allbin/u11/unindexed_font/p011EE",
+            ],
+        )
+        self.assertEqual(
+            [reference["anchor_delta"] for reference in references],
+            [2, 0, 2, 0, 0, 0, 2],
+        )
+        self.assertTrue(
+            all(
+                reference["source_target_unit_offset"]
+                == reference["output_target_unit_offset"]
+                for reference in references
+            )
+        )
 
     def test_unit_shared_pool_relinks_hidden_and_gap_consumers(self) -> None:
         def entry(

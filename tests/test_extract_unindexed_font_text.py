@@ -9,6 +9,12 @@ from scripts.extract_unindexed_font_text import (
     EXPECTED_DISCOVERY_CANDIDATE_COUNT,
     EXPECTED_ENTRY_COUNT,
     EXPECTED_FALSE_POSITIVE_COUNT,
+    MIRRORED_FINALE_ALIAS_IDS,
+    MIRRORED_FINALE_END,
+    MIRRORED_FINALE_POOL_SHA256,
+    MIRRORED_FINALE_START,
+    MIRRORED_FINALE_UNITS,
+    REVIEWED_SHORT_RACE_ALIASES,
     build_workset,
 )
 
@@ -64,6 +70,75 @@ class ExtractUnindexedFontTextTests(unittest.TestCase):
                 hashlib.sha256(raw).hexdigest(),
                 source["sha256"],
             )
+
+    def test_cooking_punctuation_only_fallthrough_page_is_included(self) -> None:
+        entry = next(
+            entry
+            for entry in self.document["entries"]
+            if entry["entry_id"]
+            == "disc1/allbin/u38/unindexed_font/p1DA50"
+        )
+        self.assertEqual(entry["original"]["display_text"], "…。")
+        self.assertEqual(entry["source"]["terminal"], "8000")
+
+    def test_reviewed_short_reaction_pages_are_included(self) -> None:
+        entries = {
+            entry["entry_id"]: entry for entry in self.document["entries"]
+        }
+        expected = {
+            "disc1/allbin/u04/unindexed_font/p00D86": "\u3000…。",
+            "disc1/allbin/u16/unindexed_font/p0127A": "\u3000へ？",
+            "disc1/allbin/u16/unindexed_font/p015B2": "\u3000…？",
+            "disc1/allbin/u18/unindexed_font/p01F72": (
+                "\u3000…{name:given}。"
+            ),
+            "disc1/allbin/u28/unindexed_font/p01008": "……。",
+        }
+        for entry_id, display_text in expected.items():
+            self.assertEqual(
+                entries[entry_id]["original"]["display_text"],
+                display_text,
+            )
+
+        for (unit_index, start), alias_id in (
+            REVIEWED_SHORT_RACE_ALIASES.items()
+        ):
+            entry_id = (
+                f"disc1/allbin/u{unit_index:02d}/"
+                f"unindexed_font/p{start:05X}"
+            )
+            self.assertEqual(
+                entries[entry_id]["translation_alias_id"], alias_id
+            )
+            self.assertEqual(
+                entries[entry_id]["original"]["display_text"], "…。"
+            )
+
+    def test_finale_mirror_is_exact_and_aliased(self) -> None:
+        allbin = self.allbin_path.read_bytes()
+        entries = self.document["entries"]
+        for unit_index in MIRRORED_FINALE_UNITS:
+            mirrored = [
+                entry
+                for entry in entries
+                if int(entry["source"]["unit_index"]) == unit_index
+                and entry["entry_id"].startswith(
+                    f"disc1/allbin/u{unit_index:02d}/"
+                    "unindexed_font/finale_ref"
+                )
+            ]
+            self.assertEqual(len(mirrored), len(MIRRORED_FINALE_ALIAS_IDS))
+            self.assertEqual(
+                [entry["translation_alias_id"] for entry in mirrored],
+                list(MIRRORED_FINALE_ALIAS_IDS),
+            )
+            pool_start = int(mirrored[0]["source"]["file_offset"], 16)
+            pool = allbin[
+                pool_start :
+                pool_start + MIRRORED_FINALE_END - MIRRORED_FINALE_START
+            ]
+            self.assertEqual(hashlib.sha256(pool).hexdigest(), MIRRORED_FINALE_POOL_SHA256)
+            self.assertTrue(all(entry["source"]["terminal"] == "8000" for entry in mirrored))
 
 
 if __name__ == "__main__":

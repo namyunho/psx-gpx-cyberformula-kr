@@ -443,12 +443,35 @@ ADDITIONAL_UNIT_REFERENCE_PROFILES = {
     17: (0x6000, 404, 404, 0, 0, "40136b9cfae670915373eea79fbfea64df30f70684837a76183d00066b20c3d5"),
     18: (0x7800, 554, 554, 0, 0, "5fc4a8fb11750f67406df2f3e2786033dc2037a060afa0a29213d04a328389bc"),
     19: (0x2000, 107, 107, 0, 0, "504a934c91f64c96b9f846eb09bfc563d24a2b022eff7a07c92645099b60fe2d"),
-    28: (0x4800, 166, 159, 1, 6, "c77b6f0c96fba98f7b66c2ccd59bceaf19e21ca99d703ba330341ec4ba7c70f2"),
-    30: (0xC000, 171, 170, 0, 1, "6abc1ce354d0cb98fc2898e363f95a752aaba9e54572e83c95a2ef4e54d6a084"),
+    28: (0x4800, 166, 160, 0, 6, "c77b6f0c96fba98f7b66c2ccd59bceaf19e21ca99d703ba330341ec4ba7c70f2"),
+    30: (0xC000, 185, 179, 0, 6, "360b3e283f2b2831126f51c9e1e7b560d1ab861ce6e21bbcce279c66e5c6c1bc"),
     31: (0xA000, 169, 168, 0, 1, "72c6ddb3e2aafa985dc8f4a8a7056d154b6de7eede280a1a4aeef9047e85d3eb"),
-    32: (0xC000, 170, 169, 0, 1, "da15fc4b806bd2283e6c86de4c1b3b672ef6bab61b87b12e2eefe50f97b25cf6"),
+    32: (0xC000, 184, 178, 0, 6, "ca747265b128cc76ecef9ea6ccc66ae32b639ceb6e84e73f1bf983a54f2bab34"),
     33: (0x9800, 119, 118, 0, 1, "d6eb845537c6df793016a89911bb02958fd223f998a45977e1313209aa63061a"),
-    34: (0xC000, 174, 173, 0, 1, "6b6bb899d84d101924aece491cdfedf4c802a8c0a5fbf26236740cc47a93ade3"),
+    34: (0xC000, 188, 182, 0, 6, "e5034841023cf22a3a6cf83f43cc5580f429cb73286bfae516f708cba2617cf5"),
+}
+
+# u11's blackjack opponent selector does not use stored u32 pointers.  Seven
+# random branches construct an address with LUI+ADDIU and deliberately enter
+# two strings at +2, after a leading blank word.  These reviewed code operands
+# must move with the promoted sequential pages in the unit-shared pool.
+SPLIT_IMMEDIATE_DIALOGUE_REFERENCE_SPECS = {
+    11: (
+        (0x00C0, 0x00C4, 0x3C04800B, 0x24849194,
+         "disc1/allbin/u11/unindexed_font/p01192", 2),
+        (0x00E4, 0x00EC, 0x3C04800B, 0x248491A4,
+         "disc1/allbin/u11/unindexed_font/p011A4", 0),
+        (0x0110, 0x0118, 0x3C04800B, 0x248491BC,
+         "disc1/allbin/u11/unindexed_font/p011BA", 2),
+        (0x013C, 0x0144, 0x3C04800B, 0x24849200,
+         "disc1/allbin/u11/unindexed_font/p01200", 0),
+        (0x0168, 0x0170, 0x3C04800B, 0x248491D0,
+         "disc1/allbin/u11/unindexed_font/p011D0", 0),
+        (0x0194, 0x019C, 0x3C04800B, 0x24849210,
+         "disc1/allbin/u11/unindexed_font/p01210", 0),
+        (0x01C8, 0x01CC, 0x3C04800B, 0x248491F0,
+         "disc1/allbin/u11/unindexed_font/p011EE", 2),
+    ),
 }
 ADDITIONAL_UNIT_REFERENCE_PROFILES = {
     unit: {
@@ -1502,6 +1525,128 @@ def scan_unit_dialogue_references(
     return references
 
 
+def scan_unit_split_immediate_dialogue_references(
+    unit_index: int,
+    unit_data: bytes,
+    entries: Iterable[dict[str, Any]],
+    layout: dict[str, Any],
+) -> list[dict[str, Any]]:
+    """Validate reviewed MIPS LUI+ADDIU references into moved dialogue."""
+    specs = SPLIT_IMMEDIATE_DIALOGUE_REFERENCE_SPECS.get(unit_index, ())
+    if not specs:
+        return []
+    entries_by_id = {str(entry["entry_id"]): entry for entry in entries}
+    load_addresses = {
+        int(entry["source"]["runtime_pointer"], 16)
+        - int(entry["source"]["unit_offset"], 16)
+        for entry in entries_by_id.values()
+        if "runtime_pointer" in entry["source"]
+    }
+    if len(load_addresses) != 1:
+        raise ValueError("split dialogue references have mixed load addresses")
+    load_address = load_addresses.pop()
+
+    references: list[dict[str, Any]] = []
+    for (
+        lui_offset,
+        addiu_offset,
+        expected_lui,
+        expected_addiu,
+        target_id,
+        anchor_delta,
+    ) in specs:
+        if addiu_offset + 4 > len(unit_data):
+            raise ValueError(
+                f"unit {unit_index}: split reference lies outside unit"
+            )
+        lui_word = struct.unpack_from("<I", unit_data, lui_offset)[0]
+        addiu_word = struct.unpack_from("<I", unit_data, addiu_offset)[0]
+        if (lui_word, addiu_word) != (expected_lui, expected_addiu):
+            raise ValueError(
+                f"unit {unit_index}: split reference instructions differ "
+                f"at 0x{lui_offset:04X}/0x{addiu_offset:04X}"
+            )
+        if lui_word >> 26 != 0x0F or addiu_word >> 26 != 0x09:
+            raise ValueError("split reference is not LUI+ADDIU")
+        register = (lui_word >> 16) & 0x1F
+        if (
+            (addiu_word >> 21) & 0x1F != register
+            or (addiu_word >> 16) & 0x1F != register
+        ):
+            raise ValueError("split reference register flow differs")
+
+        high = lui_word & 0xFFFF
+        low = addiu_word & 0xFFFF
+        signed_low = low - 0x10000 if low & 0x8000 else low
+        source_runtime = ((high << 16) + signed_low) & 0xFFFFFFFF
+        source_target = source_runtime - load_address
+        try:
+            entry = entries_by_id[target_id]
+        except KeyError as error:
+            raise ValueError(
+                f"unit {unit_index}: split target {target_id} is missing"
+            ) from error
+        entry_start = int(entry["source"]["unit_offset"], 16)
+        if source_target != entry_start + anchor_delta:
+            raise ValueError(
+                f"{target_id}: split source target differs from reviewed anchor"
+            )
+        output_target = int(layout["placements"][target_id]) + anchor_delta
+        references.append(
+            {
+                "lui_storage_unit_offset": lui_offset,
+                "addiu_storage_unit_offset": addiu_offset,
+                "raw_lui_word": lui_word,
+                "raw_addiu_word": addiu_word,
+                "source_target_unit_offset": source_target,
+                "output_target_unit_offset": output_target,
+                "target_id": target_id,
+                "anchor_delta": anchor_delta,
+                "register": register,
+            }
+        )
+    return references
+
+
+def _patch_split_immediate_dialogue_reference(
+    allbin: bytearray,
+    *,
+    unit_file_offset: int,
+    load_address: int,
+    reference: dict[str, Any],
+) -> None:
+    target = (
+        load_address + int(reference["output_target_unit_offset"])
+    ) & 0xFFFFFFFF
+    high = ((target + 0x8000) >> 16) & 0xFFFF
+    low = target & 0xFFFF
+    lui_word = int(reference["raw_lui_word"])
+    addiu_word = int(reference["raw_addiu_word"])
+    patched_lui = (lui_word & 0xFFFF0000) | high
+    patched_addiu = (addiu_word & 0xFFFF0000) | low
+    lui_storage = unit_file_offset + int(
+        reference["lui_storage_unit_offset"]
+    )
+    addiu_storage = unit_file_offset + int(
+        reference["addiu_storage_unit_offset"]
+    )
+    if struct.unpack_from("<I", allbin, lui_storage)[0] != lui_word:
+        raise ValueError("split LUI source instruction differs")
+    if struct.unpack_from("<I", allbin, addiu_storage)[0] != addiu_word:
+        raise ValueError("split ADDIU source instruction differs")
+    struct.pack_into("<I", allbin, lui_storage, patched_lui)
+    struct.pack_into("<I", allbin, addiu_storage, patched_addiu)
+
+    actual_lui = struct.unpack_from("<I", allbin, lui_storage)[0]
+    actual_addiu = struct.unpack_from("<I", allbin, addiu_storage)[0]
+    actual_high = actual_lui & 0xFFFF
+    actual_low = actual_addiu & 0xFFFF
+    signed_low = actual_low - 0x10000 if actual_low & 0x8000 else actual_low
+    actual_target = ((actual_high << 16) + signed_low) & 0xFFFFFFFF
+    if actual_target != target:
+        raise ValueError("relocated split dialogue reference differs")
+
+
 def verify_unit_reference_profile(
     unit_index: int,
     unit_data: bytes,
@@ -1816,6 +1961,14 @@ def relink_unit_shared_pool(
         combined_entries,
         layout,
     )
+    split_immediate_references = (
+        scan_unit_split_immediate_dialogue_references(
+            unit_index,
+            source_unit,
+            combined_entries,
+            layout,
+        )
+    )
     if (
         len(references) != len(baseline_references)
         or reference_catalog_sha256(references)
@@ -1895,6 +2048,21 @@ def relink_unit_shared_pool(
             raise ValueError(
                 f"{entry_id}: relocated internal anchor prefix changed"
             )
+    for reference in split_immediate_references:
+        entry_id = str(reference["target_id"])
+        anchor_delta = int(reference["anchor_delta"])
+        if not anchor_delta:
+            continue
+        source_raw = bytes.fromhex(
+            entries_by_id[entry_id]["original"]["raw_hex"]
+        )
+        if (
+            streams_by_id[entry_id][:anchor_delta]
+            != source_raw[:anchor_delta]
+        ):
+            raise ValueError(
+                f"{entry_id}: relocated split-immediate anchor prefix changed"
+            )
     for reference in references:
         storage = unit_file_offset + int(reference["storage_unit_offset"])
         actual = struct.unpack_from("<I", allbin, storage)[0]
@@ -1908,6 +2076,14 @@ def relink_unit_shared_pool(
             allbin,
             storage,
             load_address + int(reference["output_target_unit_offset"]),
+        )
+
+    for reference in split_immediate_references:
+        _patch_split_immediate_dialogue_reference(
+            allbin,
+            unit_file_offset=unit_file_offset,
+            load_address=load_address,
+            reference=reference,
         )
 
     for reference in references:
@@ -2017,6 +2193,11 @@ def relink_unit_shared_pool(
             ),
             "all_relocated_and_verified": True,
         },
+        "split_immediate_reference_catalog": {
+            "reference_count": len(split_immediate_references),
+            "reviewed_exact_instruction_pairs": True,
+            "all_relocated_and_verified": True,
+        },
         "runtime_validation": runtime_validation,
         "references": [
             {
@@ -2035,6 +2216,25 @@ def relink_unit_shared_pool(
             }
             for reference in references
         ],
+        "split_immediate_references": [
+            {
+                "lui_storage_unit_offset": (
+                    f"0x{int(reference['lui_storage_unit_offset']):04X}"
+                ),
+                "addiu_storage_unit_offset": (
+                    f"0x{int(reference['addiu_storage_unit_offset']):04X}"
+                ),
+                "source_target_unit_offset": (
+                    f"0x{int(reference['source_target_unit_offset']):04X}"
+                ),
+                "output_target_unit_offset": (
+                    f"0x{int(reference['output_target_unit_offset']):04X}"
+                ),
+                "target_id": reference["target_id"],
+                "anchor_delta": int(reference["anchor_delta"]),
+            }
+            for reference in split_immediate_references
+        ],
         "physical_entries": [
             {
                 "entry_id": entry_id,
@@ -2051,10 +2251,10 @@ def relink_unit_shared_pool(
             for entry_id in layout["physical_entry_ids"]
         ],
         "warning": (
-            "Unit-local relink: every frozen event/table reference is "
-            "updated, and pointerless pages are promoted as translated "
-            "physical entries. Post-final padding and full control flow still "
-            "require runtime replay."
+            "Unit-local relink: every frozen event/table reference and every "
+            "reviewed split MIPS address operand is updated, and pointerless "
+            "pages are promoted as translated physical entries. Post-final "
+            "padding and full control flow still require runtime replay."
         ),
     }
 
@@ -2970,6 +3170,17 @@ def main() -> None:
                     )
                     for reference in report["references"]
                 )
+                for reference in report["split_immediate_references"]:
+                    for field in (
+                        "lui_storage_unit_offset",
+                        "addiu_storage_unit_offset",
+                    ):
+                        storage = unit_file_offset + int(
+                            reference[field], 16
+                        )
+                        allbin_allowed_ranges.append(
+                            (storage, storage + 4)
+                        )
                 continue
             allbin_allowed_ranges.extend(
                 (

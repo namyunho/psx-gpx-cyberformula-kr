@@ -3,12 +3,12 @@
   "status": "complete-draft-translation-needs-independent-language-and-runtime-review",
   "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
   "source_workset": "work/translations/disc1-unindexed-font-text.json",
-  "source_workset_sha256": "6fafa734fc6f8d9760c5286577f8e875ba7fea4a8ba0e02894a265fc5aa5b707",
+  "source_workset_sha256": "bca2c3be8078744f283d91b3b621d0f7648ca44456faed2a18dc67adc19f365d",
   "manual_translation_source": "data/translations/disc1-unindexed-font-ko-manual.json",
-  "manual_translation_source_sha256": "97e2314e9ed95975def15113196f5de19f9eefa39e5d2240b74d6d98f379cbd4",
+  "manual_translation_source_sha256": "d96645422cdf2c9bc9a08ee1df88ff5b0b9cca586e91e45981c41559558819b6",
   "scope": {
-    "entry_count": 724,
-    "new_unique_text_count": 296,
+    "entry_count": 806,
+    "new_unique_text_count": 298,
     "ambiguous_context_override_count": 23,
     "graphics_text_excluded": true
   },
@@ -18,12 +18,13 @@
     "review": "Codex draft; independent language review and user runtime review are required before release eligibility"
   },
   "summary": {
-    "translation_count": 724,
+    "translation_count": 806,
     "empty_translation_count": 0,
     "provenance_counts": {
-      "manual-context-or-new-translation": 326,
+      "exact-reviewed-dialogue-alias": 76,
+      "manual-context-or-new-translation": 329,
       "manual-existing-ambiguity-resolution": 10,
-      "reused-identical-existing-japanese": 353,
+      "reused-identical-existing-japanese": 356,
       "reused-identical-new-japanese": 35
     }
   },
@@ -105,6 +106,12 @@
       "ko": "걱정 마. 네 기대를\n저버리지 않는 주행을 할게.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u04/unindexed_font/p00D86",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
     },
     {
       "id": "disc1/allbin/u04/unindexed_font/p01366",
@@ -1259,6 +1266,12 @@
       "provenance": "manual-context-or-new-translation"
     },
     {
+      "id": "disc1/allbin/u16/unindexed_font/p0127A",
+      "ko": "어?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
       "id": "disc1/allbin/u16/unindexed_font/p01284",
       "ko": "레이스 중에 한 말….\n진심이야?",
       "review_status": "needs-independent-and-runtime-review",
@@ -1353,6 +1366,12 @@
       "ko": "아하, 란돌 씨는 의외로\n좋은 사람이네.",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p015B2",
+      "ko": "…?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
     },
     {
       "id": "disc1/allbin/u16/unindexed_font/p015BC",
@@ -1703,6 +1722,12 @@
       "provenance": "manual-context-or-new-translation"
     },
     {
+      "id": "disc1/allbin/u18/unindexed_font/p01F72",
+      "ko": "…{name:given}.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
       "id": "disc1/allbin/u18/unindexed_font/p01FFC",
       "ko": "앙리 씨가 한 말,\n아직도 신경 써?",
       "review_status": "needs-independent-and-runtime-review",
@@ -1797,6 +1822,12 @@
       "ko": "그렇다니까.\n…그렇지, 레나?",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u28/unindexed_font/p01008",
+      "ko": "…….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "reused-identical-existing-japanese"
     },
     {
       "id": "disc1/allbin/u28/unindexed_font/p01012",
@@ -2071,6 +2102,13 @@
       "provenance": "reused-identical-existing-japanese"
     },
     {
+      "id": "disc1/allbin/u30/unindexed_font/p05630",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
+    },
+    {
       "id": "disc1/allbin/u30/unindexed_font/p05638",
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
@@ -2155,6 +2193,104 @@
       "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0004",
+      "ko": "(드디어 여기까지 왔다….\n오늘 레이스 결과가 내\n운명을 결정하는 거야)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0004"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0005",
+      "ko": "(스고 입단이 걸린\n이 중요한 레이스.\n마지막 전개 질주다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0005"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0006",
+      "ko": "좋은 아침, {name:given}.\n드디어 여기까지 왔네.\n이제 나, 아무 말도 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0006"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0007",
+      "ko": "그저 네가 무사히 골인해\n주면 그걸로 됐어.\n부탁이야, 약속해 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0007"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0008",
+      "ko": "…{name:given}!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0008"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0009",
+      "ko": "미안, 레나.\n그 약속은 지키게 할 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0009"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0010",
+      "ko": "오늘 레이스는 내 모든 걸\n다 쏟아부어 승부하겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0010"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0011",
+      "ko": "내게 드라이버로서 부족한\n무언가를 잡아야 해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0011"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0012",
+      "ko": "그걸 못 하면 지금까지의 고생은\n물거품이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0012"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0013",
+      "ko": "그러니 반드시 이기고 싶어.\n레나, 내 승리를 빌어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0013"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0014",
+      "ko": "그렇지. 너는 네 꿈을\n이루기 위해 달려. 나도\n새로운 꿈을 찾았어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0014"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0015",
+      "ko": "새로운 꿈이라니 어떤?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0015"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0016",
+      "ko": "네 꿈을 응원해 가는 것.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0016"
+    },
+    {
+      "id": "disc1/allbin/u30/unindexed_font/finale_ref0017",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0017"
     },
     {
       "id": "disc1/allbin/u31/unindexed_font/p04292",
@@ -2417,6 +2553,13 @@
       "provenance": "reused-identical-existing-japanese"
     },
     {
+      "id": "disc1/allbin/u31/unindexed_font/p05630",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
+    },
+    {
       "id": "disc1/allbin/u31/unindexed_font/p05638",
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
@@ -2502,6 +2645,104 @@
       "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0004",
+      "ko": "(드디어 여기까지 왔다….\n오늘 레이스 결과가 내\n운명을 결정하는 거야)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0004"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0005",
+      "ko": "(스고 입단이 걸린\n이 중요한 레이스.\n마지막 전개 질주다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0005"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0006",
+      "ko": "좋은 아침, {name:given}.\n드디어 여기까지 왔네.\n이제 나, 아무 말도 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0006"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0007",
+      "ko": "그저 네가 무사히 골인해\n주면 그걸로 됐어.\n부탁이야, 약속해 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0007"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0008",
+      "ko": "…{name:given}!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0008"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0009",
+      "ko": "미안, 레나.\n그 약속은 지키게 할 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0009"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0010",
+      "ko": "오늘 레이스는 내 모든 걸\n다 쏟아부어 승부하겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0010"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0011",
+      "ko": "내게 드라이버로서 부족한\n무언가를 잡아야 해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0011"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0012",
+      "ko": "그걸 못 하면 지금까지의 고생은\n물거품이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0012"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0013",
+      "ko": "그러니 반드시 이기고 싶어.\n레나, 내 승리를 빌어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0013"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0014",
+      "ko": "그렇지. 너는 네 꿈을\n이루기 위해 달려. 나도\n새로운 꿈을 찾았어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0014"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0015",
+      "ko": "새로운 꿈이라니 어떤?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0015"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0016",
+      "ko": "네 꿈을 응원해 가는 것.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0016"
+    },
+    {
+      "id": "disc1/allbin/u31/unindexed_font/finale_ref0017",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0017"
     },
     {
       "id": "disc1/allbin/u32/unindexed_font/p04692",
@@ -2757,6 +2998,13 @@
       "provenance": "reused-identical-existing-japanese"
     },
     {
+      "id": "disc1/allbin/u32/unindexed_font/p0523C",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
+    },
+    {
       "id": "disc1/allbin/u32/unindexed_font/p05244",
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
@@ -2841,6 +3089,104 @@
       "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0004",
+      "ko": "(드디어 여기까지 왔다….\n오늘 레이스 결과가 내\n운명을 결정하는 거야)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0004"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0005",
+      "ko": "(스고 입단이 걸린\n이 중요한 레이스.\n마지막 전개 질주다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0005"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0006",
+      "ko": "좋은 아침, {name:given}.\n드디어 여기까지 왔네.\n이제 나, 아무 말도 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0006"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0007",
+      "ko": "그저 네가 무사히 골인해\n주면 그걸로 됐어.\n부탁이야, 약속해 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0007"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0008",
+      "ko": "…{name:given}!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0008"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0009",
+      "ko": "미안, 레나.\n그 약속은 지키게 할 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0009"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0010",
+      "ko": "오늘 레이스는 내 모든 걸\n다 쏟아부어 승부하겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0010"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0011",
+      "ko": "내게 드라이버로서 부족한\n무언가를 잡아야 해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0011"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0012",
+      "ko": "그걸 못 하면 지금까지의 고생은\n물거품이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0012"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0013",
+      "ko": "그러니 반드시 이기고 싶어.\n레나, 내 승리를 빌어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0013"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0014",
+      "ko": "그렇지. 너는 네 꿈을\n이루기 위해 달려. 나도\n새로운 꿈을 찾았어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0014"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0015",
+      "ko": "새로운 꿈이라니 어떤?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0015"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0016",
+      "ko": "네 꿈을 응원해 가는 것.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0016"
+    },
+    {
+      "id": "disc1/allbin/u32/unindexed_font/finale_ref0017",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0017"
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p04230",
@@ -3246,6 +3592,13 @@
       "provenance": "reused-identical-existing-japanese"
     },
     {
+      "id": "disc1/allbin/u33/unindexed_font/p0523C",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
+    },
+    {
       "id": "disc1/allbin/u33/unindexed_font/p05244",
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
@@ -3337,6 +3690,13 @@
       "ko": "이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!\n이너셜로 억지로 끼어든다!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-existing-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/p05630",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
     },
     {
       "id": "disc1/allbin/u33/unindexed_font/p05638",
@@ -3479,6 +3839,104 @@
       "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0004",
+      "ko": "(드디어 여기까지 왔다….\n오늘 레이스 결과가 내\n운명을 결정하는 거야)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0004"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0005",
+      "ko": "(스고 입단이 걸린\n이 중요한 레이스.\n마지막 전개 질주다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0005"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0006",
+      "ko": "좋은 아침, {name:given}.\n드디어 여기까지 왔네.\n이제 나, 아무 말도 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0006"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0007",
+      "ko": "그저 네가 무사히 골인해\n주면 그걸로 됐어.\n부탁이야, 약속해 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0007"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0008",
+      "ko": "…{name:given}!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0008"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0009",
+      "ko": "미안, 레나.\n그 약속은 지키게 할 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0009"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0010",
+      "ko": "오늘 레이스는 내 모든 걸\n다 쏟아부어 승부하겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0010"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0011",
+      "ko": "내게 드라이버로서 부족한\n무언가를 잡아야 해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0011"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0012",
+      "ko": "그걸 못 하면 지금까지의 고생은\n물거품이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0012"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0013",
+      "ko": "그러니 반드시 이기고 싶어.\n레나, 내 승리를 빌어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0013"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0014",
+      "ko": "그렇지. 너는 네 꿈을\n이루기 위해 달려. 나도\n새로운 꿈을 찾았어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0014"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0015",
+      "ko": "새로운 꿈이라니 어떤?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0015"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0016",
+      "ko": "네 꿈을 응원해 가는 것.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0016"
+    },
+    {
+      "id": "disc1/allbin/u33/unindexed_font/finale_ref0017",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0017"
     },
     {
       "id": "disc1/allbin/u34/unindexed_font/p04230",
@@ -3709,6 +4167,13 @@
       "provenance": "reused-identical-existing-japanese"
     },
     {
+      "id": "disc1/allbin/u34/unindexed_font/p0523C",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u30/embedded_race/e0040"
+    },
+    {
       "id": "disc1/allbin/u34/unindexed_font/p05244",
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "review_status": "needs-independent-and-runtime-review",
@@ -3793,6 +4258,104 @@
       "ko": "지금 할 수 있는 최선은\n이것뿐이야!",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "reused-identical-new-japanese"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0004",
+      "ko": "(드디어 여기까지 왔다….\n오늘 레이스 결과가 내\n운명을 결정하는 거야)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0004"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0005",
+      "ko": "(스고 입단이 걸린\n이 중요한 레이스.\n마지막 전개 질주다)",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0005"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0006",
+      "ko": "좋은 아침, {name:given}.\n드디어 여기까지 왔네.\n이제 나, 아무 말도 안 할게.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0006"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0007",
+      "ko": "그저 네가 무사히 골인해\n주면 그걸로 됐어.\n부탁이야, 약속해 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0007"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0008",
+      "ko": "…{name:given}!?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0008"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0009",
+      "ko": "미안, 레나.\n그 약속은 지키게 할 수 없어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0009"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0010",
+      "ko": "오늘 레이스는 내 모든 걸\n다 쏟아부어 승부하겠어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0010"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0011",
+      "ko": "내게 드라이버로서 부족한\n무언가를 잡아야 해.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0011"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0012",
+      "ko": "그걸 못 하면 지금까지의 고생은\n물거품이야.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0012"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0013",
+      "ko": "그러니 반드시 이기고 싶어.\n레나, 내 승리를 빌어 줘.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0013"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0014",
+      "ko": "그렇지. 너는 네 꿈을\n이루기 위해 달려. 나도\n새로운 꿈을 찾았어.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0014"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0015",
+      "ko": "새로운 꿈이라니 어떤?",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0015"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0016",
+      "ko": "네 꿈을 응원해 가는 것.",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0016"
+    },
+    {
+      "id": "disc1/allbin/u34/unindexed_font/finale_ref0017",
+      "ko": "레나…",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "exact-reviewed-dialogue-alias",
+      "translation_alias_id": "disc1/allbin/u19/event_page/ref0017"
     },
     {
       "id": "disc1/allbin/u38/unindexed_font/p18F2C",
@@ -4179,6 +4742,12 @@
       "provenance": "manual-context-or-new-translation"
     },
     {
+      "id": "disc1/allbin/u38/unindexed_font/p1DA50",
+      "ko": "….",
+      "review_status": "needs-independent-and-runtime-review",
+      "provenance": "manual-context-or-new-translation"
+    },
+    {
       "id": "disc1/allbin/u38/unindexed_font/p1DBE4",
       "ko": "(이, 이게 회심작이라고!?)",
       "review_status": "needs-independent-and-runtime-review",
@@ -4216,7 +4785,7 @@
     },
     {
       "id": "disc1/allbin/u38/unindexed_font/p1E018",
-      "ko": "(맛있고 없고 이전에\n이걸 음식이라 할 수 있나….)",
+      "ko": "(맛을 논하기 전에\n이게 음식이긴 한 걸까…?)",
       "review_status": "needs-independent-and-runtime-review",
       "provenance": "manual-context-or-new-translation"
     },

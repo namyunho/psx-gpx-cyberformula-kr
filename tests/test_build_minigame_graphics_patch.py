@@ -39,6 +39,29 @@ class MinigameGraphicsPatchTests(unittest.TestCase):
         for entry in translation["entries"]:
             rect = tuple(entry["texture_rect"])
             self.assertNotEqual(_rect_indices(source, rect), _rect_indices(patched, rect))
+        for report in reports:
+            source_bounds = report["source_visible_bounds"]
+            replacement_bounds = report["replacement_visible_bounds"]
+            self.assertLessEqual(
+                abs(
+                    source_bounds[0]
+                    + source_bounds[2]
+                    - replacement_bounds[0]
+                    - replacement_bounds[2]
+                ),
+                1,
+                report["id"],
+            )
+            self.assertLessEqual(
+                abs(
+                    source_bounds[1]
+                    + source_bounds[3]
+                    - replacement_bounds[1]
+                    - replacement_bounds[3]
+                ),
+                1,
+                report["id"],
+            )
 
     def test_patch_is_deterministic(self) -> None:
         translation = json.loads(self.translation_path.read_text(encoding="utf-8"))

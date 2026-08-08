@@ -38,7 +38,7 @@ class SpecialScreenTranslationBriefTests(unittest.TestCase):
         source_ids = [entry["entry_id"] for entry in self.workset["entries"]]
         brief_ids = [entry["id"] for entry in brief["entries"]]
         self.assertEqual(brief_ids, source_ids)
-        self.assertEqual(brief["summary"]["entry_count"], 418)
+        self.assertEqual(brief["summary"]["entry_count"], 422)
 
     def test_minigame_rule_pages_use_observed_thirteen_columns(self) -> None:
         rule_entries = [

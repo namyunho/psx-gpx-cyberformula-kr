@@ -2,11 +2,12 @@
   "schema_version": 1,
   "status": "external-ai-revised-draft-static-and-runtime-review-required",
   "baseline_id": "disc1-allbin-6f61295be0ce2d7d",
-  "source_workset_sha256": "40703314baefae9e37871f34a7c43f718e2401649a1f49917d15e08a2c5108fd",
+  "source_workset_sha256": "5081636d3f8917e749698bc2f1afe877e6c420503c6dc4e37a4de972caae201a",
   "translation_scope": {
     "included": [
       "u38 font-rendered mini-game dialogue and runtime words",
-      "u38 font-rendered mini-game rule heading and titles",
+      "u38 runtime-composed cooking result fragments",
+      "u38 archival unreferenced copies of baked mini-game rule labels",
       "u43 font-rendered Course Information dialogue",
       "u43 font-rendered Machine Setting dialogue",
       "u43 font-rendered garage action menus",
@@ -14,9 +15,9 @@
     ],
     "excluded": [
       "baked graphical buttons",
-      "baked graphical labels and title assets"
+      "baked graphical labels and title assets, including MINI_G3 unit 0 rule labels"
     ],
-    "entry_count": 418,
+    "entry_count": 422,
     "model_role": "external-ai-revised-draft",
     "human_runtime_review_required": true
   },
@@ -1139,7 +1140,7 @@
     },
     {
       "id": "disc1/allbin/u38/direct/cooking_favorite_prefix",
-      "ko": "와, 레나의 특기인"
+      "ko": "와, 레나의 특기인\n"
     },
     {
       "id": "disc1/allbin/u38/direct/cooking_taste_start",
@@ -1283,31 +1284,31 @@
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_00",
-      "ko": "날것"
+      "ko": "생 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_01",
-      "ko": "설익은"
+      "ko": "설익은 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_02",
-      "ko": "부드러운"
+      "ko": "부드러운 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_03",
-      "ko": "맛있어 보인"
+      "ko": "먹음직한 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_04",
-      "ko": "탄내 나는"
+      "ko": "탄내 밴 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_05",
-      "ko": "탄"
+      "ko": "탄 "
     },
     {
       "id": "disc1/allbin/u38/cooking_word/condition_06",
-      "ko": "숯이 된"
+      "ko": "숯이 된 "
     },
     {
       "id": "disc1/allbin/u43/course_page/ref0000",
@@ -1595,7 +1596,7 @@
     },
     {
       "id": "disc1/allbin/u38/rule_label/heading",
-      "ko": "규칙설명"
+      "ko": "규칙 설명"
     },
     {
       "id": "disc1/allbin/u38/rule_label/catch",
@@ -1692,6 +1693,22 @@
     {
       "id": "disc1/allbin/u43/machine_setting_sequence/setting_retry",
       "ko": "그래. 잘 생각해서 세팅하자."
+    },
+    {
+      "id": "disc1/allbin/u38/cooking_composite/open_quote",
+      "ko": " 「"
+    },
+    {
+      "id": "disc1/allbin/u38/cooking_composite/close_quote",
+      "ko": "」"
+    },
+    {
+      "id": "disc1/allbin/u38/cooking_composite/copula",
+      "ko": "이야!"
+    },
+    {
+      "id": "disc1/allbin/u38/cooking_composite/resemblance_suffix",
+      "ko": " 같은\n음식"
     }
   ],
   "batch_import": {
@@ -1700,7 +1717,7 @@
     "stable_id_order_exact": true,
     "protected_batch_fields_unchanged": true,
     "workset": "work/translations/disc1-special-screen-text.json",
-    "workset_sha256": "84f43b08d9d91dad73839fd38ee908ab6fdf892e043b4d19fc8b13286e747dba",
+    "workset_sha256": "5081636d3f8917e749698bc2f1afe877e6c420503c6dc4e37a4de972caae201a",
     "batches": [
       {
         "source_batch": "work/translations/disc1-special-screen-translation-batches/disc1-special-screen-batch-001.json",

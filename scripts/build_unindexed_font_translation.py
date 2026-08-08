@@ -30,8 +30,8 @@ DEFAULT_EXISTING_PAIRS = (
     ),
 )
 
-EXPECTED_WORKSET_ENTRY_COUNT = 724
-EXPECTED_NEW_UNIQUE_TEXT_COUNT = 296
+EXPECTED_WORKSET_ENTRY_COUNT = 806
+EXPECTED_NEW_UNIQUE_TEXT_COUNT = 298
 EXPECTED_AMBIGUOUS_PHYSICAL_ENTRY_COUNT = 23
 
 
@@ -134,6 +134,38 @@ def build_existing_translation_index(
     return result
 
 
+def build_existing_alias_index(
+    *,
+    pairs: Iterable[tuple[Path, Path, str]],
+    glyphs: dict[int, str],
+) -> dict[str, tuple[str, str]]:
+    """Index exact source IDs for reviewed physical mirror aliases."""
+    result: dict[str, tuple[str, str]] = {}
+    for workset_path, translation_path, translation_key in pairs:
+        workset = load_object(workset_path)
+        translation = load_object(translation_path)
+        source_by_id = entries_by_id(
+            workset.get("entries", []),
+            key="entry_id",
+        )
+        translated_by_id = entries_by_id(
+            translation.get(translation_key, []),
+            key="id",
+        )
+        for entry_id, source in source_by_id.items():
+            translated = translated_by_id.get(entry_id)
+            if translated is None:
+                continue
+            alias_text = translated.get("ko_candidate")
+            if not isinstance(alias_text, str):
+                alias_text = translation_text(translated)
+            result[entry_id] = (
+                normalized_text(visible_text(source, glyphs)),
+                alias_text,
+            )
+    return result
+
+
 def build_translation(
     *,
     workset_path: Path,
@@ -169,7 +201,12 @@ def build_translation(
             f"manual translations contain unknown IDs: {unknown_manual_ids[:3]}"
         )
 
+    existing_pairs = tuple(existing_pairs)
     existing_index = build_existing_translation_index(
+        pairs=existing_pairs,
+        glyphs=glyphs,
+    )
+    existing_alias_index = build_existing_alias_index(
         pairs=existing_pairs,
         glyphs=glyphs,
     )
@@ -191,9 +228,10 @@ def build_translation(
     # A manual entry is required for each new unique text.  Multiple manual
     # values for one Japanese string are allowed only as exact-ID overrides.
     new_unique = {
-        value
-        for value in normalized_by_id.values()
-        if value not in existing_index
+        normalized_by_id[entry_id]
+        for entry_id, source in source_by_id.items()
+        if source.get("translation_alias_id") is None
+        and normalized_by_id[entry_id] not in existing_index
     }
     missing_new = sorted(new_unique - set(manual_by_normalized))
     if missing_new:
@@ -212,7 +250,25 @@ def build_translation(
     for source in workset_entries:
         entry_id = source["entry_id"]
         key = normalized_by_id[entry_id]
-        if entry_id in manual_by_id:
+        alias_id = source.get("translation_alias_id")
+        if alias_id is not None:
+            if not isinstance(alias_id, str) or alias_id not in existing_alias_index:
+                raise ValueError(f"{entry_id}: translation alias is unavailable")
+            alias_key, ko = existing_alias_index[alias_id]
+            alias_policy = source.get("translation_alias_match_policy")
+            alias_matches = alias_key == key
+            if alias_policy == "reviewed-punctuation-variant":
+                alias_matches = key.replace("…私", "私", 1) == alias_key
+            elif alias_policy != "normalized-japanese-exact":
+                raise ValueError(
+                    f"{entry_id}: unknown translation alias match policy"
+                )
+            if not alias_matches:
+                raise ValueError(
+                    f"{entry_id}: translation alias Japanese text differs"
+                )
+            provenance = "exact-reviewed-dialogue-alias"
+        elif entry_id in manual_by_id:
             ko = translation_text(manual_by_id[entry_id])
             provenance = "manual-context-or-new-translation"
         elif key in existing_index and len(existing_index[key]) == 1:
@@ -244,6 +300,8 @@ def build_translation(
             "review_status": "needs-independent-and-runtime-review",
             "provenance": provenance,
         }
+        if alias_id is not None:
+            output_entry["translation_alias_id"] = alias_id
         if entry_id in manual_by_id:
             visual_width_reviewed = manual_by_id[entry_id].get(
                 "layout_visual_width_reviewed",

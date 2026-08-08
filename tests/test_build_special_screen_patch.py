@@ -11,6 +11,7 @@ from scripts.build_special_screen_patch import (
     special_required_characters,
     validate_special_screen_artifacts,
 )
+from scripts.export_special_screen_translation_brief import visible_length
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -70,7 +71,7 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
                     mapping,
                 )[1]
             )
-        self.assertEqual(len(reports), 418)
+        self.assertEqual(len(reports), 422)
         self.assertEqual(
             self.validation["layout_or_storage_issue_count"],
             0,
@@ -81,6 +82,22 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
                 <= report["source_bytes"]
                 for report in reports
             )
+        )
+
+    def test_rule_heading_and_titles_keep_approved_korean(self) -> None:
+        expected = {
+            "disc1/allbin/u38/rule_label/heading": "규칙 설명",
+            "disc1/allbin/u38/rule_label/catch": "앙리를 붙잡아라",
+            "disc1/allbin/u38/rule_label/camera": "음료 도둑 찍기",
+            "disc1/allbin/u38/rule_label/cooking": "레나의 3분 요리",
+            "disc1/allbin/u38/rule_label/blackjack": "블랙잭",
+        }
+        self.assertEqual(
+            {
+                entry_id: self.translations[entry_id]
+                for entry_id in expected
+            },
+            expected,
         )
 
     def test_machine_confirmation_keeps_fffd_and_d002_offsets(self) -> None:
@@ -130,6 +147,44 @@ class BuildSpecialScreenPatchTests(unittest.TestCase):
             report["stored_capacity_positions"],
         )
         self.assertEqual(report["unused_tail_bytes"], 2)
+
+    def test_every_cooking_result_composition_fits_three_rows(self) -> None:
+        prefix = self.translations[
+            "disc1/allbin/u38/direct/cooking_favorite_prefix"
+        ]
+        opening = self.translations[
+            "disc1/allbin/u38/cooking_composite/open_quote"
+        ]
+        closing = self.translations[
+            "disc1/allbin/u38/cooking_composite/close_quote"
+        ]
+        copula = self.translations[
+            "disc1/allbin/u38/cooking_composite/copula"
+        ]
+        similar = self.translations[
+            "disc1/allbin/u38/cooking_composite/resemblance_suffix"
+        ]
+        conditions = [
+            text
+            for entry_id, text in self.translations.items()
+            if "/cooking_word/condition_" in entry_id
+        ]
+        dishes = [
+            text
+            for entry_id, text in self.translations.items()
+            if "/cooking_word/dish_" in entry_id
+        ]
+        self.assertEqual((len(conditions), len(dishes)), (7, 16))
+        self.assertTrue(all(condition.endswith(" ") for condition in conditions))
+        for condition in conditions:
+            for dish in dishes:
+                composed = prefix + opening + condition + dish + similar + closing + copula
+                lines = composed.split("\n")
+                self.assertLessEqual(len(lines), 3)
+                self.assertTrue(
+                    all(visible_length(line) <= 17 for line in lines),
+                    composed,
+                )
 
     def test_status_requires_integrated_names_and_ui_build(self) -> None:
         status = _base_status_with_special_screen(

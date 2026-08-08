@@ -9,6 +9,9 @@ import ghidra.program.model.listing.Function;
 import ghidra.program.model.symbol.Reference;
 import ghidra.program.model.symbol.ReferenceIterator;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class AnalyzeSpecialScreenText extends GhidraScript {
     private Address address(String value) {
         return toAddr(Long.parseUnsignedLong(value, 16));
@@ -75,8 +78,35 @@ public class AnalyzeSpecialScreenText extends GhidraScript {
         decompiler.dispose();
     }
 
+    private void decompileCallers(String value) {
+        Address target = address(value);
+        Set<Address> entries = new HashSet<>();
+        println("CALLERS " + value);
+        ReferenceIterator references =
+            currentProgram.getReferenceManager().getReferencesTo(target);
+        while (references.hasNext()) {
+            Reference reference = references.next();
+            Function caller = currentProgram.getFunctionManager()
+                .getFunctionContaining(reference.getFromAddress());
+            println("  " + reference.getFromAddress() + " " +
+                reference.getReferenceType() + " " +
+                (caller == null ? "<no-function>" : caller.getName()));
+            if (caller != null && entries.add(caller.getEntryPoint())) {
+                decompile(caller.getEntryPoint().toString());
+            }
+        }
+    }
+
     private void analyzeMiniGameOverlay() {
         printCodeReferencesInto("800b0000", "800b6d7a", "800b0000");
+        // These five strings were once classified as live font labels.  Both
+        // IDA and this explicit Ghidra query now show no code references; the
+        // displayed labels are baked into MINI_G3.BIN unit 0 instead.
+        printReferences("800b0214");
+        printReferences("800b0224");
+        printReferences("800b023c");
+        printReferences("800b0254");
+        printReferences("800b026c");
         printReferences("800b033c");
         printReferences("800b0508");
         printReferences("800b0768");
@@ -88,6 +118,12 @@ public class AnalyzeSpecialScreenText extends GhidraScript {
         decompile("800a7ad0");
         decompile("800a7cfc");
         decompile("800a76ac");
+        decompile("800a72e8");
+        decompile("800a719c");
+        decompileCallers("800a734c");
+        decompileCallers("800a7470");
+        decompileCallers("800a7ad0");
+        decompileCallers("800a7cfc");
         // Cooking-result text is assembled from a fixed dialogue prefix plus
         // one of two code-referenced word tables.  Keep these consumer paths
         // in the same reproducible cross-check as the direct renderer calls.

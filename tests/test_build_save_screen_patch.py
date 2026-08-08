@@ -76,6 +76,29 @@ class SaveScreenPatchTests(unittest.TestCase):
         self.assertTrue(changed)
         self.assertTrue(changed <= permitted)
         self.assertEqual([item["text"] for item in report["labels"]], ["예", "아니오"])
+        for item in report["labels"]:
+            source_bounds = item["source_visible_bounds"]
+            replacement_bounds = item["replacement_visible_bounds"]
+            self.assertLessEqual(
+                abs(
+                    source_bounds[0]
+                    + source_bounds[2]
+                    - replacement_bounds[0]
+                    - replacement_bounds[2]
+                ),
+                1,
+            )
+            # `아니오` is two pixels taller than the original Japanese label,
+            # so the closest in-bounds vertical center differs by one pixel.
+            self.assertLessEqual(
+                abs(
+                    source_bounds[1]
+                    + source_bounds[3]
+                    - replacement_bounds[1]
+                    - replacement_bounds[3]
+                ),
+                2,
+            )
         self.assertEqual(len(allowed), len(SAVE_BUTTON_LABELS) * 16)
         for _, _, x, y, width, height in SAVE_BUTTON_LABELS:
             for row in range(y, y + height):

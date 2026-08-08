@@ -10,10 +10,10 @@ GUI다. 기본 통합 작업공간은 다음 항목을 불러온다.
 |---|---:|---|
 | 본편 직접 포인터 대사 | 5,783 | `work/translations/disc1-dialogue-ko-candidate.json` |
 | 무포인터 선택·대사 | 84 | `data/translations/disc1-pointerless-pages-u00-u21-ko.json` |
-| 추가 분기·순차 대사 | 291 | `data/translations/disc1-unindexed-font-ko.json` |
-| 추가 경기 대사 | 333 | `data/translations/disc1-unindexed-font-ko.json` |
-| 미니게임 대사·요리 런타임 단어 | 327 | `data/translations/disc1-special-screen-ko.json` |
-| 추가 미니게임 분기·결과 | 73 | `data/translations/disc1-unindexed-font-ko.json` |
+| 추가 분기·순차 대사 | 295 | `data/translations/disc1-unindexed-font-ko.json` |
+| 추가 경기 대사 | 334 | `data/translations/disc1-unindexed-font-ko.json` |
+| 미니게임 대사·요리 런타임 단어·결과 합성 조각 | 331 | `data/translations/disc1-special-screen-ko.json` |
+| 추가 미니게임 분기·결과 | 74 | `data/translations/disc1-unindexed-font-ko.json` |
 | 코스 설명 | 57 | `data/translations/disc1-special-screen-ko.json` |
 | 머신 설정 설명·순차 분기 | 32 | `data/translations/disc1-special-screen-ko.json` |
 | 저장·불러오기 메시지 | 27 | `data/translations/disc1-unindexed-font-ko.json` |
@@ -24,7 +24,9 @@ GUI다. 기본 통합 작업공간은 다음 항목을 불러온다.
 편집 행이 2개 많다. 표시 글리프가 하나도 없는 제어 전용 센티널 1개는
 목록에서 제외한다. 이름 입력용 한자·가나·영문 팔레트와 가변 런타임 버퍼는
 번역 문장이 아니므로 보호하고, 그래픽 버튼·라벨·타이틀은 그래픽 작업
-범위로 남긴다. 현재 통합 목록은 총 7,049행이다. 추가 724개는 정적 소비자
+범위로 남긴다. 현재 통합 목록은 총 7,059행이다. 추가 workset 806개 중
+최종전 미러 70개와 짧은 경기 미러 6개는 각 정본에서 자동 생성되므로 독립
+편집 행을 만들지 않는다. 나머지 추가 730개는 정적 소비자
 계열과 원본 바이트를 확인했지만 실제 색인 진입 경로와 재삽입 정책은 아직
 실행 검증 전이므로 편집기 상태에도 이를 명시한다.
 
@@ -117,8 +119,8 @@ GUI를 열지 않고 입력 구조와 항목별 레이아웃 초과 수를 확�
 
 | 항목 | 값 | 판정 |
 |---|---:|---|
-| 통합 편집 행 | 7,049 | 빈 번역 0 |
-| 원문 줄바꿈 그대로의 화면 초과 | 110 | 추가 724개 초과 0, 기존 후보 수동 줄바꿈 검토 목록 |
+| 통합 편집 행 | 7,059 | 빈 번역 0 |
+| 원문 줄바꿈 그대로의 화면 초과 | 110 | 추가 독립 항목 730개 초과 0, 기존 후보 수동 줄바꿈 검토 목록 |
 | 재삽입 감사의 파생 17×3 배치 | 5,783/5,783 | 기계 배치 차단 0, 사람 검토 필요 |
 | 개별 고정 슬롯 초과 | 1,724 | 공용 재배치 또는 축약 검토 |
 | unit 공용 총량 초과 | 1 unit (`u24`, 2바이트) | 현재 저장 정본 기준, 다음 통합 빌드 전 축약 또는 검증된 공백 압축 필요 |

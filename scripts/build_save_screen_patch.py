@@ -194,6 +194,22 @@ def _set_outside_4bpp_pixel(data: bytearray, x: int, y: int, value: int) -> None
     data[offset] = (data[offset] & mask) | (value << (4 if high else 0))
 
 
+def _visible_bounds(
+    values: list[int], width: int, height: int
+) -> tuple[int, int, int, int]:
+    if len(values) != width * height:
+        raise ValueError("save button surface size differs")
+    points = [
+        (index % width, index // width)
+        for index, value in enumerate(values)
+        if value != 0
+    ]
+    if not points:
+        raise ValueError("save button label has no visible pixels")
+    xs, ys = zip(*points)
+    return min(xs), min(ys), max(xs), max(ys)
+
+
 def patch_save_button_labels(
     input_outside: bytes,
     source_outside: bytes,
@@ -215,6 +231,14 @@ def patch_save_button_labels(
     reports: list[dict[str, Any]] = []
 
     for label_id, text, x, y, width, height in SAVE_BUTTON_LABELS:
+        original_pixels = [
+            _get_outside_4bpp_pixel(source_outside, x + px, y + py)
+            for py in range(height)
+            for px in range(width)
+        ]
+        source_visible_bounds = _visible_bounds(
+            original_pixels, width, height
+        )
         for row in range(y, y + height):
             start, _ = _outside_4bpp_offset(x, row)
             end, _ = _outside_4bpp_offset(x + width - 1, row)
@@ -231,19 +255,60 @@ def patch_save_button_labels(
         ImageDraw.Draw(mask).text((text_x, text_y), text, font=font, fill=1)
         pixels = [1 if value else 0 for value in mask.get_flattened_data()]
 
+        # Include the 1px shadow in the replacement's visual bounds, then
+        # preserve the original Japanese label's center over the separate
+        # button background.
+        provisional = [0] * (width * height)
+        for py in range(height):
+            for px in range(width):
+                if pixels[py * width + px]:
+                    if px + 1 < width and py + 1 < height:
+                        provisional[(py + 1) * width + px + 1] = 8
+        for py in range(height):
+            for px in range(width):
+                if pixels[py * width + px]:
+                    provisional[py * width + px] = 1
+        replacement_bounds = _visible_bounds(provisional, width, height)
+        dx = (
+            source_visible_bounds[0]
+            + source_visible_bounds[2]
+            - replacement_bounds[0]
+            - replacement_bounds[2]
+        ) // 2
+        dy = (
+            source_visible_bounds[1]
+            + source_visible_bounds[3]
+            - replacement_bounds[1]
+            - replacement_bounds[3]
+        ) // 2
+        dx = min(max(dx, -replacement_bounds[0]), width - 1 - replacement_bounds[2])
+        dy = min(max(dy, -replacement_bounds[1]), height - 1 - replacement_bounds[3])
+        shifted = [0] * (width * height)
+        for py in range(height):
+            for px in range(width):
+                value = provisional[py * width + px]
+                if not value:
+                    continue
+                target_x = px + dx
+                target_y = py + dy
+                if not (0 <= target_x < width and 0 <= target_y < height):
+                    raise ValueError(
+                        f"{label_id}: source-centered label exceeds its box"
+                    )
+                shifted[target_y * width + target_x] = value
+        replacement_bounds = _visible_bounds(shifted, width, height)
+
         for py in range(height):
             for px in range(width):
                 _set_outside_4bpp_pixel(patched, x + px, y + py, 0)
         # The existing state-specific CLUT maps index 1 to white and index 8
-        # to a dark red/yellow shade.  Draw shadow first, then the white face.
+        # to a dark red/yellow shade.  The provisional surface already has
+        # face-over-shadow precedence.
         for py in range(height):
             for px in range(width):
-                if pixels[py * width + px] and px + 1 < width and py + 1 < height:
-                    _set_outside_4bpp_pixel(patched, x + px + 1, y + py + 1, 8)
-        for py in range(height):
-            for px in range(width):
-                if pixels[py * width + px]:
-                    _set_outside_4bpp_pixel(patched, x + px, y + py, 1)
+                value = shifted[py * width + px]
+                if value:
+                    _set_outside_4bpp_pixel(patched, x + px, y + py, value)
 
         reports.append(
             {
@@ -253,6 +318,8 @@ def patch_save_button_labels(
                 "main_palette_index": 1,
                 "shadow_palette_index": 8,
                 "centered_ink_size": [ink_width, ink_height],
+                "source_visible_bounds": list(source_visible_bounds),
+                "replacement_visible_bounds": list(replacement_bounds),
             }
         )
 

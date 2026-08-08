@@ -85,9 +85,12 @@ GARAGE_ACTION_MENU_STARTS = (
     (0x3E70, "rest_available"),
 )
 
-# The rule-page heading and the four mini-game titles are stored immediately
-# before the pointer-backed rule body.  PCSX-Redux VRAM inspection on
-# 2026-08-01 confirmed that these are font-rendered strings, not baked pixels.
+# The rule-page heading and four mini-game titles also occur as parseable text
+# immediately before the pointer-backed rule body.  Clean-boot RAM/VRAM
+# comparison on 2026-08-08 disproved the earlier consumer assignment: IDA and
+# Ghidra find no code references to these five copies, while the displayed
+# pixels match MINI_G3.BIN unit 0.  Keep the duplicates in the workset so their
+# historical IDs remain stable, but do not treat them as the screen source.
 U38_RULE_LABELS = (
     (0x18214, "heading", "minigame_rule_heading"),
     (0x18224, "catch", "minigame_rule_title"),
@@ -169,11 +172,31 @@ U38_COOKING_WORDS = (
     (0x1E1F4, "condition_06"),
 )
 
+# The cooking result sentence is assembled at runtime from independently
+# terminated fragments, a selected condition, and a selected dish name.  A
+# pointer-only/string-start survey misses these short glue fragments because
+# three begin immediately after another stream terminator and one ends in
+# FFFF while the surrounding result pages use 8000.  Runtime captures on
+# 2026-08-04 exposed the untranslated original glyphs after the primary font
+# had been replaced; the original composition is:
+#
+#   favorite_prefix + open_quote + condition + dish
+#       + resemblance_suffix + close_quote + copula
+U38_COOKING_COMPOSITE_FRAGMENTS = (
+    (0x1DA02, "open_quote", 0xFFFF, 1),
+    (0x1DA08, "close_quote", 0xFFFF, 1),
+    (0x1DA0C, "copula", 0x8000, 1),
+    (0x1E200, "resemblance_suffix", 0xFFFF, 2),
+)
+
 U38_POINTER_TARGET_MIN = 0x18214
 U38_POINTER_TARGET_MAX_EXCLUSIVE = 0x1ED7C
 EXPECTED_U38_POINTER_PAGE_COUNT = 260
 EXPECTED_U38_DIRECT_DIALOGUE_COUNT = len(U38_DIRECT_DIALOGUE)
 EXPECTED_U38_COOKING_WORD_COUNT = len(U38_COOKING_WORDS)
+EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT = len(
+    U38_COOKING_COMPOSITE_FRAGMENTS
+)
 EXPECTED_COURSE_PAGE_COUNT = 57
 EXPECTED_MACHINE_SETTING_COUNT = len(MACHINE_SETTING_STARTS)
 EXPECTED_GARAGE_ACTION_MENU_COUNT = len(GARAGE_ACTION_MENU_STARTS)
@@ -428,9 +451,9 @@ def extract_u38_rule_labels(
                 entry_id=f"disc1/allbin/u38/rule_label/{name}",
                 classification=classification,
                 consumer={
-                    "kind": "fixed_rule_page_label",
+                    "kind": "unreferenced_rule_label_duplicate",
                     "consumer_validation": (
-                        "pcsx-redux-runtime-vram-and-static-range-cross-check"
+                        "ida-ghidra-zero-xrefs-and-mini-g3-unit0-vram-byte-match"
                     ),
                 },
                 layout_rows=1,
@@ -611,6 +634,53 @@ def extract_u38_direct_entries(
         != EXPECTED_U38_COOKING_WORD_COUNT
     ):
         raise AssertionError("u38 cooking-word population changed")
+
+    return entries
+
+
+def extract_u38_cooking_composite_fragments(
+    unit_data: bytes,
+    glyphs: dict[int, str],
+) -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for start, name, terminal, rows in U38_COOKING_COMPOSITE_FRAGMENTS:
+        tokens, end = parse_tokens(
+            unit_data,
+            start,
+            glyphs=glyphs,
+            terminal=terminal,
+        )
+        entries.append(
+            make_entry(
+                unit_index=38,
+                unit_data=unit_data,
+                start=start,
+                end=end,
+                tokens=tokens,
+                glyphs=glyphs,
+                entry_id=(
+                    "disc1/allbin/u38/cooking_composite/" + name
+                ),
+                classification="minigame_cooking_composite_fragment",
+                consumer={
+                    "kind": "runtime_composite_fragment",
+                    "consumer_validation": (
+                        "pcsx-redux-runtime-capture-and-static-adjacency-"
+                        "cross-check"
+                    ),
+                },
+                layout_rows=rows,
+            )
+        )
+    if (
+        sum(
+            entry["classification"]
+            == "minigame_cooking_composite_fragment"
+            for entry in entries
+        )
+        != EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT
+    ):
+        raise AssertionError("u38 cooking-composite population changed")
     return entries
 
 
@@ -821,6 +891,7 @@ def extract_special_screen_text(
         # keep their stable order and remain mergeable.
         *extract_u38_rule_labels(u38, glyphs),
         *extract_u43_machine_sequential(u43, glyphs),
+        *extract_u38_cooking_composite_fragments(u38, glyphs),
     ]
     ids = [entry["entry_id"] for entry in entries]
     if len(ids) != len(set(ids)):
@@ -848,7 +919,8 @@ def extract_special_screen_text(
         "scope": {
             "included": [
                 "u38 font-rendered mini-game dialogue and runtime words",
-                "u38 font-rendered mini-game rule heading and titles",
+                "u38 runtime-composed cooking result fragments",
+                "u38 archival unreferenced copies of baked mini-game rule labels",
                 "u43 font-rendered Course Information dialogue",
                 "u43 font-rendered Machine Setting dialogue",
                 "u43 font-rendered garage action menus",
@@ -856,7 +928,7 @@ def extract_special_screen_text(
             ],
             "excluded": [
                 "baked graphical buttons",
-                "baked graphical labels and title assets",
+                "baked graphical labels and title assets, including MINI_G3 unit 0 rule labels",
             ],
             "source_allbin": str(allbin_path.resolve()),
             "source_allbin_sha256": EXPECTED_ALLBIN_SHA256,
@@ -879,6 +951,9 @@ def extract_special_screen_text(
             "u38_rule_label_count": EXPECTED_U38_RULE_LABEL_COUNT,
             "u38_direct_dialogue_count": EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
             "u38_cooking_runtime_word_count": EXPECTED_U38_COOKING_WORD_COUNT,
+            "u38_cooking_composite_fragment_count": (
+                EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT
+            ),
             "u43_course_page_count": EXPECTED_COURSE_PAGE_COUNT,
             "u43_machine_setting_count": EXPECTED_MACHINE_SETTING_COUNT,
             "u43_garage_action_menu_count": (

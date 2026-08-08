@@ -8,6 +8,7 @@ from scripts.build_name_origin_graphics_patch import (
     decode_4bpp,
     encode_4bpp,
     layout_ink_bounds,
+    patch_origin_atlas,
     validate_translations,
 )
 
@@ -85,6 +86,40 @@ class NameOriginGraphicsPatchTests(unittest.TestCase):
             translation["policy"]["palette_indices"],
             {"shadow": 6, "ink": 1},
         )
+
+    def test_centered_labels_match_original_visual_centers(self) -> None:
+        source_path = Path("work/extracted/disc1/iso/OUTSIDE.BIN")
+        if not source_path.is_file():
+            self.skipTest("Disc 1 extraction is unavailable")
+        translation = json.loads(
+            Path("data/translations/disc1-name-origin-graphics-ko.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        _, report = patch_origin_atlas(
+            source_path.read_bytes(),
+            translation=translation,
+            font_profile_path=Path("config/font-profile.json"),
+        )
+        centered = [
+            item
+            for item in report["generated"]
+            if "replacement_visible_bounds_relative" in item
+        ]
+        self.assertEqual(len(centered), 13)
+        for item in centered:
+            source = item["source_visible_bounds_relative"]
+            replacement = item["replacement_visible_bounds_relative"]
+            self.assertLessEqual(
+                abs(source[0] + source[2] - replacement[0] - replacement[2]),
+                1,
+                item["id"],
+            )
+            self.assertLessEqual(
+                abs(source[1] + source[3] - replacement[1] - replacement[3]),
+                1,
+                item["id"],
+            )
 
 
 if __name__ == "__main__":

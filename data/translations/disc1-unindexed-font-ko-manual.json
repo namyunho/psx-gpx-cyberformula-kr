@@ -1025,6 +1025,10 @@
       "ko": "우물우물…."
     },
     {
+      "id": "disc1/allbin/u38/unindexed_font/p1DA50",
+      "ko": "…."
+    },
+    {
       "id": "disc1/allbin/u38/unindexed_font/p1DBE4",
       "ko": "(이, 이게 회심작이라고!?)"
     },
@@ -1050,7 +1054,7 @@
     },
     {
       "id": "disc1/allbin/u38/unindexed_font/p1E018",
-      "ko": "(맛있고 없고 이전에\n이걸 음식이라 할 수 있나….)"
+      "ko": "(맛을 논하기 전에\n이게 음식이긴 한 걸까…?)"
     },
     {
       "id": "disc1/allbin/u38/unindexed_font/p1E05C",
@@ -1333,6 +1337,14 @@
       "ko": "아쉽지만 너는 카자미와 싸우기엔\n아직 수행이 부족해. 그 녀석을\n이기려면 나를 추월할 수 있어야지…",
       "layout_visual_width_reviewed": true,
       "layout_overflow_allowance_px": 4
+    },
+    {
+      "id": "disc1/allbin/u16/unindexed_font/p0127A",
+      "ko": "어?"
+    },
+    {
+      "id": "disc1/allbin/u18/unindexed_font/p01F72",
+      "ko": "…{name:given}."
     }
   ]
 }

@@ -406,9 +406,13 @@ byte-for-byte로 일치했다.
 
 PCSX-Redux의 실제 화면 CLUT를 대조해 atlas의 본문은 palette index `1`,
 우하단 1px 그림자는 index `6`으로 확정했다. 이전 시안은 두 역할이 뒤집혀
-본문이 흐리고 그림자가 밝았다. 버튼과 타입명은 고정 시작점을 쓰지 않고 실제
-잉크와 그림자 경계를 각 버튼 사각형의 가로·세로 중앙에 둔다. `フリー 出身`
-영역은 분리된 두 칸 대신 58px의 `직접 출신` 한 영역으로 계산한다.
+본문이 흐리고 그림자가 밝았다. 라벨은 별도 버튼 배경 위에 합성되므로 저장
+사각형의 중앙이 화면 버튼의 중앙과 같다고 보지 않는다. 원본 일본어 라벨의
+비투명 잉크·그림자 경계를 고정 기준으로 추출하고, 한글의 같은 합성 경계 중심을
+그 좌표에 맞춘다. 항목별 보정은 가로 최대 3px, 세로 최대 2px이며 빌드는
+원본과 교체 라벨의 중심 좌표 차이가 반 픽셀 이하인지 검사한다. `フリー 出身`
+영역은 분리된 두 칸 대신 58px의 `직접 출신` 한 영역으로 계산한다. 원본 `?`
+그래픽은 번역·재조판하지 않고 그대로 보존한다.
 
 균형형 설명의 실제 화면 높이는 16px pitch 7줄이다. 원래 128px 원천
 사각형에 8줄을 그리면 마지막 줄이 소비 화면에서 잘리므로 7줄로 재배열했다.
@@ -422,11 +426,12 @@ PCSX-Redux의 실제 화면 CLUT를 대조해 atlas의 본문은 palette index `
 | `戻る` / `終了` | `뒤로` / `종료` |
 | `Flexible / Technical / Strength Racer` | `균형형 / 기술형 / 체력형` |
 
-현재 후속 파일 빌드는
-`work/build/dialogue-all-reviewed-font-text-shadow-name-4x4-origin-graphics-2026-08-01`,
-Disc 1은 `work/build/disc1-name-4x4-shadow-origin-graphics-2026-08-01`이다.
-Track 1 SHA-256은
-`383dabad0770b0eab837c7f8b9e2c6429ccfbfdc19631269836c2e25c254222e`이며,
-548개 변경 sector의 Expected Writes·EDC/ECC와 재추출 해시를 통과했다. 최종
+현재 통합 파일 빌드는
+`work/build/integrated-2026-08-09-49-user-button-atlases`, Disc 1·2 이미지는
+각각 `work/build/disc1-user-button-atlases-2026-08-09`,
+`work/build/disc2-user-button-atlases-2026-08-09`다. Track 1 SHA-256은 Disc 1
+`adbde780405306f46592aae9347eb4b3854c21e1023a3b170808e3d158d69de7`, Disc 2
+`c5ae02a24e19602ef98804e39920a016d54a0366a58ece5e1eb227ba9b72fae7`이며,
+각각 1,137개 변경 sector의 Expected Writes·EDC/ECC와 재추출 해시를 통과했다. 최종
 확인 창의 4+4 위치, 취소 뒤 오른쪽 끝 복귀, 버튼 중앙 정렬·본문/그림자 색과
 세 출신 설명의 실제 클리핑은 이 CUE의 실기 검증이 필요하다.

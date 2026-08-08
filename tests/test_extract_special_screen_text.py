@@ -6,6 +6,7 @@ from scripts.extract_special_screen_text import (
     EXPECTED_GARAGE_ACTION_MENU_COUNT,
     EXPECTED_MACHINE_SETTING_COUNT,
     EXPECTED_U38_COOKING_WORD_COUNT,
+    EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT,
     EXPECTED_U38_DIRECT_DIALOGUE_COUNT,
     EXPECTED_U38_POINTER_PAGE_COUNT,
     EXPECTED_U38_RULE_LABEL_COUNT,
@@ -47,6 +48,10 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
             EXPECTED_U38_COOKING_WORD_COUNT,
         )
         self.assertEqual(
+            summary["u38_cooking_composite_fragment_count"],
+            EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT,
+        )
+        self.assertEqual(
             summary["u43_course_page_count"],
             EXPECTED_COURSE_PAGE_COUNT,
         )
@@ -78,7 +83,7 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
             "セッティングをする\nコースの説明を聞く\nレースにのぞむ",
         )
 
-    def test_rule_heading_and_titles_are_font_strings(self) -> None:
+    def test_rule_heading_and_titles_are_stable_unreferenced_duplicates(self) -> None:
         entries = [
             entry
             for entry in self.document["entries"]
@@ -89,6 +94,28 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
         self.assertEqual(entries[0]["original"]["display_text"], "ルール説明")
         self.assertEqual(entries[3]["original"]["display_text"], "レナの3分クッキング")
         self.assertTrue(all(entry["layout"]["columns"] == 13 for entry in entries))
+        self.assertTrue(
+            all(
+                entry["consumer"]["kind"]
+                == "unreferenced_rule_label_duplicate"
+                for entry in entries
+            )
+        )
+
+    def test_cooking_result_composite_fragments_are_explicit(self) -> None:
+        entries = [
+            entry
+            for entry in self.document["entries"]
+            if entry["classification"]
+            == "minigame_cooking_composite_fragment"
+        ]
+        self.assertEqual(
+            len(entries), EXPECTED_U38_COOKING_COMPOSITE_FRAGMENT_COUNT
+        )
+        self.assertEqual(
+            [entry["original"]["display_text"] for entry in entries],
+            ["　「", "」", "だぁ！", "に\n似た食べ物"],
+        )
 
     def test_machine_confirmation_controls_keep_fixed_offsets(self) -> None:
         entries = [
@@ -113,7 +140,10 @@ class ExtractSpecialScreenTextTests(unittest.TestCase):
     def test_scope_excludes_graphical_assets(self) -> None:
         excluded = self.document["scope"]["excluded"]
         self.assertIn("baked graphical buttons", excluded)
-        self.assertIn("baked graphical labels and title assets", excluded)
+        self.assertIn(
+            "baked graphical labels and title assets, including MINI_G3 unit 0 rule labels",
+            excluded,
+        )
 
     def test_physical_ranges_do_not_overlap(self) -> None:
         by_unit: dict[int, list[tuple[int, int]]] = {}

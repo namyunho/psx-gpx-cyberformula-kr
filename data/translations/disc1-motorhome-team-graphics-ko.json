@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "file": "AVM_MAP.BIN",
+  "unit": 0,
+  "texture": {
+    "child": 1,
+    "width_px": 256,
+    "height_px": 256,
+    "bits_per_pixel": 4
+  },
+  "font": "Galmuri11 Regular 12px",
+  "palette_indices": {
+    "transparent": 0,
+    "foreground": 1,
+    "shadow": 4,
+    "shadow_offset_px": [1, 1]
+  },
+  "screen_layout_adjustments": [
+    {
+      "team_id": "sugo-winners",
+      "leading_fullwidth_cells": 1,
+      "shift_x_px": 12,
+      "allbin_descriptor_offsets": ["0x1018D0", "0x1018DC"]
+    },
+    {
+      "team_id": "sturmzender",
+      "leading_fullwidth_cells": 1,
+      "shift_x_px": 12,
+      "allbin_descriptor_offsets": ["0x10190C", "0x101918"]
+    }
+  ],
+  "teams": [
+    {
+      "id": "missing-link",
+      "jp": "ミッシング リンク",
+      "ko": "미싱 링크",
+      "fragments": ["missing-link"]
+    },
+    {
+      "id": "sugo-grand-prix",
+      "jp": "スゴウ グランプリ",
+      "ko": "스고 그랑프리",
+      "fragments": ["sugo", "grand-prix"]
+    },
+    {
+      "id": "sugo-winners",
+      "jp": "スゴウ ウィナーズ",
+      "ko": "스고 위너스",
+      "fragments": ["sugo", "winners"]
+    },
+    {
+      "id": "sturmzender",
+      "jp": "シュトルムツェンダー",
+      "ko": "슈트룸 젠더",
+      "fragments": ["sturm-prefix", "sturm-remainder"]
+    },
+    {
+      "id": "union-savior",
+      "jp": "ユニオン セイバー",
+      "ko": "유니온 세이버",
+      "fragments": ["union-savior"]
+    },
+    {
+      "id": "aoi-zip-formula",
+      "jp": "アオイ ZIP フォーミュラー",
+      "ko": "아오이 ZIP 포뮬러",
+      "fragments": ["aoi-zip-formula-prefix", "aoi-zip-formula-remainder"]
+    }
+  ],
+  "fragments": [
+    {
+      "id": "missing-link",
+      "jp": "ミッシング リンク",
+      "ko": "미싱 링크",
+      "texture_rect": [0, 0, 120, 16],
+      "alignment": "center"
+    },
+    {
+      "id": "sugo",
+      "jp": "スゴウ",
+      "ko": "스고",
+      "texture_rect": [0, 16, 48, 16],
+      "alignment": "right"
+    },
+    {
+      "id": "grand-prix",
+      "jp": "グランプリ",
+      "ko": "그랑프리",
+      "texture_rect": [48, 16, 72, 16],
+      "alignment": "left"
+    },
+    {
+      "id": "sturm-prefix",
+      "jp": "シュト",
+      "ko": "슈트",
+      "texture_rect": [0, 32, 48, 16],
+      "alignment": "right-tight"
+    },
+    {
+      "id": "winners",
+      "jp": "ウィナーズ",
+      "ko": "위너스",
+      "texture_rect": [48, 32, 80, 16],
+      "alignment": "left"
+    },
+    {
+      "id": "sturm-remainder",
+      "jp": "ルムツェンダー",
+      "ko": "룸 젠더",
+      "texture_rect": [0, 48, 96, 16],
+      "alignment": "left-tight"
+    },
+    {
+      "id": "union-savior",
+      "jp": "ユニオン セイバー",
+      "ko": "유니온 세이버",
+      "texture_rect": [0, 64, 120, 16],
+      "alignment": "center"
+    },
+    {
+      "id": "aoi-zip-formula-prefix",
+      "jp": "アオイ ZIP フォ",
+      "ko": "아오이 ZIP 포",
+      "texture_rect": [0, 80, 120, 16],
+      "alignment": "right-tight"
+    },
+    {
+      "id": "aoi-zip-formula-remainder",
+      "jp": "ーミュラー",
+      "ko": "뮬러",
+      "texture_rect": [0, 96, 56, 16],
+      "alignment": "left-tight"
+    }
+  ]
+}

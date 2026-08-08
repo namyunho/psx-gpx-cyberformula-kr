@@ -12,12 +12,12 @@ import struct
 from typing import Any
 
 
-EXPECTED_ENTRY_COUNT = 724
+EXPECTED_ENTRY_COUNT = 806
 EXPECTED_CLASSIFICATION_COUNTS = {
-    "indexed_minigame_page": 73,
-    "indexed_race_page": 333,
+    "indexed_minigame_page": 74,
+    "indexed_race_page": 410,
     "save_ui_stream": 27,
-    "sequential_event_page": 291,
+    "sequential_event_page": 295,
 }
 NAME_PATTERN = re.compile(r"\{name:(surname|given)\}")
 UNKNOWN_MARKUP_PATTERN = re.compile(r"\{[^{}]+\}")

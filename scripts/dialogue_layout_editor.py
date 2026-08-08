@@ -2806,6 +2806,18 @@ class FontTranslationWorkspaceDocument(DialogueDocument):
                     f"{entry_id}: unindexed-font ko must be a string"
                 )
             source = unindexed_by_id[entry_id]
+            alias_id = source.get("translation_alias_id")
+            if alias_id is not None:
+                canonical = _dialogue_by_id.get(alias_id)
+                if canonical is None or canonical.get("ko") != ko:
+                    raise DialogueEditorError(
+                        f"{entry_id}: mirrored translation differs from "
+                        f"canonical dialogue {alias_id}"
+                    )
+                # The physical u30..u34 copies are generated from the u19
+                # canonical row.  Showing them as independent editable rows
+                # would allow the five mirrors to drift apart.
+                continue
             classification = str(source.get("classification", ""))
             group = _unindexed_source_group(classification)
             raw_layout = source.get("layout")
